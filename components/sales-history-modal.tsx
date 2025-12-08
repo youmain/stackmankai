@@ -41,11 +41,7 @@ export function SalesHistoryModal({ open, onClose, salesData }: SalesHistoryModa
         const filtered = allReceipts.filter((receipt) => receipt.status === "settled")
         setCompletedReceipts(filtered)
         setLoading(false)
-      },
-      (error) => {
-        console.error("❌ 伝票取得エラー:", error)
-        setLoading(false)
-      },
+      }
     )
 
     return () => {
@@ -84,7 +80,7 @@ export function SalesHistoryModal({ open, onClose, salesData }: SalesHistoryModa
   const handleReceiptDelete = async (receipt: ReceiptType) => {
     setIsDeletingReceipt(true)
     try {
-      await deleteReceipt(receipt.id, "管理者")
+      await deleteReceipt(receipt.id)
       setShowReceiptDeleteConfirm(false)
       setReceiptToDelete(null)
     } catch (error) {
@@ -299,7 +295,6 @@ export function SalesHistoryModal({ open, onClose, salesData }: SalesHistoryModa
             setSelectedReceipt(null)
           }}
           receipt={selectedReceipt}
-          isEmployeeView={true}
         />
       )}
     </>

@@ -38,10 +38,7 @@ export default function ReceiptsPage() {
       unsubscribeReceipts = subscribeToReceipts(
         (newReceipts) => {
           setReceipts(newReceipts)
-        },
-        (error) => {
-          console.error("伝票リスナーエラー:", error)
-        },
+        }
       )
     } catch (error) {
       console.error("伝票リスナー初期化エラー:", error)
@@ -73,7 +70,7 @@ export default function ReceiptsPage() {
         return
       }
 
-      await deleteReceipt(receiptToDelete.id, userName)
+      await deleteReceipt(receiptToDelete.id)
 
       // Close dialog and reset state
       setShowPasswordDialog(false)
@@ -92,7 +89,13 @@ export default function ReceiptsPage() {
 
     setIsCompleting(true)
     try {
-      await completeReceipt(receipt.id, userName)
+      await completeReceipt(
+        receipt.id,
+        0, // receivedAmount
+        0, // changeAmount
+        0, // pointsUsed
+        userName
+      )
     } catch (error) {
       console.error("伝票清算エラー:", error)
       handleError(error, "伝票清算")
