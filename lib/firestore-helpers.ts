@@ -70,6 +70,7 @@ export const updatePlayerBalance = async (
   isPlaying: boolean,
   gameId: string | null,
 ) => {
+  if (!db) throw new Error("Firestore not initialized")
   const batch = writeBatch(db)
   const playerRef = doc(getPlayersCollection(), playerId)
 
@@ -95,6 +96,7 @@ export const addGameParticipant = async (
   finalBalance: number,
   createdBy: string,
 ) => {
+  if (!db) throw new Error("Firestore not initialized")
   const batch = writeBatch(db)
   const gameRef = doc(getGamesCollection(), gameId)
 
@@ -157,6 +159,7 @@ export const recordAdditionalStackTransaction = async (
   purchaseAmount: number,
   createdBy: string,
 ) => {
+  if (!db) throw new Error("Firestore not initialized")
   const batch = writeBatch(db)
 
   // プレイヤートランザクション
@@ -209,6 +212,7 @@ export const processPlayerGameEnd = async (
   participant: GameParticipant,
   createdBy: string,
 ) => {
+  if (!db) throw new Error("Firestore not initialized")
   const batch = writeBatch(db)
 
   const newBalance = currentBalance + finalStack

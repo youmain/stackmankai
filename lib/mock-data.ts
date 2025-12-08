@@ -39,7 +39,7 @@ export const mockPlayers: Player[] = [
     rewardPoints: 320,
     isPlaying: true,
     currentGameId: "game1",
-    membershipStatus: "inactive",
+    membershipStatus: "none",
     subscriptionEndDate: new Date("2025-10-15"),
     createdAt: new Date("2025-10-07"),
     updatedAt: new Date("2025-10-08"),
@@ -52,7 +52,7 @@ export const mockPlayers: Player[] = [
     rewardPoints: 0,
     isPlaying: false,
     currentGameId: "",
-    membershipStatus: "inactive",
+    membershipStatus: "none",
     subscriptionEndDate: new Date("2025-10-10"),
     createdAt: new Date("2025-10-07"),
     updatedAt: new Date("2025-10-08"),
@@ -65,7 +65,7 @@ export const mockPlayers: Player[] = [
     rewardPoints: 2100,
     isPlaying: false,
     currentGameId: "",
-    membershipStatus: "inactive",
+    membershipStatus: "none",
     subscriptionEndDate: new Date("2025-10-12"),
     createdAt: new Date("2025-10-07"),
     updatedAt: new Date("2025-10-08"),
@@ -78,7 +78,7 @@ export const mockPlayers: Player[] = [
     rewardPoints: 0,
     isPlaying: false,
     currentGameId: "",
-    membershipStatus: "inactive",
+    membershipStatus: "none",
     subscriptionEndDate: new Date("2025-10-14"),
     createdAt: new Date("2025-10-07"),
     updatedAt: new Date("2025-10-08"),
@@ -284,7 +284,7 @@ export const mockStoreRankingSettings: StoreRankingSettings = {
     fourth: 1,
     fifth: 1,
   },
-  rewardPointsSettings: {
+  cashbackPointsSettings: {
     baseRate: 5,
     dailyRates: {
       [new Date().toISOString().split('T')[0]]: 10, // 今日は10%還元

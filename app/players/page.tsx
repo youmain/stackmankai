@@ -183,10 +183,7 @@ export default function PlayersPage() {
         (history) => {
           console.log("[v0] 💰 購入金額履歴同期受信:", Object.keys(history).length, "プレイヤー")
           setPlayerPurchaseHistory(history)
-        },
-        (error) => {
-          console.error("[v0] 購入金額履歴リスナーエラー:", error)
-        },
+        }
       )
 
       console.log("[v0] レーキ履歴リスナー開始")
@@ -210,10 +207,7 @@ export default function PlayersPage() {
             合計レーキ: history.reduce((total, game) => total + game.rake, 0),
           })
           setRakeHistory(history)
-        },
-        (error) => {
-          console.error("[v0] レーキ履歴リスナーエラー:", error)
-        },
+        }
       )
 
       console.log("[v0] 全リスナー初期化完了")
@@ -534,8 +528,10 @@ export default function PlayersPage() {
 
         const now = new Date()
         const newPlayerData = {
+          uniqueId: `player_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
           name: playerData.name,
           systemBalance: playerData.systemBalance || 0,
+          rewardPoints: 0,
           furigana: playerData.furigana || "",
           pokerName: playerData.pokerName || "",
           isSpecial: playerData.isSpecial || false,
@@ -548,7 +544,7 @@ export default function PlayersPage() {
         console.log(`[v0] プレイヤー作成データ:`, newPlayerData)
 
         console.log(`[v0] addPlayer関数呼び出し開始: ${playerData.name}`)
-        await addPlayer(newPlayerData)
+        await addPlayer(newPlayerData as unknown as Partial<Player>)
         console.log(`[v0] addPlayer関数呼び出し成功: ${playerData.name}`)
 
         successCount++
@@ -636,7 +632,7 @@ export default function PlayersPage() {
   return (
     <AuthGuard>
       <div className="min-h-screen bg-gray-50">
-        <div style={{ display: "none" }}>{console.log("[v0] 🖥️ プレイヤー管理画面DOM構築開始")}</div>
+        <div style={{ display: "none" }}>{(() => { console.log("[v0] 🖥️ プレイヤー管理画面DOM構築開始"); return null })()}</div>
 
         <Header />
         <main className="container mx-auto px-3 py-4 sm:px-6 lg:px-8 sm:py-8" role="main" aria-label="プレイヤー管理">
@@ -823,15 +819,15 @@ export default function PlayersPage() {
           </>
         )}
 
-        {selectedPlayer && selectedPlayer.isPlaying && (
+         {showGameManagementModal && selectedPlayer && selectedPlayer.id && (
           <GameManagementModal
             open={showGameManagementModal}
             onClose={() => {
               setShowGameManagementModal(false)
               setSelectedPlayer(null)
             }}
-            player={selectedPlayer}
-            onGameEnd={(finalStack) => handleGameEnd(finalStack, selectedPlayer!.id)}
+            player={selectedPlayer as any as Player}
+            onGameEnd={(finalStack) => handleGameEnd(finalStack, selectedPlayer.id)}
             onGameUpdate={handleGameUpdate}
           />
         )}
