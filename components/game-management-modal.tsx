@@ -15,7 +15,7 @@ interface Player {
   id: string
   name: string
   systemBalance: number
-  currentGameId: string
+  currentGameId?: string
 }
 
 interface GameManagementModalProps {

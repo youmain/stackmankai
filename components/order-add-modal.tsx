@@ -69,14 +69,17 @@ export function OrderAddModal({ open, onClose, receiptId, playerName }: OrderAdd
 
     setIsAdding(true)
     try {
-      await addReceiptItem(
+      await addReceiptItem(receiptId, {
         receiptId,
-        selectedMenuType,
-        displayItemName,
-        unitPriceValue,
-        quantityValue,
-        userName || "system",
-      )
+        menuType: selectedMenuType as any,
+        itemName: displayItemName,
+        unitPrice: unitPriceValue,
+        quantity: quantityValue,
+        totalPrice: unitPriceValue * quantityValue,
+        isTaxable: true,
+        createdBy: userName || "system",
+        createdAt: new Date(),
+      })
 
       handleSuccess(`${displayItemName} × ${quantityValue} を追加しました`)
 

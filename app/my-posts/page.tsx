@@ -695,7 +695,7 @@ export default function MyPostsPage() {
       console.log("[v0] サンプル投稿作成開始:", samplePosts.length, "件")
 
       for (const post of samplePosts) {
-        await createPost(post)
+        await createPost(post as any)
         console.log("[v0] サンプル投稿作成完了:", post.title)
       }
 

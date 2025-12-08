@@ -19,7 +19,7 @@ export function TransactionHistoryModal({ open, onClose, player }: TransactionHi
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!open || !player.id) return
+    if (!open || !player.id || !db) return
 
     const q = query(collection(db, "transactions"), where("playerId", "==", player.id))
 

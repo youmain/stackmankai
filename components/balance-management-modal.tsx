@@ -40,11 +40,8 @@ export function BalanceManagementModal({ open, onClose, player }: BalanceManagem
       await updatePlayerBalance(
         player.id,
         balanceNum,
-        transactionType,
-        adjustmentAmount,
         "システム残高調整",
-        userName || "不明なユーザー",
-        null,
+        userName || "不明なユーザー"
       )
 
       onClose()

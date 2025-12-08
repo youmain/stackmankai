@@ -826,7 +826,7 @@ export default function PlayersPage() {
               setShowGameManagementModal(false)
               setSelectedPlayer(null)
             }}
-            player={selectedPlayer as any as Player}
+            player={selectedPlayer as Player}
             onGameEnd={(finalStack) => handleGameEnd(finalStack, selectedPlayer.id)}
             onGameUpdate={handleGameUpdate}
           />
