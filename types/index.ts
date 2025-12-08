@@ -328,6 +328,7 @@ export interface PaymentHistory {
   currency: string
   status: "succeeded" | "failed" | "pending" | "canceled"
   description: string
+  paymentMethod?: string // 支払い方法（card, bank_transferなど）
   createdAt: Date
 }
 

@@ -12,7 +12,7 @@ if (!process.env.STRIPE_WEBHOOK_SECRET) {
 
 const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2024-06-20",
+      apiVersion: "2025-11-17.clover",
     })
   : null
 
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
 
     switch (event.type) {
       case "checkout.session.completed": {
-        const session = event.data.object as Stripe.CheckoutSession
+        const session = event.data.object as Stripe.Checkout.Session
         const customerEmail = session.metadata?.customer_email
         const paymentType = session.metadata?.payment_type
 
@@ -60,7 +60,10 @@ export async function POST(request: NextRequest) {
           // 顧客アカウントを作成または更新
           let customerId = session.customer as string
           if (!customerId && customerEmail) {
-            customerId = await createCustomerAccount(customerEmail, session.customer as string)
+            customerId = await createCustomerAccount({
+              email: customerEmail,
+              stripeCustomerId: session.customer as string,
+            })
           }
 
           await updateCustomerPayment(customerId, {
@@ -78,11 +81,11 @@ export async function POST(request: NextRequest) {
 
           let customerId = session.customer as string
           if (!customerId && customerEmail) {
-            customerId = await createCustomerAccount(
-              customerEmail,
-              session.customer as string,
-              session.subscription as string,
-            )
+            customerId = await createCustomerAccount({
+              email: customerEmail,
+              stripeCustomerId: session.customer as string,
+              subscriptionId: session.subscription as string,
+            })
           }
 
           await updateCustomerPayment(customerId, {
@@ -135,14 +138,14 @@ export async function POST(request: NextRequest) {
       case "invoice.payment_succeeded": {
         const invoice = event.data.object as Stripe.Invoice
 
-        if (invoice.subscription) {
+        if ((invoice as any).subscription) {
           await updateCustomerPayment(invoice.customer as string, {
             paymentStatus: "active",
             lastPaymentDate: new Date(),
             paymentMethod: "card",
           })
 
-          console.log("[v0] ✅ 継続課金支払い成功:", invoice.subscription)
+          console.log("[v0] ✅ 継続課金支払い成功:", (invoice as any).subscription)
         }
         break
       }
@@ -150,13 +153,13 @@ export async function POST(request: NextRequest) {
       case "invoice.payment_failed": {
         const invoice = event.data.object as Stripe.Invoice
 
-        if (invoice.subscription) {
+        if ((invoice as any).subscription) {
           await updateCustomerPayment(invoice.customer as string, {
             paymentStatus: "inactive",
             paymentMethod: "card",
           })
 
-          console.log("[v0] ❌ 継続課金支払い失敗:", invoice.subscription)
+          console.log("[v0] ❌ 継続課金支払い失敗:", (invoice as any).subscription)
         }
         break
       }
