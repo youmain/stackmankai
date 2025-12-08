@@ -28,7 +28,7 @@ export function PasswordSettingsModal({ open, onClose }: PasswordSettingsModalPr
     const loadPassword = async () => {
       try {
         const adminPassword = await getAdminPassword()
-        setStoredPassword(adminPassword)
+        setStoredPassword(adminPassword || "0510")
       } catch (error) {
         console.error("パスワード取得エラー:", error)
         setStoredPassword("0510")
@@ -59,7 +59,7 @@ export function PasswordSettingsModal({ open, onClose }: PasswordSettingsModalPr
     }
 
     try {
-      await saveAdminPassword(newPassword, userName || "system")
+      await saveAdminPassword(newPassword)
       handleSuccess("パスワードが変更されました")
       handleClose()
     } catch (error) {

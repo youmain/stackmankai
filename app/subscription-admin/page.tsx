@@ -81,12 +81,7 @@ export default function SubscriptionAdminPage() {
   const handleStatusUpdate = async (customerId: string, newStatus: CustomerAccount["subscriptionStatus"]) => {
     setIsLoading(true)
     try {
-      await updateCustomerSubscription(customerId, {
-        subscriptionId: `sub_${Math.random().toString(36).substring(2, 15)}`,
-        subscriptionStatus: newStatus,
-        currentPeriodStart: new Date(),
-        currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
-      })
+      await updateCustomerSubscription(customerId, newStatus)
     } catch (error) {
       console.error("❌ サブスクリプション状態更新エラー:", error)
     } finally {
@@ -99,7 +94,7 @@ export default function SubscriptionAdminPage() {
     try {
       const player = players.find((p) => p.id === playerId)
       if (player) {
-        await linkPlayerToCustomer(customerId, playerId, player.name)
+        await linkPlayerToCustomer(playerId, customerId)
       }
     } catch (error) {
       console.error("❌ プレイヤー紐づけエラー:", error)

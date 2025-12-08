@@ -7,8 +7,8 @@ import type { RakeHistory } from "@/types"
 
 export function useRakeHistory() {
   const subscribe = useMemo(
-    () => (onData: (data: RakeHistory[]) => void, onError: (error: Error) => void) => {
-      return subscribeToRakeHistory(onData, onError)
+    () => (onData: (data: RakeHistory[]) => void) => {
+      return subscribeToRakeHistory(onData)
     },
     [],
   )

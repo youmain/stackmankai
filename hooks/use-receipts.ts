@@ -7,8 +7,8 @@ import type { Receipt } from "@/types"
 
 export function useReceipts() {
   const subscribe = useMemo(
-    () => (onData: (data: Receipt[]) => void, onError: (error: Error) => void) => {
-      return subscribeToReceipts(onData, onError)
+    () => (onData: (data: Receipt[]) => void) => {
+      return subscribeToReceipts(onData)
     },
     [],
   )

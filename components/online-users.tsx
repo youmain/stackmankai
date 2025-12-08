@@ -28,10 +28,7 @@ export function OnlineUsers() {
     }
 
     try {
-      const unsubscribe = subscribeToUsers(setUsers, (error) => {
-        console.error("[v0] OnlineUsers subscription error:", error)
-        setError("v0プレビュー環境ではFirebaseが利用できません。Vercelにデプロイすると正常に動作します。")
-      })
+      const unsubscribe = subscribeToUsers(setUsers)
       return unsubscribe
     } catch (error) {
       console.error("[v0] OnlineUsers initialization error:", error)

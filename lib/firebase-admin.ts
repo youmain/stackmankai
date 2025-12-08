@@ -40,12 +40,12 @@ function initializeAdminFirebase() {
 
 export function getAdminDb() {
   const app = initializeAdminFirebase()
-  return admin.firestore(app)
+  return admin.firestore(app || undefined)
 }
 
 export function getAdminAuth() {
   const app = initializeAdminFirebase()
-  return admin.auth(app)
+  return admin.auth(app || undefined)
 }
 
 export default initializeAdminFirebase

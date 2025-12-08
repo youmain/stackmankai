@@ -8,6 +8,7 @@ import type { CustomerAccount } from "@/types"
 import { handleFirebaseError, handleError } from "@/lib/error-handler"
 
 interface AuthContextType {
+  user: { uid: string; email: string | null } | null
   userName: string | null
   userId: string | null
   userType: "admin" | "customer" | null
@@ -174,6 +175,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <AuthContext.Provider
       value={{
+        user: userId ? { uid: userId, email: null } : null,
         userName,
         userId,
         userType,

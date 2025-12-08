@@ -8,7 +8,7 @@ if (!process.env.STRIPE_SECRET_KEY && process.env.NODE_ENV !== 'production') {
 
 const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2024-06-20",
+      apiVersion: "2025-11-17.clover",
     })
   : null
 

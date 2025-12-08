@@ -119,7 +119,7 @@ export default function StoreRankingSettingsPage() {
     setSaving(true)
     try {
       // 会員ランク制度のON/OFF変更を検出
-      const previousEnabled = storeSettings?.membershipRankSettings?.enabled || false
+      const previousEnabled = settings?.membershipRankSettings?.enabled || false
       const currentEnabled = membershipRankSettings.enabled
 
       await updateStoreRankingSettings({

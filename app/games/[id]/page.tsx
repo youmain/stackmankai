@@ -32,6 +32,7 @@ export default function GameDetailPage() {
   useEffect(() => {
     if (!gameId) return
 
+    if (!db) return
     const gameRef = doc(db, "games", gameId)
     const unsubscribeGame = onSnapshot(gameRef, (doc) => {
       if (doc.exists()) {
@@ -232,6 +233,7 @@ export default function GameDetailPage() {
             }}
             gameId={gameId}
             participant={selectedParticipant}
+            playerSystemBalance={players.find(p => p.id === selectedParticipant.playerId)?.systemBalance || 0}
           />
         )}
 

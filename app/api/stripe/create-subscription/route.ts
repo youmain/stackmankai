@@ -8,7 +8,7 @@ if (!process.env.STRIPE_SECRET_KEY && process.env.NODE_ENV !== 'production') {
 
 const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2024-06-20",
+      apiVersion: "2025-11-17.clover",
     })
   : null
 
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     console.log("[v0] Subscription created successfully:", subscription.id)
 
     const invoice = subscription.latest_invoice as Stripe.Invoice
-    const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent
+    const paymentIntent = (invoice as any).payment_intent as Stripe.PaymentIntent
 
     console.log("[v0] Payment intent client secret generated")
 

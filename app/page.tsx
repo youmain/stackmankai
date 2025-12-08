@@ -16,6 +16,7 @@ import {
   Sparkles,
   QrCode,
 } from "lucide-react"
+// @ts-ignore - qrcodeの型定義がない
 import QRCode from "qrcode"
 
 export default function HomePage() {

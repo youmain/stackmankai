@@ -14,11 +14,7 @@ export function usePlayerPurchaseHistory() {
         setData(history)
         setLoading(false)
         setError(null)
-      },
-      (err) => {
-        setError(err)
-        setLoading(false)
-      },
+      }
     )
 
     return () => unsubscribe()

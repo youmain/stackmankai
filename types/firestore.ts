@@ -10,6 +10,7 @@ export interface FirestorePlayer {
   pokerName?: string
   furigana?: string
   systemBalance: number
+  rewardPoints?: number
   currentGameId?: string
   isPlaying: boolean
   isSpecial?: boolean

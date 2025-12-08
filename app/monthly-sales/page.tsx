@@ -25,11 +25,7 @@ export default function MonthlySalesPage() {
       (data) => {
         setDailySales(data)
         setLoading(false)
-      },
-      (error) => {
-        console.error("❌ 日別売上リスナーエラー:", error)
-        setLoading(false)
-      },
+      }
     )
 
     return () => {

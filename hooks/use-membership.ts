@@ -7,6 +7,7 @@ export interface MembershipStatus {
   isLoading: boolean
   membershipType?: "free" | "premium"
   expiresAt?: Date
+  subscriptionStatus?: "active" | "inactive" | "canceled" | "past_due" | "trialing" | "none"
 }
 
 export function useMembership() {

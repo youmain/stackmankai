@@ -19,6 +19,11 @@ export function useAuth(): UseAuthReturn {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    if (!auth) {
+      setLoading(false)
+      setError("Auth not initialized")
+      return
+    }
     const unsubscribe = onAuthStateChanged(
       auth,
       (user) => {

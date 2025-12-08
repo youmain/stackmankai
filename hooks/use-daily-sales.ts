@@ -7,8 +7,8 @@ import type { DailySales } from "@/types"
 
 export function useDailySales() {
   const subscribe = useMemo(
-    () => (onData: (data: DailySales[]) => void, onError: (error: Error) => void) => {
-      return subscribeToDailySales(onData, onError)
+    () => (onData: (data: DailySales[]) => void) => {
+      return subscribeToDailySales(onData)
     },
     [],
   )
