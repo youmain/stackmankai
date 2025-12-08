@@ -49,10 +49,7 @@ export function ReceiptDetailModal({ open, onClose, receipt, playerRewardPoints 
       receipt.id,
       (items) => {
         setReceiptItems(items)
-      },
-      (error) => {
-        console.error("伝票項目リスナーエラー:", error)
-      },
+      }
     )
 
     return () => {
@@ -70,7 +67,7 @@ export function ReceiptDetailModal({ open, onClose, receipt, playerRewardPoints 
       food: "食事",
       other: "その他",
     }
-    return menuNames[menuType] || menuType
+    return menuNames[menuType as keyof typeof menuNames] || menuType
   }
 
   const consolidatedItems: { menuType: MenuType; itemName: string; unitPrice: number; totalQuantity: number; totalPrice: number; isTaxable: boolean }[] = receiptItems.reduce((acc, item) => {
@@ -110,7 +107,7 @@ export function ReceiptDetailModal({ open, onClose, receipt, playerRewardPoints 
     { totalAmount: 0, totalTaxableAmount: 0, totalTax: 0 },
   )
 
-  const pointUsableAmount = settings?.rewardPointsSettings?.usageScope === "stack_only"
+  const pointUsableAmount = settings?.cashbackPointsSettings?.usageScope === "stack_only"
     ? receiptItems
         .filter((item) => 
           item.menuType === "stack_purchase" || 
@@ -140,9 +137,10 @@ export function ReceiptDetailModal({ open, onClose, receipt, playerRewardPoints 
     try {
       await completeReceipt(
         receipt.id,
-        userName || "system",
+        finalAmount,
+        0,
         usePoints ? pointsUsed : 0,
-        receipt.playerId
+        userName || "system"
       )
       handleSuccess(`${receipt.playerName}の伝票を清算完了しました${usePoints ? `（${pointsUsed}P使用）` : ""}`)
       onClose()
@@ -161,7 +159,7 @@ export function ReceiptDetailModal({ open, onClose, receipt, playerRewardPoints 
 
     setDeletingItemId(receiptItemId)
     try {
-      await deleteReceiptItem(receiptItemId, userName || "system")
+      await deleteReceiptItem(receiptItemId)
     } catch (error) {
       console.error("❌ 注文項目削除エラー:", error)
       handleError(error, "注文項目削除")
@@ -233,7 +231,7 @@ export function ReceiptDetailModal({ open, onClose, receipt, playerRewardPoints 
                     {playerRewardPoints.toLocaleString()}P
                   </Badge>
                 </div>
-                {settings?.rewardPointsSettings?.usageScope === "stack_only" && (
+                {settings?.cashbackPointsSettings?.usageScope === "stack_only" && (
                   <div className="text-xs text-purple-700 bg-purple-100 p-2 rounded">
                     ※ポイントはスタック購入のみに使用できます（{pointUsableAmount.toLocaleString()}円分）
                   </div>
