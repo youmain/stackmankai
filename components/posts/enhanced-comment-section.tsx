@@ -378,7 +378,9 @@ export function EnhancedCommentSection({
     }
 
     try {
-      await deleteDoc(doc(db, "comments", commentId))
+      if (db) {
+        await deleteDoc(doc(db, "comments", commentId))
+      }
       console.log("[v0] ✅ コメント削除成功:", commentId)
     } catch (error: any) {
       console.error("[v0] ❌ コメント削除エラー:", error)
@@ -558,7 +560,7 @@ function EnhancedCommentItem({
   onDislike: () => void
   onMarkBestAnswer: () => void
   onDelete: () => void
-  canMarkBestAnswer: boolean
+  canMarkBestAnswer?: boolean
   currentUserId?: string
   postAuthorId?: string
 }) {

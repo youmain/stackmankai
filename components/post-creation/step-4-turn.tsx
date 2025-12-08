@@ -54,7 +54,7 @@ export function PostCreationStep4({ data, onUpdate }: Props) {
           <Label>ターンカード</Label>
           <div className="flex justify-center">
             <CardSelector
-              value={data.communityCard}
+              value={data.communityCard || null}
               onChange={(card) => onUpdate({ communityCard: card })}
               placeholder="ターンカード"
             />

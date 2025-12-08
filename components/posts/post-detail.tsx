@@ -57,7 +57,7 @@ export function PostDetail({ postId, onBack, isMemberContext = false }: PostDeta
     if (navigator.share) {
       navigator.share({
         title: post?.title,
-        text: post?.situation,
+        text: typeof post?.situation === "string" ? post?.situation : post?.situation?.description || "",
         url: window.location.href,
       })
     } else {

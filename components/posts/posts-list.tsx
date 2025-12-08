@@ -12,7 +12,7 @@ import { Search, MessageCircle, Heart, Eye } from "lucide-react"
 import Link from "next/link"
 import type { PostData } from "@/types/post"
 import { isFirebaseConfigured } from "@/lib/firebase"
-import { subscribeToPost } from "@/lib/firestore"
+import { subscribeToPosts } from "@/lib/firestore"
 
 const samplePosts: PostData[] = [
   // ... サンプルデータは省略（既存のコードと同じ）
@@ -56,7 +56,7 @@ export function PostsList({ onPostClick }: PostsListProps = {}) {
         }
 
         console.log("[v0] 投稿リアルタイム監視開始")
-        const unsubscribe = subscribeToPost((firestorePosts) => {
+        const unsubscribe = subscribeToPosts((firestorePosts) => {
           console.log("[v0] 投稿データ取得:", firestorePosts.length, "件")
           setPosts(firestorePosts)
           setIsLoading(false)
@@ -76,7 +76,7 @@ export function PostsList({ onPostClick }: PostsListProps = {}) {
   const filteredPosts = posts.filter((post) => {
     const matchesSearch =
       post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.situation.toLowerCase().includes(searchTerm.toLowerCase())
+      (typeof post.situation === "string" && post.situation.toLowerCase().includes(searchTerm.toLowerCase()))
 
     const matchesVisibility = filters.visibility.includes(post.visibility as any)
     const matchesAdvice =
@@ -229,7 +229,9 @@ function PostCard({ post, onPostClick }: { post: PostData; onPostClick?: (postId
         </div>
       </CardHeader>
       <CardContent>
-        <p className="text-muted-foreground mb-4 line-clamp-3">{post.situation}</p>
+        <p className="text-muted-foreground mb-4 line-clamp-3">
+          {typeof post.situation === "string" ? post.situation : post.situation.description || ""}
+        </p>
 
         <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
           <div className="flex items-center gap-1">

@@ -230,7 +230,9 @@ function MyPostCard({
         <div className="mb-2">
           <span className="text-xs font-semibold text-primary">状況説明:</span>
         </div>
-        <p className="text-muted-foreground mb-4 line-clamp-3">{post.situation}</p>
+        <p className="text-muted-foreground mb-4 line-clamp-3">
+          {typeof post.situation === "string" ? post.situation : post.situation.description || ""}
+        </p>
         {post.reflection?.thoughts && (
           <div className="mb-4">
             <span className="text-xs font-semibold text-primary">感想:</span>

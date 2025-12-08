@@ -1279,6 +1279,19 @@ export const createPaymentHistory = async (data: Partial<PaymentHistory>): Promi
 
 // --- Posts ---
 
+export const subscribeToPosts = (callback: (posts: Post[]) => void): (() => void) => {
+  if (!isFirebaseConfigured()) {
+    callback([])
+    return () => {}
+  }
+  const postsCollection = getPostsCollection()
+  const q = query(postsCollection, orderBy("createdAt", "desc"))
+  return onSnapshot(q, (snapshot) => {
+    const posts = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Post)
+    callback(posts)
+  })
+}
+
 export const subscribeToUserPosts = (userId: string, callback: (posts: Post[]) => void): (() => void) => {
   if (!isFirebaseConfigured()) {
     callback([])

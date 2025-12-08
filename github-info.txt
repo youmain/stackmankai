@@ -1,0 +1,12 @@
+GitHub Repository Information
+=============================
+
+Repository Name: stackmankai
+Repository URL: https://github.com/youmain/stackmankai
+Repository Owner: youmain
+Repository Description: Poker Stack Manager - A comprehensive poker game management application with AI-powered features using DeepSeek API
+
+Git Remote URL (HTTPS): https://github.com/youmain/stackmankai.git
+Git Remote URL (SSH): git@github.com:youmain/stackmankai.git
+
+Created: 2025-12-08

@@ -14,7 +14,7 @@ import { Search, MessageCircle, Heart, Eye, Home } from "lucide-react"
 import Link from "next/link"
 import type { PostData } from "@/types/post"
 import { isFirebaseConfigured } from "@/lib/firebase"
-import { subscribeToPost } from "@/lib/firestore"
+import { subscribeToPosts } from "@/lib/firestore"
 
 // サンプルデータ
 const samplePosts: PostData[] = [
@@ -57,7 +57,13 @@ const samplePosts: PostData[] = [
       heroPosition: 0,
       action: "AAでオールインするべきか悩んでいます。相手のレンジを考えると...",
     },
-    reflection: "結果的にオールインしましたが、相手がKKだったので運良く勝てました。でも判断が正しかったのか不安です。",
+    reflection: {
+      result: "勝利",
+      thoughts: "結果的にオールインしましたが、相手がKKだったので運良く勝てました。でも判断が正しかったのか不安です。",
+      seekingAdvice: true,
+      postCategory: "hand-review",
+      visibility: "public"
+    },
   },
   {
     id: "2",
@@ -169,7 +175,7 @@ const samplePosts: PostData[] = [
           ],
           isActive: true,
         },
-        { id: "btn", name: "BTN", position: 5, stack: 142.5, bet: 45, action: "bet" },
+        { id: "btn", name: "BTN", position: 5, stack: 142.5, bet: 45, action: "raise" },
       ],
       communityCards: [
         { suit: "spades", rank: "K" },
@@ -183,8 +189,13 @@ const samplePosts: PostData[] = [
       heroPosition: 2,
       action: "フラッシュ完成！でも相手のベットサイズが気になる。レイズするべきだった？",
     },
-    reflection:
-      "結果的にナッツフラッシュで勝ちましたが、ターンでのコール判断とリバーでのプレイに疑問が残ります。特にリバーでレイズしなかったのは消極的すぎたかもしれません。皆さんならどうプレイしますか？",
+    reflection: {
+      result: "勝利",
+      thoughts: "結果的にナッツフラッシュで勝ちましたが、ターンでのコール判断とリバーでのプレイに疑問が残ります。特にリバーでレイズしなかったのは消極的すぎたかもしれません。皆さんならどうプレイしますか？",
+      seekingAdvice: true,
+      postCategory: "hand-review",
+      visibility: "public"
+    },
   },
 ]
 
@@ -222,7 +233,7 @@ export default function PostsPage() {
           return
         }
 
-        const unsubscribe = subscribeToPost((firestorePosts) => {
+        const unsubscribe = subscribeToPosts((firestorePosts) => {
           // Firestoreのデータが空の場合はサンプルデータを使用
           if (firestorePosts.length === 0) {
             setPosts(samplePosts)
@@ -247,7 +258,7 @@ export default function PostsPage() {
   const filteredPosts = posts.filter((post) => {
     const matchesSearch =
       post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.situation.toLowerCase().includes(searchTerm.toLowerCase())
+      (typeof post.situation === "string" && post.situation.toLowerCase().includes(searchTerm.toLowerCase()))
 
     const matchesVisibility = filters.visibility.includes(post.visibility as any)
 
@@ -445,7 +456,9 @@ function PostCard({ post, isMember }: { post: PostData; isMember: boolean }) {
         </div>
       </CardHeader>
       <CardContent>
-        <p className="text-muted-foreground mb-4 line-clamp-3">{post.situation}</p>
+        <p className="text-muted-foreground mb-4 line-clamp-3">
+          {typeof post.situation === "string" ? post.situation : post.situation.description || ""}
+        </p>
 
         {/* 統計情報 */}
         <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">

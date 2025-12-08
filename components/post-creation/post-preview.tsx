@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import type { PostData } from "@/types/post"
+import type { PlayingCard } from "@/components/poker-table/playing-card"
 
 interface PostPreviewProps {
   postData: PostData
@@ -181,7 +182,7 @@ export function PostPreview({ postData, className, initialStep = 0 }: PostPrevie
         const handData: HandData = {
           situation: stageData.situation || "",
           players: stageData.players || [],
-          communityCards: stageData.communityCards || [],
+          communityCards: (stageData.communityCards || []) as PlayingCard[],
           pot: stageData.pot || 0,
           currentBet: stageData.currentBet || 0,
           stage: step.id as "preflop" | "flop" | "turn" | "river",

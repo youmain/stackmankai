@@ -42,16 +42,16 @@ export interface StageData {
 }
 
 export interface PreflopData {
-  holeCards: [PlayingCard | null, PlayingCard | null]
+  holeCards?: [PlayingCard | null, PlayingCard | null]
   action: string
-  betAmount: string
-  description: string
-  situation: string
-  players: Player[]
-  communityCards: PlayingCard[]
-  pot: number
-  currentBet: number
-  heroPosition: number
+  betAmount?: string
+  description?: string
+  situation?: string
+  players?: Player[]
+  communityCards?: PlayingCard[]
+  pot?: number
+  currentBet?: number
+  heroPosition?: number
   result?: string
   playerActions?: PlayerAction[]
 }
@@ -59,24 +59,44 @@ export interface PreflopData {
 export interface FlopData {
   communityCards: [PlayingCard | null, PlayingCard | null, PlayingCard | null]
   action: string
-  betAmount: string
-  description: string
+  betAmount?: string
+  description?: string
+  situation?: string
+  players?: Player[]
+  pot?: number
+  currentBet?: number
+  heroPosition?: number
+  result?: string
   playerActions?: PlayerAction[]
 }
 
 export interface TurnData {
-  communityCard: PlayingCard | null
+  communityCard?: PlayingCard | null
   action: string
-  betAmount: string
-  description: string
+  betAmount?: string
+  description?: string
+  situation?: string
+  players?: Player[]
+  communityCards?: PlayingCard[]
+  pot?: number
+  currentBet?: number
+  heroPosition?: number
+  result?: string
   playerActions?: PlayerAction[]
 }
 
 export interface RiverData {
-  communityCard: PlayingCard | null
+  communityCard?: PlayingCard | null
   action: string
-  betAmount: string
-  description: string
+  betAmount?: string
+  description?: string
+  situation?: string
+  players?: Player[]
+  communityCards?: PlayingCard[]
+  pot?: number
+  currentBet?: number
+  heroPosition?: number
+  result?: string
   playerActions?: PlayerAction[]
 }
 
@@ -91,7 +111,7 @@ export interface ReflectionData {
 export interface PostData {
   id: string
   title: string
-  situation: string
+  situation: string | SituationData
   visibility: "public" | "store" | "friends" | "private"
   seekingAdvice: boolean
   authorId: string
