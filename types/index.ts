@@ -137,7 +137,13 @@ export interface RakeHistory {
   amount: number
   playerCount: number
   calculation: string
-  createdAt: string
+  createdAt: string | Date
+  // ランキング計算用のプロパティ（ゲーム結果データから取得）
+  playerId?: string
+  playerName?: string
+  finalStack?: number
+  buyIn?: number
+  additionalStack?: number
 }
 
 export interface Expense {

@@ -28,8 +28,8 @@ export function calculateRankings(games: RakeHistory[], allPlayers?: Player[]): 
     allPlayers.forEach((player) => {
       const playerName = getPlayerDisplayName(player)
 
-      playerStats[player.プレイヤーID || player.id] = {
-        playerId: player.プレイヤーID || player.id,
+      playerStats[player.id] = {
+        playerId: player.id,
         playerName,
         totalProfit: 0,
         totalGames: 0,
@@ -46,12 +46,17 @@ export function calculateRankings(games: RakeHistory[], allPlayers?: Player[]): 
 
   // ゲーム結果を反映
   games.forEach((game) => {
+    // 必須プロパティがない場合はスキップ
+    if (!game.playerId || game.finalStack === undefined || game.buyIn === undefined || game.additionalStack === undefined) {
+      return
+    }
+
     const profit = game.finalStack - (game.buyIn + game.additionalStack)
 
     if (!playerStats[game.playerId]) {
       playerStats[game.playerId] = {
         playerId: game.playerId,
-        playerName: game.playerName,
+        playerName: game.playerName || "Unknown Player",
         totalProfit: 0,
         totalGames: 0,
         winRate: 0,
@@ -72,7 +77,11 @@ export function calculateRankings(games: RakeHistory[], allPlayers?: Player[]): 
     }
 
     // 最終ゲーム日を更新
-    const gameDate = game.createdAt instanceof Date ? game.createdAt : game.createdAt.toDate()
+    const gameDate = game.createdAt instanceof Date 
+      ? game.createdAt 
+      : typeof game.createdAt === 'string' 
+      ? new Date(game.createdAt) 
+      : (game.createdAt as any).toDate()
     if (!stats.lastGameDate || gameDate > stats.lastGameDate) {
       stats.lastGameDate = gameDate
     }
@@ -83,12 +92,25 @@ export function calculateRankings(games: RakeHistory[], allPlayers?: Player[]): 
     const playerGames = games
       .filter((game) => game.playerId === stats.playerId)
       .sort((a, b) => {
-        const dateA = a.createdAt instanceof Date ? a.createdAt : a.createdAt.toDate()
-        const dateB = b.createdAt instanceof Date ? b.createdAt : b.createdAt.toDate()
+        const dateA = a.createdAt instanceof Date 
+          ? a.createdAt 
+          : typeof a.createdAt === 'string' 
+          ? new Date(a.createdAt) 
+          : (a.createdAt as any).toDate()
+        const dateB = b.createdAt instanceof Date 
+          ? b.createdAt 
+          : typeof b.createdAt === 'string' 
+          ? new Date(b.createdAt) 
+          : (b.createdAt as any).toDate()
         return dateA.getTime() - dateB.getTime()
       })
 
-    const wins = playerGames.filter((game) => game.finalStack - (game.buyIn + game.additionalStack) > 0).length
+    const wins = playerGames.filter((game) => 
+      game.finalStack !== undefined && 
+      game.buyIn !== undefined && 
+      game.additionalStack !== undefined && 
+      game.finalStack - (game.buyIn + game.additionalStack) > 0
+    ).length
     stats.winRate = stats.totalGames > 0 ? (wins / stats.totalGames) * 100 : 0
     stats.averageProfit = stats.totalGames > 0 ? stats.totalProfit / stats.totalGames : 0
 
@@ -98,6 +120,9 @@ export function calculateRankings(games: RakeHistory[], allPlayers?: Player[]): 
     let lastResult = 0
 
     playerGames.forEach((game) => {
+      if (game.finalStack === undefined || game.buyIn === undefined || game.additionalStack === undefined) {
+        return
+      }
       const profit = game.finalStack - (game.buyIn + game.additionalStack)
       if (profit > 0) {
         currentStreak = lastResult > 0 ? currentStreak + 1 : 1
@@ -125,12 +150,7 @@ function getPlayerDisplayName(player: Player): string {
   if (player.name) {
     return player.name
   }
-  if (typeof player.プレイヤー名 === "string") {
-    return player.プレイヤー名
-  }
-  if (player.プレイヤー名?.name) {
-    return player.プレイヤー名.name
-  }
+  // 日本語プロパティは存在しないため削除
   return "Unknown Player"
 }
 
