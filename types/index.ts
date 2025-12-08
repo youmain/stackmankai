@@ -82,6 +82,7 @@ export interface Receipt {
   totalTaxableAmount: number // 課税対象金額
   totalTax: number // 消費税額
   pointsUsed?: number // 使用されたCP数を追加
+  profit?: number // 収支（プラスが勝ち、マイナスが負け）
   createdAt: Date
   updatedAt: Date
   createdBy: string // 伝票作成者

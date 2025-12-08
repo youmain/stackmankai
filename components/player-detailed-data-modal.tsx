@@ -164,7 +164,8 @@ function PlayerDetailedDataModal({
   ]
 
   // プレイヤーのランキングデータ
-  const playerDailyRanking = dailyRankings.find(
+  const todayRanking = dailyRankings.find((r) => r.date === new Date().toISOString().split('T')[0])
+  const playerDailyRanking = todayRanking?.rankings.find(
     (ranking) =>
       ranking.playerName === playerName ||
       ranking.playerName === player?.name ||
