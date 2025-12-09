@@ -617,6 +617,8 @@ export const addPlayerToGame = async (
   playerName: string,
   buyInAmount: number,
   addedBy: string,
+  purchaseAmount?: number, // 購入額を追加
+  receiptId?: string, // 伝票IDを追加
 ): Promise<void> => {
   if (!isFirebaseConfigured()) return
   const gameRef = doc(getGamesCollection(), gameId)
@@ -636,7 +638,87 @@ export const addPlayerToGame = async (
   })
 
   await updateDoc(gameRef, { participants, updatedAt: serverTimestamp() })
-  await updatePlayer(playerId, { isPlaying: true, currentGameId: gameId })
+
+  // プレイヤー情報を取得
+  const playerRef = doc(getPlayersCollection(), playerId)
+  const playerSnap = await getDoc(playerRef)
+  if (!playerSnap.exists()) throw new Error("Player not found")
+  
+  const playerData = playerSnap.data() as Player
+  const currentBalance = playerData.systemBalance || 0
+  
+  // 貿スタックから引き落とす金額を計算
+  const deductFromBalance = Math.min(currentBalance, buyInAmount)
+  const actualPurchase = purchaseAmount !== undefined ? purchaseAmount : Math.max(0, buyInAmount - currentBalance)
+  const newBalance = Math.max(0, currentBalance - buyInAmount)
+  
+  console.log("[v0] 💰 バイイン処理:", {
+    プレイヤー: playerName,
+    バイイン額: buyInAmount,
+    現在の貿スタック: currentBalance,
+    貿スタックから使用: deductFromBalance,
+    購入額: actualPurchase,
+    新しい貿スタック: newBalance,
+  })
+  
+  // プレイヤーの状態を更新（貿スタックを引き落とし）
+  await updatePlayer(playerId, { 
+    isPlaying: true, 
+    currentGameId: gameId,
+    systemBalance: newBalance,
+  })
+  
+  // 購入がある場合は購入履歴に記録
+  if (actualPurchase > 0) {
+    const purchaseHistoryRef = collection(getDb()!, "purchaseHistory")
+    await addDoc(purchaseHistoryRef, {
+      playerId,
+      playerName,
+      gameId,
+      amount: actualPurchase,
+      reason: "バイイン時の購入",
+      createdAt: serverTimestamp(),
+      createdBy: addedBy,
+    })
+    
+    console.log("[v0] 📝 購入履歴記録:", {
+      プレイヤー: playerName,
+      購入額: actualPurchase,
+      ゲームID: gameId,
+    })
+    
+    // 伝票がある場合は伝票にスタック購入項目を追加
+    if (receiptId) {
+      // 伝票IDが指定されている場合は直接使用
+      const itemsCollection = getReceiptItemsCollection()
+      await addDoc(itemsCollection, {
+        receiptId,
+        menuType: "stack_purchase",
+        itemName: "バイイン時スタック購入",
+        unitPrice: 1, // 1円/©（従業員が変更可能）
+        quantity: actualPurchase,
+        totalPrice: actualPurchase, // デフォルト: 購入© × 1円
+        isTaxable: false, // スタック購入は非課税
+        createdAt: serverTimestamp(),
+        createdBy: addedBy,
+      })
+      
+      // 伝票の合計金額を更新
+      await updateReceiptTotals(receiptId)
+      
+      console.log("[v0] 📦 伝票にスタック購入項目追加:", {
+        伝票ID: receiptId,
+        購入チップ: actualPurchase,
+        デフォルト金額: actualPurchase,
+      })
+    } else {
+      console.log("[v0] ⚠️ 伝票が見つからないためスタック購入項目を追加できません:", {
+        プレイヤーID: playerId,
+        ゲームID: gameId,
+        購入額: actualPurchase,
+      })
+    }
+  }
 }
 
 export const updateGameParticipantStack = async (
@@ -672,6 +754,94 @@ export const updateGameParticipantStack = async (
     }
 
     await updateDoc(gameRef, { participants, updatedAt: serverTimestamp() })
+    
+    // プレイヤー情報を取得
+    const playerRef = doc(getPlayersCollection(), playerId)
+    const playerSnap = await getDoc(playerRef)
+    if (!playerSnap.exists()) throw new Error("Player not found")
+    
+    const playerData = playerSnap.data() as Player
+    const playerName = playerData.name
+    const currentBalance = playerData.systemBalance || 0
+    
+    // 貿スタックから引き落とす金額を計算
+    const deductFromBalance = Math.min(currentBalance, amount)
+    const purchaseAmount = Math.max(0, amount - currentBalance)
+    const newBalance = Math.max(0, currentBalance - amount)
+    
+    console.log("[v0] 💰 追加スタック処理:", {
+      プレイヤー: playerName,
+      追加スタック: amount,
+      現在の貿スタック: currentBalance,
+      貿スタックから使用: deductFromBalance,
+      購入額: purchaseAmount,
+      新しい貿スタック: newBalance,
+    })
+    
+    // プレイヤーの貿スタックを更新
+    await updatePlayer(playerId, { 
+      systemBalance: newBalance,
+    })
+    
+    // 購入がある場合は購入履歴に記録
+    if (purchaseAmount > 0) {
+      const purchaseHistoryRef = collection(getDb()!, "purchaseHistory")
+      await addDoc(purchaseHistoryRef, {
+        playerId,
+        playerName,
+        gameId,
+        amount: purchaseAmount,
+        reason: "追加スタック購入",
+        createdAt: serverTimestamp(),
+        createdBy: updatedBy,
+      })
+      
+      console.log("[v0] 📝 追加スタック購入履歴記録:", {
+        プレイヤー: playerName,
+        購入額: purchaseAmount,
+        ゲームID: gameId,
+      })
+      
+      // 伝票がある場合は伝票にスタック購入項目を追加
+      const receiptsCollection = getReceiptsCollection()
+      const q = query(
+        receiptsCollection,
+        where("playerId", "==", playerId),
+        where("status", "==", "active"),
+        where("gameId", "==", gameId),
+        limit(1)
+      )
+      const receiptsSnapshot = await getDocs(q)
+      
+      if (!receiptsSnapshot.empty) {
+        const receiptId = receiptsSnapshot.docs[0].id
+        const itemsCollection = getReceiptItemsCollection()
+        await addDoc(itemsCollection, {
+          receiptId,
+          menuType: "stack_purchase",
+          itemName: "追加スタック購入",
+          unitPrice: 1, // 1円/©（従業員が変更可能）
+          quantity: purchaseAmount,
+          totalPrice: purchaseAmount, // デフォルト: 購入© × 1円
+          isTaxable: false, // スタック購入は非課税
+          createdAt: serverTimestamp(),
+          createdBy: updatedBy,
+        })
+        
+        console.log("[v0] 📦 伝票に追加スタック購入項目追加:", {
+          伝票ID: receiptId,
+          購入チップ: purchaseAmount,
+          デフォルト金額: purchaseAmount,
+        })
+      } else {
+        console.log("[v0] ⚠️ 伝票が見つからないため追加スタック購入項目を追加できません:", {
+          プレイヤーID: playerId,
+          ゲームID: gameId,
+          購入額: purchaseAmount,
+        })
+      }
+    }
+    
     console.log(`[v0] Game participant stack updated: ${playerId} ${oldStack} -> ${newStack}`)
   } catch (error) {
     console.error(`[v0] Error updating game participant stack:`, error)
@@ -711,6 +881,8 @@ export const createReceipt = async (
     playerName,
     gameId,
     status: "active",
+    totalAmount: 0,
+    totalTax: 0,
     createdAt: serverTimestamp(),
     createdBy,
   })
@@ -728,21 +900,74 @@ export const createStandaloneReceipt = async (
     playerId,
     playerName,
     status: "active",
+    totalAmount: 0,
+    totalTax: 0,
     createdAt: serverTimestamp(),
     createdBy,
   })
   return docRef.id
 }
 
+export const updateReceiptTotals = async (receiptId: string): Promise<void> => {
+  if (!isFirebaseConfigured()) return
+  
+  // 伝票の全項目を取得
+  const itemsCollection = getReceiptItemsCollection()
+  const q = query(itemsCollection, where("receiptId", "==", receiptId))
+  const itemsSnapshot = await getDocs(q)
+  
+  // 合計金額を計算
+  let totalAmount = 0
+  let totalTax = 0
+  
+  itemsSnapshot.docs.forEach((doc) => {
+    const item = doc.data() as ReceiptItem
+    totalAmount += item.totalPrice || 0
+    // 課税対象の場合は税金を計算（消費税10%）
+    if (item.isTaxable) {
+      totalTax += Math.floor((item.totalPrice || 0) * 0.1)
+    }
+  })
+  
+  // 伝票を更新
+  const receiptRef = doc(getReceiptsCollection(), receiptId)
+  await updateDoc(receiptRef, {
+    totalAmount,
+    totalTax,
+    updatedAt: serverTimestamp(),
+  })
+  
+  console.log("[v0] 📊 伝票合計金額更新:", {
+    伝票ID: receiptId,
+    合計金額: totalAmount,
+    消費税: totalTax,
+    項目数: itemsSnapshot.docs.length,
+  })
+}
+
 export const addReceiptItem = async (receiptId: string, item: Omit<ReceiptItem, "id">): Promise<void> => {
   if (!isFirebaseConfigured()) return
   const itemsCollection = getReceiptItemsCollection()
   await addDoc(itemsCollection, { ...item, receiptId })
+  // 項目追加後に合計金額を更新
+  await updateReceiptTotals(receiptId)
 }
 
 export const deleteReceiptItem = async (itemId: string): Promise<void> => {
   if (!isFirebaseConfigured()) return
-  await deleteDoc(doc(getReceiptItemsCollection(), itemId))
+  
+  // 削除前に伝票IDを取得
+  const itemRef = doc(getReceiptItemsCollection(), itemId)
+  const itemSnap = await getDoc(itemRef)
+  const receiptId = itemSnap.exists() ? itemSnap.data().receiptId : null
+  
+  // 項目を削除
+  await deleteDoc(itemRef)
+  
+  // 伝票の合計金額を更新
+  if (receiptId) {
+    await updateReceiptTotals(receiptId)
+  }
 }
 
 export const subscribeToReceipts = (callback: (receipts: Receipt[]) => void): (() => void) => {
@@ -1346,18 +1571,24 @@ export const subscribeToPlayerPurchaseHistory = (callback: (history: Record<stri
     callback({})
     return () => {}
   }
-  // 購入履歴の集計ロジック
-  const receiptsCollection = getReceiptsCollection()
-  const q = query(receiptsCollection, where("status", "==", "completed"))
-
-  return onSnapshot(q, (snapshot) => {
+  
+  // 購入履歴をpurchaseHistoryコレクションから取得
+  const purchaseHistoryCollection = collection(getDb()!, "purchaseHistory")
+  
+  return onSnapshot(purchaseHistoryCollection, (snapshot) => {
     const history: Record<string, number> = {}
     snapshot.docs.forEach((doc) => {
       const data = doc.data()
-      if (data.playerId && data.receivedAmount) {
-        history[data.playerId] = (history[data.playerId] || 0) + data.receivedAmount
+      if (data.playerId && data.amount) {
+        history[data.playerId] = (history[data.playerId] || 0) + data.amount
       }
     })
+    
+    console.log("[v0] 💰 購入履歴集計:", {
+      プレイヤー数: Object.keys(history).length,
+      詳細: history,
+    })
+    
     callback(history)
   })
 }

@@ -330,12 +330,11 @@ export default function PlayersPage() {
       // ゲームを作成
       const gameId = await createGame(`${gameData.playerName}のゲーム`)
 
-      // プレイヤーをゲームに参加させる（プレイ状態もFirestoreで更新される）
-      await addPlayerToGame(gameId, gameData.playerId, gameData.playerName, gameData.buyInAmount, userName || "system")
-
+      // 伝票作成（プレイヤー追加前に作成する必要がある）
+      let receiptId: string | undefined
       if (gameData.createReceipt) {
         try {
-          const receiptId = await createReceipt(gameData.playerId, gameData.playerName, gameId, userName || "system")
+          receiptId = await createReceipt(gameData.playerId, gameData.playerName, gameId, userName || "system")
           console.log("[v0] 📄 伝票作成完了:", {
             伝票ID: receiptId,
             プレイヤー: gameData.playerName,
@@ -346,6 +345,11 @@ export default function PlayersPage() {
           // 伝票作成に失敗してもゲーム開始は継続
         }
       }
+
+      // プレイヤーをゲームに参加させる（プレイ状態もFirestoreで更新される）
+      // 購入額も渡して、貯スタックからの引き落としと購入処理を実行
+      // 伝票IDを渡すことで、スタック購入項目を直接追加できる
+      await addPlayerToGame(gameId, gameData.playerId, gameData.playerName, gameData.buyInAmount, userName || "system", gameData.totalPurchase, receiptId)
 
       console.log("[v0] ✅ ゲーム開始完了:", {
         ゲームID: gameId,
