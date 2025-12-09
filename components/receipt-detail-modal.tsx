@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs" // Not used anymore
 import { Eye, Users, Receipt, CheckCircle, Trash2, Gift } from 'lucide-react'
 import { subscribeToReceiptItems, completeReceipt, deleteReceiptItem, getStoreRankingSettings } from "@/lib/firestore"
 import type { Receipt as ReceiptType, ReceiptItem, MenuType, StoreRankingSettings } from "@/types"
@@ -29,6 +29,11 @@ export function ReceiptDetailModal({ open, onClose, receipt, playerRewardPoints 
   const [usePoints, setUsePoints] = useState(false)
   const [pointsToUse, setPointsToUse] = useState<string>("0")
   const [settings, setSettings] = useState<StoreRankingSettings | null>(null)
+  const [activeTab, setActiveTab] = useState<string>("customer")
+
+  useEffect(() => {
+    console.log("[DEBUG] activeTab changed:", activeTab)
+  }, [activeTab])
 
   useEffect(() => {
     const loadSettings = async () => {
@@ -296,19 +301,27 @@ export function ReceiptDetailModal({ open, onClose, receipt, playerRewardPoints 
             </Card>
           )}
 
-          <Tabs defaultValue="customer" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="customer" className="flex items-center space-x-2">
+          <div className="w-full">
+            <div className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground w-full">
+              <Button
+                variant="ghost"
+                onClick={() => setActiveTab("customer")}
+                className={`flex items-center space-x-2 flex-1 ${activeTab === "customer" ? "bg-background text-foreground shadow-sm" : ""}`}
+              >
                 <Eye className="h-4 w-4" />
                 <span>顧客用表示</span>
-              </TabsTrigger>
-              <TabsTrigger value="staff" className="flex items-center space-x-2">
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => setActiveTab("staff")}
+                className={`flex items-center space-x-2 flex-1 ${activeTab === "staff" ? "bg-background text-foreground shadow-sm" : ""}`}
+              >
                 <Users className="h-4 w-4" />
                 <span>従業員用表示</span>
-              </TabsTrigger>
-            </TabsList>
+              </Button>
+            </div>
 
-            <TabsContent value="customer" className="space-y-4">
+            {activeTab === "customer" && (
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg">注文内容（顧客用）</CardTitle>
@@ -353,9 +366,9 @@ export function ReceiptDetailModal({ open, onClose, receipt, playerRewardPoints 
                   )}
                 </CardContent>
               </Card>
-            </TabsContent>
+            )}
 
-            <TabsContent value="staff" className="space-y-4">
+            {activeTab === "staff" && (
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg">注文内容（従業員用）</CardTitle>
@@ -415,8 +428,8 @@ export function ReceiptDetailModal({ open, onClose, receipt, playerRewardPoints 
                   )}
                 </CardContent>
               </Card>
-            </TabsContent>
-          </Tabs>
+            )}
+          </div>
 
           <div className="flex space-x-2 pt-4">
             <Button variant="outline" onClick={onClose} className="flex-1 bg-transparent">
