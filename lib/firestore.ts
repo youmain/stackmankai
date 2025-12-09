@@ -686,10 +686,9 @@ export const addPlayerToGame = async (
       購入額: actualPurchase,
       ゲームID: gameId,
     })
-  }
-  
-  // 伝票がある場合は伝票にスタック購入項目を追加（バイイン額が0より大きい場合）
-  if (receiptId && buyInAmount > 0) {
+    
+    // 伝票がある場合は伝票にスタック購入項目を追加
+    if (receiptId) {
       // 伝票IDが指定されている場合は直接使用
       const itemsCollection = getReceiptItemsCollection()
       await addDoc(itemsCollection, {
@@ -697,8 +696,8 @@ export const addPlayerToGame = async (
         menuType: "stack_purchase",
         itemName: "バイイン時スタック購入",
         unitPrice: 1, // 1円/©（従業員が変更可能）
-        quantity: buyInAmount,
-        totalPrice: buyInAmount, // デフォルト: バイイン© × 1円
+        quantity: actualPurchase,
+        totalPrice: actualPurchase, // デフォルト: 購入© × 1円
         isTaxable: false, // スタック購入は非課税
         createdAt: serverTimestamp(),
         createdBy: addedBy,
@@ -709,9 +708,16 @@ export const addPlayerToGame = async (
       
       console.log("[v0] 📦 伝票にスタック購入項目追加:", {
         伝票ID: receiptId,
-        バイインチップ: buyInAmount,
-        デフォルト金額: buyInAmount,
+        購入チップ: actualPurchase,
+        デフォルト金額: actualPurchase,
       })
+    } else {
+      console.log("[v0] ⚠️ 伝票が見つからないためスタック購入項目を追加できません:", {
+        プレイヤーID: playerId,
+        ゲームID: gameId,
+        購入額: actualPurchase,
+      })
+    }
   }
 }
 
