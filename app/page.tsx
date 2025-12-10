@@ -65,7 +65,7 @@ export default function HomePage() {
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               <Link
-                href="/admin"
+                href="/store-login"
                 className="group relative px-10 py-5 rounded-2xl font-bold text-xl transition-all duration-300 flex items-center gap-3 shadow-2xl hover:shadow-yellow-500/25 hover:scale-105 transform"
                 style={{
                   background: "linear-gradient(to right, #facc15, #f97316)",
