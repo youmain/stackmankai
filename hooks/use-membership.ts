@@ -19,34 +19,39 @@ export function useMembership() {
   useEffect(() => {
     const checkMembershipStatus = async () => {
       try {
-        const customerData = sessionStorage.getItem("customerAccount")
+        // localStorageからcurrentUserを取得
+        const customerData = localStorage.getItem("currentUser")
         console.log("[v0] useMembership - customerData:", customerData)
 
         if (customerData) {
           const currentCustomer = JSON.parse(customerData)
-          console.log("[v0] useMembership - subscriptionStatus:", currentCustomer?.subscriptionStatus)
+          console.log("[v0] useMembership - customer:", currentCustomer)
 
-          if (currentCustomer && currentCustomer.subscriptionStatus === "active") {
-            console.log("[v0] useMembership - isMember: true")
+          // ログインしていれば会員として扱う
+          if (currentCustomer && currentCustomer.id) {
+            console.log("[v0] useMembership - isMember: true (logged in)")
             setMembershipStatus({
               isMember: true,
               isLoading: false,
               membershipType: "premium",
+              subscriptionStatus: "active",
             })
           } else {
-            console.log("[v0] useMembership - isMember: false (not active)")
+            console.log("[v0] useMembership - isMember: false (invalid data)")
             setMembershipStatus({
               isMember: false,
               isLoading: false,
               membershipType: "free",
+              subscriptionStatus: "none",
             })
           }
         } else {
-          console.log("[v0] useMembership - isMember: false (no data)")
+          console.log("[v0] useMembership - isMember: false (not logged in)")
           setMembershipStatus({
             isMember: false,
             isLoading: false,
             membershipType: "free",
+            subscriptionStatus: "none",
           })
         }
       } catch (error) {
