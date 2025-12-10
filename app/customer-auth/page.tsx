@@ -97,6 +97,17 @@ export default function CustomerAuthPage() {
         subscriptionStatus: "free_trial",
       }
 
+      // localStorageにユーザー情報を保存（投稿作成用）
+      localStorage.setItem("currentUser", JSON.stringify({
+        id: testCustomer.id,
+        name: testCustomer.email,
+        email: testCustomer.email,
+        type: "customer",
+        storeId: "store1",
+        storeName: "テスト店舗",
+      }))
+      console.log("[v0] 💾 localStorageにユーザー情報保存:", testCustomer.email)
+
       setCurrentCustomer(testCustomer)
       setSuccess("テスト期間中の無料登録が完了しました！プレイヤーIDを紐づけてください。")
       setRegisterForm({ email: "", password: "", confirmPassword: "" })
@@ -126,6 +137,17 @@ export default function CustomerAuthPage() {
 
       sessionStorage.setItem("currentUserEmail", loginForm.email)
       console.log("[v0] 💾 セッションにメールアドレス保存:", loginForm.email)
+
+      // localStorageにユーザー情報を保存（投稿作成用）
+      localStorage.setItem("currentUser", JSON.stringify({
+        id: customer.id,
+        name: customer.name || customer.email,
+        email: customer.email,
+        type: "customer",
+        storeId: customer.storeId,
+        storeName: customer.storeName,
+      }))
+      console.log("[v0] 💾 localStorageにユーザー情報保存:", customer.email)
 
       setCurrentCustomer(customer)
       setSuccess("ログインしました")

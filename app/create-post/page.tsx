@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -24,6 +24,23 @@ export default function CreatePostPage() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1)
   const [isSaving, setIsSaving] = useState(false)
+  const [currentUser, setCurrentUser] = useState<any>(null)
+  
+  // localStorageからユーザー情報を取得
+  useEffect(() => {
+    const userStr = localStorage.getItem("currentUser")
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr)
+        setCurrentUser(user)
+        console.log("[v0] 👤 ユーザー情報をlocalStorageから読み込み:", user)
+      } catch (error) {
+        console.error("Failed to parse user from localStorage:", error)
+      }
+    } else {
+      console.warn("[v0] ⚠️ localStorageにユーザー情報がありません")
+    }
+  }, [])
   
   // 投稿データの状態管理
   const [title, setTitle] = useState("")
@@ -111,6 +128,13 @@ export default function CreatePostPage() {
         return
       }
 
+      // ユーザー情報の確認
+      if (!currentUser) {
+        alert("ログインが必要です。顧客認証ページに移動します。")
+        router.push("/customer-auth")
+        return
+      }
+
       setIsSaving(true)
 
       // 投稿データの準備
@@ -119,10 +143,10 @@ export default function CreatePostPage() {
         situation: situation,
         visibility: visibility,
         seekingAdvice: seekingAdvice,
-        authorId: "user1", // TODO: 実際のユーザーIDを取得
-        authorName: "りゅうさん", // TODO: 実際のユーザー名を取得
-        storeId: "store1", // TODO: 実際の店舗IDを取得
-        storeName: "テスト店舗", // TODO: 実際の店舗名を取得
+        authorId: currentUser.id,
+        authorName: currentUser.name,
+        storeId: currentUser.storeId || "store1",
+        storeName: currentUser.storeName || "テスト店舗",
         likes: 0,
         comments: 0,
         views: 0,
