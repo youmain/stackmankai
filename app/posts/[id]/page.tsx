@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { PostPreview } from "@/components/post-creation/post-preview"
 import { EnhancedCommentSection } from "@/components/posts/enhanced-comment-section"
-import { MembershipGate } from "@/components/membership/membership-gate"
 import { useMembership } from "@/hooks/use-membership"
 import { Heart, MessageCircle, Eye, ArrowLeft, Share2, AlertCircle } from "lucide-react"
 import Link from "next/link"
@@ -383,11 +382,10 @@ export default function PostDetailPage() {
                 variant={isLiked ? "default" : "outline"}
                 size="sm"
                 onClick={handleLike}
-                disabled={!isMember}
                 className="flex items-center gap-2"
               >
                 <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
-                {isMember ? (isLiked ? "いいね済み" : "いいね") : "いいね（会員限定）"}
+                {isLiked ? "いいね済み" : "いいね"}
               </Button>
               <Button
                 variant="outline"
@@ -407,28 +405,12 @@ export default function PostDetailPage() {
       <PostPreview postData={post} className="mb-6" />
 
       {/* コメントセクション */}
-      {isMember ? (
-        <EnhancedCommentSection
-          postId={post.id}
-          isAuthor={isAuthor}
-          seekingAdvice={post.seekingAdvice}
-          postAuthorId={post.authorId}
-        />
-      ) : (
-        <MembershipGate
-          title="コメント・アドバイスを見る"
-          description="この投稿には貴重なコメントやアドバイスが投稿されています"
-          featureType="comments"
-        >
-          <div className="bg-white/60 p-4 rounded-lg border-2 border-dashed border-gray-300">
-            <div className="text-center text-muted-foreground">
-              <MessageCircle className="w-8 h-8 mx-auto mb-2 opacity-50" />
-              <p className="font-medium">コメントは有料会員のみ見ることができます</p>
-              <p className="text-sm mt-1">プロからの詳細なアドバイスや分析をご覧いただけます</p>
-            </div>
-          </div>
-        </MembershipGate>
-      )}
+      <EnhancedCommentSection
+        postId={post.id}
+        isAuthor={isAuthor}
+        seekingAdvice={post.seekingAdvice}
+        postAuthorId={post.authorId}
+      />
     </div>
   )
 }
