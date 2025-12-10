@@ -8,6 +8,7 @@ import {
   Timestamp,
 } from "firebase/firestore"
 import { db } from "./firebase"
+import { createUser, signIn } from "./firebase-auth"
 import type { Store, StoreRegistrationData } from "@/types/store"
 
 /**
@@ -38,8 +39,12 @@ export async function generateStoreCode(): Promise<string> {
  */
 export async function registerStore(
   data: StoreRegistrationData
-): Promise<{ storeId: string; storeCode: string }> {
+): Promise<{ storeId: string; storeCode: string; uid: string }> {
   try {
+    // Firebase Authenticationでユーザーを作成
+    const userCredential = await createUser(data.ownerEmail, data.ownerPassword)
+    const uid = userCredential.user.uid
+    
     // 3桁の店舗コードを生成
     const storeCode = await generateStoreCode()
     
@@ -50,6 +55,7 @@ export async function registerStore(
     
     const storesRef = collection(db, "stores")
     const docRef = await addDoc(storesRef, {
+      uid: uid, // Firebase AuthのUIDを追加
       name: data.name,
       storeCode: storeCode,
       storePassword: hashedStorePassword,
@@ -69,6 +75,7 @@ export async function registerStore(
     return {
       storeId: docRef.id,
       storeCode: storeCode,
+      uid: uid,
     }
   } catch (error) {
     console.error("店舗登録エラー:", error)
@@ -119,6 +126,9 @@ export async function loginStoreOwner(
   ownerPassword: string
 ): Promise<Store | null> {
   try {
+    // Firebase Authenticationでサインイン
+    await signIn(ownerEmail, ownerPassword)
+    
     const storesRef = collection(db, "stores")
     const q = query(storesRef, where("ownerEmail", "==", ownerEmail))
     const querySnapshot = await getDocs(q)
@@ -129,12 +139,6 @@ export async function loginStoreOwner(
     
     const storeDoc = querySnapshot.docs[0]
     const storeData = storeDoc.data()
-    
-    // パスワードの検証
-    const hashedPassword = btoa(ownerPassword)
-    if (storeData.ownerPassword !== hashedPassword) {
-      return null
-    }
     
     return {
       id: storeDoc.id,

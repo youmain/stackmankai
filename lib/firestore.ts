@@ -1455,10 +1455,21 @@ export const getCustomerByEmail = async (email: string): Promise<CustomerAccount
   return { id: snapshot.docs[0].id, ...snapshot.docs[0].data() } as CustomerAccount
 }
 
-export const createCustomerAccount = async (data: Partial<CustomerAccount>): Promise<string> => {
+export const createCustomerAccount = async (data: Partial<CustomerAccount>, email: string, password: string): Promise<string> => {
   if (!isFirebaseConfigured()) return `mock_customer_${Date.now()}`
+  
+  // Firebase Authenticationでユーザーを作成
+  const { createUser } = await import("./firebase-auth")
+  const userCredential = await createUser(email, password)
+  const uid = userCredential.user.uid
+  
   const customersCollection = getCustomerAccountsCollection()
-  const docRef = await addDoc(customersCollection, { ...data, createdAt: serverTimestamp() })
+  const docRef = await addDoc(customersCollection, {
+    ...data,
+    uid: uid, // Firebase AuthのUIDを追加
+    email: email,
+    createdAt: serverTimestamp()
+  })
   return docRef.id
 }
 

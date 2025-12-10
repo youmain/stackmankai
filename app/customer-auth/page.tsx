@@ -102,22 +102,31 @@ export default function CustomerAuthPage() {
         throw new Error("このメールアドレスは既に登録されています")
       }
 
-      // テスト期間中の無料登録処理
-      sessionStorage.setItem("currentUserEmail", registerForm.email)
-      console.log("[v0] 💾 テスト期間中の無料登録:", registerForm.email)
+      // 店舗情報の確認
+      if (!storeInfo || !storeInfo.storeId) {
+        throw new Error("店舗情報が見つかりません。店舗ログインページに移動してください。")
+      }
 
-      // 仮の顧客データを作成（実際のFirestore登録は別途実装が必要）
+      // Firestoreに顧客アカウントを作成（Firebase Auth統合）
+      const customerId = await createCustomerAccount(
+        {
+          storeId: storeInfo.storeId,
+          storeName: storeInfo.storeName,
+          isBetaTester: true,
+          subscriptionStatus: "free_trial",
+        },
+        registerForm.email,
+        registerForm.password
+      )
+
       const testCustomer = {
-        id: `test_${Date.now()}`,
+        id: customerId,
         email: registerForm.email,
         isBetaTester: true,
         registeredAt: new Date().toISOString(),
         subscriptionStatus: "free_trial",
-      }
-
-      // 店舗情報の確認
-      if (!storeInfo || !storeInfo.storeId) {
-        throw new Error("店舗情報が見つかりません。店舗ログインページに移動してください。")
+        storeId: storeInfo.storeId,
+        storeName: storeInfo.storeName,
       }
 
       // localStorageにユーザー情報を保存（投稿作成用）
@@ -132,7 +141,7 @@ export default function CustomerAuthPage() {
       console.log("[v0] 💾 localStorageにユーザー情報保存:", testCustomer.email)
 
       setCurrentCustomer(testCustomer)
-      setSuccess("テスト期間中の無料登録が完了しました！プレイヤーIDを紐づけてください。")
+      setSuccess("無料登録が完了しました！プレイヤーIDを紐づけてください。")
       setRegisterForm({ email: "", password: "", confirmPassword: "" })
     } catch (error) {
       setError(error instanceof Error ? error.message : "登録に失敗しました")
