@@ -1,0 +1,137 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ========================================
+    // ヘルパー関数
+    // ========================================
+    
+    // ユーザーが認証されているかチェック
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // ユーザーがドキュメントの所有者かチェック
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // ========================================
+    // Stores コレクション
+    // ========================================
+    
+    match /stores/{storeId} {
+      // 誰でも店舗情報を読み取れる（店舗コードでログインするため）
+      allow read: if true;
+      
+      // 新規店舗登録は誰でも可能
+      allow create: if true;
+      
+      // 店舗情報の更新は将来的にオーナー認証を追加
+      allow update: if true;
+      
+      // 店舗の削除は将来的にオーナー認証を追加
+      allow delete: if false;
+    }
+    
+    // ========================================
+    // Customers コレクション
+    // ========================================
+    
+    match /customers/{customerId} {
+      // 顧客情報は誰でも読み取れる（テスト期間中）
+      allow read: if true;
+      
+      // 新規顧客登録は誰でも可能
+      allow create: if true;
+      
+      // 顧客情報の更新は本人のみ（将来的に実装）
+      allow update: if true;
+      
+      // 顧客の削除は本人のみ（将来的に実装）
+      allow delete: if false;
+    }
+    
+    // ========================================
+    // Posts コレクション
+    // ========================================
+    
+    match /posts/{postId} {
+      // 投稿の読み取りルール
+      allow read: if true;
+      
+      // 投稿の作成は誰でも可能（テスト期間中）
+      allow create: if true;
+      
+      // 投稿の更新は作成者のみ（将来的に実装）
+      allow update: if true;
+      
+      // 投稿の削除は作成者のみ（将来的に実装）
+      allow delete: if true;
+    }
+    
+    // ========================================
+    // Players コレクション
+    // ========================================
+    
+    match /players/{playerId} {
+      // プレイヤー情報は誰でも読み取れる
+      allow read: if true;
+      
+      // プレイヤー情報の作成は店舗スタッフのみ（将来的に実装）
+      allow create: if true;
+      
+      // プレイヤー情報の更新は店舗スタッフのみ（将来的に実装）
+      allow update: if true;
+      
+      // プレイヤー情報の削除は店舗スタッフのみ（将来的に実装）
+      allow delete: if true;
+    }
+    
+    // ========================================
+    // Games コレクション
+    // ========================================
+    
+    match /games/{gameId} {
+      // ゲーム情報は誰でも読み取れる
+      allow read: if true;
+      
+      // ゲーム情報の作成は店舗スタッフのみ（将来的に実装）
+      allow create: if true;
+      
+      // ゲーム情報の更新は店舗スタッフのみ（将来的に実装）
+      allow update: if true;
+      
+      // ゲーム情報の削除は店舗スタッフのみ（将来的に実装）
+      allow delete: if true;
+    }
+    
+    // ========================================
+    // Rankings コレクション
+    // ========================================
+    
+    match /rankings/{rankingId} {
+      // ランキング情報は誰でも読み取れる
+      allow read: if true;
+      
+      // ランキング情報の作成は店舗スタッフのみ（将来的に実装）
+      allow create: if true;
+      
+      // ランキング情報の更新は店舗スタッフのみ（将来的に実装）
+      allow update: if true;
+      
+      // ランキング情報の削除は店舗スタッフのみ（将来的に実装）
+      allow delete: if true;
+    }
+    
+    // ========================================
+    // その他のコレクション
+    // ========================================
+    
+    // デフォルトルール: すべて拒否
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
