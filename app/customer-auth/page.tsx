@@ -23,6 +23,7 @@ export default function CustomerAuthPage() {
   const [hideCompletionScreen, setHideCompletionScreen] = useState(false)
   const [shouldShowCompletion, setShouldShowCompletion] = useState(true)
   const [activeTab, setActiveTab] = useState<"login" | "register">("login")
+  const [storeInfo, setStoreInfo] = useState<any>(null)
 
   const [registerForm, setRegisterForm] = useState({
     email: "",
@@ -43,6 +44,23 @@ export default function CustomerAuthPage() {
     const hideCompletion = localStorage.getItem("hidePlayerLinkingCompletion")
     if (hideCompletion === "true") {
       setShouldShowCompletion(false)
+    }
+    
+    // 店舗情報を取得
+    const storeId = localStorage.getItem("storeId")
+    const storeName = localStorage.getItem("storeName")
+    const storeCode = localStorage.getItem("storeCode")
+    
+    if (storeId && storeName) {
+      setStoreInfo({
+        storeId,
+        storeName,
+        storeCode,
+      })
+      console.log("[v0] 🏪 店舗情報をlocalStorageから読み込み:", { storeId, storeName, storeCode })
+    } else {
+      console.warn("[v0] ⚠️ localStorageに店舗情報がありません")
+      setError("店舗情報が見つかりません。店舗ログインページに移動してください。")
     }
   }, [])
 
@@ -97,14 +115,19 @@ export default function CustomerAuthPage() {
         subscriptionStatus: "free_trial",
       }
 
+      // 店舗情報の確認
+      if (!storeInfo || !storeInfo.storeId) {
+        throw new Error("店舗情報が見つかりません。店舗ログインページに移動してください。")
+      }
+
       // localStorageにユーザー情報を保存（投稿作成用）
       localStorage.setItem("currentUser", JSON.stringify({
         id: testCustomer.id,
         name: testCustomer.email,
         email: testCustomer.email,
         type: "customer",
-        storeId: "store1",
-        storeName: "テスト店舗",
+        storeId: storeInfo.storeId,
+        storeName: storeInfo.storeName,
       }))
       console.log("[v0] 💾 localStorageにユーザー情報保存:", testCustomer.email)
 
@@ -138,14 +161,22 @@ export default function CustomerAuthPage() {
       sessionStorage.setItem("currentUserEmail", loginForm.email)
       console.log("[v0] 💾 セッションにメールアドレス保存:", loginForm.email)
 
+      // 店舗情報の確認（ログイン時は顧客データから取得、なければlocalStorageから）
+      const finalStoreId = customer.storeId || storeInfo?.storeId
+      const finalStoreName = customer.storeName || storeInfo?.storeName
+      
+      if (!finalStoreId || !finalStoreName) {
+        throw new Error("店舗情報が見つかりません。店舗ログインページに移動してください。")
+      }
+
       // localStorageにユーザー情報を保存（投稿作成用）
       localStorage.setItem("currentUser", JSON.stringify({
         id: customer.id,
         name: customer.name || customer.email,
         email: customer.email,
         type: "customer",
-        storeId: customer.storeId,
-        storeName: customer.storeName,
+        storeId: finalStoreId,
+        storeName: finalStoreName,
       }))
       console.log("[v0] 💾 localStorageにユーザー情報保存:", customer.email)
 

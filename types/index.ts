@@ -297,8 +297,8 @@ export interface CustomerAccount {
   email: string
   playerId?: string // 紐づけされたプレイヤーID
   playerName?: string // 紐づけされたプレイヤー名
-  storeId?: string // 所属店舗ID
-  storeName?: string // 所属店舗名
+  storeId: string // 所属店舗ID（必須：1アカウント=1店舗）
+  storeName: string // 所属店舗名（必須）
   stripeCustomerId: string // Stripe顧客ID
   subscriptionStatus: "active" | "inactive" | "canceled" | "past_due" | "trialing"
   subscriptionId?: string // StripeサブスクリプションID

@@ -14,7 +14,7 @@ import { Search, MessageCircle, Heart, Eye, Home } from "lucide-react"
 import Link from "next/link"
 import type { PostData } from "@/types/post"
 import { isFirebaseConfigured } from "@/lib/firebase"
-import { subscribeToPosts } from "@/lib/firestore"
+import { subscribeToPosts, subscribeToStorePosts } from "@/lib/firestore"
 
 // サンプルデータ
 const samplePosts: PostData[] = [
@@ -212,6 +212,7 @@ export default function PostsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [sortBy, setSortBy] = useState<"newest" | "popular" | "most-commented">("newest")
+  const [currentStoreId, setCurrentStoreId] = useState<string | null>(null)
 
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
   const [filters, setFilters] = useState<FilterOptions>({
@@ -224,6 +225,15 @@ export default function PostsPage() {
     stages: [],
   })
 
+  // localStorageから店舗情報を取得
+  useEffect(() => {
+    const storeId = localStorage.getItem("storeId")
+    if (storeId) {
+      setCurrentStoreId(storeId)
+      console.log("🏪 店舗IDをlocalStorageから読み込み:", storeId)
+    }
+  }, [])
+
   useEffect(() => {
     const loadPosts = async () => {
       try {
@@ -233,16 +243,24 @@ export default function PostsPage() {
           return
         }
 
-        const unsubscribe = subscribeToPosts((firestorePosts) => {
-          // Firestoreのデータが空の場合はサンプルデータを使用
-          if (firestorePosts.length === 0) {
-            setPosts(samplePosts)
-          } else {
-            setPosts(firestorePosts)
-          }
-
-          setIsLoading(false)
-        })
+        // 店舗IDがあれば店舗フィルタリング、なければ全投稿
+        const unsubscribe = currentStoreId
+          ? subscribeToStorePosts(currentStoreId, (firestorePosts) => {
+              if (firestorePosts.length === 0) {
+                setPosts(samplePosts)
+              } else {
+                setPosts(firestorePosts)
+              }
+              setIsLoading(false)
+            })
+          : subscribeToPosts((firestorePosts) => {
+              if (firestorePosts.length === 0) {
+                setPosts(samplePosts)
+              } else {
+                setPosts(firestorePosts)
+              }
+              setIsLoading(false)
+            })
 
         return unsubscribe
       } catch (error) {
@@ -253,7 +271,7 @@ export default function PostsPage() {
     }
 
     loadPosts()
-  }, [])
+  }, [currentStoreId])
 
   const filteredPosts = posts.filter((post) => {
     const matchesSearch =

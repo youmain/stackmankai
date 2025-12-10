@@ -25,8 +25,9 @@ export default function CreatePostPage() {
   const [currentStep, setCurrentStep] = useState(1)
   const [isSaving, setIsSaving] = useState(false)
   const [currentUser, setCurrentUser] = useState<any>(null)
+  const [storeInfo, setStoreInfo] = useState<any>(null)
   
-  // localStorageからユーザー情報を取得
+  // localStorageからユーザー情報と店舗情報を取得
   useEffect(() => {
     const userStr = localStorage.getItem("currentUser")
     if (userStr) {
@@ -39,6 +40,22 @@ export default function CreatePostPage() {
       }
     } else {
       console.warn("[v0] ⚠️ localStorageにユーザー情報がありません")
+    }
+    
+    // 店舗情報を取得
+    const storeId = localStorage.getItem("storeId")
+    const storeName = localStorage.getItem("storeName")
+    const storeCode = localStorage.getItem("storeCode")
+    
+    if (storeId && storeName) {
+      setStoreInfo({
+        storeId,
+        storeName,
+        storeCode,
+      })
+      console.log("[v0] 🏪 店舗情報をlocalStorageから読み込み:", { storeId, storeName, storeCode })
+    } else {
+      console.warn("[v0] ⚠️ localStorageに店舗情報がありません")
     }
   }, [])
   
@@ -134,6 +151,13 @@ export default function CreatePostPage() {
         router.push("/customer-auth")
         return
       }
+      
+      // 店舗情報の確認
+      if (!storeInfo || !storeInfo.storeId) {
+        alert("店舗情報が見つかりません。店舗ログインページに移動します。")
+        router.push("/store-login")
+        return
+      }
 
       setIsSaving(true)
 
@@ -145,8 +169,8 @@ export default function CreatePostPage() {
         seekingAdvice: seekingAdvice,
         authorId: currentUser.id,
         authorName: currentUser.name,
-        storeId: currentUser.storeId || "store1",
-        storeName: currentUser.storeName || "テスト店舗",
+        storeId: storeInfo.storeId,
+        storeName: storeInfo.storeName,
         likes: 0,
         comments: 0,
         views: 0,

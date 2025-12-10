@@ -1530,6 +1530,19 @@ export const subscribeToUserPosts = (userId: string, callback: (posts: Post[]) =
   })
 }
 
+export const subscribeToStorePosts = (storeId: string, callback: (posts: Post[]) => void): (() => void) => {
+  if (!isFirebaseConfigured()) {
+    callback([])
+    return () => {}
+  }
+  const postsCollection = getPostsCollection()
+  const q = query(postsCollection, where("storeId", "==", storeId), orderBy("createdAt", "desc"))
+  return onSnapshot(q, (snapshot) => {
+    const posts = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Post)
+    callback(posts)
+  })
+}
+
 export const subscribeToPost = (postId: string, callback: (post: Post | null) => void): (() => void) => {
   if (!isFirebaseConfigured()) {
     callback(null)
