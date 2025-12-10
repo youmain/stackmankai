@@ -113,9 +113,23 @@ export function PostPreview({ postData, className, initialStep = 0 }: PostPrevie
                   <div>
                     <span className="text-muted-foreground">ブラインド:</span>
                     <span className="ml-2">
-                      {postData.situation && typeof postData.situation === "object" && "blinds" in postData.situation
-                        ? postData.situation.blinds || "未設定"
-                        : "未設定"}
+                      {(() => {
+                        if (postData.situation && typeof postData.situation === "object") {
+                          const sit = postData.situation as any
+                          // blindsフィールドがあればそれを使用
+                          if (sit.blinds) {
+                            return sit.blinds
+                          }
+                          // smallBlindとbigBlindがあれば結合
+                          if (sit.smallBlind && sit.bigBlind) {
+                            return `${sit.smallBlind}/${sit.bigBlind}`
+                          }
+                          // どちらか一方だけある場合
+                          if (sit.smallBlind) return `SB: ${sit.smallBlind}`
+                          if (sit.bigBlind) return `BB: ${sit.bigBlind}`
+                        }
+                        return "未設定"
+                      })()}
                     </span>
                   </div>
                   <div>

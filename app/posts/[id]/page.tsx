@@ -282,7 +282,25 @@ export default function PostDetailPage() {
     )
   }
 
-  const formattedDate = post ? new Date(post.createdAt).toLocaleDateString("ja-JP") : ""
+  const formattedDate = post && post.createdAt
+    ? (() => {
+        try {
+          // Firestore Timestampオブジェクトの場合
+          if (post.createdAt && typeof post.createdAt === 'object' && 'toDate' in post.createdAt) {
+            return post.createdAt.toDate().toLocaleDateString("ja-JP")
+          }
+          // Date型の場合
+          if (post.createdAt instanceof Date) {
+            return post.createdAt.toLocaleDateString("ja-JP")
+          }
+          // 文字列やnumberの場合
+          return new Date(post.createdAt).toLocaleDateString("ja-JP")
+        } catch (error) {
+          console.error("日付のフォーマットエラー:", error)
+          return "日付不明"
+        }
+      })()
+    : ""
 
   if (isLoading) {
     return (
