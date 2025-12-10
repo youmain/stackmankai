@@ -1,5 +1,6 @@
 import {
   signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   signInAnonymously,
   signOut as firebaseSignOut,
   onAuthStateChanged,
@@ -14,6 +15,17 @@ export const signIn = async (email: string, password: string) => {
     return userCredential.user
   } catch (error) {
     console.error("ログインエラー:", error)
+    throw error
+  }
+}
+
+export const signUp = async (email: string, password: string, displayName?: string) => {
+  if (!auth) throw new Error("Auth not initialized")
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+    return userCredential.user
+  } catch (error) {
+    console.error("新規登録エラー:", error)
     throw error
   }
 }

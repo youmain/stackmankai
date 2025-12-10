@@ -103,11 +103,11 @@ export function GameManagementModal({ open, onClose, player, onGameEnd, onGameUp
 
       if (purchaseAmount > 0) {
         handleSuccess(
-          `${safeToLocaleString(additionalValue)}©の追加スタックを購入しました（${safeToLocaleString(purchaseAmount)}円）`,
+          `${safeToLocaleString(additionalValue)}©の追加スタックを追加しました（購入: ${safeToLocaleString(purchaseAmount)}©）`,
         )
       } else {
         handleSuccess(
-          `${safeToLocaleString(additionalValue)}©の追加スタックを貯スタックから使用しました（購入金額: 0円）`,
+          `${safeToLocaleString(additionalValue)}©の追加スタックを貿スタックから使用しました（購入: 0©）`,
         )
       }
     } catch (error) {
@@ -206,8 +206,8 @@ export function GameManagementModal({ open, onClose, player, onGameEnd, onGameUp
                     </div>
                     {purchaseAmount > 0 && (
                       <div className="flex justify-between text-red-600 border-t pt-2">
-                        <span>購入金額:</span>
-                        <span className="font-medium">{safeToLocaleString(purchaseAmount)}円</span>
+                        <span>購入:</span>
+                        <span className="font-medium">{safeToLocaleString(purchaseAmount)}©</span>
                       </div>
                     )}
                     {purchaseAmount === 0 && (
