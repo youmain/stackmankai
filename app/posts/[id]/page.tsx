@@ -284,31 +284,22 @@ export default function PostDetailPage() {
   const formattedDate = post && post.createdAt
     ? (() => {
         try {
-          console.log("createdAt value:", post.createdAt)
-          console.log("createdAt type:", typeof post.createdAt)
-          console.log("createdAt constructor:", post.createdAt?.constructor?.name)
-          
           // Firestore Timestampオブジェクトの場合
           if (post.createdAt && typeof post.createdAt === 'object' && 'toDate' in post.createdAt) {
-            console.log("Using Firestore Timestamp toDate()")
             return post.createdAt.toDate().toLocaleDateString("ja-JP")
           }
           // Date型の場合
           if (post.createdAt instanceof Date) {
-            console.log("Using Date instance")
             return post.createdAt.toLocaleDateString("ja-JP")
           }
           // 文字列やnumberの場合
-          console.log("Using new Date() conversion")
           const date = new Date(post.createdAt)
-          console.log("Converted date:", date)
           if (isNaN(date.getTime())) {
-            console.error("Invalid date value")
             return "日付不明"
           }
           return date.toLocaleDateString("ja-JP")
         } catch (error) {
-          console.error("日付のフォーマットエラー:", error, "createdAt:", post.createdAt)
+          console.error("日付のフォーマットエラー:", error)
           return "日付不明"
         }
       })()
