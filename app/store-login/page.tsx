@@ -41,7 +41,7 @@ export default function StoreLoginPage() {
       localStorage.setItem("isStoreOwner", "false")
 
       // ダッシュボードへリダイレクト
-      router.push("/")
+      router.push("/admin")
     } catch (err) {
       console.error("ログインエラー:", err)
       setError("ログインに失敗しました。もう一度お試しください。")
@@ -71,7 +71,7 @@ export default function StoreLoginPage() {
       localStorage.setItem("isStoreOwner", "true")
 
       // ダッシュボードへリダイレクト
-      router.push("/store-dashboard")
+      router.push("/admin")
     } catch (err) {
       console.error("ログインエラー:", err)
       setError("ログインに失敗しました。もう一度お試しください。")

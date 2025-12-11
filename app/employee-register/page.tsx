@@ -45,7 +45,7 @@ export default function EmployeeRegisterPage() {
       localStorage.setItem("uid", employee.uid)
 
       alert(`従業員登録が完了しました！\nユーザー名: ${employee.username}`)
-      router.push("/employee-dashboard")
+      router.push("/admin")
     } catch (error: any) {
       console.error("従業員登録エラー:", error)
       if (error.message?.includes('招待コード')) {

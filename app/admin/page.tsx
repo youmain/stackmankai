@@ -1,11 +1,48 @@
+"use client"
+
 import { AuthGuard } from "@/components/auth-guard"
 import { Header } from "@/components/header"
 import { FirebaseConfigWarning } from "@/components/firebase-config-warning"
 import Link from "next/link"
 import { OnlineUsers } from "@/components/online-users"
 import { Users, FileText, BarChart3, Trophy, Settings, ArrowLeft, UserCog } from "lucide-react"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 
 export default function AdminPage() {
+  const router = useRouter()
+  const [isStoreOwner, setIsStoreOwner] = useState(false)
+  const [storeName, setStoreName] = useState("")
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    // localStorageから権限情報を取得
+    const storeId = localStorage.getItem("storeId")
+    const isOwner = localStorage.getItem("isStoreOwner") === "true"
+    const name = localStorage.getItem("storeName") || ""
+
+    if (!storeId) {
+      // ログインしていない場合はログインページへ
+      router.push("/store-login")
+      return
+    }
+
+    setIsStoreOwner(isOwner)
+    setStoreName(name)
+    setLoading(false)
+  }, [router])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">読み込み中...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <AuthGuard>
       <div className="min-h-screen bg-gray-50">
@@ -24,7 +61,12 @@ export default function AdminPage() {
 
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold mb-4">ポーカースタックマネージャー</h2>
-            <p className="text-muted-foreground mb-8">店舗管理システムダッシュボード</p>
+            <p className="text-muted-foreground mb-2">店舗管理システムダッシュボード</p>
+            {storeName && (
+              <p className="text-sm text-gray-600">
+                {storeName} - {isStoreOwner ? "オーナー" : "従業員"}
+              </p>
+            )}
           </div>
 
           <div className="mb-8">
@@ -32,6 +74,7 @@ export default function AdminPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {/* プレイヤー管理 - 全員アクセス可 */}
             <Link href="/players" className="block">
               <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow h-full">
                 <div className="flex items-center mb-4">
@@ -45,6 +88,7 @@ export default function AdminPage() {
               </div>
             </Link>
 
+            {/* 伝票管理 - 全員アクセス可 */}
             <Link href="/receipts" className="block">
               <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow h-full">
                 <div className="flex items-center mb-4">
@@ -58,19 +102,23 @@ export default function AdminPage() {
               </div>
             </Link>
 
-            <Link href="/daily-sales" className="block">
-              <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow h-full">
-                <div className="flex items-center mb-4">
-                  <BarChart3 className="h-8 w-8 text-purple-600 mr-3" />
-                  <h3 className="text-xl font-semibold">売上管理</h3>
+            {/* 売上管理 - オーナーのみ */}
+            {isStoreOwner && (
+              <Link href="/daily-sales" className="block">
+                <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow h-full">
+                  <div className="flex items-center mb-4">
+                    <BarChart3 className="h-8 w-8 text-purple-600 mr-3" />
+                    <h3 className="text-xl font-semibold">売上管理</h3>
+                  </div>
+                  <p className="text-muted-foreground mb-4">日別・月別売上の確認と履歴管理</p>
+                  <div className="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors text-center">
+                    売上管理へ
+                  </div>
                 </div>
-                <p className="text-muted-foreground mb-4">日別・月別売上の確認と履歴管理</p>
-                <div className="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors text-center">
-                  売上管理へ
-                </div>
-              </div>
-            </Link>
+              </Link>
+            )}
 
+            {/* ランキング - 全員アクセス可 */}
             <Link href="/rankings" className="block">
               <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow h-full">
                 <div className="flex items-center mb-4">
@@ -84,32 +132,39 @@ export default function AdminPage() {
               </div>
             </Link>
 
-            <Link href="/store-invites" className="block">
-              <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow h-full">
-                <div className="flex items-center mb-4">
-                  <UserCog className="h-8 w-8 text-orange-600 mr-3" />
-                  <h3 className="text-xl font-semibold">従業員管理</h3>
+            {/* 従業員管理 - オーナーのみ */}
+            {isStoreOwner && (
+              <Link href="/store-invites" className="block">
+                <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow h-full">
+                  <div className="flex items-center mb-4">
+                    <UserCog className="h-8 w-8 text-orange-600 mr-3" />
+                    <h3 className="text-xl font-semibold">従業員管理</h3>
+                  </div>
+                  <p className="text-muted-foreground mb-4">従業員招待コードの発行と管理</p>
+                  <div className="w-full bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 transition-colors text-center">
+                    従業員管理へ
+                  </div>
                 </div>
-                <p className="text-muted-foreground mb-4">従業員招待コードの発行と管理</p>
-                <div className="w-full bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 transition-colors text-center">
-                  従業員管理へ
-                </div>
-              </div>
-            </Link>
+              </Link>
+            )}
 
-            <Link href="/store-ranking-settings" className="block">
-              <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow h-full">
-                <div className="flex items-center mb-4">
-                  <Settings className="h-8 w-8 text-gray-600 mr-3" />
-                  <h3 className="text-xl font-semibold">店舗設定</h3>
+            {/* 店舗設定 - オーナーのみ */}
+            {isStoreOwner && (
+              <Link href="/store-ranking-settings" className="block">
+                <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow h-full">
+                  <div className="flex items-center mb-4">
+                    <Settings className="h-8 w-8 text-gray-600 mr-3" />
+                    <h3 className="text-xl font-semibold">店舗設定</h3>
+                  </div>
+                  <p className="text-muted-foreground mb-4">ランキング設定とプライズ管理</p>
+                  <div className="w-full bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition-colors text-center">
+                    店舗設定へ
+                  </div>
                 </div>
-                <p className="text-muted-foreground mb-4">ランキング設定とプライズ管理</p>
-                <div className="w-full bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition-colors text-center">
-                  店舗設定へ
-                </div>
-              </div>
-            </Link>
+              </Link>
+            )}
 
+            {/* 使い方 - 全員アクセス可 */}
             <Link href="/help" className="block">
               <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow h-full">
                 <div className="flex items-center mb-4">

@@ -37,7 +37,7 @@ export default function EmployeeLoginPage() {
       localStorage.setItem("uid", employee.uid)
 
       alert(`ログインしました！\nようこそ、${employee.displayName}さん`)
-      router.push("/employee-dashboard")
+      router.push("/admin")
     } catch (error: any) {
       console.error("従業員ログインエラー:", error)
       if (error.code === 'auth/wrong-password') {
