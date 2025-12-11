@@ -38,3 +38,4 @@ next-env.d.ts
 
 # Firebase Admin SDK credentials
 *-firebase-adminsdk-*.json
+service-account-key.json
