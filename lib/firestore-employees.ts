@@ -16,7 +16,7 @@ import {
   updateDoc,
   increment
 } from "firebase/firestore"
-import { signUp, signIn } from "./firebase-auth"
+import { createUser, signIn } from "./firebase-auth"
 import type { InviteCode, Employee, EmployeeRegistrationData, EmployeeLoginData } from "@/types/employee"
 
 /**
@@ -192,7 +192,8 @@ export async function registerEmployee(data: EmployeeRegistrationData): Promise<
     const generatedEmail = generateEmployeeEmail(data.username, data.inviteCode)
     
     // Firebase Authenticationでアカウント作成
-    const uid = await signUp(generatedEmail, data.password)
+    const userCredential = await createUser(generatedEmail, data.password)
+    const uid = userCredential.user.uid
     
     // Firestoreに従業員情報を保存
     const employeeDocRef = doc(employeesRef)
