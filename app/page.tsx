@@ -82,6 +82,15 @@ export default function HomePage() {
               </Link>
 
               <Link
+                href="/employee-login"
+                className="group relative bg-green-600/90 backdrop-blur-sm hover:bg-green-700/90 text-white border-2 border-white/50 hover:border-white/70 px-10 py-5 rounded-2xl font-bold text-xl transition-all duration-300 flex items-center gap-3 shadow-2xl hover:shadow-green-500/25 hover:scale-105 transform"
+              >
+                <Users className="w-6 h-6" />
+                従業員の方はこちら
+                <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+              </Link>
+
+              <Link
                 href="/customer-auth"
                 className="group relative bg-slate-800/80 backdrop-blur-sm hover:bg-slate-700/80 text-white border-2 border-white/50 hover:border-white/70 px-10 py-5 rounded-2xl font-bold text-xl transition-all duration-300 flex items-center gap-3 shadow-2xl hover:shadow-white/25 hover:scale-105 transform"
               >

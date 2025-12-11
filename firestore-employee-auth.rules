@@ -1,0 +1,173 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ========================================
+    // ヘルパー関数
+    // ========================================
+    
+    // ユーザーが認証されているかチェック
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // ユーザーがドキュメントの所有者かチェック
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+    
+    // ========================================
+    // Stores コレクション
+    // ========================================
+    
+    match /stores/{storeId} {
+      // 誰でも店舗情報を読み取れる（店舗コードでログインするため）
+      allow read: if true;
+      
+      // 新規店舗登録は認証済みユーザーのみ可能
+      allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid;
+      
+      // 店舗情報の更新はオーナーのみ可能
+      allow update: if isAuthenticated() && resource.data.uid == request.auth.uid;
+      
+      // 店舗の削除は禁止
+      allow delete: if false;
+    }
+    
+    // ========================================
+    // InviteCodes コレクション（招待コード）
+    // ========================================
+    
+    match /inviteCodes/{inviteCodeId} {
+      // 誰でも招待コードを読み取れる（従業員登録時に検証するため）
+      allow read: if true;
+      
+      // 招待コードの作成は認証済みユーザーのみ可能
+      allow create: if isAuthenticated();
+      
+      // 招待コードの更新は認証済みユーザーのみ可能（使用回数の更新など）
+      allow update: if isAuthenticated();
+      
+      // 招待コードの削除は禁止
+      allow delete: if false;
+    }
+    
+    // ========================================
+    // Employees コレクション（従業員）
+    // ========================================
+    
+    match /employees/{employeeId} {
+      // 従業員情報は認証済みユーザーのみ読み取れる
+      allow read: if isAuthenticated();
+      
+      // 従業員の作成は認証済みユーザーのみ可能
+      allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid;
+      
+      // 従業員情報の更新は本人のみ可能
+      allow update: if isAuthenticated() && resource.data.uid == request.auth.uid;
+      
+      // 従業員の削除は禁止
+      allow delete: if false;
+    }
+    
+    // ========================================
+    // Customers コレクション
+    // ========================================
+    
+    match /customers/{customerId} {
+      // 顧客情報は認証済みユーザーのみ読み取れる
+      allow read: if isAuthenticated();
+      
+      // 顧客の作成は認証済みユーザーのみ可能
+      allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid;
+      
+      // 顧客情報の更新は本人のみ可能
+      allow update: if isAuthenticated() && resource.data.uid == request.auth.uid;
+      
+      // 顧客の削除は本人のみ可能
+      allow delete: if isAuthenticated() && resource.data.uid == request.auth.uid;
+    }
+    
+    // ========================================
+    // Posts コレクション
+    // ========================================
+    
+    match /posts/{postId} {
+      // 投稿は認証済みユーザーのみ読み取れる
+      allow read: if isAuthenticated();
+      
+      // 投稿の作成は認証済みユーザーのみ可能
+      allow create: if isAuthenticated() && request.resource.data.authorId == request.auth.uid;
+      
+      // 投稿の更新は作成者のみ可能
+      allow update: if isAuthenticated() && resource.data.authorId == request.auth.uid;
+      
+      // 投稿の削除は作成者のみ可能
+      allow delete: if isAuthenticated() && resource.data.authorId == request.auth.uid;
+    }
+    
+    // ========================================
+    // Players コレクション
+    // ========================================
+    
+    match /players/{playerId} {
+      // プレイヤー情報は認証済みユーザーのみ読み取れる
+      allow read: if isAuthenticated();
+      
+      // プレイヤー情報の作成は認証済みユーザーのみ可能
+      allow create: if isAuthenticated();
+      
+      // プレイヤー情報の更新は認証済みユーザーのみ可能
+      allow update: if isAuthenticated();
+      
+      // プレイヤー情報の削除は認証済みユーザーのみ可能
+      allow delete: if isAuthenticated();
+    }
+    
+    // ========================================
+    // Games コレクション
+    // ========================================
+    
+    match /games/{gameId} {
+      // ゲーム情報は認証済みユーザーのみ読み取れる
+      allow read: if isAuthenticated();
+      
+      // ゲーム情報の作成は認証済みユーザーのみ可能
+      allow create: if isAuthenticated();
+      
+      // ゲーム情報の更新は認証済みユーザーのみ可能
+      allow update: if isAuthenticated();
+      
+      // ゲーム情報の削除は認証済みユーザーのみ可能
+      allow delete: if isAuthenticated();
+    }
+    
+    // ========================================
+    // Rankings コレクション
+    // ========================================
+    
+    match /rankings/{rankingId} {
+      // ランキング情報は認証済みユーザーのみ読み取れる
+      allow read: if isAuthenticated();
+      
+      // ランキング情報の作成は認証済みユーザーのみ可能
+      allow create: if isAuthenticated();
+      
+      // ランキング情報の更新は認証済みユーザーのみ可能
+      allow update: if isAuthenticated();
+      
+      // ランキング情報の削除は認証済みユーザーのみ可能
+      allow delete: if isAuthenticated();
+    }
+    
+    // ========================================
+    // その他のコレクション
+    // ========================================
+    
+    // デフォルトルール: 認証済みユーザーのみアクセス可能
+    match /{document=**} {
+      allow read, write: if isAuthenticated();
+    }
+  }
+}
