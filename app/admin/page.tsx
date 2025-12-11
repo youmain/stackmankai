@@ -1,25 +1,30 @@
 "use client"
 
 import { AuthGuard } from "@/components/auth-guard"
-import { Header } from "@/components/header"
 import { FirebaseConfigWarning } from "@/components/firebase-config-warning"
 import Link from "next/link"
 import { OnlineUsers } from "@/components/online-users"
-import { Users, FileText, BarChart3, Trophy, Settings, ArrowLeft, UserCog } from "lucide-react"
+import { Users, FileText, BarChart3, Trophy, Settings, ArrowLeft, UserCog, Menu, LogOut, User } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import { getAuth, signOut as firebaseSignOut } from "firebase/auth"
 
 export default function AdminPage() {
   const router = useRouter()
   const [isStoreOwner, setIsStoreOwner] = useState(false)
   const [storeName, setStoreName] = useState("")
+  const [userName, setUserName] = useState("")
   const [loading, setLoading] = useState(true)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     // localStorageから権限情報を取得
     const storeId = localStorage.getItem("storeId")
     const isOwner = localStorage.getItem("isStoreOwner") === "true"
     const name = localStorage.getItem("storeName") || ""
+    const user = localStorage.getItem("userName") || localStorage.getItem("employeeName") || ""
 
     if (!storeId) {
       // ログインしていない場合はログインページへ
@@ -29,8 +34,20 @@ export default function AdminPage() {
 
     setIsStoreOwner(isOwner)
     setStoreName(name)
+    setUserName(user)
     setLoading(false)
   }, [router])
+
+  const handleSignOut = async () => {
+    try {
+      const auth = getAuth()
+      await firebaseSignOut(auth)
+      localStorage.clear()
+      router.push("/store-login")
+    } catch (error) {
+      console.error("ログアウトエラー:", error)
+    }
+  }
 
   if (loading) {
     return (
@@ -46,7 +63,56 @@ export default function AdminPage() {
   return (
     <AuthGuard>
       <div className="min-h-screen bg-gray-50">
-        <Header />
+        {/* 管理画面専用ヘッダー（新規投稿ボタンなし） */}
+        <header className="border-b bg-white shadow-sm">
+          <div className="container mx-auto px-4 py-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <h1 className="text-xl font-bold text-black">スタックマン！</h1>
+              </div>
+              <div className="flex items-center space-x-4">
+                <div className="hidden sm:flex items-center space-x-2 text-sm text-muted-foreground">
+                  <User className="h-4 w-4" />
+                  <span>{userName}</span>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  className="flex items-center space-x-2"
+                >
+                  <Menu className="h-4 w-4" />
+                  <span className="hidden sm:inline">メニュー</span>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* モバイルメニュー */}
+        <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+          <SheetContent side="right" className="w-80">
+            <SheetHeader>
+              <SheetTitle className="text-lg">メニュー</SheetTitle>
+            </SheetHeader>
+            <div className="mt-6 space-y-3">
+              <div className="flex items-center space-x-2 text-sm text-muted-foreground px-3 py-2 sm:hidden">
+                <User className="h-4 w-4" />
+                <span>{userName}</span>
+              </div>
+
+              <Button
+                variant="outline"
+                className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 bg-transparent"
+                onClick={handleSignOut}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                ログアウト
+              </Button>
+            </div>
+          </SheetContent>
+        </Sheet>
+
         <main className="container mx-auto px-4 py-8">
           <FirebaseConfigWarning />
           <div className="mb-6">
