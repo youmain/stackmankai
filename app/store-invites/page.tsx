@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Copy, Plus, Users, Calendar, CheckCircle, XCircle } from "lucide-react"
+import { Copy, Plus, Users, Calendar, CheckCircle, XCircle, MessageCircle, Share2 } from "lucide-react"
 import { createInviteCode, getStoreInviteCodes, getStoreEmployees } from "@/lib/firestore-employees"
 import type { InviteCode, Employee } from "@/types/employee"
 
@@ -75,6 +75,20 @@ export default function StoreInvitesPage() {
     navigator.clipboard.writeText(code)
     setCopiedCode(code)
     setTimeout(() => setCopiedCode(null), 2000)
+  }
+
+  const handleShareToLine = (code: string) => {
+    const registerUrl = `${window.location.origin}/employee-register`
+    const message = `【StackManKai 従業員招待】\n\n店舗名: ${storeInfo.storeName}\n招待コード: ${code}\n\n以下のURLから登録してください：\n${registerUrl}`
+    const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(message)}`
+    window.open(lineUrl, '_blank')
+  }
+
+  const handleCopyInviteMessage = (code: string) => {
+    const registerUrl = `${window.location.origin}/employee-register`
+    const message = `【StackManKai 従業員招待】\n\n店舗名: ${storeInfo.storeName}\n招待コード: ${code}\n\n以下のURLから登録してください：\n${registerUrl}`
+    navigator.clipboard.writeText(message)
+    alert('招待メッセージをコピーしました！')
   }
 
   const formatDate = (timestamp: any) => {
@@ -214,22 +228,38 @@ export default function StoreInvitesPage() {
                           )}
                         </td>
                         <td className="py-3 px-4">
-                          <button
-                            onClick={() => handleCopyCode(code.code)}
-                            className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold"
-                          >
-                            {copiedCode === code.code ? (
-                              <>
-                                <CheckCircle size={16} />
-                                コピー済み
-                              </>
-                            ) : (
-                              <>
-                                <Copy size={16} />
-                                コピー
-                              </>
-                            )}
-                          </button>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleCopyCode(code.code)}
+                              className="flex items-center gap-1 text-blue-600 hover:text-blue-700 font-semibold text-sm"
+                            >
+                              {copiedCode === code.code ? (
+                                <>
+                                  <CheckCircle size={16} />
+                                  コピー済み
+                                </>
+                              ) : (
+                                <>
+                                  <Copy size={16} />
+                                  コピー
+                                </>
+                              )}
+                            </button>
+                            <button
+                              onClick={() => handleShareToLine(code.code)}
+                              className="flex items-center gap-1 text-green-600 hover:text-green-700 font-semibold text-sm"
+                            >
+                              <MessageCircle size={16} />
+                              LINE
+                            </button>
+                            <button
+                              onClick={() => handleCopyInviteMessage(code.code)}
+                              className="flex items-center gap-1 text-purple-600 hover:text-purple-700 font-semibold text-sm"
+                            >
+                              <Share2 size={16} />
+                              メッセージ
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     )

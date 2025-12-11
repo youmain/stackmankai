@@ -23,7 +23,7 @@ export default function EmployeeLoginPage() {
       const employee = await loginEmployee(formData)
 
       if (!employee) {
-        alert("店舗コードまたはユーザー名、パスワードが正しくありません")
+        alert("ログインに失敗しました\n\n以下を確認してください：\n・店舗コードが正しいか\n・ユーザー名が正しいか\n・パスワードが正しいか")
         return
       }
 
@@ -36,10 +36,16 @@ export default function EmployeeLoginPage() {
       localStorage.setItem("uid", employee.uid)
 
       alert(`ログインしました！\nようこそ、${employee.displayName}さん`)
-      router.push("/")
+      router.push("/employee-dashboard")
     } catch (error: any) {
       console.error("従業員ログインエラー:", error)
-      alert("ログインに失敗しました")
+      if (error.code === 'auth/wrong-password') {
+        alert("パスワードが間違っています")
+      } else if (error.code === 'auth/user-not-found') {
+        alert("ユーザーが見つかりません\n店舗コードとユーザー名を確認してください")
+      } else {
+        alert("ログインに失敗しました\nもう一度お試しください")
+      }
     } finally {
       setLoading(false)
     }

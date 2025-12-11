@@ -13,8 +13,8 @@ service cloud.firestore {
     }
     
     // ユーザーがドキュメントの所有者かチェック
-    function isOwner(userId) {
-      return isAuthenticated() && request.auth.uid == userId;
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
     }
     
     // ========================================
@@ -25,13 +25,49 @@ service cloud.firestore {
       // 誰でも店舗情報を読み取れる（店舗コードでログインするため）
       allow read: if true;
       
-      // 新規店舗登録は誰でも可能
-      allow create: if true;
+      // 新規店舗登録は認証済みユーザーのみ可能
+      allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid;
       
-      // 店舗情報の更新は将来的にオーナー認証を追加
-      allow update: if true;
+      // 店舗情報の更新はオーナーのみ可能
+      allow update: if isAuthenticated() && resource.data.uid == request.auth.uid;
       
-      // 店舗の削除は将来的にオーナー認証を追加
+      // 店舗の削除は禁止
+      allow delete: if false;
+    }
+    
+    // ========================================
+    // InviteCodes コレクション（招待コード）
+    // ========================================
+    
+    match /inviteCodes/{inviteCodeId} {
+      // 誰でも招待コードを読み取れる（従業員登録時に検証するため）
+      allow read: if true;
+      
+      // 招待コードの作成は認証済みユーザーのみ可能
+      allow create: if isAuthenticated();
+      
+      // 招待コードの更新は認証済みユーザーのみ可能（使用回数の更新など）
+      allow update: if isAuthenticated();
+      
+      // 招待コードの削除は禁止
+      allow delete: if false;
+    }
+    
+    // ========================================
+    // Employees コレクション（従業員）
+    // ========================================
+    
+    match /employees/{employeeId} {
+      // 従業員情報は認証済みユーザーのみ読み取れる
+      allow read: if isAuthenticated();
+      
+      // 従業員の作成は認証済みユーザーのみ可能
+      allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid;
+      
+      // 従業員情報の更新は本人のみ可能
+      allow update: if isAuthenticated() && resource.data.uid == request.auth.uid;
+      
+      // 従業員の削除は禁止
       allow delete: if false;
     }
     
@@ -40,17 +76,17 @@ service cloud.firestore {
     // ========================================
     
     match /customers/{customerId} {
-      // 顧客情報は誰でも読み取れる（テスト期間中）
-      allow read: if true;
+      // 顧客情報は認証済みユーザーのみ読み取れる
+      allow read: if isAuthenticated();
       
-      // 新規顧客登録は誰でも可能
-      allow create: if true;
+      // 顧客の作成は認証済みユーザーのみ可能
+      allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid;
       
-      // 顧客情報の更新は本人のみ（将来的に実装）
-      allow update: if true;
+      // 顧客情報の更新は本人のみ可能
+      allow update: if isAuthenticated() && resource.data.uid == request.auth.uid;
       
-      // 顧客の削除は本人のみ（将来的に実装）
-      allow delete: if false;
+      // 顧客の削除は本人のみ可能
+      allow delete: if isAuthenticated() && resource.data.uid == request.auth.uid;
     }
     
     // ========================================
@@ -58,17 +94,17 @@ service cloud.firestore {
     // ========================================
     
     match /posts/{postId} {
-      // 投稿の読み取りルール
-      allow read: if true;
+      // 投稿は認証済みユーザーのみ読み取れる
+      allow read: if isAuthenticated();
       
-      // 投稿の作成は誰でも可能（テスト期間中）
-      allow create: if true;
+      // 投稿の作成は認証済みユーザーのみ可能
+      allow create: if isAuthenticated() && request.resource.data.authorId == request.auth.uid;
       
-      // 投稿の更新は作成者のみ（将来的に実装）
-      allow update: if true;
+      // 投稿の更新は作成者のみ可能
+      allow update: if isAuthenticated() && resource.data.authorId == request.auth.uid;
       
-      // 投稿の削除は作成者のみ（将来的に実装）
-      allow delete: if true;
+      // 投稿の削除は作成者のみ可能
+      allow delete: if isAuthenticated() && resource.data.authorId == request.auth.uid;
     }
     
     // ========================================
@@ -76,17 +112,17 @@ service cloud.firestore {
     // ========================================
     
     match /players/{playerId} {
-      // プレイヤー情報は誰でも読み取れる
-      allow read: if true;
+      // プレイヤー情報は認証済みユーザーのみ読み取れる
+      allow read: if isAuthenticated();
       
-      // プレイヤー情報の作成は店舗スタッフのみ（将来的に実装）
-      allow create: if true;
+      // プレイヤー情報の作成は認証済みユーザーのみ可能
+      allow create: if isAuthenticated();
       
-      // プレイヤー情報の更新は店舗スタッフのみ（将来的に実装）
-      allow update: if true;
+      // プレイヤー情報の更新は認証済みユーザーのみ可能
+      allow update: if isAuthenticated();
       
-      // プレイヤー情報の削除は店舗スタッフのみ（将来的に実装）
-      allow delete: if true;
+      // プレイヤー情報の削除は認証済みユーザーのみ可能
+      allow delete: if isAuthenticated();
     }
     
     // ========================================
@@ -94,17 +130,17 @@ service cloud.firestore {
     // ========================================
     
     match /games/{gameId} {
-      // ゲーム情報は誰でも読み取れる
-      allow read: if true;
+      // ゲーム情報は認証済みユーザーのみ読み取れる
+      allow read: if isAuthenticated();
       
-      // ゲーム情報の作成は店舗スタッフのみ（将来的に実装）
-      allow create: if true;
+      // ゲーム情報の作成は認証済みユーザーのみ可能
+      allow create: if isAuthenticated();
       
-      // ゲーム情報の更新は店舗スタッフのみ（将来的に実装）
-      allow update: if true;
+      // ゲーム情報の更新は認証済みユーザーのみ可能
+      allow update: if isAuthenticated();
       
-      // ゲーム情報の削除は店舗スタッフのみ（将来的に実装）
-      allow delete: if true;
+      // ゲーム情報の削除は認証済みユーザーのみ可能
+      allow delete: if isAuthenticated();
     }
     
     // ========================================
@@ -112,26 +148,26 @@ service cloud.firestore {
     // ========================================
     
     match /rankings/{rankingId} {
-      // ランキング情報は誰でも読み取れる
-      allow read: if true;
+      // ランキング情報は認証済みユーザーのみ読み取れる
+      allow read: if isAuthenticated();
       
-      // ランキング情報の作成は店舗スタッフのみ（将来的に実装）
-      allow create: if true;
+      // ランキング情報の作成は認証済みユーザーのみ可能
+      allow create: if isAuthenticated();
       
-      // ランキング情報の更新は店舗スタッフのみ（将来的に実装）
-      allow update: if true;
+      // ランキング情報の更新は認証済みユーザーのみ可能
+      allow update: if isAuthenticated();
       
-      // ランキング情報の削除は店舗スタッフのみ（将来的に実装）
-      allow delete: if true;
+      // ランキング情報の削除は認証済みユーザーのみ可能
+      allow delete: if isAuthenticated();
     }
     
     // ========================================
     // その他のコレクション
     // ========================================
     
-    // デフォルトルール: すべて拒否
+    // デフォルトルール: 認証済みユーザーのみアクセス可能
     match /{document=**} {
-      allow read, write: if false;
+      allow read, write: if isAuthenticated();
     }
   }
 }

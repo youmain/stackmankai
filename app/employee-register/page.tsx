@@ -43,10 +43,20 @@ export default function EmployeeRegisterPage() {
       localStorage.setItem("uid", employee.uid)
 
       alert(`従業員登録が完了しました！\nユーザー名: ${employee.username}`)
-      router.push("/")
+      router.push("/employee-dashboard")
     } catch (error: any) {
       console.error("従業員登録エラー:", error)
-      alert(error.message || "従業員登録に失敗しました")
+      if (error.message?.includes('招待コード')) {
+        alert(error.message)
+      } else if (error.message?.includes('ユーザー名')) {
+        alert("このユーザー名は既に使用されています\n別のユーザー名を選んでください")
+      } else if (error.code === 'auth/email-already-in-use') {
+        alert("このアカウントは既に登録されています")
+      } else if (error.code === 'auth/weak-password') {
+        alert("パスワードが弱すぎます\n6文字以上で設定してください")
+      } else {
+        alert("従業員登録に失敗しました\n\n" + (error.message || "もう一度お試しください"))
+      }
     } finally {
       setLoading(false)
     }
@@ -98,7 +108,7 @@ export default function EmployeeRegisterPage() {
               required
             />
             <p className="text-xs text-gray-500 mt-1">
-              ログイン時に使用するユーザー名（半角英数字・アンダースコア）
+              ログイン時に使用するユーザー名（ひらがな・漢字・英数字可）
             </p>
           </div>
 
