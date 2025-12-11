@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { useAuth } from "@/contexts/auth-context"
+// import { useAuth } from "@/contexts/auth-context" // 従業員はlocalStorageベースの認証を使用
 import {
   Users,
   Receipt,
@@ -22,25 +22,48 @@ import Link from "next/link"
 
 export default function EmployeeDashboard() {
   const router = useRouter()
-  const { user, signOut } = useAuth()
   const [employeeData, setEmployeeData] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // 認証チェック
-    if (!user) {
+    // 認証チェック（localStorageベース）
+    const uid = localStorage.getItem("uid")
+    const employeeUsername = localStorage.getItem("employeeUsername")
+    const storeId = localStorage.getItem("storeId")
+    const storeName = localStorage.getItem("storeName")
+    const storeCode = localStorage.getItem("storeCode")
+
+    if (!uid || !employeeUsername || !storeId) {
       router.push("/employee-login")
       return
     }
 
-    // 従業員情報を取得（実装予定）
-    // TODO: Firestoreから従業員情報を取得
+    // 従業員情報をlocalStorageから取得
+    setEmployeeData({
+      uid,
+      username: employeeUsername,
+      displayName: employeeUsername,
+      storeId,
+      storeName,
+      storeCode,
+    })
     setIsLoading(false)
-  }, [user, router])
+  }, [router])
 
   const handleSignOut = async () => {
     try {
-      await signOut()
+      // localStorageをクリア
+      localStorage.removeItem("uid")
+      localStorage.removeItem("employeeUsername")
+      localStorage.removeItem("storeId")
+      localStorage.removeItem("storeName")
+      localStorage.removeItem("storeCode")
+      localStorage.removeItem("isStoreOwner")
+      
+      // Firebase Authenticationからログアウト
+      const { signOut: firebaseSignOut } = await import("@/lib/firebase-auth")
+      await firebaseSignOut()
+      
       router.push("/")
     } catch (error) {
       console.error("ログアウトエラー:", error)
@@ -71,7 +94,7 @@ export default function EmployeeDashboard() {
               <div>
                 <h1 className="text-2xl font-bold text-slate-800">従業員ダッシュボード</h1>
                 <p className="text-sm text-slate-600">
-                  {employeeData?.storeName || "店舗名"} - {employeeData?.displayName || user?.email}
+                  {employeeData?.storeName || "店舗名"} - {employeeData?.displayName || "従業員"}
                 </p>
               </div>
             </div>
