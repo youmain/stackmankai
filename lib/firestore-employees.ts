@@ -160,7 +160,8 @@ export async function validateInviteCode(code: string): Promise<{ valid: boolean
  */
 function generateEmployeeEmail(username: string, inviteCode: string): string {
   // ユーザー名と招待コードを組み合わせてユニークなメールアドレスを生成
-  return `${username}.${inviteCode}@stackmankai.internal`
+  // Firebase Authenticationはメールアドレスを小文字に変換するため、ここでも小文字化
+  return `${username}.${inviteCode}@stackmankai.internal`.toLowerCase()
 }
 
 /**
@@ -200,7 +201,7 @@ export async function registerEmployee(data: EmployeeRegistrationData): Promise<
     const employeeData = {
       uid,
       username: data.username,
-      generatedEmail,
+      email: generatedEmail,
       storeId: inviteCode.storeId,
       storeName: inviteCode.storeName,
       storeCode: inviteCode.storeCode,
