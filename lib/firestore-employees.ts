@@ -253,7 +253,7 @@ export async function loginEmployee(data: EmployeeLoginData): Promise<Employee |
     const employeeData = employeeDoc.data()
     
     // Firebase Authenticationでサインイン
-    await signIn(employeeData.generatedEmail, data.password)
+    await signIn(employeeData.email, data.password)
     
     return {
       id: employeeDoc.id,
