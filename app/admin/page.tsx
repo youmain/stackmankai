@@ -3,7 +3,7 @@ import { Header } from "@/components/header"
 import { FirebaseConfigWarning } from "@/components/firebase-config-warning"
 import Link from "next/link"
 import { OnlineUsers } from "@/components/online-users"
-import { Users, FileText, BarChart3, Trophy, Settings, ArrowLeft } from "lucide-react"
+import { Users, FileText, BarChart3, Trophy, Settings, ArrowLeft, UserCog } from "lucide-react"
 
 export default function AdminPage() {
   return (
@@ -80,6 +80,19 @@ export default function AdminPage() {
                 <p className="text-muted-foreground mb-4">プレイヤーランキングと統計情報</p>
                 <div className="w-full bg-yellow-600 text-white py-2 px-4 rounded-md hover:bg-yellow-700 transition-colors text-center">
                   ランキングへ
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/store-invites" className="block">
+              <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow h-full">
+                <div className="flex items-center mb-4">
+                  <UserCog className="h-8 w-8 text-orange-600 mr-3" />
+                  <h3 className="text-xl font-semibold">従業員管理</h3>
+                </div>
+                <p className="text-muted-foreground mb-4">従業員招待コードの発行と管理</p>
+                <div className="w-full bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 transition-colors text-center">
+                  従業員管理へ
                 </div>
               </div>
             </Link>
