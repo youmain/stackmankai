@@ -65,13 +65,21 @@ export function PlayerRegistrationModal({ open, onClose }: PlayerRegistrationMod
     setLoading(true)
     try {
       const storeId = localStorage.getItem("storeId") || ""
-      await addPlayer({
+      const playerData: any = {
         name: name.trim(),
-        pokerName: pokerName.trim() || undefined,
-        furigana: furigana.trim() || undefined,
         systemBalance: stackAmount,
         storeId: storeId,
-      })
+      }
+      
+      // オプションフィールドは値がある場合のみ追加
+      if (pokerName.trim()) {
+        playerData.pokerName = pokerName.trim()
+      }
+      if (furigana.trim()) {
+        playerData.furigana = furigana.trim()
+      }
+      
+      await addPlayer(playerData)
       handleSuccess("プレイヤーを登録しました", `${name}を登録しました`)
       setName("")
       setPokerName("")
