@@ -455,9 +455,8 @@ ${availableExamples.slice(0, 5).join("\n")}
       setDailyRankings(rankings)
       setDataLoaded((prev) => ({ ...prev, dailyRankings: true }))
     }, storeId)
-    })
 
-      const unsubscribeMonthlyPoints = subscribeToMonthlyPoints(currentYear, currentMonth, (points) => {
+    const unsubscribeMonthlyPoints = subscribeToMonthlyPoints(currentYear, currentMonth, (points) => {
         console.log("[v0] 📈 月間RP同期受信:", points.length, "件")
         setMonthlyPoints(points)
         setDataLoaded((prev) => ({ ...prev, monthlyPoints: true }))
