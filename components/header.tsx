@@ -67,17 +67,6 @@ export function Header() {
             <div>
               <h3 className="text-sm font-medium text-gray-500 mb-3">管理機能</h3>
               <div className="space-y-2">
-                {subscriptionStatus === "active" && (
-                  <Link href="/posts" onClick={() => setIsMobileMenuOpen(false)}>
-                    <Button
-                      variant={pathname === "/posts" ? "default" : "ghost"}
-                      className="w-full justify-start text-base py-3"
-                    >
-                      <FileText className="h-5 w-5 mr-3" />
-                      投稿一覧
-                    </Button>
-                  </Link>
-                )}
                 <Link href="/players" onClick={() => setIsMobileMenuOpen(false)}>
                   <Button
                     variant={pathname === "/players" ? "default" : "ghost"}
