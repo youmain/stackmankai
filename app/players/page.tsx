@@ -38,6 +38,7 @@ import { RakeSummaryCard } from "@/components/players/rake-summary-card"
 import { useAuth } from "@/contexts/auth-context"
 import { isFirebaseConfigured } from "@/lib/firebase"
 import { handleError, handleSuccess } from "@/lib/error-handler"
+import { performanceMonitor } from "@/lib/performance-monitor"
 
 export default function PlayersPage() {
   console.log("[v0] 📱 PlayersPageコンポーネント実行開始")

@@ -389,6 +389,8 @@ export const deleteUser = async (userId: string): Promise<void> => {
 
 // --- Player Functions ---
 
+import { performanceMonitor } from './performance-monitor'
+
 export const subscribeToPlayers = (
   onUpdate: (players: Player[]) => void,
   onError?: (error: Error) => void,
@@ -409,22 +411,33 @@ export const subscribeToPlayers = (
   return onSnapshot(
     q,
     (snapshot) => {
-      const players = snapshot.docs.map((doc) => {
-        const data = doc.data()
-        return {
-          id: doc.id,
-          ...data,
-          createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt || Date.now()),
-          updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate() : new Date(data.updatedAt || Date.now()),
-          subscriptionEndDate: data.subscriptionEndDate?.toDate
-            ? data.subscriptionEndDate.toDate()
-            : data.subscriptionEndDate
-              ? new Date(data.subscriptionEndDate)
-              : undefined,
-        } as Player
-      })
-      // クライアント側で名前順にソート
-      const sortedPlayers = players.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'))
+      // データマッピングのパフォーマンスを計測
+      const players = performanceMonitor.measure(
+        'Firestore: Map player documents',
+        () => snapshot.docs.map((doc) => {
+          const data = doc.data()
+          return {
+            id: doc.id,
+            ...data,
+            createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt || Date.now()),
+            updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate() : new Date(data.updatedAt || Date.now()),
+            subscriptionEndDate: data.subscriptionEndDate?.toDate
+              ? data.subscriptionEndDate.toDate()
+              : data.subscriptionEndDate
+                ? new Date(data.subscriptionEndDate)
+                : undefined,
+          } as Player
+        }),
+        { documentCount: snapshot.docs.length }
+      )
+      
+      // ソート処理のパフォーマンスを計測
+      const sortedPlayers = performanceMonitor.measure(
+        'Client: Sort players by name',
+        () => players.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja')),
+        { playerCount: players.length }
+      )
+      
       onUpdate(sortedPlayers)
     },
     onError,
