@@ -153,7 +153,16 @@ export default function PlayersPage() {
     try {
       // localStorageからstoreIdを取得
       const storeId = localStorage.getItem("storeId")
-      console.log("[v0] プレイヤーリスナー開始", { storeId })
+      console.log("[v0] プレイヤーリスナー開始", { 
+        storeId, 
+        storeIdType: typeof storeId,
+        storeIdLength: storeId?.length,
+        allLocalStorage: {
+          storeId: localStorage.getItem("storeId"),
+          storeName: localStorage.getItem("storeName"),
+          storeCode: localStorage.getItem("storeCode"),
+        }
+      })
       
       unsubscribePlayers = subscribeToPlayers(
         (newPlayers) => {
