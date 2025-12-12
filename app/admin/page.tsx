@@ -100,14 +100,61 @@ export default function AdminPage() {
                 <span>{userName}</span>
               </div>
 
-              <Button
-                variant="outline"
-                className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 bg-transparent"
-                onClick={handleSignOut}
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                ログアウト
-              </Button>
+              <div className="space-y-2">
+                <Link href="/players" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button variant="ghost" className="w-full justify-start text-base py-3">
+                    <Users className="h-5 w-5 mr-3" />
+                    プレイヤー管理
+                  </Button>
+                </Link>
+                <Link href="/receipts" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button variant="ghost" className="w-full justify-start text-base py-3">
+                    <FileText className="h-5 w-5 mr-3" />
+                    伝票管理
+                  </Button>
+                </Link>
+                {isStoreOwner && (
+                  <Link href="/daily-sales" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button variant="ghost" className="w-full justify-start text-base py-3">
+                      <BarChart3 className="h-5 w-5 mr-3" />
+                      売上管理
+                    </Button>
+                  </Link>
+                )}
+                <Link href="/rankings" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button variant="ghost" className="w-full justify-start text-base py-3">
+                    <Trophy className="h-5 w-5 mr-3" />
+                    ランキング
+                  </Button>
+                </Link>
+                {isStoreOwner && (
+                  <Link href="/store-invites" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button variant="ghost" className="w-full justify-start text-base py-3">
+                      <UserCog className="h-5 w-5 mr-3" />
+                      従業員管理
+                    </Button>
+                  </Link>
+                )}
+                {isStoreOwner && (
+                  <Link href="/store-ranking-settings" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button variant="ghost" className="w-full justify-start text-base py-3">
+                      <Settings className="h-5 w-5 mr-3" />
+                      店舗設定
+                    </Button>
+                  </Link>
+                )}
+              </div>
+
+              <div className="pt-4 border-t">
+                <Button
+                  variant="outline"
+                  className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 bg-transparent"
+                  onClick={handleSignOut}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  ログアウト
+                </Button>
+              </div>
             </div>
           </SheetContent>
         </Sheet>
@@ -124,19 +171,7 @@ export default function AdminPage() {
             </Link>
           </div>
 
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4">ポーカースタックマネージャー</h2>
-            <p className="text-muted-foreground mb-2">店舗管理システムダッシュボード</p>
-            {storeName && (
-              <p className="text-sm text-gray-600">
-                {storeName} - {isStoreOwner ? "オーナー" : "従業員"}
-              </p>
-            )}
-          </div>
 
-          <div className="mb-8">
-            <OnlineUsers />
-          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {/* プレイヤー管理 - 全員アクセス可 */}
