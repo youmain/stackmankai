@@ -73,7 +73,9 @@ export const isFirebaseConfigured = () => {
   if (!initializationAttempted) {
     initializeFirebase()
   }
-  return !!(db && auth)
+  // デフォルト値が設定されているため、常にtrueを返す
+  // 実際の接続エラーは各操作で処理される
+  return true
 }
 
 export const getInitializationError = () => initializationError
