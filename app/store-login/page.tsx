@@ -2,15 +2,20 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { loginStore, loginStoreOwner } from "@/lib/firestore-stores"
+import { loginStoreOwner } from "@/lib/firestore-stores"
+import { loginEmployee } from "@/lib/firestore-employees"
+import type { EmployeeLoginData } from "@/types/employee"
 
 export default function StoreLoginPage() {
   const router = useRouter()
   const [loginType, setLoginType] = useState<"employee" | "owner">("employee")
   
   // 従業員ログイン用
-  const [storeCode, setStoreCode] = useState("")
-  const [storePassword, setStorePassword] = useState("")
+  const [employeeData, setEmployeeData] = useState<EmployeeLoginData>({
+    storeCode: "",
+    username: "",
+    password: "",
+  })
   
   // オーナーログイン用
   const [ownerEmail, setOwnerEmail] = useState("")
@@ -25,26 +30,35 @@ export default function StoreLoginPage() {
     setLoading(true)
 
     try {
-      const store = await loginStore(storeCode, storePassword)
+      const employee = await loginEmployee(employeeData)
       
-      if (!store) {
-        setError("店舗コードまたはパスワードが正しくありません")
+      if (!employee) {
+        setError("店舗コード、ユーザー名、またはパスワードが正しくありません")
         setLoading(false)
         return
       }
 
-      // localStorageに店舗情報を保存
-      localStorage.setItem("storeId", store.id)
-      localStorage.setItem("storeCode", store.storeCode)
-      localStorage.setItem("storeName", store.name)
-      localStorage.setItem("storeEmail", store.email)
+      // localStorageに店舗情報と従業員情報を保存
+      localStorage.setItem("storeId", employee.storeId)
+      localStorage.setItem("storeName", employee.storeName)
+      localStorage.setItem("storeCode", employee.storeCode)
       localStorage.setItem("isStoreOwner", "false")
+      localStorage.setItem("employeeUsername", employee.username)
+      localStorage.setItem("employeeName", employee.displayName)
+      localStorage.setItem("userName", employee.displayName)
+      localStorage.setItem("uid", employee.uid)
 
       // ダッシュボードへリダイレクト
       router.push("/admin")
-    } catch (err) {
-      console.error("ログインエラー:", err)
-      setError("ログインに失敗しました。もう一度お試しください。")
+    } catch (err: any) {
+      console.error("従業員ログインエラー:", err)
+      if (err.code === 'auth/wrong-password') {
+        setError("パスワードが間違っています")
+      } else if (err.code === 'auth/user-not-found') {
+        setError("ユーザーが見つかりません。店舗コードとユーザー名を確認してください")
+      } else {
+        setError("ログインに失敗しました。もう一度お試しください")
+      }
       setLoading(false)
     }
   }
@@ -68,12 +82,13 @@ export default function StoreLoginPage() {
       localStorage.setItem("storeCode", store.storeCode)
       localStorage.setItem("storeName", store.name)
       localStorage.setItem("storeEmail", store.email)
+      localStorage.setItem("userName", store.name)
       localStorage.setItem("isStoreOwner", "true")
 
       // ダッシュボードへリダイレクト
       router.push("/admin")
     } catch (err) {
-      console.error("ログインエラー:", err)
+      console.error("オーナーログインエラー:", err)
       setError("ログインに失敗しました。もう一度お試しください。")
       setLoading(false)
     }
@@ -103,7 +118,7 @@ export default function StoreLoginPage() {
             onClick={() => setLoginType("owner")}
             className={`flex-1 py-2 rounded-md font-semibold transition-colors ${
               loginType === "owner"
-                ? "bg-white text-blue-600 shadow"
+                ? "bg-white text-purple-600 shadow"
                 : "text-gray-600 hover:text-gray-800"
             }`}
           >
@@ -121,7 +136,7 @@ export default function StoreLoginPage() {
           <form onSubmit={handleEmployeeLogin} className="space-y-4">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
               <p className="text-sm text-blue-800">
-                店舗コード（3桁の数字）とパスワードを入力してください
+                店舗コード、ユーザー名、パスワードを入力してください
               </p>
             </div>
 
@@ -131,10 +146,10 @@ export default function StoreLoginPage() {
               </label>
               <input
                 type="text"
-                value={storeCode}
-                onChange={(e) => setStoreCode(e.target.value)}
+                value={employeeData.storeCode}
+                onChange={(e) => setEmployeeData({ ...employeeData, storeCode: e.target.value })}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center text-2xl tracking-widest font-bold"
-                placeholder="123"
+                placeholder="510"
                 maxLength={3}
                 pattern="[0-9]{3}"
                 required
@@ -143,12 +158,26 @@ export default function StoreLoginPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                店舗パスワード
+                ユーザー名
+              </label>
+              <input
+                type="text"
+                value={employeeData.username}
+                onChange={(e) => setEmployeeData({ ...employeeData, username: e.target.value })}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="山田太郎"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                パスワード
               </label>
               <input
                 type="password"
-                value={storePassword}
-                onChange={(e) => setStorePassword(e.target.value)}
+                value={employeeData.password}
+                onChange={(e) => setEmployeeData({ ...employeeData, password: e.target.value })}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="パスワードを入力"
                 required
@@ -162,6 +191,19 @@ export default function StoreLoginPage() {
             >
               {loading ? "ログイン中..." : "ログイン"}
             </button>
+
+            <div className="text-center text-sm text-gray-600 mt-4">
+              <p>
+                初めての方は{" "}
+                <button
+                  type="button"
+                  onClick={() => router.push("/employee-register")}
+                  className="text-blue-600 hover:text-blue-700 font-semibold"
+                >
+                  従業員登録
+                </button>
+              </p>
+            </div>
           </form>
         ) : (
           <form onSubmit={handleOwnerLogin} className="space-y-4">
