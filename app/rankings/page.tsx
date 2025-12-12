@@ -69,16 +69,17 @@ export default function RankingsPage() {
     const currentYear = currentDate.getFullYear()
     const currentMonth = currentDate.getMonth() + 1 // getMonth() returns 0-11, we need 1-12
 
+    const storeId = localStorage.getItem("storeId")
     const unsubscribePlayers = subscribeToPlayers((playersData) => {
       console.log("[v0] Rankings Page - Players loaded:", playersData.length)
       setPlayers(playersData)
       setDebugInfo((prev) => ({ ...prev, firestoreConnected: true }))
-    })
+    }, undefined, storeId)
 
     const unsubscribeRakeHistory = subscribeToRakeHistory((rakeData) => {
       console.log("[v0] Rankings Page - Rake history loaded:", rakeData.length)
       setRakeHistory(rakeData)
-    })
+    }, storeId)
 
     const unsubscribeStoreSettings = subscribeToStoreRankingSettings((settingsData) => {
       console.log("[v0] Rankings Page - Store settings loaded:", settingsData ? "Yes" : "No")

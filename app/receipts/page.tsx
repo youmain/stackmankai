@@ -35,10 +35,12 @@ export default function ReceiptsPage() {
     let unsubscribeReceipts: (() => void) | null = null
 
     try {
+      const storeId = localStorage.getItem("storeId")
       unsubscribeReceipts = subscribeToReceipts(
         (newReceipts) => {
           setReceipts(newReceipts)
-        }
+        },
+        storeId
       )
     } catch (error) {
       console.error("伝票リスナー初期化エラー:", error)

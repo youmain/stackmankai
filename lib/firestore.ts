@@ -392,6 +392,7 @@ export const deleteUser = async (userId: string): Promise<void> => {
 export const subscribeToPlayers = (
   onUpdate: (players: Player[]) => void,
   onError?: (error: Error) => void,
+  storeId?: string | null,
 ): (() => void) => {
   if (!isFirebaseConfigured()) {
     onUpdate(mockPlayers)
@@ -400,7 +401,10 @@ export const subscribeToPlayers = (
   const playersCollection = getPlayersCollection()
   if (!playersCollection) return () => {}
 
-  const q = query(playersCollection, orderBy("name"))
+  // storeIdが指定されている場合はフィルタリング
+  const q = storeId 
+    ? query(playersCollection, where("storeId", "==", storeId), orderBy("name"))
+    : query(playersCollection, orderBy("name"))
   return onSnapshot(
     q,
     (snapshot) => {
@@ -970,13 +974,15 @@ export const deleteReceiptItem = async (itemId: string): Promise<void> => {
   }
 }
 
-export const subscribeToReceipts = (callback: (receipts: Receipt[]) => void): (() => void) => {
+export const subscribeToReceipts = (callback: (receipts: Receipt[]) => void, storeId?: string | null): (() => void) => {
   if (!isFirebaseConfigured()) {
     callback(mockReceipts)
     return () => {}
   }
   const receiptsCollection = getReceiptsCollection()
-  const q = query(receiptsCollection, orderBy("createdAt", "desc"), limit(50))
+  const q = storeId
+    ? query(receiptsCollection, where("storeId", "==", storeId), orderBy("createdAt", "desc"), limit(50))
+    : query(receiptsCollection, orderBy("createdAt", "desc"), limit(50))
   return onSnapshot(q, (snapshot) => {
     const receipts = snapshot.docs.map((doc) => {
       const data = doc.data()
@@ -1136,13 +1142,15 @@ export const saveAdminPassword = async (password: string): Promise<void> => {
 
 // --- Ranking & Sales Functions ---
 
-export const subscribeToDailyRankings = (callback: (rankings: any[]) => void): (() => void) => {
+export const subscribeToDailyRankings = (callback: (rankings: any[]) => void, storeId?: string | null): (() => void) => {
   if (!isFirebaseConfigured()) {
     callback(mockDailyRankings)
     return () => {}
   }
   const rankingsCollection = getDailyRankingsCollection()
-  const q = query(rankingsCollection, orderBy("date", "desc"), limit(30))
+  const q = storeId
+    ? query(rankingsCollection, where("storeId", "==", storeId), orderBy("date", "desc"), limit(30))
+    : query(rankingsCollection, orderBy("date", "desc"), limit(30))
   return onSnapshot(q, (snapshot) => {
     const rankings = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
     callback(rankings)
@@ -1162,13 +1170,15 @@ export const subscribeToMonthlyPoints = (year: number, month: number, callback: 
   })
 }
 
-export const subscribeToMonthlyRankings = (callback: (rankings: any[]) => void): (() => void) => {
+export const subscribeToMonthlyRankings = (callback: (rankings: any[]) => void, storeId?: string | null): (() => void) => {
   if (!isFirebaseConfigured()) {
     callback(mockMonthlyRankings)
     return () => {}
   }
   const rankingsCollection = getMonthlyRankingsCollection()
-  const q = query(rankingsCollection, orderBy("month", "desc"), limit(12))
+  const q = storeId
+    ? query(rankingsCollection, where("storeId", "==", storeId), orderBy("month", "desc"), limit(12))
+    : query(rankingsCollection, orderBy("month", "desc"), limit(12))
   return onSnapshot(q, (snapshot) => {
     const rankings = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
     callback(rankings)
@@ -1617,13 +1627,15 @@ export const subscribeToPlayerPurchaseHistory = (callback: (history: Record<stri
   })
 }
 
-export const subscribeToRakeHistory = (callback: (history: any[]) => void): (() => void) => {
+export const subscribeToRakeHistory = (callback: (history: any[]) => void, storeId?: string | null): (() => void) => {
   if (!isFirebaseConfigured()) {
     callback(mockRakeHistory)
     return () => {}
   }
   const rakeCollection = getRakeHistoryCollection()
-  const q = query(rakeCollection, orderBy("createdAt", "desc"), limit(50))
+  const q = storeId
+    ? query(rakeCollection, where("storeId", "==", storeId), orderBy("createdAt", "desc"), limit(50))
+    : query(rakeCollection, orderBy("createdAt", "desc"), limit(50))
   return onSnapshot(q, (snapshot) => {
     const history = snapshot.docs.map((doc) => {
       const data = doc.data()

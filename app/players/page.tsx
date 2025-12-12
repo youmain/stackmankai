@@ -151,11 +151,15 @@ export default function PlayersPage() {
     let unsubscribeRakeHistory: (() => void) | null = null
 
     try {
-      console.log("[v0] プレイヤーリスナー開始")
+      // localStorageからstoreIdを取得
+      const storeId = localStorage.getItem("storeId")
+      console.log("[v0] プレイヤーリスナー開始", { storeId })
+      
       unsubscribePlayers = subscribeToPlayers(
         (newPlayers) => {
           console.log("[v0] プレイヤーデータ受信:", {
             count: newPlayers.length,
+            storeId,
             players: newPlayers.map((p) => ({
               id: p.id,
               name: p.name,
@@ -176,6 +180,7 @@ export default function PlayersPage() {
           console.error("[v0] プレイヤーリスナーエラー:", error)
           setFirebaseError("プレイヤーデータの読み込みに失敗しました。")
         },
+        storeId, // storeIdを渡す
       )
 
       console.log("[v0] 購入金額履歴リスナー開始")
