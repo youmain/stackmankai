@@ -47,6 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const savedCustomerAccount = sessionStorage.getItem("auth_customerAccount")
 
         // sessionStorageになければlocalStorageから取得（従業員/オーナーログイン用）
+        let isLocalStorageAuth = false
         if (!savedUserName || !savedUserId) {
           const storeId = localStorage.getItem("storeId")
           const userName = localStorage.getItem("userName") || localStorage.getItem("employeeName")
@@ -56,6 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             savedUserName = userName
             savedUserId = uid
             savedUserType = "admin"
+            isLocalStorageAuth = true
           }
         }
 
@@ -64,11 +66,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUserId(savedUserId)
           setUserType("admin")
 
-          try {
-            await updateUserOnlineStatus(savedUserId, true)
-          } catch (firebaseError) {
-            handleFirebaseError(firebaseError, "オンライン状態更新")
-            setError("Firebase接続エラーが発生しました。設定を確認してください。")
+          // localStorage認証（従業員/オーナー）の場合はFirestore更新をスキップ
+          if (!isLocalStorageAuth) {
+            try {
+              await updateUserOnlineStatus(savedUserId, true)
+            } catch (firebaseError) {
+              handleFirebaseError(firebaseError, "オンライン状態更新")
+              setError("Firebase接続エラーが発生しました。設定を確認してください。")
+            }
           }
         } else if (savedCustomerAccount && savedUserType === "customer") {
           try {
