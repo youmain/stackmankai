@@ -41,8 +41,9 @@ export default function SubscriptionAdminPage() {
       return
     }
 
+    const storeId = localStorage.getItem("storeId")
     const unsubscribeCustomers = subscribeToCustomerAccounts(setCustomers)
-    const unsubscribePlayers = subscribeToPlayers(setPlayers)
+    const unsubscribePlayers = subscribeToPlayers(setPlayers, undefined, storeId)
 
     return () => {
       unsubscribeCustomers()

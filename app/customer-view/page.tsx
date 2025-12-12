@@ -443,16 +443,18 @@ ${availableExamples.slice(0, 5).join("\n")}
       setDataLoaded((prev) => ({ ...prev, customers: true }))
     })
 
+    const storeId = localStorage.getItem("storeId")
     const unsubscribePlayers = subscribeToPlayers((players) => {
       console.log("[v0] 👥 プレイヤー同期受信:", players.length, "人")
       setPlayers(players)
       setDataLoaded((prev) => ({ ...prev, players: true }))
-    })
+    }, undefined, storeId)
 
     const unsubscribeDailyRankings = subscribeToDailyRankings((rankings) => {
       console.log("[v0] 📊 日別ランキング同期受信:", rankings.length, "件")
       setDailyRankings(rankings)
       setDataLoaded((prev) => ({ ...prev, dailyRankings: true }))
+    }, storeId)
     })
 
       const unsubscribeMonthlyPoints = subscribeToMonthlyPoints(currentYear, currentMonth, (points) => {

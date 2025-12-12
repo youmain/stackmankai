@@ -49,7 +49,8 @@ export default function GameDetailPage() {
       setLoading(false)
     })
 
-    const unsubscribePlayers = const storeId = localStorage.getItem("storeId"); subscribeToPlayers(setPlayers)
+    const storeId = localStorage.getItem("storeId")
+    const unsubscribePlayers = subscribeToPlayers(setPlayers, undefined, storeId)
 
     return () => {
       unsubscribeGame()
