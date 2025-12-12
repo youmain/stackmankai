@@ -4,7 +4,7 @@
 import { FirebaseConfigWarning } from "@/components/firebase-config-warning"
 import Link from "next/link"
 import { OnlineUsers } from "@/components/online-users"
-import { Users, FileText, BarChart3, Trophy, Settings, ArrowLeft, UserCog, Menu, LogOut, User } from "lucide-react"
+import { Users, FileText, BarChart3, Trophy, Settings, ArrowLeft, UserCog, Menu, LogOut, User, HelpCircle } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -125,6 +125,12 @@ export default function AdminPage() {
                   <Button variant="ghost" className="w-full justify-start text-base py-3">
                     <Trophy className="h-5 w-5 mr-3" />
                     ランキング
+                  </Button>
+                </Link>
+                <Link href="/how-to-use" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button variant="ghost" className="w-full justify-start text-base py-3">
+                    <HelpCircle className="h-5 w-5 mr-3" />
+                    使い方
                   </Button>
                 </Link>
                 {isStoreOwner && (
