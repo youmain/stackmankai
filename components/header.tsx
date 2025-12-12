@@ -36,18 +36,6 @@ export function Header() {
               <h1 className="text-xl font-bold text-black">スタックマン！</h1>
             </div>
             <div className="flex items-center space-x-4">
-              {userName && subscriptionStatus === "active" && (
-                <Link href="/create-post">
-                  <Button
-                    variant="default"
-                    size="sm"
-                    className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700"
-                  >
-                    <Plus className="h-4 w-4" />
-                    <span className="hidden sm:inline">新規投稿</span>
-                  </Button>
-                </Link>
-              )}
               {userName && (
                 <>
                   <div className="hidden sm:flex items-center space-x-2 text-sm text-muted-foreground">
