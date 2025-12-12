@@ -1,6 +1,6 @@
 "use client"
 
-import { AuthGuard } from "@/components/auth-guard"
+
 import { FirebaseConfigWarning } from "@/components/firebase-config-warning"
 import Link from "next/link"
 import { OnlineUsers } from "@/components/online-users"
@@ -61,8 +61,7 @@ export default function AdminPage() {
   }
 
   return (
-    <AuthGuard>
-      <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
         {/* 管理画面専用ヘッダー（新規投稿ボタンなし） */}
         <header className="border-b bg-white shadow-sm">
           <div className="container mx-auto px-4 py-3">
@@ -248,6 +247,5 @@ export default function AdminPage() {
           </div>
         </main>
       </div>
-    </AuthGuard>
   )
 }
