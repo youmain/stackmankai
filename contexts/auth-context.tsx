@@ -40,10 +40,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return
         }
 
-        const savedUserName = sessionStorage.getItem("auth_userName")
-        const savedUserId = sessionStorage.getItem("auth_userId")
-        const savedUserType = sessionStorage.getItem("auth_userType") as "admin" | "customer" | null
+        // sessionStorageから認証情報を取得
+        let savedUserName = sessionStorage.getItem("auth_userName")
+        let savedUserId = sessionStorage.getItem("auth_userId")
+        let savedUserType = sessionStorage.getItem("auth_userType") as "admin" | "customer" | null
         const savedCustomerAccount = sessionStorage.getItem("auth_customerAccount")
+
+        // sessionStorageになければlocalStorageから取得（従業員/オーナーログイン用）
+        if (!savedUserName || !savedUserId) {
+          const storeId = localStorage.getItem("storeId")
+          const userName = localStorage.getItem("userName") || localStorage.getItem("employeeName")
+          const uid = localStorage.getItem("uid")
+          
+          if (storeId && userName && uid) {
+            savedUserName = userName
+            savedUserId = uid
+            savedUserType = "admin"
+          }
+        }
 
         if (savedUserName && savedUserId && savedUserType === "admin") {
           setUserNameState(savedUserName)
