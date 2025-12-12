@@ -402,9 +402,10 @@ export const subscribeToPlayers = (
   if (!playersCollection) return () => {}
 
   // storeIdが指定されている場合はフィルタリング
+  // orderByを削除してインデックス不要にする（クライアント側でソート）
   const q = storeId 
-    ? query(playersCollection, where("storeId", "==", storeId), orderBy("name"))
-    : query(playersCollection, orderBy("name"))
+    ? query(playersCollection, where("storeId", "==", storeId))
+    : playersCollection
   return onSnapshot(
     q,
     (snapshot) => {
@@ -422,7 +423,9 @@ export const subscribeToPlayers = (
               : undefined,
         } as Player
       })
-      onUpdate(players)
+      // クライアント側で名前順にソート
+      const sortedPlayers = players.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja'))
+      onUpdate(sortedPlayers)
     },
     onError,
   )
