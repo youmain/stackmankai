@@ -127,7 +127,7 @@ export default function AdminPage() {
                     ランキング
                   </Button>
                 </Link>
-                <Link href="/how-to-use" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link href="/help" onClick={() => setIsMobileMenuOpen(false)}>
                   <Button variant="ghost" className="w-full justify-start text-base py-3">
                     <HelpCircle className="h-5 w-5 mr-3" />
                     使い方
