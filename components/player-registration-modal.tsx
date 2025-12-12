@@ -64,11 +64,13 @@ export function PlayerRegistrationModal({ open, onClose }: PlayerRegistrationMod
 
     setLoading(true)
     try {
+      const storeId = localStorage.getItem("storeId") || ""
       await addPlayer({
         name: name.trim(),
         pokerName: pokerName.trim() || undefined,
         furigana: furigana.trim() || undefined,
         systemBalance: stackAmount,
+        storeId: storeId,
       })
       handleSuccess("プレイヤーを登録しました", `${name}を登録しました`)
       setName("")

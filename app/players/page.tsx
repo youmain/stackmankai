@@ -536,6 +536,7 @@ export default function PlayersPage() {
         }
 
         const now = new Date()
+        const storeId = localStorage.getItem("storeId") || ""
         const newPlayerData = {
           uniqueId: `player_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
           name: playerData.name,
@@ -547,6 +548,7 @@ export default function PlayersPage() {
           isDeduction: playerData.isDeduction || false,
           isPlaying: false,
           currentGameId: null,
+          storeId: storeId,
           createdAt: now,
           updatedAt: now,
         }
