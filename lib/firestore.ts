@@ -1520,10 +1520,12 @@ export const linkPlayerToCustomer = async (customerId: string, playerUniqueId: s
   const playerDocId = playerDoc.id
   const playerData = playerDoc.data() as Player
   
-  // Update customer account with player info
+  // Update customer account with player info and store info
   await updateCustomerAccount(customerId, {
     playerId: playerDocId,
     playerName: playerData.name || playerName,
+    storeId: playerData.storeId,
+    storeName: playerData.storeName || "店舗",
   })
   
   // Update player with customer link (optional, if needed)
