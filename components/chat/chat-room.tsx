@@ -21,11 +21,19 @@ export function ChatRoom() {
 
   // メッセージの購読
   useEffect(() => {
-    if (!customerAccount) return
+    if (!customerAccount || !customerAccount.storeId) {
+      console.error("Customer account or storeId is missing")
+      setError("店舗情報が見つかりません")
+      return
+    }
 
+    console.log("Setting up chat subscription for store:", customerAccount.storeId)
     const unsubscribe = subscribeToChatMessages(
+      customerAccount.storeId,
       (msgs) => {
+        console.log("Received messages:", msgs.length)
         setMessages(msgs)
+        setError("") // Clear error on successful load
         // 新しいメッセージが追加されたら自動スクロール
         setTimeout(() => {
           if (scrollAreaRef.current) {
@@ -52,7 +60,11 @@ export function ChatRoom() {
       // プレイヤー名を表示名として使用（なければメールアドレスの@前を使用）
       const displayName = customerAccount.playerName || customerAccount.email.split("@")[0]
       
-      await sendChatMessage(newMessage.trim(), customerAccount.id, displayName)
+      if (!customerAccount.storeId) {
+        throw new Error("Store ID not found")
+      }
+      
+      await sendChatMessage(newMessage.trim(), customerAccount.id, displayName, customerAccount.storeId)
       setNewMessage("")
     } catch (err) {
       console.error("Error sending message:", err)
@@ -85,7 +97,7 @@ export function ChatRoom() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <MessageCircle className="h-5 w-5" />
-          {customerAccount.storeName} チャット
+          {customerAccount.storeName || "店舗"} チャット
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col gap-4 p-4">

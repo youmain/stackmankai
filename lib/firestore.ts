@@ -1858,18 +1858,16 @@ export const resetAllPlayersMembershipData = async (): Promise<void> => {
 
 // --- Chat Messages ---
 
-const getChatMessagesCollection = () => {
-  const storeId = getStoreId()
+const getChatMessagesCollection = (storeId: string) => {
   if (!storeId) throw new Error("Store ID not found")
-  return collection(checkFirebaseConfig(), `stores/${storeId}/chatMessages`)
+  return collection(checkFirebaseConfig(), `chatRooms/store_${storeId}/messages`)
 }
 
-export const sendChatMessage = async (message: string, userId: string, userName: string): Promise<void> => {
+export const sendChatMessage = async (message: string, userId: string, userName: string, storeId: string): Promise<void> => {
   if (!isFirebaseConfigured()) return
-  const storeId = getStoreId()
   if (!storeId) throw new Error("Store ID not found")
   
-  const messagesCollection = getChatMessagesCollection()
+  const messagesCollection = getChatMessagesCollection(storeId)
   await addDoc(messagesCollection, {
     storeId,
     userId,
@@ -1880,6 +1878,7 @@ export const sendChatMessage = async (message: string, userId: string, userName:
 }
 
 export const subscribeToChatMessages = (
+  storeId: string,
   callback: (messages: ChatMessage[]) => void,
   onError?: (error: Error) => void
 ): (() => void) => {
@@ -1888,8 +1887,15 @@ export const subscribeToChatMessages = (
     return () => {}
   }
   
+  if (!storeId) {
+    console.error("Store ID is required for chat subscription")
+    if (onError) onError(new Error("Store ID is required"))
+    callback([])
+    return () => {}
+  }
+  
   try {
-    const messagesCollection = getChatMessagesCollection()
+    const messagesCollection = getChatMessagesCollection(storeId)
     const q = query(messagesCollection, orderBy("createdAt", "desc"), limit(100))
     
     return onSnapshot(
