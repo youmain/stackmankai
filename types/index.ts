@@ -390,5 +390,6 @@ export interface ChatMessage {
   userId: string // 送信者のユーザーID（customerAccountのid）
   userName: string // 送信者の表示名
   message: string // メッセージ内容
+  type?: "user" | "system" // メッセージタイプ（デフォルト: "user"）
   createdAt: Date
 }

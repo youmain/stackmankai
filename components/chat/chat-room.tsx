@@ -19,7 +19,7 @@ export function ChatRoom() {
   const [error, setError] = useState("")
   const scrollAreaRef = useRef<HTMLDivElement>(null)
 
-  // メッセージの購読
+  // メッセージの購読と入室通知
   useEffect(() => {
     if (!customerAccount || !customerAccount.storeId) {
       console.error("Customer account or storeId is missing")
@@ -28,6 +28,24 @@ export function ChatRoom() {
     }
 
     console.log("Setting up chat subscription for store:", customerAccount.storeId)
+    
+    // 入室通知を送信
+    const sendJoinNotification = async () => {
+      try {
+        const displayName = customerAccount.playerName || customerAccount.email.split("@")[0]
+        await sendChatMessage(
+          `${displayName}が入室しました`,
+          "system",
+          "system",
+          customerAccount.storeId,
+          "system"
+        )
+      } catch (error) {
+        console.error("Error sending join notification:", error)
+      }
+    }
+    sendJoinNotification()
+    
     const unsubscribe = subscribeToChatMessages(
       customerAccount.storeId,
       (msgs) => {
@@ -111,6 +129,20 @@ export function ChatRoom() {
             ) : (
               messages.map((msg) => {
                 const isOwnMessage = msg.userId === customerAccount.id
+                const isSystemMessage = msg.type === "system"
+                
+                // システムメッセージの表示
+                if (isSystemMessage) {
+                  return (
+                    <div key={msg.id} className="flex justify-center my-2">
+                      <div className="text-xs text-muted-foreground bg-muted/50 px-3 py-1 rounded-full">
+                        {msg.message}
+                      </div>
+                    </div>
+                  )
+                }
+                
+                // 通常メッセージの表示
                 return (
                   <div
                     key={msg.id}

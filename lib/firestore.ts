@@ -1886,7 +1886,13 @@ const getChatMessagesCollection = (storeId: string) => {
   return collection(checkFirebaseConfig(), `chatRooms/store_${storeId}/messages`)
 }
 
-export const sendChatMessage = async (message: string, userId: string, userName: string, storeId: string): Promise<void> => {
+export const sendChatMessage = async (
+  message: string, 
+  userId: string, 
+  userName: string, 
+  storeId: string,
+  type: "user" | "system" = "user"
+): Promise<void> => {
   if (!isFirebaseConfigured()) return
   if (!storeId) throw new Error("Store ID not found")
   
@@ -1896,6 +1902,7 @@ export const sendChatMessage = async (message: string, userId: string, userName:
     userId,
     userName,
     message,
+    type,
     createdAt: serverTimestamp(),
   })
 }
@@ -1932,6 +1939,7 @@ export const subscribeToChatMessages = (
             userId: data.userId,
             userName: data.userName,
             message: data.message,
+            type: data.type || "user",
             createdAt: data.createdAt?.toDate() || new Date(),
           } as ChatMessage
         })
