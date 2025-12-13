@@ -383,3 +383,12 @@ export interface MembershipRankConfig {
     freeCharge: boolean // チャージ無料
   }
 }
+
+export interface ChatMessage {
+  id: string
+  storeId: string // 店舗ID
+  userId: string // 送信者のユーザーID（customerAccountのid）
+  userName: string // 送信者の表示名
+  message: string // メッセージ内容
+  createdAt: Date
+}

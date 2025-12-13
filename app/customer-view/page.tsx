@@ -36,6 +36,7 @@ import { PostsList } from "@/components/posts/posts-list"
 import { MyPostsList } from "@/components/posts/my-posts-list"
 import { PostDetail } from "@/components/posts/post-detail"
 import { AIPlayersInfo } from "@/components/ai-players-info"
+import { ChatRoom } from "@/components/chat/chat-room"
 
 // interface RankingData { // lint/suspicious/noRedeclare: This type declaration shadows the imported type 'RankingData'.
 //   playerId: string
@@ -53,7 +54,7 @@ import { AIPlayersInfo } from "@/components/ai-players-info"
 export default function CustomerView() {
   const { customerAccount, setCustomerAccount, signOut } = useAuth()
 
-  const [viewMode, setViewMode] = useState<"main" | "posts" | "my-posts" | "post-detail" | "ai-players">("main")
+  const [viewMode, setViewMode] = useState<"main" | "posts" | "my-posts" | "post-detail" | "ai-players" | "chat">("main")
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null)
 
   const [isDetailedDataModalOpen, setIsDetailedDataModalOpen] = useState(false)
@@ -910,6 +911,17 @@ ${availableExamples.slice(0, 5).join("\n")}
                               >
                                 <Bot className="h-5 w-5 mr-3" />
                                 AIポーカープレイヤー紹介
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                className="w-full justify-start text-base py-3"
+                                onClick={() => {
+                                  setViewMode("chat")
+                                  setIsMenuOpen(false)
+                                }}
+                              >
+                                <MessageCircle className="h-5 w-5 mr-3" />
+                                チャット
                               </Button>
                               <Button
                                 variant="ghost"
@@ -1807,6 +1819,17 @@ ${availableExamples.slice(0, 5).join("\n")}
               </Button>
             </div>
             <AIPlayersInfo />
+          </div>
+        )}
+        {viewMode === "chat" && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-purple-800">チャット</h2>
+              <Button variant="outline" onClick={() => setViewMode("main")}>
+                戻る
+              </Button>
+            </div>
+            <ChatRoom />
           </div>
         )}
       </div>

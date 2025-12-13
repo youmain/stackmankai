@@ -1855,3 +1855,70 @@ export const resetAllPlayersMembershipData = async (): Promise<void> => {
     throw error
   }
 }
+
+// --- Chat Messages ---
+
+const getChatMessagesCollection = () => {
+  const storeId = getStoreId()
+  if (!storeId) throw new Error("Store ID not found")
+  return collection(checkFirebaseConfig(), `stores/${storeId}/chatMessages`)
+}
+
+export const sendChatMessage = async (message: string, userId: string, userName: string): Promise<void> => {
+  if (!isFirebaseConfigured()) return
+  const storeId = getStoreId()
+  if (!storeId) throw new Error("Store ID not found")
+  
+  const messagesCollection = getChatMessagesCollection()
+  await addDoc(messagesCollection, {
+    storeId,
+    userId,
+    userName,
+    message,
+    createdAt: serverTimestamp(),
+  })
+}
+
+export const subscribeToChatMessages = (
+  callback: (messages: ChatMessage[]) => void,
+  onError?: (error: Error) => void
+): (() => void) => {
+  if (!isFirebaseConfigured()) {
+    callback([])
+    return () => {}
+  }
+  
+  try {
+    const messagesCollection = getChatMessagesCollection()
+    const q = query(messagesCollection, orderBy("createdAt", "desc"), limit(100))
+    
+    return onSnapshot(
+      q,
+      (snapshot) => {
+        const messages = snapshot.docs.map((doc) => {
+          const data = doc.data()
+          return {
+            id: doc.id,
+            storeId: data.storeId,
+            userId: data.userId,
+            userName: data.userName,
+            message: data.message,
+            createdAt: data.createdAt?.toDate() || new Date(),
+          } as ChatMessage
+        })
+        // 新しい順から古い順に並び替え
+        messages.reverse()
+        callback(messages)
+      },
+      (error) => {
+        console.error("Error subscribing to chat messages:", error)
+        if (onError) onError(error)
+      }
+    )
+  } catch (error) {
+    console.error("Error setting up chat subscription:", error)
+    if (onError) onError(error as Error)
+    callback([])
+    return () => {}
+  }
+}
