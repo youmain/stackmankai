@@ -178,22 +178,33 @@ export default function CustomerView() {
   // linkedPlayerが見つかった時にstoreIdを自動更新
   useEffect(() => {
     const updateStoreIdIfNeeded = async () => {
-      if (linkedPlayer && customerAccount && !customerAccount.storeId && linkedPlayer.storeId) {
-        console.log("[v0] Updating customerAccount with storeId from player:", linkedPlayer.storeId)
-        try {
-          await updateCustomerAccount(customerAccount.id, {
+      if (linkedPlayer && customerAccount) {
+        // storeIdまたはplayerNameが未設定の場合に更新
+        const needsUpdate = !customerAccount.storeId || !customerAccount.playerName
+        
+        if (needsUpdate && linkedPlayer.storeId) {
+          console.log("[v0] Updating customerAccount with player info:", {
             storeId: linkedPlayer.storeId,
-            storeName: linkedPlayer.storeName || "店舗",
+            playerName: linkedPlayer.name || linkedPlayer.pokerName,
           })
-          // Update local customerAccount state
-          setCustomerAccount({
-            ...customerAccount,
-            storeId: linkedPlayer.storeId,
-            storeName: linkedPlayer.storeName || "店舗",
-          })
-          console.log("[v0] CustomerAccount storeId updated successfully")
-        } catch (error) {
-          console.error("[v0] Error updating customerAccount storeId:", error)
+          try {
+            const playerName = linkedPlayer.name || linkedPlayer.pokerName || `プレイヤー${linkedPlayer.uniqueId}`
+            await updateCustomerAccount(customerAccount.id, {
+              storeId: linkedPlayer.storeId,
+              storeName: linkedPlayer.storeName || "店舗",
+              playerName: playerName,
+            })
+            // Update local customerAccount state
+            setCustomerAccount({
+              ...customerAccount,
+              storeId: linkedPlayer.storeId,
+              storeName: linkedPlayer.storeName || "店舗",
+              playerName: playerName,
+            })
+            console.log("[v0] CustomerAccount updated successfully")
+          } catch (error) {
+            console.error("[v0] Error updating customerAccount:", error)
+          }
         }
       }
     }
