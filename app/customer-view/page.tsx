@@ -179,8 +179,9 @@ export default function CustomerView() {
   useEffect(() => {
     const updateStoreIdIfNeeded = async () => {
       if (linkedPlayer && customerAccount) {
-        // storeIdまたはplayerNameが未設定の場合に更新
-        const needsUpdate = !customerAccount.storeId || !customerAccount.playerName
+        // storeIdまたはplayerNameが未設定または不正な場合に更新
+        const hasInvalidPlayerName = customerAccount.playerName?.startsWith("プレイヤー") || !customerAccount.playerName
+        const needsUpdate = !customerAccount.storeId || hasInvalidPlayerName
         
         if (needsUpdate && linkedPlayer.storeId) {
           console.log("[v0] Updating customerAccount with player info:", {
