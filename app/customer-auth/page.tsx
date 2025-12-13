@@ -12,7 +12,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Loader2, Mail, Lock, User, ArrowLeft, Gift } from "lucide-react"
 import { isFirebaseConfigured } from "@/lib/firebase"
-import { getCustomerByEmail, linkPlayerToCustomer } from "@/lib/firestore"
+import { getCustomerByEmail, linkPlayerToCustomer, createCustomerAccount } from "@/lib/firestore"
 
 export default function CustomerAuthPage() {
   const [isLoading, setIsLoading] = useState(false)
