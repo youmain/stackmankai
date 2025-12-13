@@ -1504,9 +1504,17 @@ export const updateCustomerAccount = async (customerId: string, data: Partial<Cu
   await updateDoc(doc(getCustomerAccountsCollection(), customerId), { ...data, updatedAt: serverTimestamp() })
 }
 
-export const linkPlayerToCustomer = async (playerId: string, customerId: string): Promise<void> => {
+export const linkPlayerToCustomer = async (customerId: string, playerId: string, playerName: string): Promise<void> => {
   if (!isFirebaseConfigured()) return
-  await updatePlayer(playerId, { uniqueId: customerId }) // Using uniqueId to link for now
+  
+  // Update customer account with player info
+  await updateCustomerAccount(customerId, {
+    playerId,
+    playerName,
+  })
+  
+  // Update player with customer link
+  await updatePlayer(playerId, { uniqueId: customerId })
 }
 
 export const subscribeToCustomerAccounts = (callback: (customers: CustomerAccount[]) => void): (() => void) => {
