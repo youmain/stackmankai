@@ -35,7 +35,7 @@ const CardDisplay = ({ card, isHidden }: { card: PokerCard; isHidden?: boolean }
   if (isHidden) {
     return (
       <div 
-        className="w-12 h-16 rounded shadow-md"
+        className="w-16 h-22 rounded shadow-md"
         style={{
           backgroundImage: "url('/card-back.png')",
           backgroundSize: "cover",
@@ -46,11 +46,11 @@ const CardDisplay = ({ card, isHidden }: { card: PokerCard; isHidden?: boolean }
   }
   
   return (
-    <div className="w-12 h-16 bg-white border-2 border-gray-300 rounded flex flex-col items-center justify-center shadow-md">
-      <span className={`text-lg font-bold ${getSuitColor(card.suit)}`}>
+    <div className="w-16 h-22 bg-white border-2 border-gray-300 rounded flex flex-col items-center justify-center shadow-md">
+      <span className={`text-xl font-bold ${getSuitColor(card.suit)}`}>
         {card.rank}
       </span>
-      <span className={`text-2xl ${getSuitColor(card.suit)}`}>
+      <span className={`text-3xl ${getSuitColor(card.suit)}`}>
         {getSuitSymbol(card.suit)}
       </span>
     </div>
@@ -117,31 +117,30 @@ const PlayerSeat = ({
       
       {/* プレイヤー情報 */}
       <div
-        className={`w-20 h-20 rounded-full flex flex-col items-center justify-center ${
+        className={`bg-white/95 shadow-lg rounded-lg p-3 border-2 flex flex-col items-center min-w-[150px] ${
           isCurrentPlayer ? "bg-green-500 border-4 border-green-700" : "bg-gray-700 border-2 border-gray-600"
         } ${player.isFolded ? "opacity-50" : ""}`}
       >
-        <div className="text-white text-[9px] font-semibold truncate w-16 text-center leading-tight">
+        <div className="text-gray-900 text-xs font-bold truncate max-w-full text-center">
           {player.userName}
         </div>
-        <div className="text-white text-[11px] font-bold mt-0.5">
+        <div className="text-gray-900 text-sm font-bold mt-1">
           ¥{player.stack.toLocaleString()}
         </div>
       </div>
       
       {/* カード */}
       {(player.cards.length > 0 || true) && (
-        <div className="flex gap-0.5">
+        <div className="flex gap-1 mt-1">
           {(player.cards.length > 0 ? player.cards : [
             { suit: "hearts" as const, rank: "A" as const },
             { suit: "spades" as const, rank: "K" as const }
           ] as PokerCard[]).map((card, idx) => (
-            <div key={idx} className="scale-75">
-              <CardDisplay
-                card={card}
-                isHidden={!isCurrentUser && !player.isFolded}
-              />
-            </div>
+            <CardDisplay
+              key={idx}
+              card={card}
+              isHidden={!isCurrentUser && !player.isFolded}
+            />
           ))}
         </div>
       )}
@@ -220,7 +219,7 @@ export function PokerTable({
             </div>
             
             {/* コミュニティカード表示エリア */}
-            <div className="flex gap-1 sm:gap-2 min-h-[64px] items-center justify-center flex-wrap">
+            <div className="bg-green-800/50 rounded-lg p-3 flex gap-2 items-center justify-center flex-wrap">
               {(game.communityCards.length > 0 ? game.communityCards : [
                 { suit: "diamonds" as const, rank: "Q" as const },
                 { suit: "clubs" as const, rank: "J" as const },
@@ -228,9 +227,7 @@ export function PokerTable({
                 { suit: "spades" as const, rank: "9" as const },
                 { suit: "diamonds" as const, rank: "8" as const }
               ] as PokerCard[]).map((card, idx) => (
-                <div key={idx} className="scale-75 sm:scale-100">
-                  <CardDisplay card={card} />
-                </div>
+                <CardDisplay key={idx} card={card} />
               ))}
             </div>
             
