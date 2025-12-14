@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useMemo, useCallback } from "react"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Calendar } from "@/components/ui/calendar"
@@ -53,6 +54,7 @@ import { ChatRoom } from "@/components/chat/chat-room"
 
 export default function CustomerView() {
   const { customerAccount, setCustomerAccount, signOut } = useAuth()
+  const router = useRouter()
 
   const [viewMode, setViewMode] = useState<"main" | "posts" | "my-posts" | "post-detail" | "ai-players" | "chat">(() => {
     // ローカルストレージから前回のviewModeを復元
@@ -969,7 +971,7 @@ ${availableExamples.slice(0, 5).join("\n")}
                                 variant="ghost"
                                 className="w-full justify-start text-base py-3"
                                 onClick={() => {
-                                  setViewMode("chat")
+                                  router.push("/customer-view/chat")
                                   setIsMenuOpen(false)
                                 }}
                               >
