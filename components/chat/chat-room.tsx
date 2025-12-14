@@ -203,16 +203,18 @@ export function ChatRoom() {
         </div>
         {/* 入室中ユーザー表示 */}
         {activeUsers.length > 0 && (
-          <div className="mt-3 flex items-center gap-2 flex-wrap">
-            <span className="text-sm text-muted-foreground">入室中:</span>
-            {activeUsers.map((user) => (
-              <div
-                key={user.userId}
-                className="px-2 py-1 text-xs font-medium border border-purple-300 bg-purple-50 text-purple-700 rounded"
-              >
-                {user.userName}
-              </div>
-            ))}
+          <div className="mt-3">
+            <span className="text-sm text-muted-foreground mb-2 block">入室中: ({activeUsers.length}人)</span>
+            <div className="flex gap-2 overflow-x-auto pb-2" style={{ scrollbarWidth: 'thin' }}>
+              {activeUsers.map((user) => (
+                <div
+                  key={user.userId}
+                  className="px-3 py-1.5 text-xs font-medium border border-purple-300 bg-purple-50 text-purple-700 rounded whitespace-nowrap flex-shrink-0"
+                >
+                  {user.userName}
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </CardHeader>
