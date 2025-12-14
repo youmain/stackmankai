@@ -84,7 +84,7 @@ const PlayerSeat = ({
           onClick={() => onJoinSeat(seatIndex)}
           variant="outline"
           size="sm"
-          className="w-16 h-16 rounded-full border-2 border-dashed border-gray-400 text-xs"
+          className="w-20 h-20 rounded-full border-2 border-dashed border-gray-400 text-sm"
         >
           座る
         </Button>
@@ -117,15 +117,15 @@ const PlayerSeat = ({
       
       {/* プレイヤー情報 */}
       <div
-        className={`w-16 h-16 rounded-full flex flex-col items-center justify-center ${
+        className={`w-20 h-20 rounded-full flex flex-col items-center justify-center ${
           isCurrentPlayer ? "bg-green-500 border-4 border-green-700" : "bg-gray-700 border-2 border-gray-600"
         } ${player.isFolded ? "opacity-50" : ""}`}
       >
-        <div className="text-white text-[10px] font-semibold truncate w-14 text-center">
+        <div className="text-white text-[9px] font-semibold truncate w-16 text-center leading-tight">
           {player.userName}
         </div>
-        <div className="text-white text-xs font-bold">
-          ¥{(player.stack / 1000).toFixed(0)}k
+        <div className="text-white text-[11px] font-bold mt-0.5">
+          ¥{player.stack.toLocaleString()}
         </div>
       </div>
       
@@ -177,18 +177,18 @@ export function PokerTable({
   const currentPlayer = game.players.find(p => p.userId === currentUserId)
   const isMyTurn = currentPlayer && game.players[game.currentPlayerIndex]?.userId === currentUserId
   
-  // 座席配置（10席を楕円形の外周に配置）
+  // 座席配置（10席を楕円形の外周に等間隔で配置）
   const seatPositions = [
-    { top: "5%", left: "50%", transform: "translate(-50%, 0)" }, // 上
-    { top: "15%", left: "75%", transform: "translate(-50%, 0)" }, // 右上
-    { top: "40%", left: "88%", transform: "translate(-50%, -50%)" }, // 右
-    { top: "65%", left: "75%", transform: "translate(-50%, -50%)" }, // 右下
-    { top: "85%", left: "60%", transform: "translate(-50%, -100%)" }, // 下右
-    { top: "85%", left: "40%", transform: "translate(-50%, -100%)" }, // 下左
-    { top: "65%", left: "25%", transform: "translate(-50%, -50%)" }, // 左下
-    { top: "40%", left: "12%", transform: "translate(-50%, -50%)" }, // 左
-    { top: "15%", left: "25%", transform: "translate(-50%, 0)" }, // 左上
-    { top: "5%", left: "70%", transform: "translate(-50%, 0)" }, // 上右（10席目）
+    { top: "8%", left: "50%", transform: "translate(-50%, 0)" },      // 0: 上中央
+    { top: "12%", left: "70%", transform: "translate(-50%, 0)" },     // 1: 上右
+    { top: "30%", left: "85%", transform: "translate(-50%, -50%)" },  // 2: 右上
+    { top: "55%", left: "88%", transform: "translate(-50%, -50%)" },  // 3: 右
+    { top: "78%", left: "70%", transform: "translate(-50%, -100%)" }, // 4: 右下
+    { top: "85%", left: "50%", transform: "translate(-50%, -100%)" }, // 5: 下中央
+    { top: "78%", left: "30%", transform: "translate(-50%, -100%)" }, // 6: 左下
+    { top: "55%", left: "12%", transform: "translate(-50%, -50%)" },  // 7: 左
+    { top: "30%", left: "15%", transform: "translate(-50%, -50%)" },  // 8: 左上
+    { top: "12%", left: "30%", transform: "translate(-50%, 0)" },     // 9: 上左
   ]
   
   return (
