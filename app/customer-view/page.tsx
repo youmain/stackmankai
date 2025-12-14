@@ -54,8 +54,24 @@ import { ChatRoom } from "@/components/chat/chat-room"
 export default function CustomerView() {
   const { customerAccount, setCustomerAccount, signOut } = useAuth()
 
-  const [viewMode, setViewMode] = useState<"main" | "posts" | "my-posts" | "post-detail" | "ai-players" | "chat">("main")
+  const [viewMode, setViewMode] = useState<"main" | "posts" | "my-posts" | "post-detail" | "ai-players" | "chat">(() => {
+    // ローカルストレージから前回のviewModeを復元
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("customerViewMode")
+      if (saved === "chat" || saved === "posts" || saved === "my-posts" || saved === "ai-players") {
+        return saved
+      }
+    }
+    return "main"
+  })
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null)
+
+  // viewModeが変更されたらローカルストレージに保存
+  useEffect(() => {
+    if (viewMode !== "post-detail") {
+      localStorage.setItem("customerViewMode", viewMode)
+    }
+  }, [viewMode])
 
   const [isDetailedDataModalOpen, setIsDetailedDataModalOpen] = useState(false)
   const [selectedPlayerForDetailedData, setSelectedPlayerForDetailedData] = useState<{
