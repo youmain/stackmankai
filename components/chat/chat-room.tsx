@@ -18,6 +18,7 @@ export function ChatRoom() {
   const [isSending, setIsSending] = useState(false)
   const [error, setError] = useState("")
   const [hiddenMessageIds, setHiddenMessageIds] = useState<Set<string>>(new Set())
+  const [activeUsers, setActiveUsers] = useState<Set<string>>(new Set())
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -52,29 +53,22 @@ export function ChatRoom() {
 
     console.log("Setting up chat subscription for store:", customerAccount.storeId)
     
-    // 入室通知を送信
-    const sendJoinNotification = async () => {
-      try {
-        const displayName = customerAccount.playerName || customerAccount.email.split("@")[0]
-        await sendChatMessage(
-          `${displayName}が入室しました`,
-          "system",
-          "system",
-          customerAccount.storeId,
-          "system"
-        )
-      } catch (error) {
-        console.error("Error sending join notification:", error)
-      }
-    }
-    sendJoinNotification()
-    
     const unsubscribe = subscribeToChatMessages(
       customerAccount.storeId,
       (msgs) => {
         console.log("Received messages:", msgs.length)
         setMessages(msgs)
         setError("") // Clear error on successful load
+        
+        // 最近5分以内にメッセージを送信したユーザーを入室中とする
+        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000)
+        const recentUsers = new Set<string>()
+        msgs.forEach(msg => {
+          if (msg.timestamp && msg.timestamp.toDate() > fiveMinutesAgo && msg.userName && msg.type !== "system") {
+            recentUsers.add(msg.userName)
+          }
+        })
+        setActiveUsers(recentUsers)
         // 新しいメッセージが追加されたら自動スクロール
         setTimeout(() => {
           if (scrollAreaRef.current) {
@@ -167,6 +161,20 @@ export function ChatRoom() {
             履歴消去
           </Button>
         </div>
+        {/* 入室中ユーザー表示 */}
+        {activeUsers.size > 0 && (
+          <div className="mt-3 flex items-center gap-2 flex-wrap">
+            <span className="text-sm text-muted-foreground">入室中:</span>
+            {Array.from(activeUsers).map((userName) => (
+              <div
+                key={userName}
+                className="px-2 py-1 text-xs font-medium border border-purple-300 bg-purple-50 text-purple-700 rounded"
+              >
+                {userName}
+              </div>
+            ))}
+          </div>
+        )}
       </CardHeader>
       <CardContent className="flex-1 flex flex-col gap-4 p-4 overflow-hidden">
         {/* メッセージ一覧 */}
