@@ -1050,7 +1050,7 @@ ${availableExamples.slice(0, 5).join("\n")}
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         {/* currentCustomerの代わりにcustomerAccountを使用 */}
-        {customerAccount?.playerId && linkedPlayer && (
+        {customerAccount?.playerId && linkedPlayer && viewMode !== "chat" && (
           <>
             {/* プレイヤー情報カード */}
             <Card className="border-green-200 bg-green-50 shadow-md">
@@ -1275,6 +1275,7 @@ ${availableExamples.slice(0, 5).join("\n")}
         )}
 
         {/* プレイ中表示 */}
+        {viewMode !== "chat" && (
         <Card className="border-green-200 bg-green-50 shadow-md">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-green-700 text-lg sm:text-xl">
@@ -1299,6 +1300,7 @@ ${availableExamples.slice(0, 5).join("\n")}
             )}
           </CardContent>
         </Card>
+        )}
 
         {viewMode === "main" && (
           <>
