@@ -130,9 +130,12 @@ const PlayerSeat = ({
       </div>
       
       {/* カード */}
-      {player.cards.length > 0 && (
+      {(player.cards.length > 0 || true) && (
         <div className="flex gap-0.5">
-          {player.cards.map((card, idx) => (
+          {(player.cards.length > 0 ? player.cards : [
+            { suit: "hearts", rank: "A" },
+            { suit: "spades", rank: "K" }
+          ]).map((card, idx) => (
             <div key={idx} className="scale-75">
               <CardDisplay
                 card={card}
@@ -193,16 +196,17 @@ export function PokerTable({
   
   return (
     <Card className="w-full">
-      <CardContent className="p-4">
-        {/* テーブル */}
-        <div 
-          className="relative w-full h-[600px] rounded-3xl shadow-2xl overflow-hidden"
-          style={{
-            backgroundImage: "url('/poker-table-bg.png')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
+      <CardContent className="p-2 sm:p-4">
+        {/* テーブル - アスペクト比を維持 */}
+        <div className="relative w-full" style={{ paddingBottom: "60%" }}>
+          <div 
+            className="absolute inset-0 rounded-3xl shadow-2xl overflow-hidden"
+            style={{
+              backgroundImage: "url('/poker-table-bg.png')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          >
           {/* 中央エリア */}
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-3 w-full max-w-md">
             {/* ポットとフェーズ */}
@@ -216,16 +220,18 @@ export function PokerTable({
             </div>
             
             {/* コミュニティカード表示エリア */}
-            <div className="flex gap-2 min-h-[64px] items-center justify-center">
-              {game.communityCards.length > 0 ? (
-                game.communityCards.map((card, idx) => (
-                  <CardDisplay key={idx} card={card} />
-                ))
-              ) : (
-                game.phase !== "waiting" && (
-                  <div className="text-white/50 text-sm">コミュニティカード</div>
-                )
-              )}
+            <div className="flex gap-1 sm:gap-2 min-h-[64px] items-center justify-center flex-wrap">
+              {(game.communityCards.length > 0 ? game.communityCards : [
+                { suit: "diamonds", rank: "Q" },
+                { suit: "clubs", rank: "J" },
+                { suit: "hearts", rank: "10" },
+                { suit: "spades", rank: "9" },
+                { suit: "diamonds", rank: "8" }
+              ]).map((card, idx) => (
+                <div key={idx} className="scale-75 sm:scale-100">
+                  <CardDisplay card={card} />
+                </div>
+              ))}
             </div>
             
             {/* ゲーム開始ボタン */}
@@ -260,6 +266,8 @@ export function PokerTable({
               </div>
             )
           })}
+        </div>
+          </div>
         </div>
         
         {/* アクションボタン */}
