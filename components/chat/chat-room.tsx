@@ -19,6 +19,7 @@ export function ChatRoom() {
   const [error, setError] = useState("")
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   // メッセージが更新されたら最下部にスクロール
   useEffect(() => {
@@ -92,6 +93,10 @@ export function ChatRoom() {
       
       await sendChatMessage(newMessage.trim(), customerAccount.id, displayName, customerAccount.storeId)
       setNewMessage("")
+      // 送信後に入力欄にフォーカスを戻す
+      setTimeout(() => {
+        inputRef.current?.focus()
+      }, 100)
     } catch (err) {
       console.error("Error sending message:", err)
       setError("メッセージの送信に失敗しました")
@@ -193,6 +198,7 @@ export function ChatRoom() {
         {/* メッセージ入力 */}
         <div className="flex gap-2">
           <Input
+            ref={inputRef}
             placeholder="メッセージを入力..."
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
