@@ -133,9 +133,9 @@ const PlayerSeat = ({
       {(player.cards.length > 0 || true) && (
         <div className="flex gap-0.5">
           {(player.cards.length > 0 ? player.cards : [
-            { suit: "hearts", rank: "A" },
-            { suit: "spades", rank: "K" }
-          ]).map((card, idx) => (
+            { suit: "hearts" as const, rank: "A" as const },
+            { suit: "spades" as const, rank: "K" as const }
+          ] as PokerCard[]).map((card, idx) => (
             <div key={idx} className="scale-75">
               <CardDisplay
                 card={card}
@@ -222,12 +222,12 @@ export function PokerTable({
             {/* コミュニティカード表示エリア */}
             <div className="flex gap-1 sm:gap-2 min-h-[64px] items-center justify-center flex-wrap">
               {(game.communityCards.length > 0 ? game.communityCards : [
-                { suit: "diamonds", rank: "Q" },
-                { suit: "clubs", rank: "J" },
-                { suit: "hearts", rank: "10" },
-                { suit: "spades", rank: "9" },
-                { suit: "diamonds", rank: "8" }
-              ]).map((card, idx) => (
+                { suit: "diamonds" as const, rank: "Q" as const },
+                { suit: "clubs" as const, rank: "J" as const },
+                { suit: "hearts" as const, rank: "10" as const },
+                { suit: "spades" as const, rank: "9" as const },
+                { suit: "diamonds" as const, rank: "8" as const }
+              ] as PokerCard[]).map((card, idx) => (
                 <div key={idx} className="scale-75 sm:scale-100">
                   <CardDisplay card={card} />
                 </div>
