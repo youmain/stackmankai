@@ -42,7 +42,7 @@ export default function PokerPage() {
       {
         userId: "user2",
         userName: "プレイヤー2",
-        seatIndex: 2,
+        seatIndex: 1,
         stack: 8500,
         currentBet: 500,
         cards: [],
@@ -52,7 +52,7 @@ export default function PokerPage() {
       {
         userId: "user3",
         userName: "プレイヤー3",
-        seatIndex: 4,
+        seatIndex: 2,
         stack: 12000,
         currentBet: 0,
         cards: [],
@@ -62,8 +62,68 @@ export default function PokerPage() {
       {
         userId: "user4",
         userName: "プレイヤー4",
-        seatIndex: 6,
+        seatIndex: 3,
         stack: 9500,
+        currentBet: 500,
+        cards: [],
+        isFolded: false,
+        lastAction: "call"
+      },
+      {
+        userId: "user5",
+        userName: "プレイヤー5",
+        seatIndex: 4,
+        stack: 15000,
+        currentBet: 500,
+        cards: [],
+        isFolded: false,
+        lastAction: "call"
+      },
+      {
+        userId: "user6",
+        userName: "プレイヤー6",
+        seatIndex: 5,
+        stack: 7500,
+        currentBet: 0,
+        cards: [],
+        isFolded: true,
+        lastAction: "fold"
+      },
+      {
+        userId: "user7",
+        userName: "プレイヤー7",
+        seatIndex: 6,
+        stack: 11000,
+        currentBet: 500,
+        cards: [],
+        isFolded: false,
+        lastAction: "call"
+      },
+      {
+        userId: "user8",
+        userName: "プレイヤー8",
+        seatIndex: 7,
+        stack: 13500,
+        currentBet: 500,
+        cards: [],
+        isFolded: false,
+        lastAction: "call"
+      },
+      {
+        userId: "user9",
+        userName: "プレイヤー9",
+        seatIndex: 8,
+        stack: 9000,
+        currentBet: 0,
+        cards: [],
+        isFolded: true,
+        lastAction: "fold"
+      },
+      {
+        userId: "user10",
+        userName: "プレイヤー10",
+        seatIndex: 9,
+        stack: 14000,
         currentBet: 500,
         cards: [],
         isFolded: false,
