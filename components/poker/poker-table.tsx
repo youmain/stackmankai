@@ -34,9 +34,14 @@ const getSuitColor = (suit: string) => {
 const CardDisplay = ({ card, isHidden }: { card: PokerCard; isHidden?: boolean }) => {
   if (isHidden) {
     return (
-      <div className="w-12 h-16 bg-blue-600 border-2 border-blue-800 rounded flex items-center justify-center">
-        <div className="text-white text-xs">🂠</div>
-      </div>
+      <div 
+        className="w-12 h-16 rounded shadow-md"
+        style={{
+          backgroundImage: "url('/card-back.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      />
     )
   }
   
@@ -79,7 +84,7 @@ const PlayerSeat = ({
           onClick={() => onJoinSeat(seatIndex)}
           variant="outline"
           size="sm"
-          className="w-24 h-24 rounded-full border-2 border-dashed border-gray-400"
+          className="w-16 h-16 rounded-full border-2 border-dashed border-gray-400 text-xs"
         >
           座る
         </Button>
@@ -112,32 +117,28 @@ const PlayerSeat = ({
       
       {/* プレイヤー情報 */}
       <div
-        className={`w-24 h-24 rounded-full flex flex-col items-center justify-center ${
+        className={`w-16 h-16 rounded-full flex flex-col items-center justify-center ${
           isCurrentPlayer ? "bg-green-500 border-4 border-green-700" : "bg-gray-700 border-2 border-gray-600"
         } ${player.isFolded ? "opacity-50" : ""}`}
       >
-        <div className="text-white text-xs font-semibold truncate w-20 text-center">
+        <div className="text-white text-[10px] font-semibold truncate w-14 text-center">
           {player.userName}
         </div>
-        <div className="text-white text-sm font-bold">
-          ¥{player.stack.toLocaleString()}
+        <div className="text-white text-xs font-bold">
+          ¥{(player.stack / 1000).toFixed(0)}k
         </div>
-        {player.lastAction && (
-          <div className="text-yellow-300 text-xs uppercase">
-            {player.lastAction}
-          </div>
-        )}
       </div>
       
       {/* カード */}
       {player.cards.length > 0 && (
-        <div className="flex gap-1">
+        <div className="flex gap-0.5">
           {player.cards.map((card, idx) => (
-            <CardDisplay
-              key={idx}
-              card={card}
-              isHidden={!isCurrentUser && !player.isFolded}
-            />
+            <div key={idx} className="scale-75">
+              <CardDisplay
+                card={card}
+                isHidden={!isCurrentUser && !player.isFolded}
+              />
+            </div>
           ))}
         </div>
       )}
@@ -203,24 +204,28 @@ export function PokerTable({
           }}
         >
           {/* 中央エリア */}
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-4">
-            {/* ポット */}
-            <div className="bg-yellow-500 text-gray-900 px-6 py-3 rounded-lg text-xl font-bold shadow-lg">
-              POT: ¥{game.pot.toLocaleString()}
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-3 w-full max-w-md">
+            {/* ポットとフェーズ */}
+            <div className="flex items-center gap-3">
+              <div className="bg-yellow-500 text-gray-900 px-4 py-2 rounded-lg text-lg font-bold shadow-lg">
+                POT: ¥{game.pot.toLocaleString()}
+              </div>
+              <div className="bg-white/90 px-3 py-1 rounded text-xs font-semibold uppercase">
+                {game.phase}
+              </div>
             </div>
             
-            {/* コミュニティカード */}
-            {game.communityCards.length > 0 && (
-              <div className="flex gap-2">
-                {game.communityCards.map((card, idx) => (
+            {/* コミュニティカード表示エリア */}
+            <div className="flex gap-2 min-h-[64px] items-center justify-center">
+              {game.communityCards.length > 0 ? (
+                game.communityCards.map((card, idx) => (
                   <CardDisplay key={idx} card={card} />
-                ))}
-              </div>
-            )}
-            
-            {/* ゲームフェーズ */}
-            <div className="bg-white/90 px-4 py-2 rounded text-sm font-semibold uppercase">
-              {game.phase}
+                ))
+              ) : (
+                game.phase !== "waiting" && (
+                  <div className="text-white/50 text-sm">コミュニティカード</div>
+                )
+              )}
             </div>
             
             {/* ゲーム開始ボタン */}
