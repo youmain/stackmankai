@@ -149,23 +149,20 @@ export function ChatRoom() {
                     className={`flex ${isOwnMessage ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`max-w-[70%] rounded-lg p-3 ${
+                      className={`max-w-[70%] rounded-lg px-3 py-2 ${
                         isOwnMessage
                           ? "bg-primary text-primary-foreground"
                           : "bg-muted"
                       }`}
                     >
-                      <div className="text-xs opacity-70 mb-1">
-                        {msg.userName}
-                      </div>
-                      <div className="text-sm whitespace-pre-wrap break-words">
-                        {msg.message}
-                      </div>
-                      <div className="text-xs opacity-50 mt-1">
-                        {msg.createdAt.toLocaleTimeString("ja-JP", {
+                      <div className="text-sm">
+                        <span className="font-semibold">{msg.userName}</span>
+                        <span>: </span>
+                        <span className="whitespace-pre-wrap break-words">{msg.message}</span>
+                        <span className="text-xs opacity-70 ml-2">({msg.createdAt.toLocaleTimeString("ja-JP", {
                           hour: "2-digit",
                           minute: "2-digit",
-                        })}
+                        })})</span>
                       </div>
                     </div>
                   </div>
