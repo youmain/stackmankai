@@ -18,6 +18,14 @@ export function ChatRoom() {
   const [isSending, setIsSending] = useState(false)
   const [error, setError] = useState("")
   const scrollAreaRef = useRef<HTMLDivElement>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  // メッセージが更新されたら最下部にスクロール
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+    }
+  }, [messages])
 
   // メッセージの購読と入室通知
   useEffect(() => {
@@ -169,6 +177,8 @@ export function ChatRoom() {
                 )
               })
             )}
+            {/* スクロール用の目印 */}
+            <div ref={messagesEndRef} />
           </div>
         </ScrollArea>
 
