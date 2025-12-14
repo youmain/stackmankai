@@ -17,9 +17,23 @@ export function ChatRoom() {
   const [newMessage, setNewMessage] = useState("")
   const [isSending, setIsSending] = useState(false)
   const [error, setError] = useState("")
+  const [hiddenMessageIds, setHiddenMessageIds] = useState<Set<string>>(new Set())
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  // ローカルストレージから非表示メッセージIDを読み込む
+  useEffect(() => {
+    const storageKey = `hiddenMessages_${customerAccount?.storeId}`
+    const stored = localStorage.getItem(storageKey)
+    if (stored) {
+      try {
+        setHiddenMessageIds(new Set(JSON.parse(stored)))
+      } catch (e) {
+        console.error("Failed to parse hidden messages:", e)
+      }
+    }
+  }, [customerAccount?.storeId])
 
   // メッセージが更新されたら最下部にスクロール
   useEffect(() => {
@@ -112,6 +126,19 @@ export function ChatRoom() {
     }
   }
 
+  const handleClearHistory = () => {
+    if (!customerAccount?.storeId) return
+    
+    // 現在表示されている全メッセージIDを非表示リストに追加
+    const allMessageIds = messages.map(msg => msg.id)
+    const newHiddenIds = new Set([...hiddenMessageIds, ...allMessageIds])
+    setHiddenMessageIds(newHiddenIds)
+    
+    // ローカルストレージに保存
+    const storageKey = `hiddenMessages_${customerAccount.storeId}`
+    localStorage.setItem(storageKey, JSON.stringify(Array.from(newHiddenIds)))
+  }
+
   if (!customerAccount) {
     return (
       <Alert>
@@ -126,21 +153,31 @@ export function ChatRoom() {
   return (
     <Card className="h-[calc(100vh-200px)] max-h-[700px] flex flex-col overflow-hidden">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <MessageCircle className="h-5 w-5" />
-          {customerAccount.storeName || "店舗"} チャット
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
+            <MessageCircle className="h-5 w-5" />
+            {customerAccount.storeName || "店舗"} チャット
+          </CardTitle>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleClearHistory}
+            disabled={messages.filter(msg => !hiddenMessageIds.has(msg.id)).length === 0}
+          >
+            履歴消去
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col gap-4 p-4 overflow-hidden">
         {/* メッセージ一覧 */}
         <ScrollArea className="flex-1 pr-4" ref={scrollAreaRef}>
           <div className="space-y-4">
-            {messages.length === 0 ? (
+            {messages.filter(msg => !hiddenMessageIds.has(msg.id)).length === 0 ? (
               <div className="text-center text-muted-foreground py-8">
                 まだメッセージがありません
               </div>
             ) : (
-              messages.map((msg) => {
+              messages.filter(msg => !hiddenMessageIds.has(msg.id)).map((msg) => {
                 const isOwnMessage = msg.userId === customerAccount.id
                 const isSystemMessage = msg.type === "system"
                 
