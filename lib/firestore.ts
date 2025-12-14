@@ -1968,7 +1968,8 @@ export const subscribeToChatMessages = (
  * Get presence collection reference for a store
  */
 const getPresenceCollection = (storeId: string) => {
-  const db = getFirestore()
+  const db = getDb()
+  if (!db) throw new Error("Firestore is not initialized")
   return collection(db, "chatRooms", `store_${storeId}`, "presence")
 }
 
