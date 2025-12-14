@@ -111,14 +111,14 @@ export function ChatRoom() {
   }
 
   return (
-    <Card className="h-[600px] flex flex-col">
+    <Card className="h-[calc(100vh-200px)] max-h-[700px] flex flex-col overflow-hidden">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <MessageCircle className="h-5 w-5" />
           {customerAccount.storeName || "店舗"} チャット
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 flex flex-col gap-4 p-4">
+      <CardContent className="flex-1 flex flex-col gap-4 p-4 overflow-hidden">
         {/* メッセージ一覧 */}
         <ScrollArea className="flex-1 pr-4" ref={scrollAreaRef}>
           <div className="space-y-4">
