@@ -1,21 +1,19 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { MessageCircle, X, ArrowLeft } from "lucide-react"
-import { useAuth } from "@/contexts/auth-context"
 import { ChatRoom } from "@/components/chat/chat-room"
 import PokerTableMobile from "@/components/poker/poker-table-mobile"
 import { PokerGame } from "@/types/poker"
 
 export default function PokerPage() {
-  const { customerAccount } = useAuth()
   const router = useRouter()
   const [isChatOpen, setIsChatOpen] = useState(false)
   
   // テスト用のゲームデータ
-  const [game, setGame] = useState<PokerGame>({
+  const [game] = useState<PokerGame>({
     id: "test-game-1",
     phase: "playing",
     pot: 15000,
@@ -79,25 +77,6 @@ export default function PokerPage() {
     createdAt: new Date(),
     updatedAt: new Date()
   })
-
-  useEffect(() => {
-    // 認証されていない場合はログインページにリダイレクト
-    if (customerAccount === null) {
-      router.push("/customer-auth")
-    }
-  }, [customerAccount, router])
-
-  // 認証チェック中または未認証の場合は何も表示しない
-  if (customerAccount === undefined || customerAccount === null) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">読み込み中...</p>
-        </div>
-      </div>
-    )
-  }
 
   const handleJoinSeat = (seatIndex: number) => {
     console.log("座席に着席:", seatIndex)
