@@ -176,25 +176,32 @@ export function PokerTable({
   const currentPlayer = game.players.find(p => p.userId === currentUserId)
   const isMyTurn = currentPlayer && game.players[game.currentPlayerIndex]?.userId === currentUserId
   
-  // 座席配置（10席を楕円形に配置）
+  // 座席配置（10席を楕円形の外周に配置）
   const seatPositions = [
-    { top: "50%", left: "50%", transform: "translate(-50%, -120px)" }, // 上
-    { top: "30%", left: "75%", transform: "translate(-50%, -50%)" }, // 右上
-    { top: "50%", left: "85%", transform: "translate(-50%, -50%)" }, // 右
-    { top: "70%", left: "75%", transform: "translate(-50%, -50%)" }, // 右下
-    { top: "80%", left: "60%", transform: "translate(-50%, -50%)" }, // 下右
-    { top: "80%", left: "40%", transform: "translate(-50%, -50%)" }, // 下左
-    { top: "70%", left: "25%", transform: "translate(-50%, -50%)" }, // 左下
-    { top: "50%", left: "15%", transform: "translate(-50%, -50%)" }, // 左
-    { top: "30%", left: "25%", transform: "translate(-50%, -50%)" }, // 左上
-    { top: "20%", left: "50%", transform: "translate(-50%, -50%)" }, // 上中央
+    { top: "5%", left: "50%", transform: "translate(-50%, 0)" }, // 上
+    { top: "15%", left: "75%", transform: "translate(-50%, 0)" }, // 右上
+    { top: "40%", left: "88%", transform: "translate(-50%, -50%)" }, // 右
+    { top: "65%", left: "75%", transform: "translate(-50%, -50%)" }, // 右下
+    { top: "85%", left: "60%", transform: "translate(-50%, -100%)" }, // 下右
+    { top: "85%", left: "40%", transform: "translate(-50%, -100%)" }, // 下左
+    { top: "65%", left: "25%", transform: "translate(-50%, -50%)" }, // 左下
+    { top: "40%", left: "12%", transform: "translate(-50%, -50%)" }, // 左
+    { top: "15%", left: "25%", transform: "translate(-50%, 0)" }, // 左上
+    { top: "5%", left: "70%", transform: "translate(-50%, 0)" }, // 上右（10席目）
   ]
   
   return (
     <Card className="w-full">
       <CardContent className="p-4">
         {/* テーブル */}
-        <div className="relative w-full h-[600px] bg-green-800 rounded-3xl border-8 border-amber-900 shadow-2xl">
+        <div 
+          className="relative w-full h-[600px] rounded-3xl shadow-2xl overflow-hidden"
+          style={{
+            backgroundImage: "url('/poker-table-bg.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
           {/* 中央エリア */}
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-4">
             {/* ポット */}
