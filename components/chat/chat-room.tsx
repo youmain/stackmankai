@@ -63,22 +63,11 @@ export function ChatRoom() {
         // 最近5分以内にメッセージを送信したユーザーを入室中とする
         const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000)
         const recentUsers = new Set<string>()
-        console.log("Checking active users from", msgs.length, "messages")
         msgs.forEach(msg => {
-          console.log("Message:", {
-            userName: msg.userName,
-            timestamp: msg.timestamp,
-            type: msg.type,
-            hasTimestamp: !!msg.timestamp,
-            timestampDate: msg.timestamp ? msg.timestamp.toDate() : null,
-            isRecent: msg.timestamp ? msg.timestamp.toDate() > fiveMinutesAgo : false
-          })
-          if (msg.timestamp && msg.timestamp.toDate() > fiveMinutesAgo && msg.userName && msg.type !== "system") {
-            console.log("Adding active user:", msg.userName)
+          if (msg.createdAt && msg.createdAt > fiveMinutesAgo && msg.userName && msg.type !== "system") {
             recentUsers.add(msg.userName)
           }
         })
-        console.log("Active users:", Array.from(recentUsers))
         setActiveUsers(recentUsers)
         // 新しいメッセージが追加されたら自動スクロール
         setTimeout(() => {
