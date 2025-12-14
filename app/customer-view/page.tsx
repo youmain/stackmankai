@@ -10,7 +10,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Separator } from "@/components/ui/separator"
 import { useAuth } from "@/contexts/auth-context"
-import { Trophy, Medal, Award, TrendingUp, Target, Zap, BarChart3, Percent, Star, Menu, AlertCircle, AlertTriangle, RefreshCw, LogOut, User, FileText, History, Bot, Gift, MessageCircle } from 'lucide-react'
+import { Trophy, Medal, Award, TrendingUp, Target, Zap, BarChart3, Percent, Star, Menu, AlertCircle, AlertTriangle, RefreshCw, LogOut, User, FileText, History, Bot, Gift, MessageCircle, Spade } from 'lucide-react'
 import {
   subscribeToPlayers,
   subscribeToDailyRankings,
@@ -977,6 +977,17 @@ ${availableExamples.slice(0, 5).join("\n")}
                               >
                                 <MessageCircle className="h-5 w-5 mr-3" />
                                 チャット
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                className="w-full justify-start text-base py-3 text-green-600 hover:text-green-700 hover:bg-green-50"
+                                onClick={() => {
+                                  router.push("/customer-view/poker")
+                                  setIsMenuOpen(false)
+                                }}
+                              >
+                                <Spade className="h-5 w-5 mr-3" />
+                                ポーカー
                               </Button>
                               <Button
                                 variant="ghost"
