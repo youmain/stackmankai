@@ -82,17 +82,16 @@ export function ChatRoom() {
 
     const displayName = customerAccount.playerName || customerAccount.email.split("@")[0]
     
-    console.log("Setting up presence for:", { storeId: customerAccount.storeId, userId: customerAccount.id, displayName })
-    
     // 入室時にプレゼンスを設定
-    setUserPresence(customerAccount.storeId, customerAccount.id, displayName)
-      .then(() => console.log("Presence set successfully"))
-      .catch(err => console.error("Error setting presence:", err))
+    setUserPresence(customerAccount.storeId, customerAccount.id, displayName).catch(err => 
+      console.error("Error setting presence:", err)
+    )
     
     // 30秒ごとにハートビートを送信
     const heartbeatInterval = setInterval(() => {
-      setUserPresence(customerAccount.storeId, customerAccount.id, displayName)
-        .catch(err => console.error("Error in heartbeat:", err))
+      setUserPresence(customerAccount.storeId, customerAccount.id, displayName).catch(err => 
+        console.error("Error in heartbeat:", err)
+      )
     }, 30000)
     
     // ページを閉じる時にプレゼンスを削除
@@ -116,7 +115,6 @@ export function ChatRoom() {
     const unsubscribe = subscribeToActiveUsers(
       customerAccount.storeId,
       (users) => {
-        console.log("Active users:", users)
         setActiveUsers(users)
       },
       (error) => {
