@@ -8,8 +8,11 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Send, MessageCircle, AlertCircle } from "lucide-react"
 import { subscribeToChatMessages, sendChatMessage, subscribeToActiveUsers, setUserPresence, removeUserPresence } from "@/lib/firestore"
+import { createPokerGame, joinPokerGame, performAction, startNewHand, subscribeToPokerGame } from "@/lib/poker-game"
 import type { ChatMessage } from "@/types"
+import type { PokerGameState } from "@/types/poker"
 import { useAuth } from "@/contexts/auth-context"
+import { PokerTable } from "@/components/poker/poker-table"
 
 export function ChatRoom() {
   const { customerAccount } = useAuth()
@@ -19,6 +22,8 @@ export function ChatRoom() {
   const [error, setError] = useState("")
   const [hiddenMessageIds, setHiddenMessageIds] = useState<Set<string>>(new Set())
   const [activeUsers, setActiveUsers] = useState<Array<{ userId: string; userName: string }>>([])
+  const [pokerGame, setPokerGame] = useState<PokerGameState | null>(null)
+  const [pokerGameId, setPokerGameId] = useState<string | null>(null)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -125,6 +130,45 @@ export function ChatRoom() {
     return () => unsubscribe()
   }, [customerAccount])
 
+  // ポーカーゲームの初期化と購読
+  useEffect(() => {
+    if (!customerAccount || !customerAccount.storeId) return
+
+    // ゲームIDをローカルストレージから取得または新規作成
+    const storageKey = `pokerGameId_${customerAccount.storeId}`
+    const storedGameId = localStorage.getItem(storageKey)
+
+    if (storedGameId) {
+      setPokerGameId(storedGameId)
+    } else {
+      // 新しいゲームを作成
+      createPokerGame(customerAccount.storeId, 50, 100)
+        .then((gameId) => {
+          setPokerGameId(gameId)
+          localStorage.setItem(storageKey, gameId)
+        })
+        .catch((err) => console.error("Error creating poker game:", err))
+    }
+  }, [customerAccount])
+
+  // ポーカーゲームの購読
+  useEffect(() => {
+    if (!customerAccount || !pokerGameId) return
+
+    const unsubscribe = subscribeToPokerGame(
+      customerAccount.storeId,
+      pokerGameId,
+      (game) => {
+        setPokerGame(game)
+      },
+      (error) => {
+        console.error("Poker game subscription error:", error)
+      }
+    )
+
+    return () => unsubscribe()
+  }, [customerAccount, pokerGameId])
+
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !customerAccount) return
 
@@ -173,6 +217,54 @@ export function ChatRoom() {
     localStorage.setItem(storageKey, JSON.stringify(Array.from(newHiddenIds)))
   }
 
+  // ポーカーアクションハンドラー
+  const handlePokerAction = async (action: string, amount?: number) => {
+    if (!customerAccount || !pokerGameId) return
+
+    try {
+      await performAction(
+        customerAccount.storeId,
+        pokerGameId,
+        customerAccount.id,
+        action as any,
+        amount
+      )
+    } catch (err) {
+      console.error("Error performing action:", err)
+      setError(err instanceof Error ? err.message : "アクションに失敗しました")
+    }
+  }
+
+  const handleJoinSeat = async (seatIndex: number) => {
+    if (!customerAccount || !pokerGameId) return
+
+    try {
+      const displayName = customerAccount.playerName || customerAccount.email.split("@")[0]
+      await joinPokerGame(
+        customerAccount.storeId,
+        pokerGameId,
+        customerAccount.id,
+        displayName,
+        seatIndex,
+        10000 // 初期スタック
+      )
+    } catch (err) {
+      console.error("Error joining seat:", err)
+      setError(err instanceof Error ? err.message : "座席に着くことができませんでした")
+    }
+  }
+
+  const handleStartGame = async () => {
+    if (!customerAccount || !pokerGameId) return
+
+    try {
+      await startNewHand(customerAccount.storeId, pokerGameId)
+    } catch (err) {
+      console.error("Error starting game:", err)
+      setError(err instanceof Error ? err.message : "ゲームを開始できませんでした")
+    }
+  }
+
   if (!customerAccount) {
     return (
       <Alert>
@@ -185,8 +277,21 @@ export function ChatRoom() {
   }
 
   return (
-    <Card className="h-[calc(100vh-200px)] max-h-[700px] flex flex-col overflow-hidden">
-      <CardHeader>
+    <div className="flex flex-col gap-4">
+      {/* ポーカーテーブル */}
+      {pokerGame && customerAccount && (
+        <PokerTable
+          game={pokerGame}
+          currentUserId={customerAccount.id}
+          onAction={handlePokerAction}
+          onJoinSeat={handleJoinSeat}
+          onStartGame={handleStartGame}
+        />
+      )}
+
+      {/* チャット */}
+      <Card className="h-[calc(100vh-200px)] max-h-[700px] flex flex-col overflow-hidden">
+        <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <MessageCircle className="h-5 w-5" />
@@ -303,5 +408,6 @@ export function ChatRoom() {
         </div>
       </CardContent>
     </Card>
+    </div>
   )
 }
