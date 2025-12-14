@@ -1959,3 +1959,114 @@ export const subscribeToChatMessages = (
     return () => {}
   }
 }
+
+// ==========================================
+// Presence Management
+// ==========================================
+
+/**
+ * Get presence collection reference for a store
+ */
+const getPresenceCollection = (storeId: string) => {
+  const db = getFirestore()
+  return collection(db, "chatRooms", `store_${storeId}`, "presence")
+}
+
+/**
+ * Set user presence (online status)
+ */
+export const setUserPresence = async (
+  storeId: string,
+  userId: string,
+  userName: string
+): Promise<void> => {
+  if (!isFirebaseConfigured()) return
+  if (!storeId || !userId) throw new Error("Store ID and User ID are required")
+  
+  const presenceCollection = getPresenceCollection(storeId)
+  const presenceDoc = doc(presenceCollection, userId)
+  
+  await setDoc(presenceDoc, {
+    userId,
+    userName,
+    lastSeen: serverTimestamp(),
+  })
+}
+
+/**
+ * Remove user presence (offline status)
+ */
+export const removeUserPresence = async (
+  storeId: string,
+  userId: string
+): Promise<void> => {
+  if (!isFirebaseConfigured()) return
+  if (!storeId || !userId) return
+  
+  try {
+    const presenceCollection = getPresenceCollection(storeId)
+    const presenceDoc = doc(presenceCollection, userId)
+    await deleteDoc(presenceDoc)
+  } catch (error) {
+    console.error("Error removing user presence:", error)
+  }
+}
+
+/**
+ * Subscribe to active users (presence)
+ */
+export const subscribeToActiveUsers = (
+  storeId: string,
+  callback: (users: Array<{ userId: string; userName: string }>) => void,
+  onError?: (error: Error) => void
+): (() => void) => {
+  if (!isFirebaseConfigured()) {
+    callback([])
+    return () => {}
+  }
+  
+  if (!storeId) {
+    console.error("Store ID is required for presence subscription")
+    if (onError) onError(new Error("Store ID is required"))
+    callback([])
+    return () => {}
+  }
+  
+  try {
+    const presenceCollection = getPresenceCollection(storeId)
+    
+    return onSnapshot(
+      presenceCollection,
+      (snapshot) => {
+        const now = Date.now()
+        const oneMinuteAgo = now - 60 * 1000 // 1分前
+        
+        const activeUsers = snapshot.docs
+          .map((doc) => {
+            const data = doc.data()
+            return {
+              userId: data.userId,
+              userName: data.userName,
+              lastSeen: data.lastSeen?.toDate()?.getTime() || 0,
+            }
+          })
+          .filter((user) => user.lastSeen > oneMinuteAgo)
+          .map((user) => ({
+            userId: user.userId,
+            userName: user.userName,
+          }))
+        
+        callback(activeUsers)
+      },
+      (error) => {
+        console.error("Error subscribing to active users:", error)
+        if (onError) onError(error)
+      }
+    )
+  } catch (error) {
+    console.error("Error setting up presence subscription:", error)
+    if (onError) onError(error as Error)
+    callback([])
+    return () => {}
+  }
+}

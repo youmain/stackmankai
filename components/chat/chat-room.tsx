@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Send, MessageCircle, AlertCircle } from "lucide-react"
-import { subscribeToChatMessages, sendChatMessage } from "@/lib/firestore"
+import { subscribeToChatMessages, sendChatMessage, subscribeToActiveUsers, setUserPresence, removeUserPresence } from "@/lib/firestore"
 import type { ChatMessage } from "@/types"
 import { useAuth } from "@/contexts/auth-context"
 
@@ -18,7 +18,7 @@ export function ChatRoom() {
   const [isSending, setIsSending] = useState(false)
   const [error, setError] = useState("")
   const [hiddenMessageIds, setHiddenMessageIds] = useState<Set<string>>(new Set())
-  const [activeUsers, setActiveUsers] = useState<Set<string>>(new Set())
+  const [activeUsers, setActiveUsers] = useState<Array<{ userId: string; userName: string }>>([])
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -60,15 +60,6 @@ export function ChatRoom() {
         setMessages(msgs)
         setError("") // Clear error on successful load
         
-        // 最近5分以内にメッセージを送信したユーザーを入室中とする
-        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000)
-        const recentUsers = new Set<string>()
-        msgs.forEach(msg => {
-          if (msg.createdAt && msg.createdAt > fiveMinutesAgo && msg.userName && msg.type !== "system") {
-            recentUsers.add(msg.userName)
-          }
-        })
-        setActiveUsers(recentUsers)
         // 新しいメッセージが追加されたら自動スクロール
         setTimeout(() => {
           if (scrollAreaRef.current) {
@@ -79,6 +70,52 @@ export function ChatRoom() {
       (error) => {
         console.error("Chat subscription error:", error)
         setError("メッセージの読み込みに失敗しました")
+      }
+    )
+
+    return () => unsubscribe()
+  }, [customerAccount])
+
+  // プレゼンス管理（入室・退室）
+  useEffect(() => {
+    if (!customerAccount || !customerAccount.storeId) return
+
+    const displayName = customerAccount.playerName || customerAccount.email.split("@")[0]
+    
+    // 入室時にプレゼンスを設定
+    setUserPresence(customerAccount.storeId, customerAccount.id, displayName)
+    
+    // 30秒ごとにハートビートを送信
+    const heartbeatInterval = setInterval(() => {
+      setUserPresence(customerAccount.storeId, customerAccount.id, displayName)
+    }, 30000)
+    
+    // ページを閉じる時にプレゼンスを削除
+    const handleBeforeUnload = () => {
+      removeUserPresence(customerAccount.storeId, customerAccount.id)
+    }
+    window.addEventListener("beforeunload", handleBeforeUnload)
+    
+    // クリーンアップ
+    return () => {
+      clearInterval(heartbeatInterval)
+      window.removeEventListener("beforeunload", handleBeforeUnload)
+      removeUserPresence(customerAccount.storeId, customerAccount.id)
+    }
+  }, [customerAccount])
+
+  // アクティブユーザーの購読
+  useEffect(() => {
+    if (!customerAccount || !customerAccount.storeId) return
+
+    const unsubscribe = subscribeToActiveUsers(
+      customerAccount.storeId,
+      (users) => {
+        console.log("Active users:", users)
+        setActiveUsers(users)
+      },
+      (error) => {
+        console.error("Active users subscription error:", error)
       }
     )
 
@@ -162,15 +199,15 @@ export function ChatRoom() {
           </Button>
         </div>
         {/* 入室中ユーザー表示 */}
-        {activeUsers.size > 0 && (
+        {activeUsers.length > 0 && (
           <div className="mt-3 flex items-center gap-2 flex-wrap">
             <span className="text-sm text-muted-foreground">入室中:</span>
-            {Array.from(activeUsers).map((userName) => (
+            {activeUsers.map((user) => (
               <div
-                key={userName}
+                key={user.userId}
                 className="px-2 py-1 text-xs font-medium border border-purple-300 bg-purple-50 text-purple-700 rounded"
               >
-                {userName}
+                {user.userName}
               </div>
             ))}
           </div>
