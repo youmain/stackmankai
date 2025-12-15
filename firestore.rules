@@ -162,6 +162,24 @@ service cloud.firestore {
     }
     
     // ========================================
+    // PokerGames コレクション
+    // ========================================
+    
+    match /pokerGames/{storeDoc}/games/{gameId} {
+      // ポーカーゲーム情報は認証済みユーザーのみ読み取れる
+      allow read: if isAuthenticated();
+      
+      // ポーカーゲーム情報の作成は認証済みユーザーのみ可能
+      allow create: if isAuthenticated();
+      
+      // ポーカーゲーム情報の更新は認証済みユーザーのみ可能
+      allow update: if isAuthenticated();
+      
+      // ポーカーゲーム情報の削除は認証済みユーザーのみ可能
+      allow delete: if isAuthenticated();
+    }
+    
+    // ========================================
     // その他のコレクション
     // ========================================
     

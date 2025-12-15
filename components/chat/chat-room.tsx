@@ -176,8 +176,14 @@ export function ChatRoom() {
           console.log("Game not found, creating new game")
           const storageKey = `pokerGameId_${customerAccount.storeId}`
           localStorage.removeItem(storageKey)
-          setPokerGameId(null)
           setPokerGame(null)
+          // 新しいゲームを作成
+          createPokerGame(customerAccount.storeId, 50, 100)
+            .then((newGameId) => {
+              setPokerGameId(newGameId)
+              localStorage.setItem(storageKey, newGameId)
+            })
+            .catch((err) => console.error("Error creating new game:", err))
         }
       },
       (error) => {
