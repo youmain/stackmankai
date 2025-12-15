@@ -13,6 +13,7 @@ interface PokerTableProps {
   currentUserId: string
   onAction: (action: string, amount?: number) => void
   onJoinSeat: (seatIndex: number) => void
+  onLeaveSeat: () => void
   onStartGame: () => void
   onResetGame?: () => void
 }
@@ -87,7 +88,7 @@ const CardDisplay = ({ card, isHidden, size = "normal", animate = false, delay =
 }
 
 // プレイヤー座席コンポーネント（縦長レイアウト用）
-const PlayerSeatVertical = ({
+const PlayerCard = ({
   player,
   seatIndex,
   isCurrentPlayer,
@@ -96,6 +97,7 @@ const PlayerSeatVertical = ({
   isBB,
   currentUserId,
   onJoinSeat,
+  gamePhase,
 }: {
   player?: PokerPlayer
   seatIndex: number
@@ -105,6 +107,7 @@ const PlayerSeatVertical = ({
   isBB: boolean
   currentUserId: string
   onJoinSeat: (seatIndex: number) => void
+  gamePhase: string
 }) => {
   if (!player) {
     return (
@@ -125,9 +128,16 @@ const PlayerSeatVertical = ({
   const isCurrentUser = player.userId === currentUserId
   
   return (
-    <div className={`rounded p-1.5 border flex items-center gap-2 ${
+    <div className={`relative rounded p-1.5 border flex items-center gap-2 ${
       isCurrentPlayer ? "bg-green-600 border-green-400 pulse-green" : "bg-gray-800 border-gray-600"
     } ${player.isFolded ? "opacity-50" : ""}`}>
+      {/* ターン表示 */}
+      {isCurrentPlayer && (
+        <div className="absolute -top-2 -right-2 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded animate-pulse">
+          YOUR TURN
+        </div>
+      )}
+      
       {/* D/SB/BBバッジ */}
       <div className="flex gap-0.5">
         {isDealer && (
@@ -181,7 +191,7 @@ const PlayerSeatVertical = ({
           <CardDisplay
             key={idx}
             card={card}
-            isHidden={!isCurrentUser && !player.isFolded}
+            isHidden={!isCurrentUser && !player.isFolded && gamePhase !== "showdown"}
             size="small"
           />
         ))}
@@ -194,6 +204,7 @@ export function PokerTable({
   game,
   currentUserId,
   onAction,
+  onLeaveSeat,
   onJoinSeat,
   onStartGame,
   onResetGame,
@@ -261,14 +272,29 @@ export function PokerTable({
             次のハンド: {countdown}秒
           </div>
         )}
-      </div>
+       </div>
       
-      {/* 他のプレイヤー（スクロール可能） */}
+      {/* アクション履歴 */}
+      {game.actionHistory && game.actionHistory.length > 0 && (
+        <div className="bg-gray-800 px-3 py-1 border-b border-gray-700">
+          <div className="flex gap-2 overflow-x-auto text-xs">
+            {game.actionHistory.slice(-5).map((entry, idx) => (
+              <div key={idx} className="flex-shrink-0 bg-gray-700 px-2 py-0.5 rounded">
+                <span className="text-gray-300">{entry.playerName}</span>
+                <span className="text-white mx-1">{entry.action.toUpperCase()}</span>
+                {entry.amount && <span className="text-yellow-400">{entry.amount}</span>}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      
+      {/* 他プレイヤーリスト（左側） */}
       <div className="flex-1 overflow-y-auto p-2 space-y-1">
         {otherPlayers.map(({ player, seatIndex }) => {
           const isCurrentPlayerTurn = game.players[game.currentPlayerIndex]?.seatIndex === seatIndex
           return (
-            <PlayerSeatVertical
+            <PlayerCard
               key={seatIndex}
               player={player}
               seatIndex={seatIndex}
@@ -278,6 +304,7 @@ export function PokerTable({
               isBB={game.bigBlindIndex === seatIndex}
               currentUserId={currentUserId}
               onJoinSeat={onJoinSeat}
+              gamePhase={game.phase}
             />
           )
         })}
@@ -330,6 +357,18 @@ export function PokerTable({
                 {currentPlayer.stack.toLocaleString()}
               </div>
             </div>
+            
+            {/* 退席ボタン */}
+            {game.phase === "waiting" && (
+              <Button
+                onClick={onLeaveSeat}
+                variant="outline"
+                size="sm"
+                className="h-7 text-xs"
+              >
+                退席
+              </Button>
+            )}
           </div>
           
           {/* 自分のカード */}
@@ -341,6 +380,19 @@ export function PokerTable({
               <CardDisplay key={idx} card={card} size="large" />
             ))}
           </div>
+          
+          {/* ハンド判定 */}
+          {currentPlayer.cards.length > 0 && game.communityCards.length > 0 && (
+            <div className="text-center mb-2">
+              <div className="inline-block bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-bold">
+                {(() => {
+                  const { evaluateHand } = require("@/lib/poker-hand-evaluator")
+                  const evaluation = evaluateHand(currentPlayer.cards, game.communityCards)
+                  return evaluation.description
+                })()}
+              </div>
+            </div>
+          )}
           
           {/* タイムアウトインジケーター */}
           <TimeoutIndicator game={game} currentUserId={currentUserId} />
@@ -362,6 +414,34 @@ export function PokerTable({
                     コール ({(game.currentBet - currentPlayer.currentBet).toLocaleString()})
                   </Button>
                 )}
+              </div>
+              
+              {/* プリセットボタン */}
+              <div className="flex gap-1">
+                <Button
+                  onClick={() => setBetAmount(Math.floor(game.pot / 2).toString())}
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 h-7 text-[10px] px-1"
+                >
+                  1/2 POT
+                </Button>
+                <Button
+                  onClick={() => setBetAmount(game.pot.toString())}
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 h-7 text-[10px] px-1"
+                >
+                  POT
+                </Button>
+                <Button
+                  onClick={() => setBetAmount((game.pot * 2).toString())}
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 h-7 text-[10px] px-1"
+                >
+                  2x POT
+                </Button>
               </div>
               
               <div className="flex gap-1.5">

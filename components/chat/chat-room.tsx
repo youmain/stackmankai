@@ -302,6 +302,18 @@ export function ChatRoom() {
     }
   }
 
+  const handleLeaveSeat = async () => {
+    if (!customerAccount || !pokerGameId) return
+
+    try {
+      const { leavePokerGame } = await import("@/lib/poker-game")
+      await leavePokerGame(customerAccount.storeId, pokerGameId, customerAccount.id)
+    } catch (err) {
+      console.error("Error leaving seat:", err)
+      setError(err instanceof Error ? err.message : "退席できませんでした")
+    }
+  }
+
   const handleStartGame = async () => {
     if (!customerAccount || !pokerGameId) return
 
@@ -363,6 +375,7 @@ export function ChatRoom() {
             currentUserId={customerAccount.id}
             onAction={handlePokerAction}
             onJoinSeat={handleJoinSeat}
+            onLeaveSeat={handleLeaveSeat}
             onStartGame={handleStartGame}
             onResetGame={handleResetGame}
           />

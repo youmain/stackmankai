@@ -25,6 +25,13 @@ export interface PokerPlayer {
   lastAction?: PlayerAction
 }
 
+export interface ActionHistoryEntry {
+  playerName: string
+  action: PlayerAction
+  amount?: number
+  phase: GamePhase
+}
+
 export interface PokerGameState {
   id: string
   storeId: string
@@ -40,6 +47,7 @@ export interface PokerGameState {
   players: PokerPlayer[]
   smallBlind: number
   bigBlind: number
+  actionHistory?: ActionHistoryEntry[] // アクション履歴
   createdAt: Date
   updatedAt: Date
   turnStartTime?: Date // 現在のターンの開始時刻
