@@ -280,7 +280,7 @@ export function ChatRoom() {
     <div className="h-full flex flex-col">
       {/* ポーカーテーブル */}
       {pokerGame && customerAccount && (
-        <div className="h-1/2 overflow-hidden">
+        <div style={{ height: '70%' }} className="overflow-hidden">
           <PokerTable
             game={pokerGame}
             currentUserId={customerAccount.id}
@@ -292,13 +292,9 @@ export function ChatRoom() {
       )}
 
       {/* チャット */}
-      <Card className="flex-1 flex flex-col overflow-hidden rounded-t-lg rounded-b-none border-t-2 border-purple-500">
+      <Card style={{ height: '30%' }} className="flex flex-col overflow-hidden rounded-t-lg rounded-b-none border-t-2 border-purple-500">
         <CardHeader className="p-2 pb-1">
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-1 text-sm">
-            <MessageCircle className="h-4 w-4" />
-            {customerAccount.storeName || "店舗"} チャット
-          </CardTitle>
+        <div className="flex items-center justify-end">
           <Button
             variant="outline"
             size="sm"
