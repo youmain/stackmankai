@@ -231,7 +231,6 @@ export const startNextHand = async (
     currentBet: 0,
     isFolded: false,
     isAllIn: false,
-    lastAction: undefined,
   }))
   
   // Post blinds
