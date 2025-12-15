@@ -43,8 +43,11 @@ export function ChatRoom() {
 
   // メッセージが更新されたら最下部にスクロール
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+    if (scrollAreaRef.current) {
+      const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]')
+      if (viewport) {
+        viewport.scrollTop = viewport.scrollHeight
+      }
     }
   }, [messages])
 

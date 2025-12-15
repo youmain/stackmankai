@@ -117,7 +117,7 @@ const PlayerSeatVertical = ({
     <div className={`rounded p-1.5 border flex items-center gap-2 ${
       isCurrentPlayer ? "bg-green-600 border-green-400" : "bg-gray-800 border-gray-600"
     } ${player.isFolded ? "opacity-50" : ""}`}>
-      {/* 左側: ディーラーボタン、SB、BB */}
+      {/* D/SB/BBバッジ */}
       <div className="flex gap-0.5">
         {isDealer && (
           <div className="w-4 h-4 bg-white border border-gray-800 rounded-full flex items-center justify-center text-[8px] font-bold">
@@ -136,7 +136,32 @@ const PlayerSeatVertical = ({
         )}
       </div>
       
-      {/* 中央: カード */}
+      {/* 名前 */}
+      <div className="text-white text-xs font-bold truncate min-w-[60px]">
+        {player.userName}
+      </div>
+      
+      {/* スタック */}
+      <div className="text-yellow-400 text-sm font-bold min-w-[50px]">
+        ¥{player.stack.toLocaleString()}
+      </div>
+      
+      {/* アクション（ベット額または最後のアクション） */}
+      <div className="min-w-[40px]">
+        {player.currentBet > 0 ? (
+          <div className="text-yellow-300 text-[10px] bg-yellow-500/20 px-1.5 py-0.5 rounded text-center">
+            ¥{player.currentBet.toLocaleString()}
+          </div>
+        ) : player.lastAction ? (
+          <div className="text-gray-300 text-[10px] bg-gray-700/50 px-1.5 py-0.5 rounded text-center">
+            {player.lastAction}
+          </div>
+        ) : (
+          <div className="text-gray-500 text-[10px] text-center">-</div>
+        )}
+      </div>
+      
+      {/* ハンド（カード） */}
       <div className="flex gap-0.5">
         {(player.cards.length > 0 ? player.cards : [
           { suit: "hearts" as const, rank: "A" as const },
@@ -150,23 +175,6 @@ const PlayerSeatVertical = ({
           />
         ))}
       </div>
-      
-      {/* 右側: プレイヤー情報 */}
-      <div className="flex-1 flex flex-col min-w-0">
-        <div className="text-white text-xs font-bold truncate">
-          {player.userName}
-        </div>
-        <div className="text-yellow-400 text-sm font-bold">
-          ¥{player.stack.toLocaleString()}
-        </div>
-      </div>
-      
-      {/* ベット額 */}
-      {player.currentBet > 0 && (
-        <div className="text-yellow-300 text-[10px] bg-yellow-500/20 px-1.5 py-0.5 rounded">
-          ¥{player.currentBet.toLocaleString()}
-        </div>
-      )}
     </div>
   )
 }
