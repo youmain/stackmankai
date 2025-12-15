@@ -43,12 +43,17 @@ export function ChatRoom() {
 
   // メッセージが更新されたら最下部にスクロール
   useEffect(() => {
-    if (scrollAreaRef.current) {
-      const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]')
-      if (viewport) {
-        viewport.scrollTop = viewport.scrollHeight
+    const scrollToBottom = () => {
+      if (scrollAreaRef.current) {
+        const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]')
+        if (viewport) {
+          setTimeout(() => {
+            viewport.scrollTop = viewport.scrollHeight
+          }, 100)
+        }
       }
     }
+    scrollToBottom()
   }, [messages])
 
   // メッセージの購読と入室通知
