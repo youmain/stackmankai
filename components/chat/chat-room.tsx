@@ -194,6 +194,29 @@ export function ChatRoom() {
     return () => unsubscribe()
   }, [customerAccount, pokerGameId])
 
+  // SHOWDOWN後の自動進行
+  useEffect(() => {
+    if (!customerAccount || !pokerGameId || !pokerGame) return
+    
+    // SHOWDOWN状態で、2人以上のプレイヤーがいる場合
+    if (pokerGame.phase === "showdown" && pokerGame.players.length >= 2) {
+      console.log("SHOWDOWN detected, starting next hand in 5 seconds...")
+      
+      const timer = setTimeout(() => {
+        startNewHand(customerAccount.storeId, pokerGameId)
+          .then(() => {
+            console.log("Next hand started successfully")
+          })
+          .catch((err) => {
+            console.error("Error starting next hand:", err)
+            setError("次のハンドを開始できませんでした")
+          })
+      }, 5000) // 5秒後に次のハンドを開始
+      
+      return () => clearTimeout(timer)
+    }
+  }, [customerAccount, pokerGameId, pokerGame])
+
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !customerAccount) return
 

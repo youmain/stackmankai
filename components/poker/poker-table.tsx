@@ -199,6 +199,31 @@ export function PokerTable({
   onResetGame,
 }: PokerTableProps) {
   const [betAmount, setBetAmount] = useState("")
+  const [countdown, setCountdown] = useState<number | null>(null)
+  
+  // SHOWDOWN状態のカウントダウン
+  useEffect(() => {
+    if (game?.phase === "showdown" && game.players.length >= 2) {
+      setCountdown(5)
+      
+      const interval = setInterval(() => {
+        setCountdown(prev => {
+          if (prev === null || prev <= 1) {
+            clearInterval(interval)
+            return null
+          }
+          return prev - 1
+        })
+      }, 1000)
+      
+      return () => {
+        clearInterval(interval)
+        setCountdown(null)
+      }
+    } else {
+      setCountdown(null)
+    }
+  }, [game?.phase, game?.players.length])
   
   if (!game) {
     return (
@@ -231,6 +256,11 @@ export function PokerTable({
         <div className="bg-white px-2 py-0.5 rounded text-xs font-semibold uppercase">
           {game.phase}
         </div>
+        {countdown !== null && (
+          <div className="bg-green-600 text-white px-2 py-0.5 rounded text-xs font-semibold">
+            次のハンド: {countdown}秒
+          </div>
+        )}
       </div>
       
       {/* 他のプレイヤー（スクロール可能） */}
