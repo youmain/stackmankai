@@ -184,57 +184,9 @@ export const startNewHand = async (
 ): Promise<void> => {
   if (!isFirebaseConfigured()) throw new Error("Firebase is not configured")
   
-  const gameCollection = getPokerGameCollection(storeId)
-  const gameDoc = doc(gameCollection, gameId)
-  const gameSnap = await getDoc(gameDoc)
-  
-  if (!gameSnap.exists()) {
-    throw new Error("Game not found")
-  }
-  
-  const gameData = gameSnap.data() as PokerGameState
-  
-  // Need at least 2 players
-  if (gameData.players.length < 2) {
-    throw new Error("Need at least 2 players to start")
-  }
-  
-  // Shuffle deck and deal cards
-  const deck = shuffleDeck(createDeck())
-  let cardIndex = 0
-  
-  // Deal 2 cards to each player
-  const updatedPlayers = gameData.players.map(player => ({
-    ...player,
-    cards: [deck[cardIndex++], deck[cardIndex++]],
-    currentBet: 0,
-    isFolded: false,
-    isAllIn: false,
-  }))
-  
-  // Post blinds
-  const sbPlayer = updatedPlayers.find(p => p.seatIndex === gameData.smallBlindIndex)
-  const bbPlayer = updatedPlayers.find(p => p.seatIndex === gameData.bigBlindIndex)
-  
-  if (sbPlayer) {
-    sbPlayer.currentBet = gameData.smallBlind
-    sbPlayer.stack -= gameData.smallBlind
-  }
-  
-  if (bbPlayer) {
-    bbPlayer.currentBet = gameData.bigBlind
-    bbPlayer.stack -= gameData.bigBlind
-  }
-  
-  await updateDoc(gameDoc, {
-    phase: "preflop",
-    pot: gameData.smallBlind + gameData.bigBlind,
-    communityCards: [],
-    currentBet: gameData.bigBlind,
-    minRaise: gameData.bigBlind,
-    players: updatedPlayers,
-    updatedAt: serverTimestamp(),
-  })
+  // Use the advanced logic from poker-game-advanced
+  const { startNextHand } = await import("./poker-game-advanced")
+  await startNextHand(storeId, gameId)
 }
 
 /**
@@ -329,6 +281,10 @@ export const performAction = async (
     currentPlayerIndex: nextPlayerIndex,
     updatedAt: serverTimestamp(),
   })
+  
+  // Check if phase should advance automatically
+  const { checkAndAdvancePhase } = await import("./poker-game-advanced")
+  await checkAndAdvancePhase(storeId, gameId)
 }
 
 /**

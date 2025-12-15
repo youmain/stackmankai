@@ -287,10 +287,10 @@ export function ChatRoom() {
 
   return (
     <div className="h-full flex flex-col">
-      {/* テストコントロール */}
-      <div className="p-2 bg-gray-50 border-b">
+      {/* テストコントロール - コメントアウト */}
+      {/* <div className="p-2 bg-gray-50 border-b">
         <PokerTestControls />
-      </div>
+      </div> */}
       
       {/* ポーカーテーブル */}
       {pokerGame && customerAccount && (
