@@ -68,6 +68,17 @@ export default function CustomerView() {
   })
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null)
 
+  // URLパラメータからviewModeを読み取る
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search)
+      const viewModeParam = urlParams.get("viewMode")
+      if (viewModeParam === "chat" || viewModeParam === "posts" || viewModeParam === "my-posts" || viewModeParam === "ai-players") {
+        setViewMode(viewModeParam)
+      }
+    }
+  }, [])
+
   // viewModeが変更されたらローカルストレージに保存
   useEffect(() => {
     if (viewMode !== "post-detail") {
