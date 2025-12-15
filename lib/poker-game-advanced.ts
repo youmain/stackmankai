@@ -219,7 +219,17 @@ export const startNextHand = async (
   let newDealerIndex = (gameData.dealerIndex + 1) % activePlayers.length
   let newSmallBlindIndex = (newDealerIndex + 1) % activePlayers.length
   let newBigBlindIndex = (newDealerIndex + 2) % activePlayers.length
-  let newCurrentPlayerIndex = (newDealerIndex + 3) % activePlayers.length
+  
+  // In preflop, action starts after BB (UTG position)
+  // For 3 players or less, action starts with dealer (who is also UTG)
+  let newCurrentPlayerIndex: number
+  if (activePlayers.length <= 3) {
+    // With 3 or fewer players, dealer acts first preflop
+    newCurrentPlayerIndex = newDealerIndex
+  } else {
+    // With 4+ players, UTG (after BB) acts first
+    newCurrentPlayerIndex = (newBigBlindIndex + 1) % activePlayers.length
+  }
   
   // Shuffle deck and deal cards
   const deck = new Deck()
