@@ -9,7 +9,7 @@ interface RoundIndicatorProps {
 
 const PHASE_INFO = {
   waiting: { label: "待機中", color: "bg-gray-500", icon: "⏸️" },
-  preflop: { label: "PREFLOP", color: "bg-blue-500", icon: "🎴" },
+  preflop: { label: "PREFLOP", color: "bg-blue-500", icon: "" },
   flop: { label: "FLOP", color: "bg-green-500", icon: "🃏" },
   turn: { label: "TURN", color: "bg-yellow-500", icon: "🎯" },
   river: { label: "RIVER", color: "bg-red-500", icon: "🌊" },

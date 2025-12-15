@@ -16,7 +16,6 @@ export function ViewModeHeader({ viewMode, onModeChange }: ViewModeHeaderProps) 
             : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
         }`}
       >
-        <span className="text-lg">🎴</span>
         <span className="text-sm">ポーカー</span>
       </button>
       
