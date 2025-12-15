@@ -165,11 +165,66 @@ export const leavePokerGame = async (
   }
   
   const gameData = gameSnap.data() as PokerGameState
+  const leavingPlayer = gameData.players.find(p => p.userId === userId)
   
-  await updateDoc(gameDoc, removeUndefined({
-    players: gameData.players.filter(p => p.userId !== userId),
-    updatedAt: serverTimestamp(),
-  }))
+  // ゲーム中の場合、自動的にフォールド
+  if (leavingPlayer && gameData.phase !== "waiting" && !leavingPlayer.isFolded) {
+    console.log(`Player ${leavingPlayer.userName} leaving during game, auto-folding...`)
+    
+    // プレイヤーをフォールド状態にする
+    const updatedPlayers = gameData.players.map(p => {
+      if (p.userId === userId) {
+        return { ...p, isFolded: true, lastAction: "fold" as const }
+      }
+      return p
+    })
+    
+    // アクション履歴に追加
+    const newHistoryEntry = {
+      playerName: leavingPlayer.userName,
+      action: "fold" as const,
+      phase: gameData.phase,
+      timestamp: new Date()
+    }
+    
+    const updatedHistory = [...(gameData.actionHistory || []), newHistoryEntry]
+    
+    // フォールド後、次のプレイヤーに進む（現在のターンの場合）
+    let nextPlayerIndex = gameData.currentPlayerIndex
+    if (gameData.currentPlayerIndex !== undefined && 
+        gameData.players[gameData.currentPlayerIndex]?.userId === userId) {
+      nextPlayerIndex = (gameData.currentPlayerIndex + 1) % gameData.players.length
+      let attempts = 0
+      while (
+        attempts < gameData.players.length &&
+        (updatedPlayers[nextPlayerIndex].isFolded || updatedPlayers[nextPlayerIndex].isAllIn)
+      ) {
+        nextPlayerIndex = (nextPlayerIndex + 1) % gameData.players.length
+        attempts++
+      }
+    }
+    
+    // フォールドしたプレイヤーを削除
+    const playersAfterLeave = updatedPlayers.filter(p => p.userId !== userId)
+    
+    await updateDoc(gameDoc, removeUndefined({
+      players: playersAfterLeave,
+      currentPlayerIndex: nextPlayerIndex,
+      actionHistory: updatedHistory,
+      turnStartTime: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    }))
+    
+    // フェーズ進行をチェック
+    const { checkAndAdvancePhase } = await import("./poker-game-advanced")
+    await checkAndAdvancePhase(storeId, gameId)
+  } else {
+    // 待機中または既にフォールド済みの場合、そのまま削除
+    await updateDoc(gameDoc, removeUndefined({
+      players: gameData.players.filter(p => p.userId !== userId),
+      updatedAt: serverTimestamp(),
+    }))
+  }
 }
 
 /**
@@ -262,6 +317,9 @@ export const performAction = async (
   
   player.lastAction = action
   
+  // タイムアウトカウンターをリセット
+  player.consecutiveTimeouts = 0
+  
   // Add to action history
   const actionHistory = gameData.actionHistory || []
   actionHistory.push({
@@ -298,6 +356,7 @@ export const performAction = async (
     currentBet: newCurrentBet,
     currentPlayerIndex: nextPlayerIndex,
     actionHistory: actionHistory,
+    turnStartTime: serverTimestamp(), // ターン開始時刻を記録
     updatedAt: serverTimestamp(),
   }))
   

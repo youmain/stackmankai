@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import type { PokerGameState } from "@/types/poker"
+import { getRemainingTime } from "@/lib/poker-timeout"
 
 interface TimeoutIndicatorProps {
   game: PokerGameState

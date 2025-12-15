@@ -254,11 +254,13 @@ export function PokerTable({
   const currentPlayer = game.players.find(p => p.userId === currentUserId)
   const isMyTurn = currentPlayer && game.currentPlayerIndex !== undefined && game.players[game.currentPlayerIndex]?.userId === currentUserId && game.phase !== "waiting" && game.phase !== "showdown"
   
-  // 自分以外のプレイヤー
-  const otherPlayers = Array.from({ length: 10 }, (_, idx) => {
-    const player = game.players.find(p => p.seatIndex === idx)
-    return { player, seatIndex: idx }
-  }).filter(({ player }) => !player || player.userId !== currentUserId)
+  // 自分以外のプレイヤー（空席は表示しない）
+  const otherPlayers = game.players
+    .filter(p => p.userId !== currentUserId)
+    .map(p => ({ player: p, seatIndex: p.seatIndex }))
+  
+  // 空席数を計算
+  const emptySeatsCount = 10 - game.players.length
   
   return (
     <div className="flex flex-col h-full bg-gray-900">
@@ -308,6 +310,32 @@ export function PokerTable({
             />
           )
         })}
+        
+        {/* 空席数表示 */}
+        {emptySeatsCount > 0 && (
+          <div className="bg-gray-800/30 rounded p-2 border border-dashed border-gray-600 text-center">
+            <div className="text-gray-400 text-sm">
+              🪑 空席: {emptySeatsCount}席
+            </div>
+            <Button
+              onClick={() => {
+                // 最初の空席を見つける
+                const occupiedSeats = new Set(game.players.map(p => p.seatIndex))
+                for (let i = 0; i < 10; i++) {
+                  if (!occupiedSeats.has(i)) {
+                    onJoinSeat(i)
+                    break
+                  }
+                }
+              }}
+              variant="outline"
+              size="sm"
+              className="mt-2 h-7 text-xs"
+            >
+              席に着く
+            </Button>
+          </div>
+        )}
       </div>
       
       {/* コミュニティカード（中央固定） */}

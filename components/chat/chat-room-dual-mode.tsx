@@ -9,6 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Send, AlertCircle } from "lucide-react"
 import { subscribeToChatMessages, sendChatMessage, subscribeToActiveUsers, setUserPresence, removeUserPresence } from "@/lib/firestore"
 import { createPokerGame, joinPokerGame, leavePokerGame, performAction, startNewHand, subscribeToPokerGame } from "@/lib/poker-game"
+import { handlePlayerTimeout, getRemainingTime } from "@/lib/poker-timeout"
 import { deletePokerGame } from "@/lib/poker-game-reset"
 import type { ChatMessage } from "@/types"
 import type { PokerGameState } from "@/types/poker"
@@ -146,6 +147,31 @@ export function ChatRoomDualMode() {
 
     return () => unsubscribe()
   }, [customerAccount?.storeId, pokerGameId])
+
+  // タイムアウト監視
+  useEffect(() => {
+    if (!customerAccount || !pokerGameId || !pokerGame) return
+    if (pokerGame.phase === "waiting" || pokerGame.phase === "showdown") return
+
+    const currentPlayer = pokerGame.players[pokerGame.currentPlayerIndex]
+    if (!currentPlayer || currentPlayer.isFolded || currentPlayer.isAllIn) return
+
+    // 1秒ごとにタイムアウトをチェック
+    const interval = setInterval(() => {
+      const remaining = getRemainingTime(pokerGame.turnStartTime)
+      
+      if (remaining <= 0) {
+        console.log(`Player ${currentPlayer.userName} timeout detected`)
+        handlePlayerTimeout(customerAccount.storeId, pokerGameId, currentPlayer.userId)
+          .catch((err) => {
+            console.error("Error handling timeout:", err)
+          })
+        clearInterval(interval)
+      }
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [customerAccount, pokerGameId, pokerGame])
 
   // SHOWDOWN後の自動次ハンド開始
   useEffect(() => {

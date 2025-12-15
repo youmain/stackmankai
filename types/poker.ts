@@ -25,6 +25,7 @@ export interface PokerPlayer {
   isAllIn: boolean
   isActive: boolean // ゲームに参加中
   lastAction?: PlayerAction
+  consecutiveTimeouts?: number // 連続タイムアウト回数
 }
 
 export interface ActionHistoryEntry {
