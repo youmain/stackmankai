@@ -266,7 +266,6 @@ export const startNextHand = async (
     bigBlindIndex: newBigBlindIndex,
     currentPlayerIndex: newCurrentPlayerIndex,
     players: updatedPlayers,
-    lastHandResult: null,
     updatedAt: serverTimestamp(),
   })
 }
