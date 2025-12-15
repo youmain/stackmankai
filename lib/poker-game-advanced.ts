@@ -15,6 +15,7 @@ import { Deck } from "./poker-logic/deck"
 import { HandEvaluator } from "./poker-logic/hand-evaluator"
 import { determineWinners } from "./poker-logic/game-helpers"
 import { calculateSidePots, distributePots } from "./poker-logic/side-pot"
+import { removeUndefined } from "./poker-logic/firestore-utils"
 
 /**
  * Get poker game collection reference for a store
@@ -68,12 +69,12 @@ export const advancePhase = async (
     const winner = activePlayers[0]
     winner.stack += gameData.pot
     
-    await updateDoc(gameDoc, {
+    await updateDoc(gameDoc, removeUndefined({
       phase: "showdown",
       pot: 0,
       players: gameData.players,
       updatedAt: serverTimestamp(),
-    })
+    }))
     return
   }
   
@@ -131,14 +132,14 @@ export const advancePhase = async (
     nextPlayerIndex = (nextPlayerIndex + 1) % gameData.players.length
   }
   
-  await updateDoc(gameDoc, {
+  await updateDoc(gameDoc, removeUndefined({
     phase: newPhase,
     communityCards: newCommunityCards,
     currentBet: 0,
     players: updatedPlayers,
     currentPlayerIndex: nextPlayerIndex,
     updatedAt: serverTimestamp(),
-  })
+  }))
 }
 
 /**
@@ -183,12 +184,12 @@ export const evaluateShowdown = async (
     timestamp: new Date(),
   }
   
-  await updateDoc(gameDoc, {
+  await updateDoc(gameDoc, removeUndefined({
     phase: "showdown",
     players: gameData.players,
     pot: 0,
     updatedAt: serverTimestamp(),
-  })
+  }))
 }
 
 /**
@@ -254,7 +255,7 @@ export const startNextHand = async (
   
   const pot = (sbPlayer?.currentBet || 0) + (bbPlayer?.currentBet || 0)
   
-  await updateDoc(gameDoc, {
+  await updateDoc(gameDoc, removeUndefined({
     phase: "preflop",
     pot,
     communityCards: [],
@@ -266,7 +267,7 @@ export const startNextHand = async (
     currentPlayerIndex: newCurrentPlayerIndex,
     players: updatedPlayers,
     updatedAt: serverTimestamp(),
-  })
+  }))
 }
 
 /**

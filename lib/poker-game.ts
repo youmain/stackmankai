@@ -19,6 +19,7 @@ import type {
   GamePhase,
 } from "@/types/poker"
 import { validatePlayerAction, validateSeatSelection, withErrorHandling } from "./poker-logic/validation"
+import { removeUndefined } from "./poker-logic/firestore-utils"
 
 /**
  * Get poker game collection reference for a store
@@ -138,10 +139,10 @@ export const joinPokerGame = async (
     isActive: true,
   }
   
-    await updateDoc(gameDoc, {
+    await updateDoc(gameDoc, removeUndefined({
       players: [...gameData.players, newPlayer],
       updatedAt: serverTimestamp(),
-    })
+    }))
   }, "座席への参加に失敗しました")
 }
 
@@ -165,10 +166,10 @@ export const leavePokerGame = async (
   
   const gameData = gameSnap.data() as PokerGameState
   
-  await updateDoc(gameDoc, {
+  await updateDoc(gameDoc, removeUndefined({
     players: gameData.players.filter(p => p.userId !== userId),
     updatedAt: serverTimestamp(),
-  })
+  }))
 }
 
 /**
@@ -267,13 +268,13 @@ export const performAction = async (
     nextPlayerIndex = (nextPlayerIndex + 1) % gameData.players.length
   }
   
-  await updateDoc(gameDoc, {
+  await updateDoc(gameDoc, removeUndefined({
     players: gameData.players,
     pot: newPot,
     currentBet: newCurrentBet,
     currentPlayerIndex: nextPlayerIndex,
     updatedAt: serverTimestamp(),
-  })
+  }))
   
     // Check if phase should advance automatically
     const { checkAndAdvancePhase } = await import("./poker-game-advanced")
