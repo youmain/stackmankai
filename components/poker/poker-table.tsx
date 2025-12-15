@@ -212,7 +212,7 @@ export function PokerTable({
   onStartGame,
   onResetGame,
 }: PokerTableProps) {
-  const [betAmount, setBetAmount] = useState("")
+  const [betAmount, setBetAmount] = useState(game.minRaise?.toString() || "")
   const [countdown, setCountdown] = useState<number | null>(null)
   
   // SHOWDOWN状態のカウントダウン
@@ -312,16 +312,16 @@ export function PokerTable({
       
       {/* コミュニティカード（中央固定） */}
       <div className="bg-green-700 p-2">
-        <div className="flex gap-1 items-center justify-center flex-wrap">
-          {(game.communityCards.length > 0 ? game.communityCards : [
-            { suit: "diamonds" as const, rank: "Q" as const },
-            { suit: "clubs" as const, rank: "J" as const },
-            { suit: "hearts" as const, rank: "10" as const },
-            { suit: "spades" as const, rank: "9" as const },
-            { suit: "diamonds" as const, rank: "8" as const }
-          ] as PokerCard[]).map((card, idx) => (
-            <CardDisplay key={idx} card={card} size="normal" />
-          ))}
+        <div className="flex gap-1 items-center justify-center flex-wrap min-h-[80px]">
+          {game.communityCards.length > 0 ? (
+            game.communityCards.map((card, idx) => (
+              <CardDisplay key={idx} card={card} size="normal" />
+            ))
+          ) : (
+            <div className="text-gray-400 text-sm font-semibold">
+              {game.phase === "preflop" ? "プリフロップ - カード配布待ち" : "カード配布中..."}
+            </div>
+          )}
         </div>
       </div>
       
@@ -332,17 +332,17 @@ export function PokerTable({
             {/* ディーラーボタン、SB、BB */}
             <div className="flex gap-0.5">
               {game.dealerIndex === currentPlayer.seatIndex && (
-                <div className="w-5 h-5 bg-white border border-gray-800 rounded-full flex items-center justify-center text-[10px] font-bold">
+                <div className="w-8 h-8 bg-white border-2 border-gray-800 rounded-full flex items-center justify-center text-sm font-bold shadow-lg">
                   D
                 </div>
               )}
               {game.smallBlindIndex === currentPlayer.seatIndex && (
-                <div className="w-5 h-5 bg-yellow-400 border border-yellow-600 rounded-full flex items-center justify-center text-[10px] font-bold">
+                <div className="w-8 h-8 bg-yellow-400 border-2 border-yellow-600 rounded-full flex items-center justify-center text-xs font-bold shadow-lg">
                   SB
                 </div>
               )}
               {game.bigBlindIndex === currentPlayer.seatIndex && (
-                <div className="w-5 h-5 bg-orange-400 border border-orange-600 rounded-full flex items-center justify-center text-[10px] font-bold">
+                <div className="w-8 h-8 bg-orange-500 border-2 border-orange-700 rounded-full flex items-center justify-center text-xs font-bold shadow-lg">
                   BB
                 </div>
               )}
