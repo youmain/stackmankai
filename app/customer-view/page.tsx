@@ -969,17 +969,6 @@ ${availableExamples.slice(0, 5).join("\n")}
                               </Button>
                               <Button
                                 variant="ghost"
-                                className="w-full justify-start text-base py-3"
-                                onClick={() => {
-                                  router.push("/customer-view/chat")
-                                  setIsMenuOpen(false)
-                                }}
-                              >
-                                <MessageCircle className="h-5 w-5 mr-3" />
-                                チャット
-                              </Button>
-                              <Button
-                                variant="ghost"
                                 className="w-full justify-start text-base py-3 text-orange-600 hover:text-orange-700 hover:bg-orange-50"
                                 onClick={() => {
                                   setIsResetConfirmOpen(true)
@@ -1029,6 +1018,21 @@ ${availableExamples.slice(0, 5).join("\n")}
                       </div>
                     )}
                   </div>
+                  <Separator />
+                  
+                  {/* チャットボタン - プレイヤー紐づけ不要 */}
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-base py-3"
+                    onClick={() => {
+                      setViewMode("chat")
+                      setIsMenuOpen(false)
+                    }}
+                  >
+                    <MessageCircle className="h-5 w-5 mr-3" />
+                    チャット
+                  </Button>
+                  
                   <Separator />
 
                   <Button
