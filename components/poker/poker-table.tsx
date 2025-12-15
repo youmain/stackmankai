@@ -84,7 +84,7 @@ const PlayerSeat = ({
           onClick={() => onJoinSeat(seatIndex)}
           variant="outline"
           size="sm"
-          className="w-20 h-20 rounded-full border-2 border-dashed border-gray-400 text-sm"
+          className="w-12 h-12 rounded-full border-2 border-dashed border-gray-400 text-xs"
         >
           座る
         </Button>
@@ -115,20 +115,6 @@ const PlayerSeat = ({
         )}
       </div>
       
-      {/* プレイヤー情報 */}
-      <div
-        className={`bg-white/95 shadow-lg rounded-lg p-3 border-2 flex flex-col items-center min-w-[150px] ${
-          isCurrentPlayer ? "bg-green-500 border-4 border-green-700" : "bg-gray-700 border-2 border-gray-600"
-        } ${player.isFolded ? "opacity-50" : ""}`}
-      >
-        <div className="text-gray-900 text-xs font-bold truncate max-w-full text-center">
-          {player.userName}
-        </div>
-        <div className="text-gray-900 text-sm font-bold mt-1">
-          ¥{player.stack.toLocaleString()}
-        </div>
-      </div>
-      
       {/* カード */}
       {(player.cards.length > 0 || true) && (
         <div className="flex gap-1 mt-1">
@@ -144,6 +130,20 @@ const PlayerSeat = ({
           ))}
         </div>
       )}
+      
+      {/* プレイヤー情報 */}
+      <div
+        className={`shadow-lg rounded-lg p-2 border-2 flex flex-col items-center min-w-[130px] ${
+          isCurrentPlayer ? "bg-green-500 border-4 border-green-700" : "bg-gray-700 border-2 border-gray-600"
+        } ${player.isFolded ? "opacity-50" : ""}`}
+      >
+        <div className="text-white text-xs font-bold truncate max-w-full text-center">
+          {player.userName}
+        </div>
+        <div className="text-yellow-400 text-sm font-bold mt-0.5">
+          ¥{player.stack.toLocaleString()}
+        </div>
+      </div>
       
       {/* 現在のベット額 */}
       {player.currentBet > 0 && (
