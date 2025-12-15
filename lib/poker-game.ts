@@ -305,11 +305,17 @@ export const subscribeToPokerGame = (
       (snapshot) => {
         if (snapshot.exists()) {
           const data = snapshot.data()
+          // updatedAtがTimestampオブジェクトかどうかをチェック
+          let updatedAtDate = new Date()
+          if (data.updatedAt && typeof data.updatedAt.toDate === 'function') {
+            updatedAtDate = data.updatedAt.toDate()
+          }
+          
           const game: PokerGameState = {
             ...data,
             id: snapshot.id,
             createdAt: data.createdAt?.toDate() || new Date(),
-            updatedAt: data.updatedAt?.toDate() || new Date(),
+            updatedAt: updatedAtDate,
           } as PokerGameState
           callback(game)
         } else {
