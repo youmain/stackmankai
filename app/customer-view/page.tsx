@@ -37,7 +37,7 @@ import { PostsList } from "@/components/posts/posts-list"
 import { MyPostsList } from "@/components/posts/my-posts-list"
 import { PostDetail } from "@/components/posts/post-detail"
 import { AIPlayersInfo } from "@/components/ai-players-info"
-import { ChatRoom } from "@/components/chat/chat-room"
+import { ChatRoomDualMode } from "@/components/chat/chat-room-dual-mode"
 
 // interface RankingData { // lint/suspicious/noRedeclare: This type declaration shadows the imported type 'RankingData'.
 //   playerId: string
@@ -1901,7 +1901,7 @@ ${availableExamples.slice(0, 5).join("\n")}
                 戻る
               </Button>
             </div>
-            <ChatRoom />
+            <ChatRoomDualMode />
           </div>
         )}
       </div>
