@@ -154,14 +154,14 @@ const PlayerSeatVertical = ({
       
       {/* スタック */}
       <div className="text-yellow-400 text-sm font-bold min-w-[50px]">
-        ¥{player.stack.toLocaleString()}
+        {player.stack.toLocaleString()}
       </div>
       
       {/* アクション（ベット額または最後のアクション） */}
       <div className="min-w-[40px]">
         {player.currentBet > 0 ? (
           <div className="text-yellow-300 text-[10px] bg-yellow-500/20 px-1.5 py-0.5 rounded text-center">
-            ¥{player.currentBet.toLocaleString()}
+            {player.currentBet.toLocaleString()}
           </div>
         ) : player.lastAction ? (
           <div className="text-gray-300 text-[10px] bg-gray-700/50 px-1.5 py-0.5 rounded text-center">
@@ -226,7 +226,7 @@ export function PokerTable({
       {/* ポット表示（最上部固定） */}
       <div className="bg-yellow-500 text-gray-900 px-3 py-1.5 flex items-center justify-center gap-3 shadow-lg">
         <div className="text-base font-bold">
-          POT: ¥{game.pot.toLocaleString()}
+          POT: {game.pot.toLocaleString()}
         </div>
         <div className="bg-white px-2 py-0.5 rounded text-xs font-semibold uppercase">
           {game.phase}
@@ -297,7 +297,7 @@ export function PokerTable({
                 {currentPlayer.userName}
               </div>
               <div className="text-yellow-400 text-base font-bold">
-                ¥{currentPlayer.stack.toLocaleString()}
+                {currentPlayer.stack.toLocaleString()}
               </div>
             </div>
           </div>
@@ -329,7 +329,7 @@ export function PokerTable({
                   </Button>
                 ) : (
                   <Button onClick={() => onAction("call")} variant="default" className="flex-1 h-8 text-xs">
-                    コール (¥{(game.currentBet - currentPlayer.currentBet).toLocaleString()})
+                    コール ({(game.currentBet - currentPlayer.currentBet).toLocaleString()})
                   </Button>
                 )}
               </div>
@@ -358,7 +358,7 @@ export function PokerTable({
               </div>
               
               <Button onClick={() => onAction("allin")} variant="outline" className="w-full h-8 text-xs">
-                オールイン (¥{currentPlayer.stack.toLocaleString()})
+               オールイン ({currentPlayer.stack.toLocaleString()})
               </Button>
             </div>
           )}
