@@ -331,6 +331,13 @@ export function ChatRoom() {
       </div> */}
       
       {/* ポーカーテーブル */}
+      {/* デバッグ表示 */}
+      <div className="p-2 bg-yellow-100 text-xs">
+        <div>pokerGame: {pokerGame ? 'OK' : 'NULL'}</div>
+        <div>customerAccount: {customerAccount ? 'OK' : 'NULL'}</div>
+        <div>pokerGameId: {pokerGameId || 'NULL'}</div>
+      </div>
+      
       {pokerGame && customerAccount && (
         <div style={{ height: '70%' }} className="overflow-hidden">
           <PokerTable
