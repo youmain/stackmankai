@@ -187,7 +187,6 @@ export const evaluateShowdown = async (
     phase: "showdown",
     players: gameData.players,
     pot: 0,
-    lastHandResult: handResult,
     updatedAt: serverTimestamp(),
   })
 }
