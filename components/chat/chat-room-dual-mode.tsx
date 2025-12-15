@@ -8,7 +8,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Send, AlertCircle } from "lucide-react"
 import { subscribeToChatMessages, sendChatMessage, subscribeToActiveUsers, setUserPresence, removeUserPresence } from "@/lib/firestore"
-import { createPokerGame, joinPokerGame, performAction, startNewHand, subscribeToPokerGame } from "@/lib/poker-game"
+import { createPokerGame, joinPokerGame, leavePokerGame, performAction, startNewHand, subscribeToPokerGame } from "@/lib/poker-game"
 import { deletePokerGame } from "@/lib/poker-game-reset"
 import type { ChatMessage } from "@/types"
 import type { PokerGameState } from "@/types/poker"
@@ -66,14 +66,13 @@ export function ChatRoomDualMode() {
   // メッセージが更新されたら最下部にスクロール
   useEffect(() => {
     const scrollToBottom = () => {
-      if (scrollAreaRef.current) {
-        const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]')
-        if (viewport) {
-          viewport.scrollTop = viewport.scrollHeight
-        }
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
       }
     }
-    scrollToBottom()
+    // 少し遅延させて確実にスクロール
+    const timer = setTimeout(scrollToBottom, 100)
+    return () => clearTimeout(timer)
   }, [messages])
 
   // チャットメッセージの購読
@@ -185,9 +184,10 @@ export function ChatRoomDualMode() {
       
       await sendChatMessage(newMessage.trim(), customerAccount.id, displayName, customerAccount.storeId)
       setNewMessage("")
-      setTimeout(() => {
+      // フォーカスを維持
+      requestAnimationFrame(() => {
         inputRef.current?.focus()
-      }, 100)
+      })
     } catch (err) {
       console.error("Error sending message:", err)
       setError("メッセージの送信に失敗しました")
@@ -251,7 +251,16 @@ export function ChatRoomDualMode() {
   }
 
   const handleLeaveSeat = async () => {
-    // TODO: 実装
+    if (!customerAccount || !pokerGameId) return
+
+    if (!confirm("席を立ちますか？")) return
+
+    try {
+      await leavePokerGame(customerAccount.storeId, pokerGameId, customerAccount.id)
+    } catch (err) {
+      console.error("Error leaving seat:", err)
+      setError(err instanceof Error ? err.message : "席を立つことができませんでした")
+    }
   }
 
   const handleStartGame = async () => {

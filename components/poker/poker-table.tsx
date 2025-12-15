@@ -359,16 +359,14 @@ export function PokerTable({
             </div>
             
             {/* 退席ボタン */}
-            {game.phase === "waiting" && (
-              <Button
-                onClick={onLeaveSeat}
-                variant="outline"
-                size="sm"
-                className="h-7 text-xs"
-              >
-                退席
-              </Button>
-            )}
+            <Button
+              onClick={onLeaveSeat}
+              variant="outline"
+              size="sm"
+              className="h-7 text-xs"
+            >
+              席を立つ
+            </Button>
           </div>
           
           {/* 自分のカード */}
