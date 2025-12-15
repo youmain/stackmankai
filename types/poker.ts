@@ -30,6 +30,7 @@ export interface ActionHistoryEntry {
   action: PlayerAction
   amount?: number
   phase: GamePhase
+  timestamp: Date
 }
 
 export interface PokerGameState {
@@ -48,6 +49,8 @@ export interface PokerGameState {
   smallBlind: number
   bigBlind: number
   actionHistory?: ActionHistoryEntry[] // アクション履歴
+  winners?: string[] // 勝者のuserIdリスト（showdown時）
+  winnerHands?: any[] // 勝者のハンド情報
   createdAt: Date
   updatedAt: Date
   turnStartTime?: Date // 現在のターンの開始時刻

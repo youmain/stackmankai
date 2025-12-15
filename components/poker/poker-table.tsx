@@ -7,6 +7,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { PokerGameState, PokerPlayer, Card as PokerCard } from "@/types/poker"
 import { TimeoutIndicator } from "./timeout-indicator"
+import { WinnerDisplay } from "./winner-display"
+import { RoundIndicator, PhaseProgressBar } from "./round-indicator"
+import { CompactActionHistory } from "./action-history"
 
 interface PokerTableProps {
   game: PokerGameState | null
@@ -259,20 +262,17 @@ export function PokerTable({
   
   return (
     <div className="flex flex-col h-full bg-gray-900">
-      {/* ポット表示（最上部固定） */}
-      <div className="bg-yellow-500 text-gray-900 px-3 py-1.5 flex items-center justify-center gap-3 shadow-lg">
-        <div className="text-base font-bold">
-          POT: {game.pot.toLocaleString()}
-        </div>
-        <div className="bg-white px-2 py-0.5 rounded text-xs font-semibold uppercase">
-          {game.phase}
-        </div>
+      {/* ラウンド表示（最上部固定） */}
+      <div className="bg-gray-800 px-3 py-2">
+        <RoundIndicator phase={game.phase} pot={game.pot} />
         {countdown !== null && (
-          <div className="bg-green-600 text-white px-2 py-0.5 rounded text-xs font-semibold">
-            次のハンド: {countdown}秒
+          <div className="text-center mt-2">
+            <div className="inline-block bg-green-600 text-white px-4 py-1 rounded-full text-sm font-semibold animate-pulse">
+              次のハンド: {countdown}秒
+            </div>
           </div>
         )}
-       </div>
+      </div>
       
       {/* アクション履歴 */}
       {game.actionHistory && game.actionHistory.length > 0 && (
@@ -487,6 +487,15 @@ export function PokerTable({
             </div>
           )}
         </div>
+      )}
+      
+      {/* 勝者表示 */}
+      {game.phase === "showdown" && game.winners && game.winners.length > 0 && (
+        <WinnerDisplay
+          winners={game.players.filter(p => game.winners?.includes(p.userId))}
+          communityCards={game.communityCards}
+          pot={game.pot}
+        />
       )}
     </div>
   )

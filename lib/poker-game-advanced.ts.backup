@@ -36,14 +36,9 @@ const isRoundComplete = (game: PokerGameState): boolean => {
     return true
   }
   
-  // All active players must have:
-  // 1. The same bet amount
-  // 2. At least one action (lastAction must be set)
+  // All active players must have the same bet amount
   const maxBet = Math.max(...game.players.map(p => p.currentBet))
-  const allHaveSameBet = activePlayers.every(p => p.currentBet === maxBet)
-  const allHaveActed = activePlayers.every(p => p.lastAction !== undefined && p.lastAction !== null)
-  
-  return allHaveSameBet && allHaveActed
+  return activePlayers.every(p => p.currentBet === maxBet)
 }
 
 /**
@@ -129,7 +124,6 @@ export const advancePhase = async (
   const updatedPlayers = gameData.players.map(p => ({
     ...p,
     currentBet: 0,
-    lastAction: undefined, // Reset lastAction for new betting round
   }))
   
   // Find first active player after dealer
@@ -194,8 +188,6 @@ export const evaluateShowdown = async (
     phase: "showdown",
     players: gameData.players,
     pot: 0,
-    winners: winners.map(idx => gameData.players[idx].userId),
-    winnerHands: hands.filter(h => winners.includes(h.seatIndex)),
     updatedAt: serverTimestamp(),
   }))
 }
@@ -261,7 +253,6 @@ export const startNextHand = async (
     isFolded: false,
     isAllIn: false,
     isActive: true,
-    lastAction: undefined, // Reset lastAction for new hand
   }))
   
   // Post blinds
