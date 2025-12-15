@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
-import { ChatRoom } from "@/components/chat/chat-room"
+import { ChatRoomDualMode } from "@/components/chat/chat-room-dual-mode"
 
 export default function ChatPage() {
   const { customerAccount } = useAuth()
@@ -50,7 +50,7 @@ export default function ChatPage() {
 
       {/* チャットコンポーネント */}
       <div className="flex-1 overflow-hidden">
-        <ChatRoom />
+        <ChatRoomDualMode />
       </div>
     </div>
   )

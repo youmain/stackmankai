@@ -1,5 +1,7 @@
 // ポーカーゲームの型定義
 
+export type ViewMode = 'poker' | 'chat' | 'spectate'
+
 export type Suit = "hearts" | "diamonds" | "clubs" | "spades"
 export type Rank = "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "J" | "Q" | "K" | "A"
 
