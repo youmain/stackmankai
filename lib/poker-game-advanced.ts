@@ -217,8 +217,18 @@ export const startNextHand = async (
   
   // Move dealer button
   let newDealerIndex = (gameData.dealerIndex + 1) % activePlayers.length
-  let newSmallBlindIndex = (newDealerIndex + 1) % activePlayers.length
-  let newBigBlindIndex = (newDealerIndex + 2) % activePlayers.length
+  
+  // For single player (testing only), use same index for all positions
+  let newSmallBlindIndex: number
+  let newBigBlindIndex: number
+  
+  if (activePlayers.length === 1) {
+    newSmallBlindIndex = 0
+    newBigBlindIndex = 0
+  } else {
+    newSmallBlindIndex = (newDealerIndex + 1) % activePlayers.length
+    newBigBlindIndex = (newDealerIndex + 2) % activePlayers.length
+  }
   
   // In preflop, action starts after BB (UTG position)
   // For 3 players or less, action starts with dealer (who is also UTG)
