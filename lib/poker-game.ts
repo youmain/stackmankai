@@ -264,8 +264,22 @@ export const performAction = async (
   
   // Move to next player
   let nextPlayerIndex = (gameData.currentPlayerIndex + 1) % gameData.players.length
-  while (gameData.players[nextPlayerIndex].isFolded || gameData.players[nextPlayerIndex].isAllIn) {
+  let loopCount = 0
+  const maxLoops = gameData.players.length
+  
+  // Find next active player (not folded, not all-in)
+  while (
+    loopCount < maxLoops &&
+    (gameData.players[nextPlayerIndex].isFolded || gameData.players[nextPlayerIndex].isAllIn)
+  ) {
     nextPlayerIndex = (nextPlayerIndex + 1) % gameData.players.length
+    loopCount++
+  }
+  
+  // If we looped through all players, it means only one active player left
+  // In this case, keep currentPlayerIndex as is (will be handled by checkAndAdvancePhase)
+  if (loopCount >= maxLoops) {
+    nextPlayerIndex = gameData.currentPlayerIndex
   }
   
   await updateDoc(gameDoc, removeUndefined({
