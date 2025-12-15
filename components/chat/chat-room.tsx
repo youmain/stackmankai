@@ -9,6 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Send, MessageCircle, AlertCircle } from "lucide-react"
 import { subscribeToChatMessages, sendChatMessage, subscribeToActiveUsers, setUserPresence, removeUserPresence } from "@/lib/firestore"
 import { createPokerGame, joinPokerGame, performAction, startNewHand, subscribeToPokerGame } from "@/lib/poker-game"
+import { deletePokerGame } from "@/lib/poker-game-reset"
 import type { ChatMessage } from "@/types"
 import type { PokerGameState } from "@/types/poker"
 import { useAuth } from "@/contexts/auth-context"
@@ -274,6 +275,24 @@ export function ChatRoom() {
     }
   }
 
+  const handleResetGame = async () => {
+    if (!customerAccount || !pokerGameId) return
+
+    if (!confirm("ゲームをリセットしますか？全てのデータが削除されます。")) return
+
+    try {
+      await deletePokerGame(customerAccount.storeId, pokerGameId)
+      setPokerGameId(null)
+      setPokerGame(null)
+      // 新しいゲームを作成
+      const newGameId = await createPokerGame(customerAccount.storeId, 10, 20, 10000)
+      setPokerGameId(newGameId)
+    } catch (err) {
+      console.error("Error resetting game:", err)
+      setError(err instanceof Error ? err.message : "ゲームをリセットできませんでした")
+    }
+  }
+
   if (!customerAccount) {
     return (
       <Alert>
@@ -301,6 +320,7 @@ export function ChatRoom() {
             onAction={handlePokerAction}
             onJoinSeat={handleJoinSeat}
             onStartGame={handleStartGame}
+            onResetGame={handleResetGame}
           />
         </div>
       )}

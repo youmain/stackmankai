@@ -14,6 +14,7 @@ interface PokerTableProps {
   onAction: (action: string, amount?: number) => void
   onJoinSeat: (seatIndex: number) => void
   onStartGame: () => void
+  onResetGame?: () => void
 }
 
 // カードのスートを絵文字で表示
@@ -195,6 +196,7 @@ export function PokerTable({
   onAction,
   onJoinSeat,
   onStartGame,
+  onResetGame,
 }: PokerTableProps) {
   const [betAmount, setBetAmount] = useState("")
   
@@ -363,9 +365,16 @@ export function PokerTable({
           
           {/* ゲーム開始ボタン */}
           {game.phase === "waiting" && game.players.length >= 2 && (
-            <Button onClick={onStartGame} className="w-full h-8 text-xs mt-1">
-              ゲーム開始
-            </Button>
+            <div className="flex gap-1 mt-1">
+              <Button onClick={onStartGame} className="flex-1 h-8 text-xs">
+                ゲーム開始
+              </Button>
+              {onResetGame && (
+                <Button onClick={onResetGame} variant="destructive" className="h-8 text-xs px-2">
+                  リセット
+                </Button>
+              )}
+            </div>
           )}
         </div>
       )}
