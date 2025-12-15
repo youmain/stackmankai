@@ -169,7 +169,16 @@ export function ChatRoom() {
       customerAccount.storeId,
       pokerGameId,
       (game) => {
-        setPokerGame(game)
+        if (game) {
+          setPokerGame(game)
+        } else {
+          // ゲームが存在しない場合、localStorageをクリアして新規作成
+          console.log("Game not found, creating new game")
+          const storageKey = `pokerGameId_${customerAccount.storeId}`
+          localStorage.removeItem(storageKey)
+          setPokerGameId(null)
+          setPokerGame(null)
+        }
       },
       (error) => {
         console.error("Poker game subscription error:", error)
@@ -284,9 +293,13 @@ export function ChatRoom() {
       await deletePokerGame(customerAccount.storeId, pokerGameId)
       setPokerGameId(null)
       setPokerGame(null)
+      // localStorageからも削除
+      const storageKey = `pokerGameId_${customerAccount.storeId}`
+      localStorage.removeItem(storageKey)
       // 新しいゲームを作成
-      const newGameId = await createPokerGame(customerAccount.storeId, 10, 20, 10000)
+      const newGameId = await createPokerGame(customerAccount.storeId, 50, 100)
       setPokerGameId(newGameId)
+      localStorage.setItem(storageKey, newGameId)
     } catch (err) {
       console.error("Error resetting game:", err)
       setError(err instanceof Error ? err.message : "ゲームをリセットできませんでした")
