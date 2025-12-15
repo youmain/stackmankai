@@ -255,8 +255,8 @@ export const startNextHand = async (
   
   const pot = (sbPlayer?.currentBet || 0) + (bbPlayer?.currentBet || 0)
   
-  await updateDoc(gameDoc, removeUndefined({
-    phase: "preflop",
+  const updateData = removeUndefined({
+    phase: "preflop" as const,
     pot,
     communityCards: [],
     currentBet: gameData.bigBlind,
@@ -266,8 +266,12 @@ export const startNextHand = async (
     bigBlindIndex: newBigBlindIndex,
     currentPlayerIndex: newCurrentPlayerIndex,
     players: updatedPlayers,
+  })
+  
+  await updateDoc(gameDoc, {
+    ...updateData,
     updatedAt: serverTimestamp(),
-  }))
+  })
 }
 
 /**
