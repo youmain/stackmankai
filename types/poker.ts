@@ -42,6 +42,8 @@ export interface PokerGameState {
   bigBlind: number
   createdAt: Date
   updatedAt: Date
+  turnStartTime?: Date // 現在のターンの開始時刻
+  timeoutSeconds?: number // タイムアウトまでの秒数
 }
 
 export interface PokerAction {

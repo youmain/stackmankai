@@ -1,0 +1,191 @@
+/* Poker game animations */
+
+/* Card deal animation */
+@keyframes dealCard {
+  from {
+    opacity: 0;
+    transform: translateY(-100px) scale(0.5) rotate(-10deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+}
+
+.card-deal {
+  animation: dealCard 0.5s ease-out forwards;
+}
+
+.card-deal-delay-1 {
+  animation-delay: 0.1s;
+  opacity: 0;
+}
+
+.card-deal-delay-2 {
+  animation-delay: 0.2s;
+  opacity: 0;
+}
+
+.card-deal-delay-3 {
+  animation-delay: 0.3s;
+  opacity: 0;
+}
+
+.card-deal-delay-4 {
+  animation-delay: 0.4s;
+  opacity: 0;
+}
+
+/* Card flip animation */
+@keyframes flipCard {
+  0% {
+    transform: rotateY(0deg);
+  }
+  50% {
+    transform: rotateY(90deg);
+  }
+  100% {
+    transform: rotateY(0deg);
+  }
+}
+
+.card-flip {
+  animation: flipCard 0.6s ease-in-out;
+}
+
+/* Chip move to pot animation */
+@keyframes chipToPot {
+  from {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(var(--chip-target-x), var(--chip-target-y)) scale(0.5);
+  }
+}
+
+.chip-to-pot {
+  animation: chipToPot 0.8s ease-in-out forwards;
+}
+
+/* Pot to winner animation */
+@keyframes potToWinner {
+  from {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(var(--winner-x), var(--winner-y)) scale(0.5);
+  }
+}
+
+.pot-to-winner {
+  animation: potToWinner 1s ease-in-out forwards;
+}
+
+/* Pulse animation for current player */
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+  }
+}
+
+.pulse-green {
+  animation: pulse 2s infinite;
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+/* Slide up animation */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+/* Bounce animation for chips */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.bounce {
+  animation: bounce 0.5s ease-in-out;
+}
+
+/* Shake animation for invalid action */
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10px);
+  }
+  75% {
+    transform: translateX(10px);
+  }
+}
+
+.shake {
+  animation: shake 0.3s ease-in-out;
+}
+
+/* Glow animation for winner */
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(251, 191, 36, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(251, 191, 36, 1), 0 0 30px rgba(251, 191, 36, 0.5);
+  }
+}
+
+.glow-gold {
+  animation: glow 1.5s ease-in-out infinite;
+}
+
+/* Dealer button move animation */
+@keyframes moveDealer {
+  from {
+    opacity: 0;
+    transform: translate(var(--dealer-from-x), var(--dealer-from-y)) scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+.dealer-move {
+  animation: moveDealer 0.8s ease-out;
+}

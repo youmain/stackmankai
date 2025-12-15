@@ -18,6 +18,7 @@ import type {
   PlayerAction,
   GamePhase,
 } from "@/types/poker"
+import { validatePlayerAction, validateSeatSelection, withErrorHandling } from "./poker-logic/validation"
 
 /**
  * Get poker game collection reference for a store
@@ -109,27 +110,21 @@ export const joinPokerGame = async (
   seatIndex: number,
   buyIn: number
 ): Promise<void> => {
-  if (!isFirebaseConfigured()) throw new Error("Firebase is not configured")
-  
-  const gameCollection = getPokerGameCollection(storeId)
-  const gameDoc = doc(gameCollection, gameId)
-  const gameSnap = await getDoc(gameDoc)
-  
-  if (!gameSnap.exists()) {
-    throw new Error("Game not found")
-  }
-  
-  const gameData = gameSnap.data() as PokerGameState
-  
-  // Check if seat is available
-  if (gameData.players.some(p => p.seatIndex === seatIndex)) {
-    throw new Error("Seat is already taken")
-  }
-  
-  // Check if player is already in game
-  if (gameData.players.some(p => p.userId === userId)) {
-    throw new Error("Player is already in game")
-  }
+  return withErrorHandling(async () => {
+    if (!isFirebaseConfigured()) throw new Error("Firebase is not configured")
+    
+    const gameCollection = getPokerGameCollection(storeId)
+    const gameDoc = doc(gameCollection, gameId)
+    const gameSnap = await getDoc(gameDoc)
+    
+    if (!gameSnap.exists()) {
+      throw new Error("Game not found")
+    }
+    
+    const gameData = gameSnap.data() as PokerGameState
+    
+    // Validate seat selection
+    validateSeatSelection(gameData, userId, seatIndex, buyIn)
   
   const newPlayer: PokerPlayer = {
     userId,
@@ -143,10 +138,11 @@ export const joinPokerGame = async (
     isActive: true,
   }
   
-  await updateDoc(gameDoc, {
-    players: [...gameData.players, newPlayer],
-    updatedAt: serverTimestamp(),
-  })
+    await updateDoc(gameDoc, {
+      players: [...gameData.players, newPlayer],
+      updatedAt: serverTimestamp(),
+    })
+  }, "座席への参加に失敗しました")
 }
 
 /**
@@ -199,26 +195,23 @@ export const performAction = async (
   action: PlayerAction,
   amount?: number
 ): Promise<void> => {
-  if (!isFirebaseConfigured()) throw new Error("Firebase is not configured")
-  
-  const gameCollection = getPokerGameCollection(storeId)
-  const gameDoc = doc(gameCollection, gameId)
-  const gameSnap = await getDoc(gameDoc)
-  
-  if (!gameSnap.exists()) {
-    throw new Error("Game not found")
-  }
-  
-  const gameData = gameSnap.data() as PokerGameState
-  const playerIndex = gameData.players.findIndex(p => p.userId === userId)
-  
-  if (playerIndex === -1) {
-    throw new Error("Player not found")
-  }
-  
-  if (playerIndex !== gameData.currentPlayerIndex) {
-    throw new Error("Not your turn")
-  }
+  return withErrorHandling(async () => {
+    if (!isFirebaseConfigured()) throw new Error("Firebase is not configured")
+    
+    const gameCollection = getPokerGameCollection(storeId)
+    const gameDoc = doc(gameCollection, gameId)
+    const gameSnap = await getDoc(gameDoc)
+    
+    if (!gameSnap.exists()) {
+      throw new Error("Game not found")
+    }
+    
+    const gameData = gameSnap.data() as PokerGameState
+    
+    // Validate action
+    validatePlayerAction(gameData, userId, action, amount)
+    
+    const playerIndex = gameData.players.findIndex(p => p.userId === userId)
   
   const player = gameData.players[playerIndex]
   let newPot = gameData.pot
@@ -282,9 +275,10 @@ export const performAction = async (
     updatedAt: serverTimestamp(),
   })
   
-  // Check if phase should advance automatically
-  const { checkAndAdvancePhase } = await import("./poker-game-advanced")
-  await checkAndAdvancePhase(storeId, gameId)
+    // Check if phase should advance automatically
+    const { checkAndAdvancePhase } = await import("./poker-game-advanced")
+    await checkAndAdvancePhase(storeId, gameId)
+  }, "アクションの実行に失敗しました")
 }
 
 /**

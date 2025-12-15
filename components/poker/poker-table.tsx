@@ -1,10 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import "./animations.css"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { PokerGameState, PokerPlayer, Card as PokerCard } from "@/types/poker"
+import { TimeoutIndicator } from "./timeout-indicator"
 
 interface PokerTableProps {
   game: PokerGameState | null
@@ -31,7 +33,13 @@ const getSuitColor = (suit: string) => {
 }
 
 // カードコンポーネント
-const CardDisplay = ({ card, isHidden, size = "normal" }: { card: PokerCard; isHidden?: boolean; size?: "small" | "normal" | "large" }) => {
+const CardDisplay = ({ card, isHidden, size = "normal", animate = false, delay = 0 }: { 
+  card: PokerCard; 
+  isHidden?: boolean; 
+  size?: "small" | "normal" | "large";
+  animate?: boolean;
+  delay?: number;
+}) => {
   const sizeClasses = {
     small: "w-8 h-11",
     normal: "w-12 h-16",
@@ -50,10 +58,12 @@ const CardDisplay = ({ card, isHidden, size = "normal" }: { card: PokerCard; isH
     large: "text-3xl"
   }
   
+  const animationClass = animate ? `card-deal ${delay > 0 ? `card-deal-delay-${delay}` : ''}` : ''
+  
   if (isHidden) {
     return (
       <div 
-        className={`${sizeClasses[size]} rounded shadow-md`}
+        className={`${sizeClasses[size]} rounded shadow-md ${animationClass}`}
         style={{
           backgroundImage: "url('/card-back.png')",
           backgroundSize: "cover",
@@ -64,7 +74,7 @@ const CardDisplay = ({ card, isHidden, size = "normal" }: { card: PokerCard; isH
   }
   
   return (
-    <div className={`${sizeClasses[size]} bg-white border-2 border-gray-300 rounded flex flex-col items-center justify-center shadow-md`}>
+    <div className={`${sizeClasses[size]} bg-white border-2 border-gray-300 rounded flex flex-col items-center justify-center shadow-md ${animationClass}`}>
       <span className={`${rankSizeClasses[size]} font-bold ${getSuitColor(card.suit)}`}>
         {card.rank}
       </span>
@@ -115,7 +125,7 @@ const PlayerSeatVertical = ({
   
   return (
     <div className={`rounded p-1.5 border flex items-center gap-2 ${
-      isCurrentPlayer ? "bg-green-600 border-green-400" : "bg-gray-800 border-gray-600"
+      isCurrentPlayer ? "bg-green-600 border-green-400 pulse-green" : "bg-gray-800 border-gray-600"
     } ${player.isFolded ? "opacity-50" : ""}`}>
       {/* D/SB/BBバッジ */}
       <div className="flex gap-0.5">
@@ -299,6 +309,9 @@ export function PokerTable({
               <CardDisplay key={idx} card={card} size="large" />
             ))}
           </div>
+          
+          {/* タイムアウトインジケーター */}
+          <TimeoutIndicator game={game} currentUserId={currentUserId} />
           
           {/* アクションボタン */}
           {isMyTurn && !currentPlayer.isFolded && (

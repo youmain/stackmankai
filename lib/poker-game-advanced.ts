@@ -13,7 +13,8 @@ import { collection } from "firebase/firestore"
 import type { PokerGameState, Card } from "@/types/poker"
 import { Deck } from "./poker-logic/deck"
 import { HandEvaluator } from "./poker-logic/hand-evaluator"
-import { determineWinners, distributePot } from "./poker-logic/game-helpers"
+import { determineWinners } from "./poker-logic/game-helpers"
+import { calculateSidePots, distributePots } from "./poker-logic/side-pot"
 
 /**
  * Get poker game collection reference for a store
@@ -156,11 +157,17 @@ export const evaluateShowdown = async (
   
   const gameData = gameSnap.data() as PokerGameState
   
+  // Calculate side pots
+  const pots = calculateSidePots(gameData.players)
+  
   // Determine winners using hand evaluator
   const { winners, hands } = determineWinners(gameData)
   
-  // Distribute pot
-  distributePot(gameData, winners)
+  // Group winners by hand strength
+  const winnersByStrength: number[][] = [winners]
+  
+  // Distribute pots to winners
+  distributePots(pots, gameData.players, winnersByStrength)
   
   // Store hand results for history
   const handResult = {
