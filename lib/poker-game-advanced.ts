@@ -211,8 +211,8 @@ export const startNextHand = async (
   // Remove players with 0 stack
   const activePlayers = gameData.players.filter(p => p.stack > 0)
   
-  if (activePlayers.length < 1) {
-    throw new Error("Need at least 1 player with chips to continue")
+  if (activePlayers.length < 2) {
+    throw new Error("Need at least 2 players with chips to continue")
   }
   
   // Move dealer button

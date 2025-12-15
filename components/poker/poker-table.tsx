@@ -364,7 +364,7 @@ export function PokerTable({
           )}
           
           {/* ゲーム開始ボタン */}
-          {game.phase === "waiting" && game.players.length >= 1 && (
+          {game.phase === "waiting" && game.players.length >= 2 && (
             <div className="flex gap-1 mt-1">
               <Button onClick={onStartGame} className="flex-1 h-8 text-xs">
                 ゲーム開始
