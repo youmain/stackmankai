@@ -277,44 +277,47 @@ export function ChatRoom() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="h-full flex flex-col">
       {/* ポーカーテーブル */}
       {pokerGame && customerAccount && (
-        <PokerTable
-          game={pokerGame}
-          currentUserId={customerAccount.id}
-          onAction={handlePokerAction}
-          onJoinSeat={handleJoinSeat}
-          onStartGame={handleStartGame}
-        />
+        <div className="h-1/2 overflow-hidden">
+          <PokerTable
+            game={pokerGame}
+            currentUserId={customerAccount.id}
+            onAction={handlePokerAction}
+            onJoinSeat={handleJoinSeat}
+            onStartGame={handleStartGame}
+          />
+        </div>
       )}
 
       {/* チャット */}
-      <Card className="h-[calc(100vh-200px)] max-h-[700px] flex flex-col overflow-hidden">
-        <CardHeader>
+      <Card className="flex-1 flex flex-col overflow-hidden rounded-t-lg rounded-b-none border-t-2 border-purple-500">
+        <CardHeader className="p-2 pb-1">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <MessageCircle className="h-5 w-5" />
+          <CardTitle className="flex items-center gap-1 text-sm">
+            <MessageCircle className="h-4 w-4" />
             {customerAccount.storeName || "店舗"} チャット
           </CardTitle>
           <Button
             variant="outline"
             size="sm"
+            className="h-6 text-xs px-2"
             onClick={handleClearHistory}
             disabled={messages.filter(msg => !hiddenMessageIds.has(msg.id)).length === 0}
           >
-            履歴消去
+            消去
           </Button>
         </div>
         {/* 入室中ユーザー表示 */}
         {activeUsers.length > 0 && (
-          <div className="mt-3">
-            <span className="text-sm text-muted-foreground mb-2 block">入室中: ({activeUsers.length}人)</span>
-            <div className="flex gap-2 overflow-x-auto pb-2" style={{ scrollbarWidth: 'thin' }}>
+          <div className="mt-1">
+            <span className="text-xs text-muted-foreground">入室中: ({activeUsers.length}人)</span>
+            <div className="flex gap-1 overflow-x-auto pb-1 mt-1" style={{ scrollbarWidth: 'thin' }}>
               {activeUsers.map((user) => (
                 <div
                   key={user.userId}
-                  className="px-3 py-1.5 text-xs font-medium border border-purple-300 bg-purple-50 text-purple-700 rounded whitespace-nowrap flex-shrink-0"
+                  className="px-2 py-0.5 text-[10px] font-medium border border-purple-300 bg-purple-50 text-purple-700 rounded whitespace-nowrap flex-shrink-0"
                 >
                   {user.userName}
                 </div>
@@ -323,7 +326,7 @@ export function ChatRoom() {
           </div>
         )}
       </CardHeader>
-      <CardContent className="flex-1 flex flex-col gap-4 p-4 overflow-hidden">
+      <CardContent className="flex-1 flex flex-col gap-2 p-2 overflow-hidden">
         {/* メッセージ一覧 */}
         <ScrollArea className="flex-1 pr-4" ref={scrollAreaRef}>
           <div className="space-y-4">

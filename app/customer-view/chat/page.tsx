@@ -31,23 +31,25 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
-      <div className="container mx-auto p-4 max-w-4xl">
-        {/* ヘッダー */}
-        <div className="mb-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-purple-900">
-            {customerAccount.playerName || "プレイヤー"}さんのチャット
-          </h1>
-          <Button
-            variant="outline"
-            onClick={() => router.push("/customer-view")}
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            マイページに戻る
-          </Button>
-        </div>
+    <div className="h-screen flex flex-col bg-gradient-to-br from-purple-50 via-white to-pink-50">
+      {/* ヘッダー */}
+      <div className="flex items-center justify-between p-2 bg-white shadow-sm">
+        <h1 className="text-base font-bold text-purple-900">
+          {customerAccount.playerName || "プレイヤー"}さんのチャット
+        </h1>
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-8 text-xs"
+          onClick={() => router.push("/customer-view")}
+        >
+          <ArrowLeft className="h-3 w-3 mr-1" />
+          戻る
+        </Button>
+      </div>
 
-        {/* チャットコンポーネント */}
+      {/* チャットコンポーネント */}
+      <div className="flex-1 overflow-hidden">
         <ChatRoom />
       </div>
     </div>
