@@ -13,6 +13,7 @@ import type { ChatMessage } from "@/types"
 import type { PokerGameState } from "@/types/poker"
 import { useAuth } from "@/contexts/auth-context"
 import { PokerTable } from "@/components/poker/poker-table"
+import { PokerTestControls } from "@/components/poker/poker-test-controls"
 
 export function ChatRoom() {
   const { customerAccount } = useAuth()
@@ -286,6 +287,11 @@ export function ChatRoom() {
 
   return (
     <div className="h-full flex flex-col">
+      {/* テストコントロール */}
+      <div className="p-2 bg-gray-50 border-b">
+        <PokerTestControls />
+      </div>
+      
       {/* ポーカーテーブル */}
       {pokerGame && customerAccount && (
         <div style={{ height: '70%' }} className="overflow-hidden">
