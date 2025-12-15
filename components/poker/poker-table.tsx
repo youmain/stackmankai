@@ -249,7 +249,7 @@ export function PokerTable({
   }
   
   const currentPlayer = game.players.find(p => p.userId === currentUserId)
-  const isMyTurn = currentPlayer && game.players[game.currentPlayerIndex]?.userId === currentUserId
+  const isMyTurn = currentPlayer && game.currentPlayerIndex !== undefined && game.players[game.currentPlayerIndex]?.userId === currentUserId && game.phase !== "waiting" && game.phase !== "showdown"
   
   // 自分以外のプレイヤー
   const otherPlayers = Array.from({ length: 10 }, (_, idx) => {
