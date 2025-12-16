@@ -13,6 +13,14 @@ export function TimeoutIndicator({ game, currentUserId }: TimeoutIndicatorProps)
   const [remainingTime, setRemainingTime] = useState<number | null>(null)
   
   useEffect(() => {
+    console.log("[TimeoutIndicator] Game state:", {
+      phase: game.phase,
+      turnStartTime: game.turnStartTime,
+      timeoutSeconds: game.timeoutSeconds,
+      currentPlayerIndex: game.currentPlayerIndex,
+      currentPlayer: game.players[game.currentPlayerIndex]
+    })
+    
     // ゲームがWAITINGまたはSHOWDOWN状態の場合は表示しない
     if (game.phase === "WAITING" || game.phase === "SHOWDOWN") {
       setRemainingTime(null)
