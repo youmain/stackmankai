@@ -395,9 +395,7 @@ export function PokerTable({
               <div className="text-yellow-400 text-base font-bold">
                 {currentPlayer.stack.toLocaleString()}
               </div>
-            </div>
-            
-            {/* 退席ボタン */}
+               <div className="flex gap-2 justify-center mb-2">
             <Button
               onClick={onLeaveSeat}
               variant="outline"
@@ -406,6 +404,16 @@ export function PokerTable({
             >
               席を立つ
             </Button>
+            {onResetGame && (
+              <Button
+                onClick={onResetGame}
+                variant="destructive"
+                size="sm"
+                className="h-7 text-xs"
+              >
+                🛠️ リセット
+              </Button>
+            )}
           </div>
           
           {/* 自分のカード */}
@@ -531,19 +539,7 @@ export function PokerTable({
         />
       )}
       
-      {/* リセットボタン（テスト用） */}
-      {onResetGame && (
-        <div className="mt-2">
-          <Button 
-            onClick={onResetGame} 
-            variant="destructive" 
-            size="sm"
-            className="w-full h-8 text-xs"
-          >
-            🛠️ 開発用: ゲームをリセット
-          </Button>
-        </div>
-      )}
+
     </div>
   )
 }
