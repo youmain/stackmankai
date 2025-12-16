@@ -531,8 +531,8 @@ export function PokerTable({
         />
       )}
       
-      {/* 開発環境でのみ表示されるリセットボタン */}
-      {process.env.NEXT_PUBLIC_SHOW_DEV_TOOLS === 'true' && onResetGame && (
+      {/* リセットボタン（テスト用） */}
+      {onResetGame && (
         <div className="mt-2">
           <Button 
             onClick={onResetGame} 
