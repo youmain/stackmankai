@@ -144,6 +144,7 @@ export const advancePhase = async (
     currentBet: 0,
     players: updatedPlayers,
     currentPlayerIndex: nextPlayerIndex,
+    turnStartTime: new Date(),
     updatedAt: serverTimestamp(),
   }))
 }
@@ -295,6 +296,8 @@ export const startNextHand = async (
     bigBlindIndex: newBigBlindIndex,
     currentPlayerIndex: newCurrentPlayerIndex,
     players: updatedPlayers,
+    timeoutSeconds: gameData.timeoutSeconds || 30,
+    turnStartTime: new Date(),
   })
   
   await updateDoc(gameDoc, {

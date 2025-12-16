@@ -87,6 +87,7 @@ export const createPokerGame = async (
     players: [],
     smallBlind,
     bigBlind,
+    timeoutSeconds: 30,
     createdAt: new Date(),
     updatedAt: new Date(),
   }
