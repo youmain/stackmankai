@@ -38,9 +38,17 @@ export function TimeoutIndicator({ game, currentUserId }: TimeoutIndicatorProps)
     
     const updateTimer = () => {
       const now = new Date()
-      const turnStartTime = game.turnStartTime instanceof Date 
-        ? game.turnStartTime 
-        : (game.turnStartTime as any).toDate()
+      
+      // turnStartTimeをDate型に変換
+      let turnStartTime: Date
+      if (game.turnStartTime instanceof Date) {
+        turnStartTime = game.turnStartTime
+      } else if (game.turnStartTime && typeof (game.turnStartTime as any).toDate === 'function') {
+        turnStartTime = (game.turnStartTime as any).toDate()
+      } else {
+        // turnStartTimeが無効な場合、現在時刻を使用
+        turnStartTime = now
+      }
       
       const elapsedSeconds = (now.getTime() - turnStartTime.getTime()) / 1000
       const remaining = timeoutSeconds - elapsedSeconds
