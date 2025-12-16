@@ -395,7 +395,10 @@ export function PokerTable({
               <div className="text-yellow-400 text-base font-bold">
                 {currentPlayer.stack.toLocaleString()}
               </div>
-               <div className="flex gap-2 justify-center mb-2">
+            </div>
+          </div>
+          
+          <div className="flex gap-2 justify-center mb-2">
             <Button
               onClick={onLeaveSeat}
               variant="outline"
