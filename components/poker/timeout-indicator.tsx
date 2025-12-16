@@ -13,7 +13,19 @@ export function TimeoutIndicator({ game, currentUserId }: TimeoutIndicatorProps)
   const [remainingTime, setRemainingTime] = useState<number | null>(null)
   
   useEffect(() => {
-    if (!game.turnStartTime || !game.timeoutSeconds) {
+    // ゲームがWAITINGまたはSHOWDOWN状態の場合は表示しない
+    if (game.phase === "WAITING" || game.phase === "SHOWDOWN") {
+      setRemainingTime(null)
+      return
+    }
+    
+    // turnStartTimeがnullの場合、デフォルトのタイムアウト時間を表示
+    if (!game.turnStartTime) {
+      setRemainingTime(game.timeoutSeconds || 30)
+      return
+    }
+    
+    if (!game.timeoutSeconds) {
       setRemainingTime(null)
       return
     }
@@ -38,14 +50,18 @@ export function TimeoutIndicator({ game, currentUserId }: TimeoutIndicatorProps)
     const interval = setInterval(updateTimer, 100)
     
     return () => clearInterval(interval)
-  }, [game.turnStartTime, game.timeoutSeconds, game.currentPlayerIndex])
+  }, [game.turnStartTime, game.timeoutSeconds, game.currentPlayerIndex, game.phase])
   
   if (remainingTime === null) {
     return null
   }
   
   const currentPlayer = game.players[game.currentPlayerIndex]
-  const isMyTurn = currentPlayer?.userId === currentUserId
+  if (!currentPlayer) {
+    return null
+  }
+  
+  const isMyTurn = currentPlayer.userId === currentUserId
   
   // Calculate progress percentage
   const progress = game.timeoutSeconds ? (remainingTime / game.timeoutSeconds) * 100 : 0
@@ -59,15 +75,18 @@ export function TimeoutIndicator({ game, currentUserId }: TimeoutIndicatorProps)
   }
   
   return (
-    <div className={`${isMyTurn ? 'block' : 'hidden'} w-full`}>
-      <div className="flex items-center gap-2 px-2 py-1">
-        <div className="flex-1 bg-gray-700 rounded-full h-2 overflow-hidden">
+    <div className="w-full px-2 py-2 bg-gray-800/50 backdrop-blur-sm">
+      <div className="flex items-center gap-3">
+        <div className="text-sm font-medium text-white min-w-[120px]">
+          {isMyTurn ? "あなたのターン" : `${currentPlayer.name}のターン`}
+        </div>
+        <div className="flex-1 bg-gray-700 rounded-full h-3 overflow-hidden">
           <div
             className={`h-full ${colorClass} transition-all duration-100`}
             style={{ width: `${progress}%` }}
           />
         </div>
-        <div className={`text-sm font-bold ${remainingTime <= 5 ? 'text-red-500 animate-pulse' : 'text-white'}`}>
+        <div className={`text-sm font-bold min-w-[40px] text-right ${remainingTime <= 5 ? 'text-red-500 animate-pulse' : 'text-white'}`}>
           {remainingTime}s
         </div>
       </div>
