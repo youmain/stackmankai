@@ -99,7 +99,7 @@ export const handlePlayerTimeout = async (
     players: updatedPlayers,
     currentPlayerIndex: nextPlayerIndex,
     actionHistory: updatedHistory,
-    turnStartTime: serverTimestamp(),
+    turnStartTime: new Date(),
     updatedAt: serverTimestamp(),
   }))
   

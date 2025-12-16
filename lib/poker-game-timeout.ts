@@ -78,7 +78,7 @@ export const handlePlayerTimeout = async (
   await updateDoc(gameDoc, {
     players: gameData.players,
     currentPlayerIndex: nextPlayerIndex,
-    turnStartTime: serverTimestamp(),
+    turnStartTime: new Date(),
     updatedAt: serverTimestamp(),
   })
   
@@ -97,7 +97,7 @@ export const updateTurnStartTime = async (
   const gameDoc = doc(getPokerGameCollection(storeId), gameId)
   
   await updateDoc(gameDoc, {
-    turnStartTime: serverTimestamp(),
+    turnStartTime: new Date(),
     updatedAt: serverTimestamp(),
   })
 }
@@ -114,7 +114,7 @@ export const enableTimeout = async (
   
   await updateDoc(gameDoc, {
     timeoutSeconds,
-    turnStartTime: serverTimestamp(),
+    turnStartTime: new Date(),
     updatedAt: serverTimestamp(),
   })
 }
