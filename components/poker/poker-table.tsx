@@ -254,6 +254,17 @@ export function PokerTable({
   const currentPlayer = game.players.find(p => p.userId === currentUserId)
   const isMyTurn = currentPlayer && game.currentPlayerIndex !== undefined && game.players[game.currentPlayerIndex]?.userId === currentUserId && game.phase !== "waiting" && game.phase !== "showdown"
   
+  // デバッグログ
+  console.log('[PokerTable] Debug:', {
+    currentUserId,
+    currentPlayer,
+    isMyTurn,
+    currentPlayerIndex: game.currentPlayerIndex,
+    currentPlayerUserId: game.players[game.currentPlayerIndex]?.userId,
+    phase: game.phase,
+    allPlayers: game.players.map(p => ({ userId: p.userId, name: p.name }))
+  })
+  
   // 自分以外のプレイヤー（空席は表示しない）
   const otherPlayers = game.players
     .filter(p => p.userId !== currentUserId)

@@ -93,7 +93,15 @@ export function TimeoutIndicator({ game, currentUserId }: TimeoutIndicatorProps)
   }
   
   const currentPlayer = game.players[game.currentPlayerIndex]
+  
+  console.log('[TimeoutIndicator] Current player:', {
+    currentPlayerIndex: game.currentPlayerIndex,
+    currentPlayer,
+    remainingTime
+  })
+  
   if (!currentPlayer) {
+    console.warn('[TimeoutIndicator] No current player found')
     return null
   }
   
