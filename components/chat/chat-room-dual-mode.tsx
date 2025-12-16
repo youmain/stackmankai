@@ -148,7 +148,9 @@ export function ChatRoomDualMode() {
     return () => unsubscribe()
   }, [customerAccount?.storeId, pokerGameId])
 
-  // タイムアウト監視
+  // タイムアウト監視 - 一時的に無効化（UIのカウントダウンテスト用）
+  // TODO: サーバー側でタイムアウト処理を実装する
+  /*
   useEffect(() => {
     if (!customerAccount || !pokerGameId || !pokerGame) return
     if (pokerGame.phase === "waiting" || pokerGame.phase === "showdown") return
@@ -172,6 +174,7 @@ export function ChatRoomDualMode() {
 
     return () => clearInterval(interval)
   }, [customerAccount, pokerGameId, pokerGame])
+  */
 
   // SHOWDOWN後の自動次ハンド開始
   useEffect(() => {
