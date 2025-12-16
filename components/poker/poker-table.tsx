@@ -530,6 +530,20 @@ export function PokerTable({
           pot={game.pot}
         />
       )}
+      
+      {/* 開発環境でのみ表示されるリセットボタン */}
+      {process.env.NEXT_PUBLIC_SHOW_DEV_TOOLS === 'true' && onResetGame && (
+        <div className="mt-2">
+          <Button 
+            onClick={onResetGame} 
+            variant="destructive" 
+            size="sm"
+            className="w-full h-8 text-xs"
+          >
+            🛠️ 開発用: ゲームをリセット
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
