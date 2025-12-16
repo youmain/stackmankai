@@ -27,14 +27,12 @@ export function TimeoutIndicator({ game, currentUserId }: TimeoutIndicatorProps)
       return
     }
     
+    // timeoutSecondsのデフォルト値を設定
+    const timeoutSeconds = game.timeoutSeconds || 30
+    
     // turnStartTimeがnullの場合、デフォルトのタイムアウト時間を表示
     if (!game.turnStartTime) {
-      setRemainingTime(game.timeoutSeconds || 30)
-      return
-    }
-    
-    if (!game.timeoutSeconds) {
-      setRemainingTime(null)
+      setRemainingTime(timeoutSeconds)
       return
     }
     
@@ -45,7 +43,7 @@ export function TimeoutIndicator({ game, currentUserId }: TimeoutIndicatorProps)
         : (game.turnStartTime as any).toDate()
       
       const elapsedSeconds = (now.getTime() - turnStartTime.getTime()) / 1000
-      const remaining = game.timeoutSeconds! - elapsedSeconds
+      const remaining = timeoutSeconds - elapsedSeconds
       
       if (remaining <= 0) {
         setRemainingTime(0)
@@ -72,7 +70,8 @@ export function TimeoutIndicator({ game, currentUserId }: TimeoutIndicatorProps)
   const isMyTurn = currentPlayer.userId === currentUserId
   
   // Calculate progress percentage
-  const progress = game.timeoutSeconds ? (remainingTime / game.timeoutSeconds) * 100 : 0
+  const timeoutSeconds = game.timeoutSeconds || 30
+  const progress = (remainingTime / timeoutSeconds) * 100
   
   // Determine color based on remaining time
   let colorClass = "bg-green-500"
