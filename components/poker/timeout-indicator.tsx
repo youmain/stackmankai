@@ -12,8 +12,15 @@ export function TimeoutIndicator({ game, currentUserId }: TimeoutIndicatorProps)
   const [countdown, setCountdown] = useState<number | null>(null)
   
   useEffect(() => {
+    console.log('[TimeoutIndicator] useEffect triggered', {
+      phase: game.phase,
+      currentPlayerIndex: game.currentPlayerIndex,
+      timeoutSeconds: game.timeoutSeconds
+    })
+    
     // ゲームがWAITINGまたはSHOWDOWN状態の場合は表示しない
     if (game.phase === "WAITING" || game.phase === "SHOWDOWN") {
+      console.log('[TimeoutIndicator] Phase is WAITING or SHOWDOWN, hiding indicator')
       setCountdown(null)
       return
     }
@@ -22,10 +29,12 @@ export function TimeoutIndicator({ game, currentUserId }: TimeoutIndicatorProps)
     const timeoutSeconds = game.timeoutSeconds || 30
     
     // カウントダウンを開始
+    console.log('[TimeoutIndicator] Starting countdown from', timeoutSeconds)
     setCountdown(timeoutSeconds)
     
     const interval = setInterval(() => {
       setCountdown(prev => {
+        console.log('[TimeoutIndicator] Countdown tick:', prev)
         if (prev === null || prev <= 1) {
           clearInterval(interval)
           return 0
