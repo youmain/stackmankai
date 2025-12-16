@@ -409,14 +409,13 @@ export function PokerTable({
           </div>
           
           {/* 自分のカード */}
-          <div className="flex gap-1 justify-center mb-2">
-            {(currentPlayer.cards.length > 0 ? currentPlayer.cards : [
-              { suit: "hearts" as const, rank: "A" as const },
-              { suit: "spades" as const, rank: "K" as const }
-            ] as PokerCard[]).map((card, idx) => (
-              <CardDisplay key={idx} card={card} size="large" />
-            ))}
-          </div>
+          {currentPlayer.cards.length > 0 && (
+            <div className="flex gap-1 justify-center mb-2">
+              {currentPlayer.cards.map((card, idx) => (
+                <CardDisplay key={idx} card={card} size="large" />
+              ))}
+            </div>
+          )}
           
           {/* ハンド判定 */}
           {currentPlayer.cards.length > 0 && game.communityCards.length > 0 && (
