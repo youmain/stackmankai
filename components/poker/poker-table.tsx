@@ -262,7 +262,7 @@ export function PokerTable({
     currentPlayerIndex: game.currentPlayerIndex,
     currentPlayerUserId: game.players[game.currentPlayerIndex]?.userId,
     phase: game.phase,
-    allPlayers: game.players.map(p => ({ userId: p.userId, name: p.name }))
+    allPlayers: game.players.map(p => ({ userId: p.userId, userName: p.userName }))
   })
   
   // 自分以外のプレイヤー（空席は表示しない）

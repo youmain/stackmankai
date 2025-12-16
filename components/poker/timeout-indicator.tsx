@@ -123,7 +123,7 @@ export function TimeoutIndicator({ game, currentUserId }: TimeoutIndicatorProps)
     <div className="w-full px-2 py-2 bg-gray-800/50 backdrop-blur-sm">
       <div className="flex items-center gap-3">
         <div className="text-sm font-medium text-white min-w-[120px]">
-          {isMyTurn ? "あなたのターン" : `${currentPlayer.name}のターン`}
+          {isMyTurn ? "あなたのターン" : `${currentPlayer.userName}のターン`}
         </div>
         <div className="flex-1 bg-gray-700 rounded-full h-3 overflow-hidden">
           <div
