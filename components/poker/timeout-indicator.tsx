@@ -37,26 +37,42 @@ export function TimeoutIndicator({ game, currentUserId }: TimeoutIndicatorProps)
     }
     
     const updateTimer = () => {
-      const now = new Date()
+      try {
+        const now = new Date()
+        
+        // turnStartTimeをDate型に変換
+        let turnStartTime: Date
+        if (game.turnStartTime instanceof Date) {
+          turnStartTime = game.turnStartTime
+        } else if (game.turnStartTime && typeof (game.turnStartTime as any).toDate === 'function') {
+          turnStartTime = (game.turnStartTime as any).toDate()
+        } else if (game.turnStartTime && typeof game.turnStartTime === 'object' && 'seconds' in game.turnStartTime) {
+          // Firestore Timestamp形式 { seconds, nanoseconds }
+          turnStartTime = new Date((game.turnStartTime as any).seconds * 1000)
+        } else {
+          // turnStartTimeが無効な場合、現在時刻を使用
+          console.warn('[TimeoutIndicator] Invalid turnStartTime, using current time:', game.turnStartTime)
+          turnStartTime = now
+        }
+        
+        // 安全性チェック
+        if (!(turnStartTime instanceof Date) || isNaN(turnStartTime.getTime())) {
+          console.error('[TimeoutIndicator] turnStartTime is not a valid Date:', turnStartTime)
+          setRemainingTime(timeoutSeconds)
+          return
+        }
+        
+        const elapsedSeconds = (now.getTime() - turnStartTime.getTime()) / 1000
+        const remaining = timeoutSeconds - elapsedSeconds
       
-      // turnStartTimeをDate型に変換
-      let turnStartTime: Date
-      if (game.turnStartTime instanceof Date) {
-        turnStartTime = game.turnStartTime
-      } else if (game.turnStartTime && typeof (game.turnStartTime as any).toDate === 'function') {
-        turnStartTime = (game.turnStartTime as any).toDate()
-      } else {
-        // turnStartTimeが無効な場合、現在時刻を使用
-        turnStartTime = now
-      }
-      
-      const elapsedSeconds = (now.getTime() - turnStartTime.getTime()) / 1000
-      const remaining = timeoutSeconds - elapsedSeconds
-      
-      if (remaining <= 0) {
-        setRemainingTime(0)
-      } else {
-        setRemainingTime(Math.ceil(remaining))
+        if (remaining <= 0) {
+          setRemainingTime(0)
+        } else {
+          setRemainingTime(Math.ceil(remaining))
+        }
+      } catch (error) {
+        console.error('[TimeoutIndicator] Error in updateTimer:', error)
+        setRemainingTime(timeoutSeconds)
       }
     }
     

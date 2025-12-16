@@ -276,6 +276,9 @@ export function PokerTable({
         )}
       </div>
       
+      {/* タイムアウトインジケーター（全プレイヤーに表示） */}
+      <TimeoutIndicator game={game} currentUserId={currentUserId} />
+      
       {/* アクション履歴 */}
       {game.actionHistory && game.actionHistory.length > 0 && (
         <div className="bg-gray-800 px-3 py-1 border-b border-gray-700">
@@ -419,9 +422,6 @@ export function PokerTable({
               </div>
             </div>
           )}
-          
-          {/* タイムアウトインジケーター */}
-          <TimeoutIndicator game={game} currentUserId={currentUserId} />
           
           {/* アクションボタン */}
           {isMyTurn && !currentPlayer.isFolded && (
