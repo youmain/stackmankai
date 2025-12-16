@@ -8,6 +8,7 @@ import {
 import { getDb } from "./firebase"
 import type { PokerGameState } from "@/types/poker"
 import { removeUndefined } from "./poker-logic/firestore-utils"
+import { checkAndAdvancePhase } from "./poker-game-advanced"
 
 const TIMEOUT_SECONDS = 30
 
@@ -88,12 +89,6 @@ export const handlePlayerTimeout = async (
     attempts++
   }
   
-  // 全員フォールドまたはオールインの場合の処理
-  if (attempts >= maxAttempts) {
-    console.log("All players folded or all-in, advancing to showdown")
-    // showdownに進む処理は poker-game-advanced.ts の checkAndAdvancePhase で処理される
-  }
-  
   // ゲーム状態を更新
   await updateDoc(gameDoc, removeUndefined({
     players: updatedPlayers,
@@ -102,6 +97,9 @@ export const handlePlayerTimeout = async (
     turnStartTime: new Date(),
     updatedAt: serverTimestamp(),
   }))
+  
+  // フェーズ進行をチェック（1人だけ残った場合など）
+  await checkAndAdvancePhase(storeId, gameId)
   
   // 2回連続タイムアウトの場合、強制退席
   const timedOutPlayer = updatedPlayers.find(p => p.userId === userId)
