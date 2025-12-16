@@ -187,10 +187,7 @@ const PlayerCard = ({
       
       {/* ハンド（カード） */}
       <div className="flex gap-0.5">
-        {(player.cards.length > 0 ? player.cards : [
-          { suit: "hearts" as const, rank: "A" as const },
-          { suit: "spades" as const, rank: "K" as const }
-        ] as PokerCard[]).map((card, idx) => (
+        {player.cards.length > 0 && player.cards.map((card, idx) => (
           <CardDisplay
             key={idx}
             card={card}
