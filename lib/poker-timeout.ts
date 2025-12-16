@@ -1,4 +1,5 @@
 import {
+  collection,
   doc,
   getDoc,
   updateDoc,
@@ -16,7 +17,6 @@ const TIMEOUT_SECONDS = 30
 const getPokerGameCollection = (storeId: string) => {
   const db = getDb()
   if (!db) throw new Error("Firestore is not initialized")
-  const { collection } = require("firebase/firestore")
   return collection(db, "pokerGames", `store_${storeId}`, "games")
 }
 
