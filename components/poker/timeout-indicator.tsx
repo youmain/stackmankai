@@ -41,23 +41,29 @@ export function TimeoutIndicator({ game, currentUserId }: TimeoutIndicatorProps)
         const now = new Date()
         
         // turnStartTimeをDate型に変換
-        let turnStartTime: Date
+        let turnStartTime: Date | null = null
+        
         if (game.turnStartTime instanceof Date) {
           turnStartTime = game.turnStartTime
         } else if (game.turnStartTime && typeof (game.turnStartTime as any).toDate === 'function') {
-          turnStartTime = (game.turnStartTime as any).toDate()
-        } else if (game.turnStartTime && typeof game.turnStartTime === 'object' && 'seconds' in game.turnStartTime) {
+          try {
+            turnStartTime = (game.turnStartTime as any).toDate()
+          } catch (e) {
+            console.error('[TimeoutIndicator] Error calling toDate():', e)
+          }
+        } else if (game.turnStartTime && typeof game.turnStartTime === 'object') {
           // Firestore Timestamp形式 { seconds, nanoseconds }
-          turnStartTime = new Date((game.turnStartTime as any).seconds * 1000)
-        } else {
-          // turnStartTimeが無効な場合、現在時刻を使用
-          console.warn('[TimeoutIndicator] Invalid turnStartTime, using current time:', game.turnStartTime)
-          turnStartTime = now
+          if ('seconds' in game.turnStartTime && typeof (game.turnStartTime as any).seconds === 'number') {
+            turnStartTime = new Date((game.turnStartTime as any).seconds * 1000)
+          } else {
+            // 空のオブジェクトまたは無効なオブジェクト
+            console.warn('[TimeoutIndicator] Invalid turnStartTime object:', game.turnStartTime)
+          }
         }
         
-        // 安全性チェック
-        if (!(turnStartTime instanceof Date) || isNaN(turnStartTime.getTime())) {
-          console.error('[TimeoutIndicator] turnStartTime is not a valid Date:', turnStartTime)
+        // turnStartTimeが無効な場合、デフォルトのタイムアウト時間を表示
+        if (!turnStartTime || !(turnStartTime instanceof Date) || isNaN(turnStartTime.getTime())) {
+          console.warn('[TimeoutIndicator] Using default timeout, turnStartTime is invalid')
           setRemainingTime(timeoutSeconds)
           return
         }
