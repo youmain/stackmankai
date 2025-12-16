@@ -88,6 +88,7 @@ export const createPokerGame = async (
     smallBlind,
     bigBlind,
     timeoutSeconds: 30,
+    turnStartTime: null, // ゲーム開始前はnull
     createdAt: new Date(),
     updatedAt: new Date(),
   }
