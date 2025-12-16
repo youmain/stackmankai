@@ -303,6 +303,21 @@ export function ChatRoomDualMode() {
     }
   }
 
+  const handleTimeout = async () => {
+    if (!customerAccount || !pokerGameId || !pokerGame) return
+    
+    const currentPlayer = pokerGame.players[pokerGame.currentPlayerIndex]
+    if (!currentPlayer || currentPlayer.userId !== customerAccount.id) return
+    
+    console.log('[ChatRoomDualMode] Timeout detected, auto-folding')
+    
+    try {
+      await handlePlayerTimeout(customerAccount.storeId, pokerGameId, customerAccount.id)
+    } catch (err) {
+      console.error('Error handling timeout:', err)
+    }
+  }
+
   const handleResetGame = async () => {
     if (!customerAccount || !pokerGameId) return
 
@@ -501,6 +516,7 @@ export function ChatRoomDualMode() {
                 onLeaveSeat={handleLeaveSeat}
                 onStartGame={handleStartGame}
                 onResetGame={handleResetGame}
+                onTimeout={handleTimeout}
               />
             </div>
             <ChatPanel height="27vh" />

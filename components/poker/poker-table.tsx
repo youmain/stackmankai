@@ -19,6 +19,7 @@ interface PokerTableProps {
   onLeaveSeat: () => void
   onStartGame: () => void
   onResetGame?: () => void
+  onTimeout?: () => void
 }
 
 // カードのスートを絵文字で表示
@@ -200,15 +201,7 @@ const PlayerCard = ({
   )
 }
 
-export function PokerTable({
-  game,
-  currentUserId,
-  onAction,
-  onLeaveSeat,
-  onJoinSeat,
-  onStartGame,
-  onResetGame,
-}: PokerTableProps) {
+export function PokerTable({ game, currentUserId, onAction, onJoinSeat, onLeaveSeat, onStartGame, onResetGame, onTimeout }: PokerTableProps) {
   const [betAmount, setBetAmount] = useState(game.minRaise?.toString() || "")
   const [countdown, setCountdown] = useState<number | null>(null)
   
@@ -285,7 +278,7 @@ export function PokerTable({
       </div>
       
       {/* タイムアウトインジケーター（全プレイヤーに表示） */}
-      <TimeoutIndicator game={game} currentUserId={currentUserId} />
+      <TimeoutIndicator game={game} currentUserId={currentUserId} onTimeout={onTimeout} />
       
       {/* アクション履歴 */}
       {game.actionHistory && game.actionHistory.length > 0 && (

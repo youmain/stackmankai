@@ -6,9 +6,10 @@ import type { PokerGameState } from "@/types/poker"
 interface TimeoutIndicatorProps {
   game: PokerGameState
   currentUserId: string
+  onTimeout?: () => void
 }
 
-export function TimeoutIndicator({ game, currentUserId }: TimeoutIndicatorProps) {
+export function TimeoutIndicator({ game, currentUserId, onTimeout }: TimeoutIndicatorProps) {
   const [countdown, setCountdown] = useState<number | null>(null)
   
   useEffect(() => {
@@ -37,6 +38,11 @@ export function TimeoutIndicator({ game, currentUserId }: TimeoutIndicatorProps)
         console.log('[TimeoutIndicator] Countdown tick:', prev)
         if (prev === null || prev <= 1) {
           clearInterval(interval)
+          // タイムアウトコールバックを呼び出す
+          if (onTimeout) {
+            console.log('[TimeoutIndicator] Timeout reached, calling onTimeout')
+            onTimeout()
+          }
           return 0
         }
         return prev - 1
