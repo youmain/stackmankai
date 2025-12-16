@@ -212,7 +212,7 @@ export const leavePokerGame = async (
       players: playersAfterLeave,
       currentPlayerIndex: nextPlayerIndex,
       actionHistory: updatedHistory,
-      turnStartTime: serverTimestamp(),
+      turnStartTime: new Date(),
       updatedAt: serverTimestamp(),
     }))
     
@@ -357,7 +357,7 @@ export const performAction = async (
     currentBet: newCurrentBet,
     currentPlayerIndex: nextPlayerIndex,
     actionHistory: actionHistory,
-    turnStartTime: serverTimestamp(), // ターン開始時刻を記録
+    turnStartTime: new Date(), // ターン開始時刻を記録
     updatedAt: serverTimestamp(),
   }))
   
