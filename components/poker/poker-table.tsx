@@ -461,25 +461,25 @@ export function PokerTable({
               <div className="flex gap-1">
                 <Button
                   onClick={() => setBetAmount(Math.floor(game.pot / 2).toString())}
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
-                  className="flex-1 h-7 text-[10px] px-1"
+                  className="flex-1 h-7 text-[10px] px-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold"
                 >
                   1/2 POT
                 </Button>
                 <Button
                   onClick={() => setBetAmount(game.pot.toString())}
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
-                  className="flex-1 h-7 text-[10px] px-1"
+                  className="flex-1 h-7 text-[10px] px-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold"
                 >
                   POT
                 </Button>
                 <Button
                   onClick={() => setBetAmount((game.pot * 2).toString())}
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
-                  className="flex-1 h-7 text-[10px] px-1"
+                  className="flex-1 h-7 text-[10px] px-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold"
                 >
                   2x POT
                 </Button>
@@ -491,7 +491,7 @@ export function PokerTable({
                   value={betAmount}
                   onChange={(e) => setBetAmount(e.target.value)}
                   placeholder="ベット額"
-                  className="flex-1 h-8 text-xs"
+                  className="flex-1 h-8 text-xs text-white font-bold bg-gray-800 border-gray-600"
                 />
                 <Button
                   onClick={() => {
