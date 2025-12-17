@@ -145,8 +145,20 @@ export const advancePhase = async (
   
   // Find first active player after dealer
   let nextPlayerIndex = (gameData.dealerIndex + 1) % gameData.players.length
-  while (gameData.players[nextPlayerIndex].isFolded || gameData.players[nextPlayerIndex].isAllIn) {
+  let loopCount = 0
+  const maxLoops = gameData.players.length
+  
+  while (
+    loopCount < maxLoops &&
+    (gameData.players[nextPlayerIndex].isFolded || gameData.players[nextPlayerIndex].isAllIn)
+  ) {
     nextPlayerIndex = (nextPlayerIndex + 1) % gameData.players.length
+    loopCount++
+  }
+  
+  // If all players are folded or all-in, keep current index (no actions needed)
+  if (loopCount >= maxLoops) {
+    nextPlayerIndex = gameData.currentPlayerIndex
   }
   
   await updateDoc(gameDoc, removeUndefined({
@@ -158,6 +170,13 @@ export const advancePhase = async (
     turnStartTime: new Date(),
     updatedAt: serverTimestamp(),
   }))
+  
+  // If all remaining players are all-in, continue advancing automatically
+  const actionablePlayers = updatedPlayers.filter(p => !p.isFolded && !p.isAllIn)
+  if (actionablePlayers.length === 0) {
+    // Recursively advance to next phase
+    await checkAndAdvancePhase(storeId, gameId)
+  }
 }
 
 /**
