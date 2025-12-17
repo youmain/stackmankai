@@ -56,8 +56,17 @@ const isRoundComplete = (game: PokerGameState): boolean => {
   
   console.log('[isRoundComplete] Actionable players:', actionablePlayers.length)
   
-  // アクション可能なプレイヤーがいる場合、全員がアクションして同じベット額になっているか確認
+  // アクション可能なプレイヤーがいる場合
   if (actionablePlayers.length > 0) {
+    // 相手が全員オールインまたはフォールドの場合、実質的にアクションできない
+    const opponents = nonFoldedPlayers.filter(p => !actionablePlayers.includes(p))
+    const allOpponentsAllIn = opponents.every(p => p.isAllIn)
+    
+    if (allOpponentsAllIn && actionablePlayers.length === 1) {
+      console.log('[isRoundComplete] Only one actionable player and all opponents are all-in, round complete')
+      return true
+    }
+    
     const maxBet = Math.max(...game.players.map(p => p.currentBet))
     const allHaveSameBet = actionablePlayers.every(p => p.currentBet === maxBet)
     const allHaveActed = actionablePlayers.every(p => p.lastAction !== undefined && p.lastAction !== null)

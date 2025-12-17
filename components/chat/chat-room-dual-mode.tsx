@@ -92,10 +92,16 @@ export function ChatRoomDualMode() {
 
   // ポーカーモードで新しいメッセージが来たらトースト通知を表示
   useEffect(() => {
-    if (viewMode !== 'poker' || !customerAccount) return
+    console.log('[Toast Debug] Effect triggered:', { viewMode, hasAccount: !!customerAccount, messageCount: messages.length })
+    
+    if (viewMode !== 'poker' || !customerAccount) {
+      console.log('[Toast Debug] Skipping: not in poker mode or no account')
+      return
+    }
     
     // 初回ロード時はスキップ
     if (lastMessageCountRef.current === 0) {
+      console.log('[Toast Debug] Initial load, setting count to:', messages.length)
       lastMessageCountRef.current = messages.length
       return
     }
@@ -103,11 +109,19 @@ export function ChatRoomDualMode() {
     // 新しいメッセージがあるかチェック
     if (messages.length > lastMessageCountRef.current) {
       const newMessages = messages.slice(lastMessageCountRef.current)
+      console.log('[Toast Debug] New messages detected:', newMessages.length)
+      
       // 自分以外のメッセージのみトースト表示
       const othersMessages = newMessages.filter(msg => msg.userId !== customerAccount.id)
+      console.log('[Toast Debug] Others messages:', othersMessages.length)
       
       if (othersMessages.length > 0) {
-        setToastMessages(prev => [...prev, ...othersMessages])
+        console.log('[Toast Debug] Adding toast messages:', othersMessages)
+        setToastMessages(prev => {
+          const updated = [...prev, ...othersMessages]
+          console.log('[Toast Debug] Toast messages updated:', updated.length)
+          return updated
+        })
       }
     }
     
