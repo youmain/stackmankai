@@ -493,14 +493,14 @@ export function PokerTable({ game, currentUserId, onAction, onJoinSeat, onLeaveS
                   onClick={() => {
                     const amount = parseInt(betAmount)
                     if (amount > 0) {
-                      onAction(currentPlayer.currentBet === 0 ? "bet" : "raise", amount)
+                      onAction(game.currentBet === 0 ? "bet" : "raise", amount)
                       setBetAmount("")
                     }
                   }}
                   variant="default"
                   className="h-8 text-xs"
                 >
-                  {currentPlayer.currentBet === 0 ? "ベット" : "レイズ"}
+                  {game.currentBet === 0 ? "ベット" : "レイズ"}
                 </Button>
               </div>
               
