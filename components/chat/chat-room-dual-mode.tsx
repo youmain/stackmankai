@@ -18,6 +18,7 @@ import { PokerTable } from "@/components/poker/poker-table"
 import { ViewModeHeader } from "@/components/poker/view-mode-header"
 import { TurnNotification } from "@/components/poker/turn-notification"
 import { useViewMode } from "@/hooks/use-view-mode"
+import { ChatPanel } from "@/components/chat/chat-panel"
 
 export function ChatRoomDualMode() {
   const { customerAccount } = useAuth()
@@ -349,120 +350,25 @@ export function ChatRoomDualMode() {
     )
   }
 
-  // チャットコンポーネント（メモ化して再レンダリングを防ぐ）
-  const ChatPanel = useMemo(() => ({ height, showHeader = true }: { height: string; showHeader?: boolean }) => (
-    <Card style={{ height }} className="flex flex-col overflow-hidden rounded-none border-0 border-t-2 border-purple-500">
-      {showHeader && (
-        <CardHeader className="p-2 pb-1">
-          <div className="flex items-center justify-end">
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-6 text-xs px-2"
-              onClick={handleClearHistory}
-              disabled={messages.filter(msg => !hiddenMessageIds.has(msg.id)).length === 0}
-            >
-              消去
-            </Button>
-          </div>
-          {activeUsers.length > 0 && (
-            <div className="mt-1">
-              <span className="text-xs text-muted-foreground">入室中: ({activeUsers.length}人)</span>
-              <div className="flex gap-1 overflow-x-auto pb-1 mt-1" style={{ scrollbarWidth: 'thin' }}>
-                {activeUsers.map((user) => (
-                  <div
-                    key={user.userId}
-                    className="px-2 py-0.5 text-[10px] font-medium border border-purple-300 bg-purple-50 text-purple-700 rounded whitespace-nowrap flex-shrink-0"
-                  >
-                    {user.userName}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </CardHeader>
-      )}
-      <CardContent className="flex-1 flex flex-col gap-2 p-2 overflow-hidden">
-        <ScrollArea className="flex-1 pr-4" ref={scrollAreaRef}>
-          <div className="space-y-4">
-            {messages.filter(msg => !hiddenMessageIds.has(msg.id)).length === 0 ? (
-              <div className="text-center text-muted-foreground py-8">
-                まだメッセージがありません
-              </div>
-            ) : (
-              messages.filter(msg => !hiddenMessageIds.has(msg.id)).map((msg) => {
-                const isOwnMessage = msg.userId === customerAccount.id
-                const isSystemMessage = msg.type === "system"
-                
-                if (isSystemMessage) {
-                  return (
-                    <div key={msg.id} className="flex justify-center my-2">
-                      <div className="text-xs text-muted-foreground bg-muted/50 px-3 py-1 rounded-full">
-                        {msg.message}
-                      </div>
-                    </div>
-                  )
-                }
-                
-                return (
-                  <div
-                    key={msg.id}
-                    className={`flex ${isOwnMessage ? "justify-end" : "justify-start"}`}
-                  >
-                    <div
-                      className={`max-w-[70%] rounded-lg px-3 py-2 ${
-                        isOwnMessage
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted"
-                      }`}
-                    >
-                      <div className="text-sm">
-                        <span className="font-semibold">{msg.userName}</span>
-                        <span>: </span>
-                        <span className="whitespace-pre-wrap break-words">{msg.message}</span>
-                        <span className="text-xs opacity-70 ml-2">({msg.createdAt.toLocaleTimeString("ja-JP", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })})</span>
-                      </div>
-                    </div>
-                  </div>
-                )
-              })
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-        </ScrollArea>
+  // handleClearHistoryをuseCallbackでメモ化
+  const handleClearHistoryCallback = useCallback(() => {
+    handleClearHistory()
+  }, [handleClearHistory])
 
-        {error && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
+  // handleSendMessageをuseCallbackでメモ化
+  const handleSendMessageCallback = useCallback(() => {
+    handleSendMessage()
+  }, [handleSendMessage])
 
-        <div className="flex gap-2">
-          <Input
-            key="chat-input-field"
-            ref={inputRef}
-            placeholder="メッセージを入力..."
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
-            disabled={isSending}
-            className="flex-1"
-          />
-          <Button
-            onClick={handleSendMessage}
-            disabled={!newMessage.trim() || isSending}
-            size="icon"
-          >
-            <Send className="h-4 w-4" />
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
-  ), [messages, isSending, error, hiddenMessageIds, activeUsers, customerAccount.id, handleClearHistory, handleSendMessage, handleKeyPress])
+  // handleKeyPressをuseCallbackでメモ化
+  const handleKeyPressCallback = useCallback((e: React.KeyboardEvent) => {
+    handleKeyPress(e)
+  }, [handleKeyPress])
+
+  // newMessageの変更ハンドラをuseCallbackでメモ化
+  const handleMessageChange = useCallback((message: string) => {
+    setNewMessage(message)
+  }, [])
 
   // ゲーム状況の最小表示
   const GameStatusMinimal = () => (
@@ -520,14 +426,40 @@ export function ChatRoomDualMode() {
                 onTimeout={handleTimeout}
               />
             </div>
-            <ChatPanel height="27vh" />
+            <ChatPanel
+              height="27vh"
+              messages={messages}
+              newMessage={newMessage}
+              isSending={isSending}
+              error={error}
+              hiddenMessageIds={hiddenMessageIds}
+              activeUsers={activeUsers}
+              currentUserId={customerAccount.id}
+              onMessageChange={handleMessageChange}
+              onSendMessage={handleSendMessageCallback}
+              onKeyPress={handleKeyPressCallback}
+              onClearHistory={handleClearHistoryCallback}
+            />
           </>
         )}
 
         {/* チャットモード */}
         {viewMode === 'chat' && (
           <>
-            <ChatPanel height="67vh" />
+            <ChatPanel
+              height="67vh"
+              messages={messages}
+              newMessage={newMessage}
+              isSending={isSending}
+              error={error}
+              hiddenMessageIds={hiddenMessageIds}
+              activeUsers={activeUsers}
+              currentUserId={customerAccount.id}
+              onMessageChange={handleMessageChange}
+              onSendMessage={handleSendMessageCallback}
+              onKeyPress={handleKeyPressCallback}
+              onClearHistory={handleClearHistoryCallback}
+            />
             {pokerGame && (
               <div style={{ height: '27vh' }} className="overflow-hidden bg-slate-900">
                 <div className="h-full flex flex-col items-center justify-center p-2">
@@ -565,7 +497,20 @@ export function ChatRoomDualMode() {
         {/* 観戦モード */}
         {viewMode === 'spectate' && (
           <>
-            <ChatPanel height="82vh" />
+            <ChatPanel
+              height="82vh"
+              messages={messages}
+              newMessage={newMessage}
+              isSending={isSending}
+              error={error}
+              hiddenMessageIds={hiddenMessageIds}
+              activeUsers={activeUsers}
+              currentUserId={customerAccount.id}
+              onMessageChange={handleMessageChange}
+              onSendMessage={handleSendMessageCallback}
+              onKeyPress={handleKeyPressCallback}
+              onClearHistory={handleClearHistoryCallback}
+            />
             <GameStatusMinimal />
           </>
         )}
