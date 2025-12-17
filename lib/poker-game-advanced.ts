@@ -58,16 +58,29 @@ const isRoundComplete = (game: PokerGameState): boolean => {
   
   // アクション可能なプレイヤーがいる場合
   if (actionablePlayers.length > 0) {
-    const maxBet = Math.max(...game.players.map(p => p.currentBet))
-    const allHaveSameBet = actionablePlayers.every(p => p.currentBet === maxBet)
+    // 全員がアクションしたかチェック
     const allHaveActed = actionablePlayers.every(p => p.lastAction !== undefined && p.lastAction !== null)
     
-    console.log('[isRoundComplete] Actionable check:', { maxBet, allHaveSameBet, allHaveActed })
+    console.log('[isRoundComplete] Actionable players check:', {
+      count: actionablePlayers.length,
+      allHaveActed,
+      players: actionablePlayers.map(p => ({
+        name: p.userName,
+        currentBet: p.currentBet,
+        lastAction: p.lastAction
+      }))
+    })
     
     // 全員がアクションしていない場合は、まだラウンド完了ではない
     if (!allHaveActed) {
       return false
     }
+    
+    // 全員のベット額を確認
+    const maxBet = Math.max(0, ...game.players.map(p => p.currentBet || 0))
+    const allHaveSameBet = actionablePlayers.every(p => (p.currentBet || 0) === maxBet)
+    
+    console.log('[isRoundComplete] Bet check:', { maxBet, allHaveSameBet })
     
     // 全員がアクション済みで、ベット額が揃っている場合
     if (allHaveSameBet) {
@@ -77,7 +90,7 @@ const isRoundComplete = (game: PokerGameState): boolean => {
     // ベット額が揃っていないが、相手が全員オールインの場合
     // （例: Player Aが9,800オールイン、Player Bが9,800コールして200残る）
     const opponents = nonFoldedPlayers.filter(p => !actionablePlayers.includes(p))
-    const allOpponentsAllIn = opponents.every(p => p.isAllIn)
+    const allOpponentsAllIn = opponents.length > 0 && opponents.every(p => p.isAllIn)
     
     if (allOpponentsAllIn && actionablePlayers.length === 1) {
       console.log('[isRoundComplete] Only one actionable player and all opponents are all-in, round complete')
