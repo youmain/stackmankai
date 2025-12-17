@@ -192,7 +192,7 @@ const PlayerCard = ({
           <CardDisplay
             key={idx}
             card={card}
-            isHidden={!isCurrentUser && !player.isFolded && gamePhase !== "showdown"}
+            isHidden={gamePhase === "showdown" ? false : !isCurrentUser}
             size="small"
           />
         ))}
