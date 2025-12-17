@@ -448,7 +448,7 @@ export function ChatRoomDualMode() {
       )}
 
       {/* メインコンテンツ */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden bg-gray-900">
         {/* ポーカーモード */}
         {viewMode === 'poker' && pokerGame && (
           <>
