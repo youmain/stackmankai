@@ -44,9 +44,13 @@ export const ChatPanel = memo(function ChatPanel({
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  // メッセージが追加されたら自動スクロール
+  // メッセージが追加されたら自動スクロール（チャットパネル内のみ）
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    messagesEndRef.current?.scrollIntoView({ 
+      behavior: "smooth",
+      block: "nearest", // ページ全体をスクロールしない
+      inline: "nearest"
+    })
   }, [messages])
 
   return (

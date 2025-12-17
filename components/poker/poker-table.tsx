@@ -538,6 +538,7 @@ export function PokerTable({ game, currentUserId, onAction, onJoinSeat, onLeaveS
       {game.phase === "showdown" && game.winners && game.winners.length > 0 && showWinnerDisplay && (
         <WinnerDisplay
           winners={game.players.filter(p => game.winners?.includes(p.userId))}
+          allPlayers={game.players.filter(p => !p.isFolded)} // ショーダウンまで残った全プレイヤー
           communityCards={game.communityCards}
           pot={game.pot}
           showByFold={game.showByFold}
