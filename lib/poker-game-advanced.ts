@@ -72,12 +72,14 @@ export const advancePhase = async (
   if (activePlayers.length === 1) {
     // Award pot to last remaining player
     const winner = activePlayers[0]
-    winner.stack += gameData.pot
+    const potAmount = gameData.pot
+    winner.stack += potAmount
     
     await updateDoc(gameDoc, removeUndefined({
       phase: "showdown",
-      pot: 0,
+      pot: potAmount, // potを保持してWinnerDisplayに表示
       players: gameData.players,
+      winners: [winner.userId], // winnersを設定
       updatedAt: serverTimestamp(),
     }))
     return

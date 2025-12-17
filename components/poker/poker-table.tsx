@@ -132,9 +132,9 @@ const PlayerCard = ({
   const isCurrentUser = player.userId === currentUserId
   
   return (
-    <div className={`relative rounded p-1.5 border flex items-center gap-2 ${
+    <div className={`relative rounded p-1.5 border flex items-center gap-2 transition-all duration-300 ${
       isCurrentPlayer ? "bg-green-600 border-green-400 pulse-green" : "bg-gray-800 border-gray-600"
-    } ${player.isFolded ? "opacity-50" : ""}`}>
+    } ${player.isFolded ? "opacity-30 grayscale" : ""}`}>
       {/* ターン表示 */}
       {isCurrentPlayer && (
         <div className="absolute -top-2 -right-2 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded animate-pulse">
@@ -264,7 +264,7 @@ export function PokerTable({ game, currentUserId, onAction, onJoinSeat, onLeaveS
   const emptySeatsCount = 10 - game.players.length
   
   return (
-    <div className="flex flex-col h-full bg-gray-900">
+    <div className="flex flex-col min-h-full bg-gray-900">
       {/* ラウンド表示（最上部固定） */}
       <div className="bg-gray-800 px-3 py-2">
         <RoundIndicator phase={game.phase} pot={game.pot} />
@@ -295,8 +295,8 @@ export function PokerTable({ game, currentUserId, onAction, onJoinSeat, onLeaveS
         </div>
       )}
       
-      {/* 他プレイヤーリスト（左側） */}
-      <div className="flex-1 overflow-y-auto p-2 space-y-1">
+      {/* 他プレイヤーリスト（全員表示） */}
+      <div className="p-2 space-y-1">
         {otherPlayers.map(({ player, seatIndex }) => {
           const isCurrentPlayerTurn = game.players[game.currentPlayerIndex]?.seatIndex === seatIndex
           return (
