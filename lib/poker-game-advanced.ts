@@ -267,7 +267,7 @@ export const evaluateShowdown = async (
   await updateDoc(gameDoc, removeUndefined({
     phase: "showdown",
     players: gameData.players,
-    pot: 0,
+    pot: gameData.pot, // Keep pot amount for display in WinnerDisplay
     winners: winners.map(idx => gameData.players[idx].userId),
     winnerHands: hands.filter(h => winners.includes(h.seatIndex)),
     showByFold: false, // 通常のショーダウン：ハンドを公開
