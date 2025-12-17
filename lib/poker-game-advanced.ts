@@ -30,20 +30,28 @@ const getPokerGameCollection = (storeId: string) => {
  * Check if all players have acted in current betting round
  */
 const isRoundComplete = (game: PokerGameState): boolean => {
-  const activePlayers = game.players.filter(p => !p.isFolded && !p.isAllIn)
+  // フォールドしていないプレイヤー（オールインも含む）
+  const nonFoldedPlayers = game.players.filter(p => !p.isFolded)
   
-  if (activePlayers.length <= 1) {
+  // フォールドしていないプレイヤーが1人以下ならラウンド完了
+  if (nonFoldedPlayers.length <= 1) {
     return true
   }
   
-  // All active players must have:
-  // 1. The same bet amount
-  // 2. At least one action (lastAction must be set)
-  const maxBet = Math.max(...game.players.map(p => p.currentBet))
-  const allHaveSameBet = activePlayers.every(p => p.currentBet === maxBet)
-  const allHaveActed = activePlayers.every(p => p.lastAction !== undefined && p.lastAction !== null)
+  // アクション可能なプレイヤー（フォールドもオールインもしていない）
+  const actionablePlayers = game.players.filter(p => !p.isFolded && !p.isAllIn)
   
-  return allHaveSameBet && allHaveActed
+  // アクション可能なプレイヤーがいる場合、全員がアクションして同じベット額になっているか確認
+  if (actionablePlayers.length > 0) {
+    const maxBet = Math.max(...game.players.map(p => p.currentBet))
+    const allHaveSameBet = actionablePlayers.every(p => p.currentBet === maxBet)
+    const allHaveActed = actionablePlayers.every(p => p.lastAction !== undefined && p.lastAction !== null)
+    
+    return allHaveSameBet && allHaveActed
+  }
+  
+  // アクション可能なプレイヤーがいない（全員オールイン）ならラウンド完了
+  return true
 }
 
 /**
