@@ -448,11 +448,11 @@ export function ChatRoomDualMode() {
       )}
 
       {/* メインコンテンツ */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden">
         {/* ポーカーモード */}
         {viewMode === 'poker' && pokerGame && (
           <>
-            <div style={{ height: '67vh' }} className="overflow-y-auto overflow-x-hidden w-full max-w-full">
+            <div style={{ minHeight: '67vh' }} className="overflow-x-hidden w-full max-w-full">
               <PokerTable
                 game={pokerGame}
                 currentUserId={customerAccount.id}
