@@ -217,27 +217,34 @@ export function ChatRoomDualMode() {
   }, [customerAccount, pokerGameId, pokerGame])
   */
 
-  // SHOWDOWN後の自動次ハンド開始
+  // SHOWDOWN後の自動次ハンド開始（タイムアウト監視）
   useEffect(() => {
     if (!customerAccount || !pokerGameId || !pokerGame) return
+    if (pokerGame.phase !== "showdown") return
+    if (!pokerGame.nextHandStartTime) return
 
-    if (pokerGame.phase === "showdown" && pokerGame.players.filter(p => p.isActive).length >= 2) {
-      console.log("SHOWDOWN detected, starting next hand in 5 seconds...")
+    console.log("[ChatRoomDualMode] Monitoring next hand start time...")
+    
+    // 1秒ごとにタイムアウトをチェック
+    const interval = setInterval(async () => {
+      const now = new Date()
+      const startTime = pokerGame.nextHandStartTime
       
-      const timer = setTimeout(() => {
-        startNewHand(customerAccount.storeId, pokerGameId)
-          .then(() => {
-            console.log("Next hand started successfully")
-          })
-          .catch((err) => {
-            console.error("Error starting next hand:", err)
-            setError("次のハンドを開始できませんでした")
-          })
-      }, 5000)
-      
-      return () => clearTimeout(timer)
-    }
-  }, [customerAccount, pokerGameId, pokerGame])
+      if (startTime && now >= startTime) {
+        console.log("[ChatRoomDualMode] Next hand timeout reached, checking and starting...")
+        clearInterval(interval)
+        
+        try {
+          const { checkAndStartNextHand } = await import('@/lib/poker-ready-next-hand')
+          await checkAndStartNextHand(customerAccount.storeId, pokerGameId)
+        } catch (err) {
+          console.error("Error checking and starting next hand:", err)
+        }
+      }
+    }, 1000)
+    
+    return () => clearInterval(interval)
+  }, [customerAccount, pokerGameId, pokerGame?.phase, pokerGame?.nextHandStartTime])
 
   const handleSendMessage = useCallback(async () => {
     if (!newMessage.trim() || !customerAccount) return
@@ -358,6 +365,18 @@ export function ChatRoomDualMode() {
       console.error('Error handling timeout:', err)
     }
   }
+  
+  const handleReadyNextHand = async () => {
+    if (!customerAccount || !pokerGameId) return
+    
+    try {
+      const { markPlayerReady } = await import('@/lib/poker-ready-next-hand')
+      await markPlayerReady(customerAccount.storeId, pokerGameId, customerAccount.id)
+    } catch (err) {
+      console.error('Error marking ready for next hand:', err)
+      setError(err instanceof Error ? err.message : '次のハンドの準備に失敗しました')
+    }
+  }
 
   const handleResetGame = async () => {
     if (!customerAccount || !pokerGameId) return
@@ -475,6 +494,7 @@ export function ChatRoomDualMode() {
                 onStartGame={handleStartGame}
                 onResetGame={handleResetGame}
                 onTimeout={handleTimeout}
+                onReadyNextHand={handleReadyNextHand}
               />
             </div>
             <ChatPanel

@@ -11,15 +11,52 @@ interface WinnerDisplayProps {
   pot: number
   showByFold?: boolean // フォールド勝利の場合true
   onClose?: () => void
+  onNextHand?: () => void // 次のハンドに進む
+  readyPlayers?: string[] // 準備完了プレイヤーのIDリスト
+  nextHandStartTime?: Date // 次のハンド自動開始時刻
+  currentUserId?: string // 現在のユーザーID
 }
 
-export function WinnerDisplay({ winners, allPlayers, communityCards, pot, showByFold = false, onClose }: WinnerDisplayProps) {
+export function WinnerDisplay({ 
+  winners, 
+  allPlayers, 
+  communityCards, 
+  pot, 
+  showByFold = false, 
+  onClose, 
+  onNextHand,
+  readyPlayers = [],
+  nextHandStartTime,
+  currentUserId
+}: WinnerDisplayProps) {
   const [visible, setVisible] = useState(false)
+  const [countdown, setCountdown] = useState<number>(15)
 
   useEffect(() => {
     // アニメーション用に少し遅延
     setTimeout(() => setVisible(true), 100)
   }, [])
+  
+  // カウントダウン
+  useEffect(() => {
+    if (!nextHandStartTime) return
+    
+    const interval = setInterval(() => {
+      const now = new Date()
+      const remaining = Math.max(0, Math.floor((nextHandStartTime.getTime() - now.getTime()) / 1000))
+      setCountdown(remaining)
+      
+      if (remaining === 0) {
+        clearInterval(interval)
+      }
+    }, 100)
+    
+    return () => clearInterval(interval)
+  }, [nextHandStartTime])
+  
+  const activePlayerCount = allPlayers.filter(p => p.isActive && p.stack > 0).length
+  const readyCount = readyPlayers.length
+  const isCurrentUserReady = currentUserId && readyPlayers.includes(currentUserId)
 
   if (winners.length === 0) return null
 
@@ -169,14 +206,35 @@ export function WinnerDisplay({ winners, allPlayers, communityCards, pot, showBy
           )}
         </div>
 
-        {/* 閉じるボタン */}
-        {onClose && (
+        {/* 次のハンドボタン */}
+        {onNextHand && (
+          <div className="text-center mt-6 space-y-3">
+            <button
+              onClick={onNextHand}
+              disabled={isCurrentUserReady}
+              className={`px-8 py-3 rounded-full font-bold text-lg transition-colors shadow-lg ${
+                isCurrentUserReady 
+                  ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                  : 'bg-white text-yellow-600 hover:bg-yellow-50'
+              }`}
+            >
+              {isCurrentUserReady ? '✓ 準備完了' : '次のハンドへ'}
+            </button>
+            <div className="text-white text-sm">
+              <p>準備完了: {readyCount}/{activePlayerCount}</p>
+              <p>自動開始まで: {countdown}秒</p>
+            </div>
+          </div>
+        )}
+        
+        {/* 閉じるボタン（旧版、onCloseのみの場合） */}
+        {onClose && !onNextHand && (
           <div className="text-center mt-6">
             <button
               onClick={onClose}
               className="bg-white text-yellow-600 px-8 py-3 rounded-full font-bold text-lg hover:bg-yellow-50 transition-colors shadow-lg"
             >
-              次のハンドへ
+              閉じる
             </button>
           </div>
         )}

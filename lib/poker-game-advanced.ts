@@ -273,6 +273,9 @@ export const evaluateShowdown = async (
     timestamp: new Date(),
   }
   
+  // Set next hand start time (15 seconds from now)
+  const nextHandStartTime = new Date(Date.now() + 15000)
+  
   await updateDoc(gameDoc, removeUndefined({
     phase: "showdown",
     players: gameData.players,
@@ -280,6 +283,8 @@ export const evaluateShowdown = async (
     winners: winners.map(idx => gameData.players[idx].userId),
     winnerHands: hands.filter(h => winners.includes(h.seatIndex)),
     showByFold: false, // 通常のショーダウン：ハンドを公開
+    nextHandReadyPlayers: [], // Reset ready players
+    nextHandStartTime: nextHandStartTime,
     updatedAt: serverTimestamp(),
   }))
 }

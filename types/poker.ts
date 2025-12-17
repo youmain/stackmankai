@@ -56,6 +56,8 @@ export interface PokerGameState {
   winners?: string[] // 勝者のuserIｄリスト（showdown時）
   winnerHands?: any[] // 勝者のハンド情報
   showByFold?: boolean // フォールドで勝利した場合true（ハンドを公開しない）
+  nextHandReadyPlayers?: string[] // 次のハンドに進む準備ができたプレイヤーのuserIdリスト
+  nextHandStartTime?: Date // 次のハンド自動開始時刻（ショーダウンから15秒後）
   createdAt: Date
   updatedAt: Date
   turnStartTime?: Date // 現在のターンの開始時刻
