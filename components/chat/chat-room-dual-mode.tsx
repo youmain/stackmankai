@@ -208,7 +208,7 @@ export function ChatRoomDualMode() {
   useEffect(() => {
     if (!customerAccount || !pokerGameId || !pokerGame) return
 
-    if (pokerGame.phase === "showdown" && pokerGame.players.length >= 2) {
+    if (pokerGame.phase === "showdown" && pokerGame.players.filter(p => p.isActive).length >= 1) {
       console.log("SHOWDOWN detected, starting next hand in 5 seconds...")
       
       const timer = setTimeout(() => {
