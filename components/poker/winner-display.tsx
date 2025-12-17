@@ -55,8 +55,10 @@ export function WinnerDisplay({
   }, [nextHandStartTime])
   
   const activePlayerCount = allPlayers.filter(p => p.isActive && p.stack > 0).length
-  const readyCount = readyPlayers.length
-  const isCurrentUserReady = currentUserId && readyPlayers.includes(currentUserId)
+  // readyPlayersが配列であることを保証
+  const safeReadyPlayers = Array.isArray(readyPlayers) ? readyPlayers : []
+  const readyCount = safeReadyPlayers.length
+  const isCurrentUserReady = currentUserId && safeReadyPlayers.includes(currentUserId)
 
   if (winners.length === 0) return null
 
