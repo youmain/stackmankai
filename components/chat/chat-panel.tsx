@@ -12,7 +12,6 @@ import type { ChatMessage } from "@/types"
 interface ChatPanelProps {
   height: string
   showHeader?: boolean
-  reverseMessages?: boolean // true: oldest first (poker mode), false: newest first (chat mode)
   messages: ChatMessage[]
   newMessage: string
   isSending: boolean
@@ -29,7 +28,6 @@ interface ChatPanelProps {
 export const ChatPanel = memo(function ChatPanel({
   height,
   showHeader = true,
-  reverseMessages = false,
   messages,
   newMessage,
   isSending,
@@ -45,9 +43,47 @@ export const ChatPanel = memo(function ChatPanel({
   const inputRef = useRef<HTMLInputElement>(null)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const isUserScrollingRef = useRef(false)
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  // メッセージが追加されたら自動スクロール（ScrollArea内のみ）
+  // ユーザーが手動でスクロールしたかを検出
   useEffect(() => {
+    if (!scrollAreaRef.current) return
+
+    const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]')
+    if (!viewport) return
+
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = viewport
+      const isAtBottom = scrollHeight - scrollTop - clientHeight < 50 // 50px以内なら「下にいる」
+
+      // 下にいない場合は、ユーザーが手動でスクロールしたと判断
+      isUserScrollingRef.current = !isAtBottom
+
+      // スクロールが止まったら少し待ってから自動スクロールを再開
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current)
+      }
+      scrollTimeoutRef.current = setTimeout(() => {
+        if (isAtBottom) {
+          isUserScrollingRef.current = false
+        }
+      }, 1000)
+    }
+
+    viewport.addEventListener('scroll', handleScroll)
+    return () => {
+      viewport.removeEventListener('scroll', handleScroll)
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  // メッセージが追加されたら自動スクロール（ユーザーが手動スクロール中でない場合のみ）
+  useEffect(() => {
+    if (isUserScrollingRef.current) return // ユーザーがスクロール中は自動スクロールしない
+
     if (scrollAreaRef.current) {
       const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]')
       if (viewport) {
@@ -97,10 +133,7 @@ export const ChatPanel = memo(function ChatPanel({
                 まだメッセージがありません
               </div>
             ) : (
-              (reverseMessages 
-                ? [...messages].reverse() 
-                : messages
-              ).filter(msg => !hiddenMessageIds.has(msg.id)).map((msg) => {
+              messages.filter(msg => !hiddenMessageIds.has(msg.id)).map((msg) => {
                 const isOwnMessage = msg.userId === currentUserId
                 const isSystemMessage = msg.type === "system"
                 
