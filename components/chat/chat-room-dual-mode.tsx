@@ -442,7 +442,6 @@ export function ChatRoomDualMode() {
           onDismiss={(messageId) => {
             setToastMessages(prev => prev.filter(msg => msg.id !== messageId))
           }}
-          onClickToast={() => setViewMode('chat')}
         />
       )}
 

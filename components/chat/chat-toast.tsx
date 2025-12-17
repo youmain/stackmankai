@@ -30,10 +30,9 @@ export function ChatToast({ message, onClose, onClick }: ChatToastProps) {
       className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 ${
         visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
       }`}
-      onClick={onClick}
       style={{ maxWidth: "90%", width: "400px" }}
     >
-      <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg shadow-2xl p-3 cursor-pointer hover:shadow-xl transition-shadow">
+      <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg shadow-2xl p-3 hover:shadow-xl transition-shadow">
         <div className="flex items-start gap-2">
           <div className="flex-shrink-0">
             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
