@@ -361,17 +361,25 @@ export const startNextHand = async (
  */
 export const checkAndAdvancePhase = async (
   storeId: string,
-  gameId: string
+  gameId: string,
+  providedGameData?: PokerGameState
 ): Promise<void> => {
-  const gameDoc = doc(getPokerGameCollection(storeId), gameId)
-  const gameSnap = await getDoc(gameDoc)
+  let gameData: PokerGameState
   
-  if (!gameSnap.exists()) {
-    console.log('[checkAndAdvancePhase] Game not found')
-    return
+  if (providedGameData) {
+    console.log('[checkAndAdvancePhase] Using provided game data')
+    gameData = providedGameData
+  } else {
+    const gameDoc = doc(getPokerGameCollection(storeId), gameId)
+    const gameSnap = await getDoc(gameDoc)
+    
+    if (!gameSnap.exists()) {
+      console.log('[checkAndAdvancePhase] Game not found')
+      return
+    }
+    
+    gameData = gameSnap.data() as PokerGameState
   }
-  
-  const gameData = gameSnap.data() as PokerGameState
   
   console.log('[checkAndAdvancePhase] Called:', {
     phase: gameData.phase,

@@ -364,8 +364,17 @@ export const performAction = async (
   }))
   
     // Check if phase should advance automatically
+    // Pass the updated game data directly to avoid reading stale data from Firestore
+    const updatedGameData: PokerGameState = {
+      ...gameData,
+      pot: newPot,
+      currentBet: newCurrentBet,
+      currentPlayerIndex: nextPlayerIndex,
+      actionHistory: actionHistory,
+    }
+    
     const { checkAndAdvancePhase } = await import("./poker-game-advanced")
-    await checkAndAdvancePhase(storeId, gameId)
+    await checkAndAdvancePhase(storeId, gameId, updatedGameData)
   }, "アクションの実行に失敗しました")
 }
 
