@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo, useCallback } from "react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -198,7 +198,7 @@ export function ChatRoomDualMode() {
     }
   }, [customerAccount, pokerGameId, pokerGame])
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = useCallback(async () => {
     if (!newMessage.trim() || !customerAccount) return
 
     setIsSending(true)
@@ -223,14 +223,14 @@ export function ChatRoomDualMode() {
     } finally {
       setIsSending(false)
     }
-  }
+  }, [newMessage, customerAccount])
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
       handleSendMessage()
     }
-  }
+  }, [handleSendMessage])
 
   const handleClearHistory = () => {
     if (!customerAccount?.storeId) return
@@ -349,8 +349,8 @@ export function ChatRoomDualMode() {
     )
   }
 
-  // チャットコンポーネント
-  const ChatPanel = ({ height, showHeader = true }: { height: string; showHeader?: boolean }) => (
+  // チャットコンポーネント（メモ化して再レンダリングを防ぐ）
+  const ChatPanel = useMemo(() => ({ height, showHeader = true }: { height: string; showHeader?: boolean }) => (
     <Card style={{ height }} className="flex flex-col overflow-hidden rounded-none border-0 border-t-2 border-purple-500">
       {showHeader && (
         <CardHeader className="p-2 pb-1">
@@ -443,6 +443,7 @@ export function ChatRoomDualMode() {
 
         <div className="flex gap-2">
           <Input
+            key="chat-input-field"
             ref={inputRef}
             placeholder="メッセージを入力..."
             value={newMessage}
@@ -461,7 +462,7 @@ export function ChatRoomDualMode() {
         </div>
       </CardContent>
     </Card>
-  )
+  ), [messages, isSending, error, hiddenMessageIds, activeUsers, customerAccount.id, handleClearHistory, handleSendMessage, handleKeyPress])
 
   // ゲーム状況の最小表示
   const GameStatusMinimal = () => (
