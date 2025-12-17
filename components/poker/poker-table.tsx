@@ -204,6 +204,14 @@ const PlayerCard = ({
 export function PokerTable({ game, currentUserId, onAction, onJoinSeat, onLeaveSeat, onStartGame, onResetGame, onTimeout }: PokerTableProps) {
   const [betAmount, setBetAmount] = useState(game.minRaise?.toString() || "")
   const [countdown, setCountdown] = useState<number | null>(null)
+  const [showWinnerDisplay, setShowWinnerDisplay] = useState(true)
+  
+  // ゲームのフェーズが変わったらWIN表示をリセット
+  useEffect(() => {
+    if (game?.phase !== "showdown") {
+      setShowWinnerDisplay(true)
+    }
+  }, [game?.phase])
   
   // SHOWDOWN状態のカウントダウン
   useEffect(() => {
@@ -527,11 +535,13 @@ export function PokerTable({ game, currentUserId, onAction, onJoinSeat, onLeaveS
       )}
       
       {/* 勝者表示 */}
-      {game.phase === "showdown" && game.winners && game.winners.length > 0 && (
+      {game.phase === "showdown" && game.winners && game.winners.length > 0 && showWinnerDisplay && (
         <WinnerDisplay
           winners={game.players.filter(p => game.winners?.includes(p.userId))}
           communityCards={game.communityCards}
           pot={game.pot}
+          showByFold={game.showByFold}
+          onClose={() => setShowWinnerDisplay(false)}
         />
       )}
       

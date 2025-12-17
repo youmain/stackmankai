@@ -80,6 +80,7 @@ export const advancePhase = async (
       pot: potAmount, // potを保持してWinnerDisplayに表示
       players: gameData.players,
       winners: [winner.userId], // winnersを設定
+      showByFold: true, // フォールド勝利のフラグ
       updatedAt: serverTimestamp(),
     }))
     return
