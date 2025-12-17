@@ -12,6 +12,7 @@ import type { ChatMessage } from "@/types"
 interface ChatPanelProps {
   height: string
   showHeader?: boolean
+  reverseMessages?: boolean // true: oldest first (poker mode), false: newest first (chat mode)
   messages: ChatMessage[]
   newMessage: string
   isSending: boolean
@@ -28,6 +29,7 @@ interface ChatPanelProps {
 export const ChatPanel = memo(function ChatPanel({
   height,
   showHeader = true,
+  reverseMessages = false,
   messages,
   newMessage,
   isSending,
@@ -95,7 +97,10 @@ export const ChatPanel = memo(function ChatPanel({
                 まだメッセージがありません
               </div>
             ) : (
-              messages.filter(msg => !hiddenMessageIds.has(msg.id)).map((msg) => {
+              (reverseMessages 
+                ? [...messages].reverse() 
+                : messages
+              ).filter(msg => !hiddenMessageIds.has(msg.id)).map((msg) => {
                 const isOwnMessage = msg.userId === currentUserId
                 const isSystemMessage = msg.type === "system"
                 

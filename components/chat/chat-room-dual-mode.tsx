@@ -465,6 +465,7 @@ export function ChatRoomDualMode() {
             </div>
             <ChatPanel
               height="60vh"
+              reverseMessages={true}
               messages={messages}
               newMessage={newMessage}
               isSending={isSending}
