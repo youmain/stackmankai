@@ -16,10 +16,12 @@ export interface Pot {
  */
 export function calculateSidePots(players: PokerPlayer[]): Pot[] {
   // Get all players who have bet something
+  // Use totalBet if available (for side pot calculation after phase advance)
+  // Otherwise use currentBet (for immediate calculation)
   const playersWithBets = players
     .map((player, index) => ({ player, index }))
-    .filter(({ player }) => player.currentBet > 0)
-    .sort((a, b) => a.player.currentBet - b.player.currentBet)
+    .filter(({ player }) => (player.totalBet ?? player.currentBet) > 0)
+    .sort((a, b) => (a.player.totalBet ?? a.player.currentBet) - (b.player.totalBet ?? b.player.currentBet))
 
   if (playersWithBets.length === 0) {
     return []
@@ -30,7 +32,7 @@ export function calculateSidePots(players: PokerPlayer[]): Pot[] {
 
   // Process each bet level
   for (let i = 0; i < playersWithBets.length; i++) {
-    const currentBetLevel = playersWithBets[i].player.currentBet
+    const currentBetLevel = playersWithBets[i].player.totalBet ?? playersWithBets[i].player.currentBet
 
     if (currentBetLevel === previousBetLevel) {
       continue
@@ -45,16 +47,18 @@ export function calculateSidePots(players: PokerPlayer[]): Pot[] {
     // All players who bet at least this amount contribute
     for (let j = 0; j < players.length; j++) {
       const player = players[j]
-      if (player.currentBet >= currentBetLevel) {
+      const playerBet = player.totalBet ?? player.currentBet
+      
+      if (playerBet >= currentBetLevel) {
         potAmount += betDifference
         
         // Only non-folded players are eligible to win
         if (!player.isFolded) {
           eligiblePlayerIndices.push(j)
         }
-      } else if (player.currentBet > previousBetLevel) {
+      } else if (playerBet > previousBetLevel) {
         // Partial contribution
-        potAmount += player.currentBet - previousBetLevel
+        potAmount += playerBet - previousBetLevel
         
         if (!player.isFolded) {
           eligiblePlayerIndices.push(j)

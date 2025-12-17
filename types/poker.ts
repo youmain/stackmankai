@@ -19,7 +19,8 @@ export interface PokerPlayer {
   userName: string
   seatIndex: number // 0-9
   stack: number
-  currentBet: number
+  currentBet: number // Current betting round bet amount
+  totalBet?: number // Total bet amount for the entire hand (for side pot calculation)
   cards: Card[] // 2枚のホールカード
   isFolded: boolean
   isAllIn: boolean

@@ -291,6 +291,7 @@ export const performAction = async (
       const callAmount = gameData.currentBet - player.currentBet
       player.stack -= callAmount
       player.currentBet += callAmount
+      player.totalBet = (player.totalBet || 0) + callAmount
       newPot += callAmount
       break
       
@@ -301,6 +302,7 @@ export const performAction = async (
       }
       player.stack -= amount
       player.currentBet += amount
+      player.totalBet = (player.totalBet || 0) + amount
       newPot += amount
       newCurrentBet = player.currentBet
       break
@@ -309,6 +311,7 @@ export const performAction = async (
       const allinAmount = player.stack
       player.stack = 0
       player.currentBet += allinAmount
+      player.totalBet = (player.totalBet || 0) + allinAmount
       player.isAllIn = true
       newPot += allinAmount
       if (player.currentBet > newCurrentBet) {

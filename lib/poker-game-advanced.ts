@@ -333,6 +333,7 @@ export const startNextHand = async (
     ...player,
     cards: deck.dealMultiple(2),
     currentBet: 0,
+    totalBet: 0, // Reset totalBet for new hand
     isFolded: false,
     isAllIn: false,
     isActive: true,
@@ -346,6 +347,7 @@ export const startNextHand = async (
   if (sbPlayer) {
     const sbAmount = Math.min(sbPlayer.stack, gameData.smallBlind)
     sbPlayer.currentBet = sbAmount
+    sbPlayer.totalBet = sbAmount // Initialize totalBet with blind
     sbPlayer.stack -= sbAmount
     if (sbPlayer.stack === 0) sbPlayer.isAllIn = true
   }
@@ -353,6 +355,7 @@ export const startNextHand = async (
   if (bbPlayer) {
     const bbAmount = Math.min(bbPlayer.stack, gameData.bigBlind)
     bbPlayer.currentBet = bbAmount
+    bbPlayer.totalBet = bbAmount // Initialize totalBet with blind
     bbPlayer.stack -= bbAmount
     if (bbPlayer.stack === 0) bbPlayer.isAllIn = true
   }
