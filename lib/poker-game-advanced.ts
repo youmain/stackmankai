@@ -200,6 +200,7 @@ export const evaluateShowdown = async (
     pot: 0,
     winners: winners.map(idx => gameData.players[idx].userId),
     winnerHands: hands.filter(h => winners.includes(h.seatIndex)),
+    showByFold: false, // 通常のショーダウン：ハンドを公開
     updatedAt: serverTimestamp(),
   }))
 }
