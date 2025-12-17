@@ -202,7 +202,7 @@ const PlayerCard = ({
 }
 
 export function PokerTable({ game, currentUserId, onAction, onJoinSeat, onLeaveSeat, onStartGame, onResetGame, onTimeout }: PokerTableProps) {
-  const [betAmount, setBetAmount] = useState(game.minRaise?.toString() || "")
+  const [betAmount, setBetAmount] = useState(game?.minRaise?.toString() || "")
   const [countdown, setCountdown] = useState<number | null>(null)
   const [showWinnerDisplay, setShowWinnerDisplay] = useState(true)
   
@@ -235,7 +235,7 @@ export function PokerTable({ game, currentUserId, onAction, onJoinSeat, onLeaveS
     } else {
       setCountdown(null)
     }
-  }, [game?.phase, game?.players.length])
+  }, [game?.phase, game?.players?.length])
   
   if (!game) {
     return (
