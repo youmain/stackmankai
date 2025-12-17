@@ -19,6 +19,7 @@ import { ViewModeHeader } from "@/components/poker/view-mode-header"
 import { TurnNotification } from "@/components/poker/turn-notification"
 import { useViewMode } from "@/hooks/use-view-mode"
 import { ChatPanel } from "@/components/chat/chat-panel"
+import { ChatToastContainer } from "@/components/chat/chat-toast"
 
 export function ChatRoomDualMode() {
   const { customerAccount } = useAuth()
@@ -32,6 +33,8 @@ export function ChatRoomDualMode() {
   const [pokerGame, setPokerGame] = useState<PokerGameState | null>(null)
   const [pokerGameId, setPokerGameId] = useState<string | null>(null)
   const [showTurnNotification, setShowTurnNotification] = useState(false)
+  const [toastMessages, setToastMessages] = useState<ChatMessage[]>([])
+  const lastMessageCountRef = useRef(0)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -87,6 +90,30 @@ export function ChatRoomDualMode() {
 
     return () => unsubscribe()
   }, [customerAccount?.storeId])
+
+  // ポーカーモードで新しいメッセージが来たらトースト通知を表示
+  useEffect(() => {
+    if (viewMode !== 'poker' || !customerAccount) return
+    
+    // 初回ロード時はスキップ
+    if (lastMessageCountRef.current === 0) {
+      lastMessageCountRef.current = messages.length
+      return
+    }
+    
+    // 新しいメッセージがあるかチェック
+    if (messages.length > lastMessageCountRef.current) {
+      const newMessages = messages.slice(lastMessageCountRef.current)
+      // 自分以外のメッセージのみトースト表示
+      const othersMessages = newMessages.filter(msg => msg.userId !== customerAccount.id)
+      
+      if (othersMessages.length > 0) {
+        setToastMessages(prev => [...prev, ...othersMessages])
+      }
+    }
+    
+    lastMessageCountRef.current = messages.length
+  }, [messages, viewMode, customerAccount])
 
   // アクティブユーザーの購読
   useEffect(() => {
@@ -406,6 +433,17 @@ export function ChatRoomDualMode() {
         <TurnNotification
           onSwitchToPoker={() => setViewMode('poker')}
           onDismiss={() => setShowTurnNotification(false)}
+        />
+      )}
+
+      {/* チャットトースト通知（ポーカーモードのみ） */}
+      {viewMode === 'poker' && toastMessages.length > 0 && (
+        <ChatToastContainer
+          messages={toastMessages}
+          onDismiss={(messageId) => {
+            setToastMessages(prev => prev.filter(msg => msg.id !== messageId))
+          }}
+          onClickToast={() => setViewMode('chat')}
         />
       )}
 
