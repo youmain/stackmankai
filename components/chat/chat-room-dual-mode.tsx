@@ -452,7 +452,7 @@ export function ChatRoomDualMode() {
         {/* ポーカーモード */}
         {viewMode === 'poker' && pokerGame && (
           <>
-            <div style={{ height: '67vh', maxWidth: '600px', margin: '0 auto' }} className="overflow-y-auto overflow-x-hidden">
+            <div style={{ height: '67vh' }} className="overflow-y-auto overflow-x-hidden w-full max-w-full">
               <PokerTable
                 game={pokerGame}
                 currentUserId={customerAccount.id}
