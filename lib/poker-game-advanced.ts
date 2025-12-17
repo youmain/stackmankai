@@ -192,6 +192,32 @@ export const advancePhase = async (
   // If all remaining players are all-in, continue advancing automatically
   const actionablePlayers = updatedPlayers.filter(p => !p.isFolded && !p.isAllIn)
   if (actionablePlayers.length === 0) {
+    // Add delay before auto-advancing to next phase for better UX
+    let delay = 0
+    
+    switch (newPhase) {
+      case "flop":
+        // Flop: 3 cards revealed at 0.5s intervals = 1.5s total
+        // Add extra 0.5s for the last card to be visible
+        delay = 2000 // 2 seconds
+        break
+      case "turn":
+        // Turn: 2 seconds after flop
+        delay = 2000
+        break
+      case "river":
+        // River: 3 seconds after turn
+        delay = 3000
+        break
+      default:
+        delay = 0
+    }
+    
+    console.log(`[advancePhase] Auto-advancing after ${delay}ms delay (phase: ${newPhase})`)
+    
+    // Wait before advancing to next phase
+    await new Promise(resolve => setTimeout(resolve, delay))
+    
     // Recursively advance to next phase
     await checkAndAdvancePhase(storeId, gameId)
   }

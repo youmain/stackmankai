@@ -205,6 +205,34 @@ export function PokerTable({ game, currentUserId, onAction, onJoinSeat, onLeaveS
   const [betAmount, setBetAmount] = useState(game?.minRaise?.toString() || "")
   const [countdown, setCountdown] = useState<number | null>(null)
   const [showWinnerDisplay, setShowWinnerDisplay] = useState(true)
+  const [visibleCommunityCards, setVisibleCommunityCards] = useState<number>(0)
+  
+  // コミュニティカードの段階的表示
+  useEffect(() => {
+    if (!game) return
+    
+    const totalCards = game.communityCards.length
+    
+    // フロップ（3枚）の場合: 0.5秒ずつ表示
+    if (game.phase === "flop" && totalCards === 3) {
+      setVisibleCommunityCards(0)
+      setTimeout(() => setVisibleCommunityCards(1), 0)
+      setTimeout(() => setVisibleCommunityCards(2), 500)
+      setTimeout(() => setVisibleCommunityCards(3), 1000)
+    }
+    // ターン（4枚目）の場合: すぐに表示
+    else if (game.phase === "turn" && totalCards === 4) {
+      setVisibleCommunityCards(4)
+    }
+    // リバー（5枚目）の場合: すぐに表示
+    else if (game.phase === "river" && totalCards === 5) {
+      setVisibleCommunityCards(5)
+    }
+    // その他の場合: 全て表示
+    else {
+      setVisibleCommunityCards(totalCards)
+    }
+  }, [game?.phase, game?.communityCards.length])
   
   // ゲームのフェーズが変わったらWIN表示をリセット
   useEffect(() => {
@@ -355,7 +383,11 @@ export function PokerTable({ game, currentUserId, onAction, onJoinSeat, onLeaveS
         <div className="flex gap-1 items-center justify-center flex-wrap min-h-[80px]">
           {game.communityCards.length > 0 ? (
             game.communityCards.map((card, idx) => (
-              <CardDisplay key={idx} card={card} size="normal" />
+              idx < visibleCommunityCards ? (
+                <CardDisplay key={`card-${idx}`} card={card} size="normal" animate={true} />
+              ) : (
+                <div key={`empty-${idx}`} className="w-12 h-16 border-2 border-dashed border-white/30 rounded" />
+              )
             ))
           ) : (
             <div className="text-gray-400 text-sm font-semibold">
