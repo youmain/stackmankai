@@ -68,16 +68,15 @@ export function ChatRoomDualMode() {
     }
   }, [customerAccount?.storeId])
 
-  // メッセージが更新されたら最下部にスクロール
+  // メッセージが更新されたら最下部にスクロール（ScrollArea内のみ）
   useEffect(() => {
-    const scrollToBottom = () => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+    if (scrollAreaRef.current) {
+      const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]')
+      if (viewport) {
+        // ScrollArea内部のみをスクロール（ページ全体はスクロールしない）
+        viewport.scrollTop = viewport.scrollHeight
       }
     }
-    // 少し遅延させて確実にスクロール
-    const timer = setTimeout(scrollToBottom, 100)
-    return () => clearTimeout(timer)
   }, [messages])
 
   // チャットメッセージの購読

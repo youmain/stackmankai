@@ -44,13 +44,15 @@ export const ChatPanel = memo(function ChatPanel({
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  // メッセージが追加されたら自動スクロール（チャットパネル内のみ）
+  // メッセージが追加されたら自動スクロール（ScrollArea内のみ）
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ 
-      behavior: "smooth",
-      block: "nearest", // ページ全体をスクロールしない
-      inline: "nearest"
-    })
+    if (scrollAreaRef.current) {
+      const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]')
+      if (viewport) {
+        // ScrollArea内部のみをスクロール（ページ全体はスクロールしない）
+        viewport.scrollTop = viewport.scrollHeight
+      }
+    }
   }, [messages])
 
   return (
