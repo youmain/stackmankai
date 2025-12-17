@@ -58,7 +58,24 @@ const isRoundComplete = (game: PokerGameState): boolean => {
   
   // アクション可能なプレイヤーがいる場合
   if (actionablePlayers.length > 0) {
-    // 相手が全員オールインまたはフォールドの場合、実質的にアクションできない
+    const maxBet = Math.max(...game.players.map(p => p.currentBet))
+    const allHaveSameBet = actionablePlayers.every(p => p.currentBet === maxBet)
+    const allHaveActed = actionablePlayers.every(p => p.lastAction !== undefined && p.lastAction !== null)
+    
+    console.log('[isRoundComplete] Actionable check:', { maxBet, allHaveSameBet, allHaveActed })
+    
+    // 全員がアクションしていない場合は、まだラウンド完了ではない
+    if (!allHaveActed) {
+      return false
+    }
+    
+    // 全員がアクション済みで、ベット額が揃っている場合
+    if (allHaveSameBet) {
+      return true
+    }
+    
+    // ベット額が揃っていないが、相手が全員オールインの場合
+    // （例: Player Aが9,800オールイン、Player Bが9,800コールして200残る）
     const opponents = nonFoldedPlayers.filter(p => !actionablePlayers.includes(p))
     const allOpponentsAllIn = opponents.every(p => p.isAllIn)
     
@@ -67,13 +84,7 @@ const isRoundComplete = (game: PokerGameState): boolean => {
       return true
     }
     
-    const maxBet = Math.max(...game.players.map(p => p.currentBet))
-    const allHaveSameBet = actionablePlayers.every(p => p.currentBet === maxBet)
-    const allHaveActed = actionablePlayers.every(p => p.lastAction !== undefined && p.lastAction !== null)
-    
-    console.log('[isRoundComplete] Actionable check:', { maxBet, allHaveSameBet, allHaveActed })
-    
-    return allHaveSameBet && allHaveActed
+    return false
   }
   
   // アクション可能なプレイヤーがいない（全員オールイン）ならラウンド完了
