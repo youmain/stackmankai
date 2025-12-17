@@ -60,6 +60,34 @@ export function WinnerDisplay({ winners, allPlayers, communityCards, pot, showBy
           </p>
         </div>
 
+        {/* コミュニティカード */}
+        {!showByFold && communityCards.length > 0 && (
+          <div className="mb-6">
+            <p className="text-center text-white text-lg font-semibold mb-3">
+              コミュニティカード
+            </p>
+            <div className="flex gap-2 justify-center">
+              {communityCards.map((card, idx) => (
+                <div 
+                  key={idx}
+                  className="w-16 h-22 bg-white rounded-lg flex flex-col items-center justify-center shadow-xl border-2 border-white"
+                >
+                  <span className={`text-2xl font-bold ${
+                    card.suit === 'hearts' || card.suit === 'diamonds' ? 'text-red-600' : 'text-gray-900'
+                  }`}>
+                    {card.rank}
+                  </span>
+                  <span className={`text-3xl ${
+                    card.suit === 'hearts' || card.suit === 'diamonds' ? 'text-red-600' : 'text-gray-900'
+                  }`}>
+                    {card.suit === 'hearts' ? '♥' : card.suit === 'diamonds' ? '♦' : card.suit === 'clubs' ? '♣' : '♠'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* 勝者情報 */}
         <div className="space-y-4">
           {showByFold ? (
