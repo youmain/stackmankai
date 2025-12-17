@@ -197,17 +197,16 @@ export const advancePhase = async (
     
     switch (newPhase) {
       case "flop":
-        // Flop: 3 cards revealed at 0.5s intervals = 1.5s total
-        // Add extra 0.5s for the last card to be visible
-        delay = 2000 // 2 seconds
-        break
-      case "turn":
-        // Turn: 2 seconds after flop
+        // Flop: Wait 2 seconds before advancing to turn
         delay = 2000
         break
-      case "river":
-        // River: 3 seconds after turn
+      case "turn":
+        // Turn: Wait 3 seconds before advancing to river
         delay = 3000
+        break
+      case "river":
+        // River: Wait before showdown
+        delay = 2000
         break
       default:
         delay = 0
