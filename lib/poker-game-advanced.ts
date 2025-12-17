@@ -33,13 +33,28 @@ const isRoundComplete = (game: PokerGameState): boolean => {
   // フォールドしていないプレイヤー（オールインも含む）
   const nonFoldedPlayers = game.players.filter(p => !p.isFolded)
   
+  console.log('[isRoundComplete] Check:', {
+    phase: game.phase,
+    nonFoldedCount: nonFoldedPlayers.length,
+    players: game.players.map(p => ({
+      name: p.userName,
+      isFolded: p.isFolded,
+      isAllIn: p.isAllIn,
+      currentBet: p.currentBet,
+      lastAction: p.lastAction
+    }))
+  })
+  
   // フォールドしていないプレイヤーが1人以下ならラウンド完了
   if (nonFoldedPlayers.length <= 1) {
+    console.log('[isRoundComplete] Only one player left, round complete')
     return true
   }
   
   // アクション可能なプレイヤー（フォールドもオールインもしていない）
   const actionablePlayers = game.players.filter(p => !p.isFolded && !p.isAllIn)
+  
+  console.log('[isRoundComplete] Actionable players:', actionablePlayers.length)
   
   // アクション可能なプレイヤーがいる場合、全員がアクションして同じベット額になっているか確認
   if (actionablePlayers.length > 0) {
@@ -47,10 +62,13 @@ const isRoundComplete = (game: PokerGameState): boolean => {
     const allHaveSameBet = actionablePlayers.every(p => p.currentBet === maxBet)
     const allHaveActed = actionablePlayers.every(p => p.lastAction !== undefined && p.lastAction !== null)
     
+    console.log('[isRoundComplete] Actionable check:', { maxBet, allHaveSameBet, allHaveActed })
+    
     return allHaveSameBet && allHaveActed
   }
   
   // アクション可能なプレイヤーがいない（全員オールイン）ならラウンド完了
+  console.log('[isRoundComplete] No actionable players, round complete')
   return true
 }
 
@@ -349,18 +367,29 @@ export const checkAndAdvancePhase = async (
   const gameSnap = await getDoc(gameDoc)
   
   if (!gameSnap.exists()) {
+    console.log('[checkAndAdvancePhase] Game not found')
     return
   }
   
   const gameData = gameSnap.data() as PokerGameState
   
+  console.log('[checkAndAdvancePhase] Called:', {
+    phase: gameData.phase,
+    currentPlayerIndex: gameData.currentPlayerIndex
+  })
+  
   // Don't auto-advance if in waiting or showdown
   if (gameData.phase === "waiting" || gameData.phase === "showdown") {
+    console.log('[checkAndAdvancePhase] Phase is waiting or showdown, skipping')
     return
   }
   
   // Check if round is complete
-  if (isRoundComplete(gameData)) {
+  const roundComplete = isRoundComplete(gameData)
+  console.log('[checkAndAdvancePhase] Round complete?', roundComplete)
+  
+  if (roundComplete) {
+    console.log('[checkAndAdvancePhase] Advancing phase...')
     await advancePhase(storeId, gameId)
   }
 }

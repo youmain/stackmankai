@@ -338,6 +338,7 @@ export const performAction = async (
   const maxLoops = gameData.players.length
   
   // Find next active player (not folded, not all-in)
+  // Note: player.isAllIn is already updated above, so this will correctly skip the current player if they went all-in
   while (
     loopCount < maxLoops &&
     (gameData.players[nextPlayerIndex].isFolded || gameData.players[nextPlayerIndex].isAllIn)
@@ -346,7 +347,7 @@ export const performAction = async (
     loopCount++
   }
   
-  // If we looped through all players, it means only one active player left
+  // If we looped through all players, it means no actionable players left
   // In this case, keep currentPlayerIndex as is (will be handled by checkAndAdvancePhase)
   if (loopCount >= maxLoops) {
     nextPlayerIndex = gameData.currentPlayerIndex
