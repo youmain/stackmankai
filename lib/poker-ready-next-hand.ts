@@ -36,7 +36,7 @@ export const markPlayerReady = async (
   }
   
   // Check if player is already ready
-  const readyPlayers = gameData.nextHandReadyPlayers || []
+  const readyPlayers = Array.isArray(gameData.nextHandReadyPlayers) ? gameData.nextHandReadyPlayers : []
   if (readyPlayers.includes(userId)) {
     console.log(`[markPlayerReady] Player ${userId} is already ready`)
     return
@@ -83,7 +83,7 @@ export const checkAndStartNextHand = async (
   console.log(`[checkAndStartNextHand] Active players: ${activePlayerIds.length}`)
   
   // Get ready players
-  const readyPlayers = gameData.nextHandReadyPlayers || []
+  const readyPlayers = Array.isArray(gameData.nextHandReadyPlayers) ? gameData.nextHandReadyPlayers : []
   
   console.log(`[checkAndStartNextHand] Ready players: ${readyPlayers.length}/${activePlayerIds.length}`)
   
