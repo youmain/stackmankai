@@ -488,7 +488,7 @@ export function PokerTable({ game, currentUserId, onAction, onJoinSeat, onLeaveS
                     チェック
                   </Button>
                 ) : (
-                  <Button onClick={() => onAction("call")} variant="default" className="flex-1 h-8 text-xs">
+                  <Button onClick={() => onAction("call")} variant="secondary" className="flex-1 h-8 text-xs">
                     コール ({(game.currentBet - currentPlayer.currentBet).toLocaleString()})
                   </Button>
                 )}
