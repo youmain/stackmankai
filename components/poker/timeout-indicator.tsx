@@ -19,9 +19,9 @@ export function TimeoutIndicator({ game, currentUserId, onTimeout }: TimeoutIndi
       timeoutSeconds: game.timeoutSeconds
     })
     
-    // ゲームがWAITINGまたはSHOWDOWN状態の場合は表示しない
-    if (game.phase === "WAITING" || game.phase === "SHOWDOWN") {
-      console.log('[TimeoutIndicator] Phase is WAITING or SHOWDOWN, hiding indicator')
+    // ゲームがwaitingまたはshowdown状態の場合は表示しない
+    if (game.phase === "waiting" || game.phase === "showdown") {
+      console.log('[TimeoutIndicator] Phase is waiting or showdown, hiding indicator')
       setCountdown(null)
       return
     }
