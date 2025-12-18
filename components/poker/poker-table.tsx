@@ -576,6 +576,10 @@ export function PokerTable({ game, currentUserId, onAction, onJoinSeat, onLeaveS
           pot={game.pot}
           showByFold={game.showByFold}
           onNextHand={onReadyNextHand}
+          onTimerExpired={() => {
+            console.log('[PokerTable] Timer expired, hiding Winner Display')
+            setShowWinnerDisplay(false)
+          }}
           readyPlayers={game.nextHandReadyPlayers}
           nextHandStartTime={game.nextHandStartTime}
           currentUserId={currentUserId}

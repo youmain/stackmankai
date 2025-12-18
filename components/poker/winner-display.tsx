@@ -12,6 +12,7 @@ interface WinnerDisplayProps {
   showByFold?: boolean // フォールド勝利の場合true
   onClose?: () => void
   onNextHand?: () => void // 次のハンドに進む
+  onTimerExpired?: () => void // タイマーが0になったときのコールバック
   readyPlayers?: string[] // 準備完了プレイヤーのIDリスト
   nextHandStartTime?: Date // 次のハンド自動開始時刻
   currentUserId?: string // 現在のユーザーID
@@ -25,6 +26,7 @@ export function WinnerDisplay({
   showByFold = false, 
   onClose, 
   onNextHand,
+  onTimerExpired,
   readyPlayers = [],
   nextHandStartTime,
   currentUserId
@@ -57,6 +59,11 @@ export function WinnerDisplay({
         if (onNextHand) {
           console.log('[WinnerDisplay] Timer expired, calling onNextHand')
           onNextHand()
+        }
+        // タイマー終了を通知
+        if (onTimerExpired) {
+          console.log('[WinnerDisplay] Timer expired, calling onTimerExpired')
+          onTimerExpired()
         }
       }
     }, 1000) // 1秒ごとに更新
