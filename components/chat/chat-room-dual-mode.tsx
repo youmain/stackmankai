@@ -409,25 +409,7 @@ export function ChatRoomDualMode() {
     )
   }
 
-  // handleClearHistoryをuseCallbackでメモ化
-  const handleClearHistoryCallback = useCallback(() => {
-    handleClearHistory()
-  }, [handleClearHistory])
 
-  // handleSendMessageをuseCallbackでメモ化
-  const handleSendMessageCallback = useCallback(() => {
-    handleSendMessage()
-  }, [handleSendMessage])
-
-  // handleKeyPressをuseCallbackでメモ化
-  const handleKeyPressCallback = useCallback((e: React.KeyboardEvent) => {
-    handleKeyPress(e)
-  }, [handleKeyPress])
-
-  // newMessageの変更ハンドラをuseCallbackでメモ化
-  const handleMessageChange = useCallback((message: string) => {
-    setNewMessage(message)
-  }, [])
 
   // ゲーム状況の最小表示
   const GameStatusMinimal = () => (
@@ -506,10 +488,10 @@ export function ChatRoomDualMode() {
               hiddenMessageIds={hiddenMessageIds}
               activeUsers={activeUsers}
               currentUserId={customerAccount.id}
-              onMessageChange={handleMessageChange}
-              onSendMessage={handleSendMessageCallback}
-              onKeyPress={handleKeyPressCallback}
-              onClearHistory={handleClearHistoryCallback}
+              onMessageChange={setNewMessage}
+              onSendMessage={handleSendMessage}
+              onKeyPress={handleKeyPress}
+              onClearHistory={handleClearHistory}
             />
           </>
         )}
@@ -526,10 +508,10 @@ export function ChatRoomDualMode() {
               hiddenMessageIds={hiddenMessageIds}
               activeUsers={activeUsers}
               currentUserId={customerAccount.id}
-              onMessageChange={handleMessageChange}
-              onSendMessage={handleSendMessageCallback}
-              onKeyPress={handleKeyPressCallback}
-              onClearHistory={handleClearHistoryCallback}
+              onMessageChange={setNewMessage}
+              onSendMessage={handleSendMessage}
+              onKeyPress={handleKeyPress}
+              onClearHistory={handleClearHistory}
             />
             {pokerGame && (
               <div style={{ height: '27vh' }} className="overflow-hidden bg-slate-900">
@@ -577,10 +559,10 @@ export function ChatRoomDualMode() {
               hiddenMessageIds={hiddenMessageIds}
               activeUsers={activeUsers}
               currentUserId={customerAccount.id}
-              onMessageChange={handleMessageChange}
-              onSendMessage={handleSendMessageCallback}
-              onKeyPress={handleKeyPressCallback}
-              onClearHistory={handleClearHistoryCallback}
+              onMessageChange={setNewMessage}
+              onSendMessage={handleSendMessage}
+              onKeyPress={handleKeyPress}
+              onClearHistory={handleClearHistory}
             />
             <GameStatusMinimal />
           </>
