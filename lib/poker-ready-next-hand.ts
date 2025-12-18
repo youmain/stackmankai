@@ -76,8 +76,9 @@ export const checkAndStartNextHand = async (
     return
   }
   
-  // Get active players (not folded, has chips)
-  const activePlayers = gameData.players.filter(p => p.isActive && p.stack > 0)
+  // Get active players (seated players with chips)
+  // In showdown phase, include folded players as they need to ready up for next hand
+  const activePlayers = gameData.players.filter(p => p.seatNumber !== null && p.stack > 0)
   const activePlayerIds = activePlayers.map(p => p.userId)
   
   console.log(`[checkAndStartNextHand] Active players: ${activePlayerIds.length}`)
