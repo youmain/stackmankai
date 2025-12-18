@@ -757,7 +757,7 @@ ${availableExamples.slice(0, 5).join("\n")}
     return todayRate !== undefined && todayRate > baseRate
   }, [storeSettings, today])
 
-  const getDoublePointDates = useCallback((): Date[] => {
+  const doublePointDates = useMemo((): Date[] => {
     if (!storeSettings?.doublePointDays) return []
     return storeSettings.doublePointDays.map((dateStr) => new Date(dateStr))
   }, [storeSettings?.doublePointDays])
@@ -1783,10 +1783,10 @@ ${availableExamples.slice(0, 5).join("\n")}
                       <div className="flex justify-center">
                         <Calendar
                           mode="multiple"
-                          selected={getDoublePointDates()}
+                          selected={doublePointDates}
                           className="rounded-md border border-yellow-200 bg-white"
                           modifiers={{
-                            doublePoint: getDoublePointDates(),
+                            doublePoint: doublePointDates,
                           }}
                           modifiersStyles={{
                             doublePoint: {
