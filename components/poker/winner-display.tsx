@@ -213,12 +213,7 @@ export function WinnerDisplay({
           <div className="text-center mt-6 space-y-3">
             <button
               onClick={onNextHand}
-              disabled={isCurrentUserReady}
-              className={`px-8 py-3 rounded-full font-bold text-lg transition-colors shadow-lg ${
-                isCurrentUserReady 
-                  ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-                  : 'bg-white text-yellow-600 hover:bg-yellow-50'
-              }`}
+              className="px-8 py-3 rounded-full font-bold text-lg transition-colors shadow-lg bg-white text-yellow-600 hover:bg-yellow-50"
             >
               {isCurrentUserReady ? '✓ 準備完了' : '次のハンドへ'}
             </button>
