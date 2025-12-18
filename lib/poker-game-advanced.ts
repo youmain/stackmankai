@@ -333,24 +333,18 @@ export const startNextHand = async (
   // Remove players with 0 stack
   const activePlayers = gameData.players.filter(p => p.stack > 0)
   
-  if (activePlayers.length < 1) {
-    throw new Error("Need at least 1 player with chips to continue")
+  // Need at least 2 players to start next hand
+  if (activePlayers.length < 2) {
+    console.log(`[startNextHand] Not enough players to start next hand: ${activePlayers.length}`)
+    return
   }
   
   // Move dealer button
   let newDealerIndex = (gameData.dealerIndex + 1) % activePlayers.length
   
-  // For single player (testing only), use same index for all positions
-  let newSmallBlindIndex: number
-  let newBigBlindIndex: number
-  
-  if (activePlayers.length === 1) {
-    newSmallBlindIndex = 0
-    newBigBlindIndex = 0
-  } else {
-    newSmallBlindIndex = (newDealerIndex + 1) % activePlayers.length
-    newBigBlindIndex = (newDealerIndex + 2) % activePlayers.length
-  }
+  // Calculate blind positions
+  const newSmallBlindIndex = (newDealerIndex + 1) % activePlayers.length
+  const newBigBlindIndex = (newDealerIndex + 2) % activePlayers.length
   
   // In preflop, action starts after BB (UTG position)
   // For 3 players or less, action starts with dealer (who is also UTG)
