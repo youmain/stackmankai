@@ -59,6 +59,19 @@ export default function CustomerView() {
   const [viewMode, setViewMode] = useState<"main" | "posts" | "my-posts" | "post-detail" | "ai-players" | "chat">("main")
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null)
 
+  // forceResetパラメータでゲームをリセット（一時的な機能）
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.get("forceReset") === "true" && customerAccount?.storeId) {
+      const storageKey = `pokerGameId_${customerAccount.storeId}`
+      localStorage.removeItem(storageKey)
+      // パラメータを削除してリロード
+      urlParams.delete("forceReset")
+      const newUrl = window.location.pathname + (urlParams.toString() ? "?" + urlParams.toString() : "")
+      window.location.href = newUrl
+    }
+  }, [customerAccount?.storeId])
+
   // localStorageとURLパラメータからviewModeを読み取る
   useEffect(() => {
     // まずlocalStorageから復元
