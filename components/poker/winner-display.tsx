@@ -39,11 +39,16 @@ export function WinnerDisplay({
   
   // カウントダウン
   useEffect(() => {
-    if (!nextHandStartTime) return
+    console.log('[WinnerDisplay] nextHandStartTime:', nextHandStartTime, 'type:', typeof nextHandStartTime)
+    if (!nextHandStartTime) {
+      console.log('[WinnerDisplay] nextHandStartTime is null/undefined, countdown disabled')
+      return
+    }
     
     const interval = setInterval(() => {
       const now = new Date()
       const remaining = Math.max(0, Math.floor((nextHandStartTime.getTime() - now.getTime()) / 1000))
+      console.log('[WinnerDisplay] Countdown:', remaining, 'seconds remaining')
       setCountdown(remaining)
       
       if (remaining === 0) {
