@@ -90,6 +90,9 @@ export const checkAndStartNextHand = async (
   // Check if all active players are ready
   const allReady = activePlayerIds.every(id => readyPlayers.includes(id))
   
+  // Check if at least one player is ready (for faster game flow)
+  const anyReady = readyPlayers.length > 0
+  
   // Check if timeout has passed
   const now = new Date()
   const startTime = gameData.nextHandStartTime
@@ -101,9 +104,10 @@ export const checkAndStartNextHand = async (
     console.log(`[checkAndStartNextHand] Now: ${now.toISOString()}, Start time: ${startDate.toISOString()}, Timeout passed: ${timeoutPassed}`)
   }
   
-  console.log(`[checkAndStartNextHand] All ready: ${allReady}, Timeout passed: ${timeoutPassed}`)
+  console.log(`[checkAndStartNextHand] All ready: ${allReady}, Any ready: ${anyReady}, Timeout passed: ${timeoutPassed}`)
   
-  if (allReady || timeoutPassed) {
+  // Start next hand if all ready, any ready, or timeout passed
+  if (allReady || anyReady || timeoutPassed) {
     console.log(`[checkAndStartNextHand] Starting next hand...`)
     await startNextHand(storeId, gameId)
   }
