@@ -45,9 +45,16 @@ export function WinnerDisplay({
       return
     }
     
+    // Convert Timestamp to Date if needed
+    const targetTime = nextHandStartTime instanceof Date 
+      ? nextHandStartTime 
+      : (nextHandStartTime.toDate ? nextHandStartTime.toDate() : new Date(nextHandStartTime))
+    
+    console.log('[WinnerDisplay] Converted targetTime:', targetTime, 'type:', typeof targetTime)
+    
     const interval = setInterval(() => {
       const now = new Date()
-      const remaining = Math.max(0, Math.floor((nextHandStartTime.getTime() - now.getTime()) / 1000))
+      const remaining = Math.max(0, Math.floor((targetTime.getTime() - now.getTime()) / 1000))
       console.log('[WinnerDisplay] Countdown:', remaining, 'seconds remaining')
       setCountdown(remaining)
       
