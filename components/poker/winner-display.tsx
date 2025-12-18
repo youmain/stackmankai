@@ -39,16 +39,26 @@ export function WinnerDisplay({
   
   // カウントダウン
   useEffect(() => {
+    console.log('[WinnerDisplay] Setting up countdown interval')
     console.log('[WinnerDisplay] nextHandStartTime:', nextHandStartTime, 'type:', typeof nextHandStartTime)
+    
     if (!nextHandStartTime) {
       console.log('[WinnerDisplay] nextHandStartTime is null/undefined, countdown disabled')
+      setCountdown(15) // デフォルト値を設定
       return
     }
     
+    // 初回の計算
+    const now = new Date()
+    const initialRemaining = Math.max(0, Math.floor((nextHandStartTime.getTime() - now.getTime()) / 1000))
+    console.log('[WinnerDisplay] Initial countdown:', initialRemaining, 'seconds remaining')
+    setCountdown(initialRemaining)
+    
+    // intervalを設定（1秒ごとに更新）
     const interval = setInterval(() => {
-      const now = new Date()
-      const remaining = Math.max(0, Math.floor((nextHandStartTime.getTime() - now.getTime()) / 1000))
-      console.log('[WinnerDisplay] Countdown:', remaining, 'seconds remaining')
+      const currentNow = new Date()
+      const remaining = Math.max(0, Math.floor((nextHandStartTime.getTime() - currentNow.getTime()) / 1000))
+      console.log('[WinnerDisplay] Countdown update:', remaining, 'seconds remaining')
       setCountdown(remaining)
       
       if (remaining === 0) {
@@ -59,9 +69,12 @@ export function WinnerDisplay({
           onNextHand()
         }
       }
-    }, 100)
+    }, 1000) // 1秒ごとに更新
     
-    return () => clearInterval(interval)
+    return () => {
+      console.log('[WinnerDisplay] Cleaning up countdown interval')
+      clearInterval(interval)
+    }
   }, [nextHandStartTime, onNextHand])
   
   const activePlayerCount = allPlayers.filter(p => p.isActive && p.stack > 0).length
