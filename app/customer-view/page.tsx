@@ -56,26 +56,22 @@ export default function CustomerView() {
   const { customerAccount, setCustomerAccount, signOut } = useAuth()
   const router = useRouter()
 
-  const [viewMode, setViewMode] = useState<"main" | "posts" | "my-posts" | "post-detail" | "ai-players" | "chat">(() => {
-    // ローカルストレージから前回のviewModeを復元
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("customerViewMode")
-      if (saved === "chat" || saved === "posts" || saved === "my-posts" || saved === "ai-players") {
-        return saved
-      }
-    }
-    return "main"
-  })
+  const [viewMode, setViewMode] = useState<"main" | "posts" | "my-posts" | "post-detail" | "ai-players" | "chat">("main")
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null)
 
-  // URLパラメータからviewModeを読み取る
+  // localStorageとURLパラメータからviewModeを読み取る
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const urlParams = new URLSearchParams(window.location.search)
-      const viewModeParam = urlParams.get("viewMode")
-      if (viewModeParam === "chat" || viewModeParam === "posts" || viewModeParam === "my-posts" || viewModeParam === "ai-players") {
-        setViewMode(viewModeParam)
-      }
+    // まずlocalStorageから復元
+    const saved = localStorage.getItem("customerViewMode")
+    if (saved === "chat" || saved === "posts" || saved === "my-posts" || saved === "ai-players") {
+      setViewMode(saved)
+    }
+    
+    // URLパラメータがあればそちらを優先
+    const urlParams = new URLSearchParams(window.location.search)
+    const viewModeParam = urlParams.get("viewMode")
+    if (viewModeParam === "chat" || viewModeParam === "posts" || viewModeParam === "my-posts" || viewModeParam === "ai-players") {
+      setViewMode(viewModeParam)
     }
   }, [])
 
