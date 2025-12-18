@@ -230,15 +230,21 @@ export function ChatRoomDualMode() {
       const now = new Date()
       const startTime = pokerGame.nextHandStartTime
       
-      if (startTime && now >= startTime) {
-        console.log("[ChatRoomDualMode] Next hand timeout reached, checking and starting...")
-        clearInterval(interval)
+      if (startTime) {
+        // Convert Firestore Timestamp to Date if needed
+        const startDate = startTime instanceof Date ? startTime : (startTime.toDate ? startTime.toDate() : new Date(startTime))
+        console.log(`[ChatRoomDualMode] Checking timeout - Now: ${now.toISOString()}, Start: ${startDate.toISOString()}`)
         
-        try {
-          const { checkAndStartNextHand } = await import('@/lib/poker-ready-next-hand')
-          await checkAndStartNextHand(customerAccount.storeId, pokerGameId)
-        } catch (err) {
-          console.error("Error checking and starting next hand:", err)
+        if (now >= startDate) {
+          console.log("[ChatRoomDualMode] Next hand timeout reached, checking and starting...")
+          clearInterval(interval)
+          
+          try {
+            const { checkAndStartNextHand } = await import('@/lib/poker-ready-next-hand')
+            await checkAndStartNextHand(customerAccount.storeId, pokerGameId)
+          } catch (err) {
+            console.error("Error checking and starting next hand:", err)
+          }
         }
       }
     }, 1000)

@@ -411,7 +411,20 @@ export const subscribeToPokerGame = (
           }
           
           console.log('[subscribeToPokerGame] Raw nextHandStartTime:', data.nextHandStartTime, 'type:', typeof data.nextHandStartTime)
-          const convertedTime = data.nextHandStartTime?.toDate ? data.nextHandStartTime.toDate() : data.nextHandStartTime
+          // Convert Firestore Timestamp to Date
+          let convertedTime: Date | null = null
+          if (data.nextHandStartTime) {
+            if (data.nextHandStartTime instanceof Date) {
+              convertedTime = data.nextHandStartTime
+            } else if (data.nextHandStartTime.toDate && typeof data.nextHandStartTime.toDate === 'function') {
+              convertedTime = data.nextHandStartTime.toDate()
+            } else if (typeof data.nextHandStartTime === 'number') {
+              convertedTime = new Date(data.nextHandStartTime)
+            } else {
+              console.warn('[subscribeToPokerGame] Unknown nextHandStartTime format:', data.nextHandStartTime)
+              convertedTime = null
+            }
+          }
           console.log('[subscribeToPokerGame] Converted nextHandStartTime:', convertedTime, 'type:', typeof convertedTime)
           
           const game: PokerGameState = {

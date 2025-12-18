@@ -93,7 +93,13 @@ export const checkAndStartNextHand = async (
   // Check if timeout has passed
   const now = new Date()
   const startTime = gameData.nextHandStartTime
-  const timeoutPassed = startTime && now >= startTime
+  let timeoutPassed = false
+  if (startTime) {
+    // Convert Firestore Timestamp to Date if needed
+    const startDate = startTime instanceof Date ? startTime : (startTime.toDate ? startTime.toDate() : new Date(startTime))
+    timeoutPassed = now >= startDate
+    console.log(`[checkAndStartNextHand] Now: ${now.toISOString()}, Start time: ${startDate.toISOString()}, Timeout passed: ${timeoutPassed}`)
+  }
   
   console.log(`[checkAndStartNextHand] All ready: ${allReady}, Timeout passed: ${timeoutPassed}`)
   
