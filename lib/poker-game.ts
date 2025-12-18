@@ -416,6 +416,7 @@ export const subscribeToPokerGame = (
             createdAt: data.createdAt?.toDate() || new Date(),
             updatedAt: updatedAtDate,
             nextHandReadyPlayers: Array.isArray(data.nextHandReadyPlayers) ? data.nextHandReadyPlayers : [],
+            nextHandStartTime: data.nextHandStartTime?.toDate ? data.nextHandStartTime.toDate() : data.nextHandStartTime,
           } as PokerGameState
           callback(game)
         } else {
