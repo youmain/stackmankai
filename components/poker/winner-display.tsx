@@ -48,11 +48,16 @@ export function WinnerDisplay({
       
       if (remaining === 0) {
         clearInterval(interval)
+        // タイマーが0になったら自動的に次のハンドを開始
+        if (onNextHand) {
+          console.log('[WinnerDisplay] Timer expired, calling onNextHand')
+          onNextHand()
+        }
       }
     }, 100)
     
     return () => clearInterval(interval)
-  }, [nextHandStartTime])
+  }, [nextHandStartTime, onNextHand])
   
   const activePlayerCount = allPlayers.filter(p => p.isActive && p.stack > 0).length
   // readyPlayersが配列であることを保証
