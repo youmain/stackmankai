@@ -410,14 +410,19 @@ export const subscribeToPokerGame = (
             updatedAtDate = data.updatedAt.toDate()
           }
           
+          console.log('[subscribeToPokerGame] Raw nextHandStartTime:', data.nextHandStartTime, 'type:', typeof data.nextHandStartTime)
+          const convertedTime = data.nextHandStartTime?.toDate ? data.nextHandStartTime.toDate() : data.nextHandStartTime
+          console.log('[subscribeToPokerGame] Converted nextHandStartTime:', convertedTime, 'type:', typeof convertedTime)
+          
           const game: PokerGameState = {
             ...data,
             id: snapshot.id,
             createdAt: data.createdAt?.toDate() || new Date(),
             updatedAt: updatedAtDate,
             nextHandReadyPlayers: Array.isArray(data.nextHandReadyPlayers) ? data.nextHandReadyPlayers : [],
-            nextHandStartTime: data.nextHandStartTime?.toDate ? data.nextHandStartTime.toDate() : data.nextHandStartTime,
+            nextHandStartTime: convertedTime,
           } as PokerGameState
+          console.log('[subscribeToPokerGame] Final game.nextHandStartTime:', game.nextHandStartTime)
           callback(game)
         } else {
           callback(null)
