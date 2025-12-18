@@ -420,6 +420,10 @@ export const subscribeToPokerGame = (
               convertedTime = data.nextHandStartTime.toDate()
             } else if (typeof data.nextHandStartTime === 'number') {
               convertedTime = new Date(data.nextHandStartTime)
+            } else if (data.nextHandStartTime.seconds !== undefined) {
+              // Firestore Timestamp with seconds/nanoseconds
+              convertedTime = new Date(data.nextHandStartTime.seconds * 1000 + (data.nextHandStartTime.nanoseconds || 0) / 1000000)
+              console.log('[subscribeToPokerGame] Converted from seconds/nanoseconds:', convertedTime)
             } else {
               console.warn('[subscribeToPokerGame] Unknown nextHandStartTime format:', data.nextHandStartTime)
               convertedTime = null

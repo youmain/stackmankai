@@ -43,10 +43,10 @@ export const markPlayerReady = async (
   }
   
   // Add player to ready list
-  await updateDoc(gameDoc, removeUndefined({
+  await updateDoc(gameDoc, {
     nextHandReadyPlayers: arrayUnion(userId),
     updatedAt: serverTimestamp(),
-  }))
+  })
   
   console.log(`[markPlayerReady] Player ${userId} marked as ready`)
   
@@ -98,10 +98,30 @@ export const checkAndStartNextHand = async (
   const startTime = gameData.nextHandStartTime
   let timeoutPassed = false
   if (startTime) {
-    // Convert Firestore Timestamp to Date if needed
-    const startDate = startTime instanceof Date ? startTime : (startTime.toDate ? startTime.toDate() : new Date(startTime))
-    timeoutPassed = now >= startDate
-    console.log(`[checkAndStartNextHand] Now: ${now.toISOString()}, Start time: ${startDate.toISOString()}, Timeout passed: ${timeoutPassed}`)
+    try {
+      // Convert Firestore Timestamp to Date if needed
+      let startDate: Date
+      if (startTime instanceof Date) {
+        startDate = startTime
+      } else if (startTime.toDate && typeof startTime.toDate === 'function') {
+        startDate = startTime.toDate()
+      } else if (typeof startTime === 'number') {
+        startDate = new Date(startTime)
+      } else if ((startTime as any).seconds !== undefined) {
+        startDate = new Date((startTime as any).seconds * 1000 + ((startTime as any).nanoseconds || 0) / 1000000)
+      } else {
+        throw new Error('Unknown startTime format')
+      }
+      
+      if (!isNaN(startDate.getTime())) {
+        timeoutPassed = now >= startDate
+        console.log(`[checkAndStartNextHand] Now: ${now.toISOString()}, Start time: ${startDate.toISOString()}, Timeout passed: ${timeoutPassed}`)
+      } else {
+        console.error('[checkAndStartNextHand] Invalid startDate:', startDate)
+      }
+    } catch (err) {
+      console.error('[checkAndStartNextHand] Error converting nextHandStartTime:', err, startTime)
+    }
   }
   
   console.log(`[checkAndStartNextHand] All ready: ${allReady}, Any ready: ${anyReady}, Timeout passed: ${timeoutPassed}`)
