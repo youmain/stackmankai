@@ -7,6 +7,7 @@ import {
   getDoc,
   updateDoc,
   serverTimestamp,
+  Timestamp,
 } from "firebase/firestore"
 import { getDb } from "./firebase"
 import { collection } from "firebase/firestore"
@@ -298,7 +299,7 @@ export const evaluateShowdown = async (
   }
   
   // Set next hand start time (15 seconds from now)
-  const nextHandStartTime = new Date(Date.now() + 15000)
+  const nextHandStartTime = Timestamp.fromMillis(Date.now() + 15000)
   
   await updateDoc(gameDoc, removeUndefined({
     phase: "showdown",
