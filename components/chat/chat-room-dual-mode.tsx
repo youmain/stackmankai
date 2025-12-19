@@ -91,54 +91,27 @@ export function ChatRoomDualMode() {
   }, [customerAccount?.storeId])
 
   // ポーカーモードで新しいメッセージが来たらトースト通知を表示
-  // 前回viewModeを追跡して、ポーカーモードに切り替わった瞬間を検出
-  const prevViewModeRef = useRef<string>(viewMode)
-  
   useEffect(() => {
-    console.log('[Toast Debug] Effect triggered:', { 
-      viewMode, 
-      prevViewMode: prevViewModeRef.current,
-      hasAccount: !!customerAccount, 
-      messageCount: messages.length,
-      lastCount: lastMessageCountRef.current 
-    })
+    if (viewMode !== 'poker' || !customerAccount) return
     
-    // viewModeがポーカーモードに切り替わった瞬間を検出
-    if (viewMode === 'poker' && prevViewModeRef.current !== 'poker') {
-      console.log('[Toast Debug] Just switched to poker mode, initializing count to:', messages.length)
+    // 初回ロード時はスキップ
+    if (lastMessageCountRef.current === 0) {
       lastMessageCountRef.current = messages.length
-      prevViewModeRef.current = viewMode
-      return
-    }
-    
-    // viewModeを更新
-    prevViewModeRef.current = viewMode
-    
-    if (viewMode !== 'poker' || !customerAccount) {
-      console.log('[Toast Debug] Skipping: not in poker mode or no account')
       return
     }
     
     // 新しいメッセージがあるかチェック
     if (messages.length > lastMessageCountRef.current) {
       const newMessages = messages.slice(lastMessageCountRef.current)
-      console.log('[Toast Debug] New messages detected:', newMessages.length)
-      
       // 自分以外のメッセージのみトースト表示
       const othersMessages = newMessages.filter(msg => msg.userId !== customerAccount.id)
-      console.log('[Toast Debug] Others messages:', othersMessages.length)
       
       if (othersMessages.length > 0) {
-        console.log('[Toast Debug] Adding toast messages:', othersMessages)
-        setToastMessages(prev => {
-          const updated = [...prev, ...othersMessages]
-          console.log('[Toast Debug] Toast messages updated:', updated.length)
-          return updated
-        })
+        setToastMessages(prev => [...prev, ...othersMessages])
       }
-      
-      lastMessageCountRef.current = messages.length
     }
+    
+    lastMessageCountRef.current = messages.length
   }, [messages, viewMode, customerAccount])
 
   // アクティブユーザーの購読
