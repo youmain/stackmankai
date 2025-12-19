@@ -149,13 +149,18 @@ export const advancePhase = async (
   // Create deck for dealing community cards
   // Note: In production, deck state should be stored securely
   const deck = new Deck()
-  deck.shuffle()
   
   // Remove already dealt cards from deck
   const dealtCards = [
     ...gameData.communityCards,
     ...gameData.players.flatMap(p => p.cards),
   ]
+  
+  // 既に配られたカードをデッキから除外
+  deck.removeCards(dealtCards)
+  
+  // シャッフル
+  deck.shuffle()
   
   let newCommunityCards: Card[] = [...gameData.communityCards]
   let newPhase = gameData.phase

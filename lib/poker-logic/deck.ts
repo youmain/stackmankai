@@ -49,4 +49,13 @@ export class Deck {
   remaining(): number {
     return this.cards.length
   }
+
+  // デッキから特定のカードを除外
+  removeCards(cardsToRemove: Card[]): void {
+    this.cards = this.cards.filter(card =>
+      !cardsToRemove.some(removed =>
+        removed.suit === card.suit && removed.rank === card.rank
+      )
+    )
+  }
 }
