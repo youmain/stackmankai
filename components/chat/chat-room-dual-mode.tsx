@@ -25,6 +25,11 @@ export function ChatRoomDualMode() {
   const { customerAccount } = useAuth()
   const { viewMode, setViewMode } = useViewMode()
   const [messages, setMessages] = useState<ChatMessage[]>([])
+  
+  // messagesの変化をログ出力
+  useEffect(() => {
+    console.log('[Messages] messages state changed:', messages.length, messages.slice(-3))
+  }, [messages])
   const [newMessage, setNewMessage] = useState("")
   const [isSending, setIsSending] = useState(false)
   const [error, setError] = useState("")
@@ -88,11 +93,16 @@ export function ChatRoomDualMode() {
   useEffect(() => {
     if (!customerAccount?.storeId) return
 
+    console.log('[Messages] Setting up subscription for storeId:', customerAccount.storeId)
     const unsubscribe = subscribeToChatMessages(customerAccount.storeId, (newMessages) => {
+      console.log('[Messages] Received from Firestore:', newMessages.length, newMessages.slice(-3))
       setMessages(newMessages)
     })
 
-    return () => unsubscribe()
+    return () => {
+      console.log('[Messages] Cleaning up subscription')
+      unsubscribe()
+    }
   }, [customerAccount?.storeId])
 
   // ポーカーモードで新しいメッセージが来たらトースト通知を表示
