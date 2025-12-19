@@ -1910,7 +1910,8 @@ export const sendChatMessage = async (
 export const subscribeToChatMessages = (
   storeId: string,
   callback: (messages: ChatMessage[]) => void,
-  onError?: (error: Error) => void
+  onError?: (error: Error) => void,
+  joinedAt?: Date
 ): (() => void) => {
   if (!isFirebaseConfigured()) {
     callback([])
@@ -1926,7 +1927,11 @@ export const subscribeToChatMessages = (
   
   try {
     const messagesCollection = getChatMessagesCollection(storeId)
-    const q = query(messagesCollection, orderBy("createdAt", "desc"), limit(200))
+    
+    // 入室時刻が指定されている場合は、それ以降のメッセージのみ取得
+    const q = joinedAt
+      ? query(messagesCollection, where("createdAt", ">=", Timestamp.fromDate(joinedAt)), orderBy("createdAt", "asc"))
+      : query(messagesCollection, orderBy("createdAt", "desc"), limit(200))
     
     return onSnapshot(
       q,
@@ -1943,8 +1948,10 @@ export const subscribeToChatMessages = (
             createdAt: data.createdAt?.toDate() || new Date(),
           } as ChatMessage
         })
-        // 新しい順から古い順に並び替え
-        messages.reverse()
+        // joinedAtが指定されていない場合は、新しい順から古い順に並び替え
+        if (!joinedAt) {
+          messages.reverse()
+        }
         callback(messages)
       },
       (error) => {

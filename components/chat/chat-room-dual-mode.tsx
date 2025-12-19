@@ -46,6 +46,7 @@ export function ChatRoomDualMode() {
   }, [toastMessages])
   const lastMessageCountRef = useRef(0)
   const seenMessageIdsRef = useRef<Set<string>>(new Set())
+  const joinedAtRef = useRef<Date>(new Date()) // 入室時刻を記録
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -94,11 +95,16 @@ export function ChatRoomDualMode() {
   useEffect(() => {
     if (!customerAccount?.storeId) return
 
-    console.log('[Messages] Setting up subscription for storeId:', customerAccount.storeId)
-    const unsubscribe = subscribeToChatMessages(customerAccount.storeId, (newMessages) => {
-      console.log('[Messages] Received from Firestore:', newMessages.length, newMessages.slice(-3))
-      setMessages(newMessages)
-    })
+    console.log('[Messages] Setting up subscription for storeId:', customerAccount.storeId, 'joinedAt:', joinedAtRef.current)
+    const unsubscribe = subscribeToChatMessages(
+      customerAccount.storeId,
+      (newMessages) => {
+        console.log('[Messages] Received from Firestore:', newMessages.length, newMessages.slice(-3))
+        setMessages(newMessages)
+      },
+      undefined, // onError
+      joinedAtRef.current // 入室時刻を渡す
+    )
 
     return () => {
       console.log('[Messages] Cleaning up subscription')
