@@ -46,6 +46,7 @@ export function ChatRoomDualMode() {
   }, [toastMessages])
   const lastMessageCountRef = useRef(0)
   const seenMessageIdsRef = useRef<Set<string>>(new Set())
+  const isInitialLoadRef = useRef(true) // 初回ロードフラグ
   const joinedAtRef = useRef<Date>(new Date()) // 入室時刻を記録
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -131,9 +132,10 @@ export function ChatRoomDualMode() {
     }
     
     // 初回ロード時はすべてのメッセージIDを記録
-    if (seenMessageIdsRef.current.size === 0) {
+    if (isInitialLoadRef.current) {
       console.log('[Toast] Initial load, recording', messages.length, 'message IDs')
       messages.forEach(msg => seenMessageIdsRef.current.add(msg.id))
+      isInitialLoadRef.current = false
       return
     }
     
