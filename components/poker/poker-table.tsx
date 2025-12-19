@@ -577,9 +577,21 @@ export function PokerTable({ game, currentUserId, onAction, onJoinSeat, onLeaveS
           showByFold={game.showByFold}
           onNextHand={onLeaveSeat}
           onTimerExpired={() => {
-            console.log('[PokerTable] Timer expired, leaving seat')
+            console.log('[PokerTable] Timer expired')
             setShowWinnerDisplay(false)
-            onLeaveSeat()
+            
+            // Check player count
+            const activePlayers = game.players.filter(p => p.seatNumber !== null && p.stack > 0)
+            console.log('[PokerTable] Active players after timer:', activePlayers.length)
+            
+            if (activePlayers.length >= 2) {
+              console.log('[PokerTable] Starting next hand')
+              if (onReadyNextHand) {
+                onReadyNextHand()
+              }
+            } else {
+              console.log('[PokerTable] Not enough players, waiting')
+            }
           }}
           readyPlayers={game.nextHandReadyPlayers}
           nextHandStartTime={game.nextHandStartTime}
