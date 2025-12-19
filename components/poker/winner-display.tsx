@@ -32,7 +32,7 @@ export function WinnerDisplay({
   currentUserId
 }: WinnerDisplayProps) {
   const [visible, setVisible] = useState(false)
-  const [countdown, setCountdown] = useState<number>(15)
+  const [countdown, setCountdown] = useState<number>(7)
   const [startTime] = useState<Date>(new Date()) // コンポーネントマウント時の時刻
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export function WinnerDisplay({
     setTimeout(() => setVisible(true), 100)
   }, [])
   
-  // カウントダウン（表示時点から15秒）
+  // カウントダウン（表示時点から7秒）
   useEffect(() => {
     console.log('[WinnerDisplay] Setting up countdown from display time')
     console.log('[WinnerDisplay] Start time:', startTime.toISOString())
@@ -49,7 +49,7 @@ export function WinnerDisplay({
     const interval = setInterval(() => {
       const now = new Date()
       const elapsed = Math.floor((now.getTime() - startTime.getTime()) / 1000)
-      const remaining = Math.max(0, 15 - elapsed)
+      const remaining = Math.max(0, 7 - elapsed)
       console.log('[WinnerDisplay] Elapsed:', elapsed, 'seconds, Remaining:', remaining, 'seconds')
       setCountdown(remaining)
       
@@ -243,7 +243,7 @@ export function WinnerDisplay({
               style={{ pointerEvents: 'auto', cursor: 'pointer' }}
               className="px-8 py-3 rounded-full font-bold text-lg transition-colors shadow-lg bg-white text-yellow-600 hover:bg-yellow-50"
             >
-              {isCurrentUserReady ? '✓ 準備完了' : '次のハンドへ'}
+              席を立つ
             </button>
             <div className="text-white text-sm">
               <p>準備完了: {readyCount}/{activePlayerCount}</p>
