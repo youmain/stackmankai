@@ -83,6 +83,12 @@ export const checkAndStartNextHand = async (
   
   console.log(`[checkAndStartNextHand] Active players: ${activePlayerIds.length}`)
   
+  // Need at least 2 players to start next hand
+  if (activePlayers.length < 2) {
+    console.log(`[checkAndStartNextHand] Not enough players to start next hand: ${activePlayers.length}`)
+    return
+  }
+  
   // Get ready players
   const readyPlayers = Array.isArray(gameData.nextHandReadyPlayers) ? gameData.nextHandReadyPlayers : []
   
