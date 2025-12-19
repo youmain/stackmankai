@@ -142,12 +142,17 @@ export const advancePhase = async (
     const potAmount = gameData.pot
     winner.stack += potAmount
     
+    // Set next hand start time (7 seconds from now)
+    const nextHandStartTime = Timestamp.fromMillis(Date.now() + 7000)
+    
     await updateDoc(gameDoc, removeUndefined({
       phase: "showdown",
       pot: potAmount, // potを保持してWinnerDisplayに表示
       players: gameData.players,
       winners: [winner.userId], // winnersを設定
       showByFold: true, // フォールド勝利のフラグ
+      nextHandReadyPlayers: [], // Reset ready players
+      nextHandStartTime: nextHandStartTime,
       updatedAt: serverTimestamp(),
     }))
     return
@@ -310,8 +315,8 @@ export const evaluateShowdown = async (
     timestamp: new Date(),
   }
   
-  // Set next hand start time (15 seconds from now)
-  const nextHandStartTime = Timestamp.fromMillis(Date.now() + 15000)
+  // Set next hand start time (7 seconds from now)
+  const nextHandStartTime = Timestamp.fromMillis(Date.now() + 7000)
   
   await updateDoc(gameDoc, removeUndefined({
     phase: "showdown",
