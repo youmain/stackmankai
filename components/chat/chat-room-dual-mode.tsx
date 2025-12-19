@@ -99,8 +99,8 @@ export function ChatRoomDualMode() {
       return
     }
     
-    // 初回ロード時はスキップ
-    if (lastMessageCountRef.current === 0) {
+    // 初回ロード時はスキップ（メッセージが0件の場合も初回とみなす）
+    if (lastMessageCountRef.current === 0 && messages.length > 0) {
       console.log('[Toast Debug] Initial load, setting count to:', messages.length)
       lastMessageCountRef.current = messages.length
       return
@@ -123,9 +123,9 @@ export function ChatRoomDualMode() {
           return updated
         })
       }
+      
+      lastMessageCountRef.current = messages.length
     }
-    
-    lastMessageCountRef.current = messages.length
   }, [messages, viewMode, customerAccount])
 
   // アクティブユーザーの購読
@@ -494,6 +494,7 @@ export function ChatRoomDualMode() {
               hiddenMessageIds={hiddenMessageIds}
               activeUsers={activeUsers}
               currentUserId={customerAccount.id}
+              inputRef={inputRef}
               onMessageChange={setNewMessage}
               onSendMessage={handleSendMessage}
               onKeyPress={handleKeyPress}
@@ -514,6 +515,7 @@ export function ChatRoomDualMode() {
               hiddenMessageIds={hiddenMessageIds}
               activeUsers={activeUsers}
               currentUserId={customerAccount.id}
+              inputRef={inputRef}
               onMessageChange={setNewMessage}
               onSendMessage={handleSendMessage}
               onKeyPress={handleKeyPress}
@@ -565,6 +567,7 @@ export function ChatRoomDualMode() {
               hiddenMessageIds={hiddenMessageIds}
               activeUsers={activeUsers}
               currentUserId={customerAccount.id}
+              inputRef={inputRef}
               onMessageChange={setNewMessage}
               onSendMessage={handleSendMessage}
               onKeyPress={handleKeyPress}

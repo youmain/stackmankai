@@ -19,6 +19,7 @@ interface ChatPanelProps {
   hiddenMessageIds: Set<string>
   activeUsers: Array<{ userId: string; userName: string }>
   currentUserId: string
+  inputRef?: React.RefObject<HTMLInputElement>
   onMessageChange: (message: string) => void
   onSendMessage: () => void
   onKeyPress: (e: React.KeyboardEvent) => void
@@ -35,12 +36,14 @@ export const ChatPanel = memo(function ChatPanel({
   hiddenMessageIds,
   activeUsers,
   currentUserId,
+  inputRef: externalInputRef,
   onMessageChange,
   onSendMessage,
   onKeyPress,
   onClearHistory,
 }: ChatPanelProps) {
-  const inputRef = useRef<HTMLInputElement>(null)
+  const internalInputRef = useRef<HTMLInputElement>(null)
+  const inputRef = externalInputRef || internalInputRef
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const isUserScrollingRef = useRef(false)
