@@ -51,6 +51,18 @@ export function ChatRoomDualMode() {
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const wasSendingRef = useRef(false)
+
+  // メッセージ送信後にフォーカスを戻す
+  useEffect(() => {
+    if (wasSendingRef.current && !isSending) {
+      // 送信が完了したらフォーカスを戻す
+      setTimeout(() => {
+        inputRef.current?.focus()
+      }, 50)
+    }
+    wasSendingRef.current = isSending
+  }, [isSending])
 
   // 自分のターンかどうかを判定
   const isMyTurn = pokerGame && 
@@ -304,10 +316,6 @@ export function ChatRoomDualMode() {
       
       await sendChatMessage(newMessage.trim(), customerAccount.id, displayName, customerAccount.storeId)
       setNewMessage("")
-      // フォーカスを維持
-      setTimeout(() => {
-        inputRef.current?.focus()
-      }, 0)
     } catch (err) {
       console.error("Error sending message:", err)
       setError("メッセージの送信に失敗しました")
