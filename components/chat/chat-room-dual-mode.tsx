@@ -100,7 +100,10 @@ export function ChatRoomDualMode() {
       customerAccount.storeId,
       (newMessages) => {
         console.log('[Messages] Received from Firestore:', newMessages.length, newMessages.slice(-3))
-        setMessages(newMessages)
+        // 最新100件のみ保持
+        const limitedMessages = newMessages.slice(-100)
+        console.log('[Messages] Limited to last 100:', limitedMessages.length)
+        setMessages(limitedMessages)
       },
       undefined, // onError
       joinedAtRef.current // 入室時刻を渡す
