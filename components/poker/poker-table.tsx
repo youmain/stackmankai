@@ -575,7 +575,7 @@ export function PokerTable({ game, currentUserId, onAction, onJoinSeat, onLeaveS
           communityCards={game.communityCards}
           pot={game.pot}
           showByFold={game.showByFold}
-          onNextHand={onLeaveSeat}
+          onNextHand={onLeaveSeat} // ボタンクリック用
           onTimerExpired={() => {
             console.log('[PokerTable] Timer expired')
             setShowWinnerDisplay(false)

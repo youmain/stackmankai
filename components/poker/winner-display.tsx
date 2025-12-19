@@ -55,12 +55,7 @@ export function WinnerDisplay({
       
       if (remaining === 0) {
         clearInterval(interval)
-        // タイマーが0になったら自動的に次のハンドを開始
-        if (onNextHand) {
-          console.log('[WinnerDisplay] Timer expired, calling onNextHand')
-          onNextHand()
-        }
-        // タイマー終了を通知
+        // タイマー終了を通知（onNextHandは呼ばない）
         if (onTimerExpired) {
           console.log('[WinnerDisplay] Timer expired, calling onTimerExpired')
           onTimerExpired()
