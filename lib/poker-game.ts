@@ -171,7 +171,16 @@ export const leavePokerGame = async (
   
   // ゲーム中の場合、自動的にフォールド
   if (leavingPlayer && gameData.phase !== "waiting" && !leavingPlayer.isFolded) {
-    console.log(`Player ${leavingPlayer.userName} leaving during game, auto-folding...`)
+    console.log(`[leavePokerGame] Player ${leavingPlayer.userName} leaving during game, auto-folding...`)
+    console.log('[leavePokerGame] Game state before leave:', {
+      phase: gameData.phase,
+      pot: gameData.pot,
+      players: gameData.players.map(p => ({
+        name: p.userName,
+        isFolded: p.isFolded,
+        stack: p.stack
+      }))
+    })
     
     // プレイヤーをフォールド状態にする
     const updatedPlayers = gameData.players.map(p => {

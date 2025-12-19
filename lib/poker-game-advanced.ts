@@ -136,10 +136,27 @@ export const advancePhase = async (
   
   // Check if only one player remains (everyone else folded)
   const activePlayers = gameData.players.filter(p => !p.isFolded)
+  console.log('[advancePhase] Active players check:', {
+    totalPlayers: gameData.players.length,
+    activePlayers: activePlayers.length,
+    pot: gameData.pot,
+    players: gameData.players.map(p => ({
+      name: p.userName,
+      isFolded: p.isFolded,
+      stack: p.stack
+    }))
+  })
+  
   if (activePlayers.length === 1) {
     // Award pot to last remaining player
     const winner = activePlayers[0]
     const potAmount = gameData.pot
+    console.log('[advancePhase] Fold win:', {
+      winner: winner.userName,
+      stackBefore: winner.stack,
+      potAmount: potAmount,
+      stackAfter: winner.stack + potAmount
+    })
     winner.stack += potAmount
     
     // Set next hand start time (7 seconds from now)
