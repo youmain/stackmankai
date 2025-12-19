@@ -91,18 +91,19 @@ export function ChatRoomDualMode() {
   }, [customerAccount?.storeId])
 
   // ポーカーモードで新しいメッセージが来たらトースト通知を表示
+  // viewModeが変更された時にlastMessageCountRefをリセット
+  useEffect(() => {
+    if (viewMode === 'poker') {
+      console.log('[Toast Debug] Switched to poker mode, resetting message count')
+      lastMessageCountRef.current = messages.length
+    }
+  }, [viewMode, messages.length])
+
   useEffect(() => {
     console.log('[Toast Debug] Effect triggered:', { viewMode, hasAccount: !!customerAccount, messageCount: messages.length })
     
     if (viewMode !== 'poker' || !customerAccount) {
       console.log('[Toast Debug] Skipping: not in poker mode or no account')
-      return
-    }
-    
-    // 初回ロード時はスキップ（メッセージが0件の場合も初回とみなす）
-    if (lastMessageCountRef.current === 0 && messages.length > 0) {
-      console.log('[Toast Debug] Initial load, setting count to:', messages.length)
-      lastMessageCountRef.current = messages.length
       return
     }
     
