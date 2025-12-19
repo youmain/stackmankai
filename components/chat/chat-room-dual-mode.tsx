@@ -45,6 +45,7 @@ export function ChatRoomDualMode() {
     console.log('[Toast] toastMessages state changed:', toastMessages.length, toastMessages)
   }, [toastMessages])
   const lastMessageCountRef = useRef(0)
+  const seenMessageIdsRef = useRef<Set<string>>(new Set())
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -111,7 +112,7 @@ export function ChatRoomDualMode() {
       viewMode,
       hasAccount: !!customerAccount,
       messagesLength: messages.length,
-      lastCount: lastMessageCountRef.current,
+      seenIdsCount: seenMessageIdsRef.current.size,
       toastMessagesLength: toastMessages.length
     })
     
@@ -120,17 +121,21 @@ export function ChatRoomDualMode() {
       return
     }
     
-    // 初回ロード時はスキップ
-    if (lastMessageCountRef.current === 0) {
-      console.log('[Toast] Initial load, setting lastCount to:', messages.length)
-      lastMessageCountRef.current = messages.length
+    // 初回ロード時はすべてのメッセージIDを記録
+    if (seenMessageIdsRef.current.size === 0) {
+      console.log('[Toast] Initial load, recording', messages.length, 'message IDs')
+      messages.forEach(msg => seenMessageIdsRef.current.add(msg.id))
       return
     }
     
-    // 新しいメッセージがあるかチェック
-    if (messages.length > lastMessageCountRef.current) {
-      const newMessages = messages.slice(lastMessageCountRef.current)
+    // 新しいメッセージをIDベースで検出
+    const newMessages = messages.filter(msg => !seenMessageIdsRef.current.has(msg.id))
+    
+    if (newMessages.length > 0) {
       console.log('[Toast] New messages detected:', newMessages.length, newMessages)
+      
+      // 新しいメッセージIDを記録
+      newMessages.forEach(msg => seenMessageIdsRef.current.add(msg.id))
       
       // 自分以外のメッセージのみトースト表示
       const othersMessages = newMessages.filter(msg => msg.userId !== customerAccount.id)
@@ -147,8 +152,6 @@ export function ChatRoomDualMode() {
     } else {
       console.log('[Toast] No new messages')
     }
-    
-    lastMessageCountRef.current = messages.length
   }, [messages, viewMode, customerAccount])
 
   // アクティブユーザーの購読
