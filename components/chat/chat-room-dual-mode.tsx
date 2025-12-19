@@ -279,7 +279,7 @@ export function ChatRoomDualMode() {
     }
   }, [newMessage, customerAccount])
 
-  const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
       handleSendMessage()
@@ -497,7 +497,7 @@ export function ChatRoomDualMode() {
               inputRef={inputRef}
               onMessageChange={setNewMessage}
               onSendMessage={handleSendMessage}
-              onKeyPress={handleKeyPress}
+              onKeyDown={handleKeyDown}
               onClearHistory={handleClearHistory}
             />
           </>
@@ -518,7 +518,7 @@ export function ChatRoomDualMode() {
               inputRef={inputRef}
               onMessageChange={setNewMessage}
               onSendMessage={handleSendMessage}
-              onKeyPress={handleKeyPress}
+              onKeyDown={handleKeyDown}
               onClearHistory={handleClearHistory}
             />
             {pokerGame && (
@@ -570,7 +570,7 @@ export function ChatRoomDualMode() {
               inputRef={inputRef}
               onMessageChange={setNewMessage}
               onSendMessage={handleSendMessage}
-              onKeyPress={handleKeyPress}
+              onKeyDown={handleKeyDown}
               onClearHistory={handleClearHistory}
             />
             <GameStatusMinimal />

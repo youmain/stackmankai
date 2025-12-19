@@ -22,7 +22,7 @@ interface ChatPanelProps {
   inputRef?: React.RefObject<HTMLInputElement>
   onMessageChange: (message: string) => void
   onSendMessage: () => void
-  onKeyPress: (e: React.KeyboardEvent) => void
+  onKeyDown: (e: React.KeyboardEvent) => void
   onClearHistory: () => void
 }
 
@@ -39,7 +39,7 @@ export const ChatPanel = memo(function ChatPanel({
   inputRef: externalInputRef,
   onMessageChange,
   onSendMessage,
-  onKeyPress,
+  onKeyDown,
   onClearHistory,
 }: ChatPanelProps) {
   const internalInputRef = useRef<HTMLInputElement>(null)
@@ -193,7 +193,7 @@ export const ChatPanel = memo(function ChatPanel({
             placeholder="メッセージを入力..."
             value={newMessage}
             onChange={(e) => onMessageChange(e.target.value)}
-            onKeyPress={onKeyPress}
+            onKeyDown={onKeyDown}
             disabled={isSending}
             className="flex-1"
           />
