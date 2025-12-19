@@ -1926,7 +1926,7 @@ export const subscribeToChatMessages = (
   
   try {
     const messagesCollection = getChatMessagesCollection(storeId)
-    const q = query(messagesCollection, orderBy("createdAt", "desc"), limit(100))
+    const q = query(messagesCollection, orderBy("createdAt", "desc"), limit(200))
     
     return onSnapshot(
       q,
