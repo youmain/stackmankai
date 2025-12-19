@@ -34,6 +34,11 @@ export function ChatRoomDualMode() {
   const [pokerGameId, setPokerGameId] = useState<string | null>(null)
   const [showTurnNotification, setShowTurnNotification] = useState(false)
   const [toastMessages, setToastMessages] = useState<ChatMessage[]>([])
+  
+  // toastMessagesの変化をログ出力
+  useEffect(() => {
+    console.log('[Toast] toastMessages state changed:', toastMessages.length, toastMessages)
+  }, [toastMessages])
   const lastMessageCountRef = useRef(0)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -92,10 +97,22 @@ export function ChatRoomDualMode() {
 
   // ポーカーモードで新しいメッセージが来たらトースト通知を表示
   useEffect(() => {
-    if (viewMode !== 'poker' || !customerAccount) return
+    console.log('[Toast] useEffect triggered:', {
+      viewMode,
+      hasAccount: !!customerAccount,
+      messagesLength: messages.length,
+      lastCount: lastMessageCountRef.current,
+      toastMessagesLength: toastMessages.length
+    })
+    
+    if (viewMode !== 'poker' || !customerAccount) {
+      console.log('[Toast] Skipping: viewMode or account check failed')
+      return
+    }
     
     // 初回ロード時はスキップ
     if (lastMessageCountRef.current === 0) {
+      console.log('[Toast] Initial load, setting lastCount to:', messages.length)
       lastMessageCountRef.current = messages.length
       return
     }
@@ -103,12 +120,22 @@ export function ChatRoomDualMode() {
     // 新しいメッセージがあるかチェック
     if (messages.length > lastMessageCountRef.current) {
       const newMessages = messages.slice(lastMessageCountRef.current)
+      console.log('[Toast] New messages detected:', newMessages.length, newMessages)
+      
       // 自分以外のメッセージのみトースト表示
       const othersMessages = newMessages.filter(msg => msg.userId !== customerAccount.id)
+      console.log('[Toast] Others messages:', othersMessages.length, othersMessages)
       
       if (othersMessages.length > 0) {
-        setToastMessages(prev => [...prev, ...othersMessages])
+        console.log('[Toast] Adding to toastMessages')
+        setToastMessages(prev => {
+          const updated = [...prev, ...othersMessages]
+          console.log('[Toast] toastMessages updated:', updated.length, updated)
+          return updated
+        })
       }
+    } else {
+      console.log('[Toast] No new messages')
     }
     
     lastMessageCountRef.current = messages.length
@@ -443,15 +470,23 @@ export function ChatRoomDualMode() {
       )}
 
       {/* チャットトースト通知（ポーカーモードのみ） */}
-      {viewMode === 'poker' && toastMessages.length > 0 && (
-        <ChatToastContainer
-          messages={toastMessages}
-          onDismiss={(messageId) => {
-            setToastMessages(prev => prev.filter(msg => msg.id !== messageId))
-          }}
-          onClickToast={() => setViewMode('chat')}
-        />
-      )}
+      {(() => {
+        const shouldShow = viewMode === 'poker' && toastMessages.length > 0
+        console.log('[Toast] Render check:', { viewMode, toastMessagesLength: toastMessages.length, shouldShow })
+        return shouldShow ? (
+          <ChatToastContainer
+            messages={toastMessages}
+            onDismiss={(messageId) => {
+              console.log('[Toast] Dismissing message:', messageId)
+              setToastMessages(prev => prev.filter(msg => msg.id !== messageId))
+            }}
+            onClickToast={() => {
+              console.log('[Toast] Toast clicked, switching to chat')
+              setViewMode('chat')
+            }}
+          />
+        ) : null
+      })()}
 
       {/* メインコンテンツ */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden bg-gray-900">
