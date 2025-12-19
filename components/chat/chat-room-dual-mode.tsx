@@ -305,9 +305,9 @@ export function ChatRoomDualMode() {
       await sendChatMessage(newMessage.trim(), customerAccount.id, displayName, customerAccount.storeId)
       setNewMessage("")
       // フォーカスを維持
-      requestAnimationFrame(() => {
+      setTimeout(() => {
         inputRef.current?.focus()
-      })
+      }, 0)
     } catch (err) {
       console.error("Error sending message:", err)
       setError("メッセージの送信に失敗しました")
