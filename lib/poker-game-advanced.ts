@@ -103,15 +103,25 @@ const isRoundComplete = (game: PokerGameState): boolean => {
       }))
     })
     
-    if (allOpponentsAllIn && actionablePlayers.length === 1) {
-      // アクション可能なプレイヤーがアクション済みかチェック
-      const actionablePlayer = actionablePlayers[0]
-      if (actionablePlayer.lastAction !== undefined && actionablePlayer.lastAction !== null) {
-        console.log('[isRoundComplete] Only one actionable player (acted) and all opponents are all-in, round complete')
+    // 相手が全員オールインの場合
+    if (allOpponentsAllIn) {
+      // アクション可能なプレイヤーが1人の場合
+      if (actionablePlayers.length === 1) {
+        const actionablePlayer = actionablePlayers[0]
+        // アクション済みならラウンド完了
+        if (actionablePlayer.lastAction !== undefined && actionablePlayer.lastAction !== null) {
+          console.log('[isRoundComplete] Only one actionable player (acted) and all opponents are all-in, round complete')
+          return true
+        } else {
+          console.log('[isRoundComplete] Only one actionable player (not acted yet) and all opponents are all-in, round NOT complete')
+          return false
+        }
+      }
+      // アクション可能なプレイヤーが複数の場合
+      // 全員アクション済みで、ベット額が揃っていればラウンド完了
+      if (allHaveActed && allHaveSameBet) {
+        console.log('[isRoundComplete] Multiple actionable players (all acted, same bet) and all opponents are all-in, round complete')
         return true
-      } else {
-        console.log('[isRoundComplete] Only one actionable player (not acted yet) and all opponents are all-in, round NOT complete')
-        return false
       }
     }
     
