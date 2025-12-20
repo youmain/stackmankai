@@ -44,16 +44,20 @@ export interface StackManHand {
   // Hand information
   cards: Card[]
   handRank: string
+  rank: "S" | "A" | "B" | "C"  // Hand strength rank
   
   // Purchase information
   purchasePrice: number
-  rewardAmount: number
+  multiplier: number              // Random multiplier (10-20)
+  baseReward: number              // Base reward amount from store settings
+  finalReward: number             // baseReward × multiplier
   purchasedAt: Timestamp
   validUntil: Timestamp
   
   // Status
-  status: "active" | "used" | "expired"
+  status: "active" | "used" | "expired" | "replaced"
   usedAt?: Timestamp
+  replacedAt?: Timestamp
   result?: "win" | "lose"
 }
 

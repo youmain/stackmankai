@@ -32,6 +32,51 @@ export const generateRandomHand = (): Card[] => {
 }
 
 /**
+ * Get rank value for comparison
+ */
+const getRankValue = (rank: Rank): number => {
+  const rankValues: Record<Rank, number> = {
+    "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9,
+    "10": 10, "J": 11, "Q": 12, "K": 13, "A": 14
+  }
+  return rankValues[rank]
+}
+
+/**
+ * Evaluate hand strength rank (S/A/B/C)
+ */
+export const evaluateHandStrengthRank = (cards: Card[]): "S" | "A" | "B" | "C" => {
+  if (cards.length !== 2) return "C"
+  
+  const [card1, card2] = cards
+  const rank1 = getRankValue(card1.rank)
+  const rank2 = getRankValue(card2.rank)
+  const suited = card1.suit === card2.suit
+  const isPair = card1.rank === card2.rank
+  
+  // Sort ranks (high to low)
+  const [high, low] = rank1 > rank2 ? [rank1, rank2] : [rank2, rank1]
+  
+  // S Rank: Premium hands
+  if (isPair && high >= 12) return "S" // QQ, KK, AA
+  if (high === 14 && low === 13 && suited) return "S" // AKs
+  
+  // A Rank: Strong hands
+  if (isPair && high >= 10) return "A" // TT, JJ
+  if (high === 14 && low === 13) return "A" // AKo
+  if (high === 14 && low === 12 && suited) return "A" // AQs
+  
+  // B Rank: Decent hands
+  if (isPair && high >= 7) return "B" // 77-99
+  if (high === 14 && low >= 11 && suited) return "B" // AJs, ATs (suited)
+  if (high === 13 && low === 12 && suited) return "B" // KQs
+  if (high === 14 && low === 12) return "B" // AQo
+  
+  // C Rank: Weak hands
+  return "C"
+}
+
+/**
  * Evaluate hand rank (simplified)
  */
 export const evaluateHandRank = (cards: Card[]): string => {
@@ -120,20 +165,32 @@ export const purchaseStackManHand = async (
     // Generate random hand
     const cards = generateRandomHand()
     const handRank = evaluateHandRank(cards)
+    const rank = evaluateHandStrengthRank(cards)
+    
+    // Generate random multiplier (10-20)
+    const multiplier = Math.floor(Math.random() * 11) + 10
+    
+    // Calculate rewards
+    const baseReward = settings.rewardAmount
+    const finalReward = baseReward * multiplier
     
     // Calculate valid until (end of today)
     const validUntil = new Date()
     validUntil.setHours(23, 59, 59, 999)
     
     // Create Stack Man Hand
+    const handsRef = collection(db, "stores", storeId, "stackManHands")
     const handData: Omit<StackManHand, "id"> = {
       userId,
       userName,
       storeId,
       cards,
       handRank,
+      rank,
       purchasePrice: settings.purchasePrice,
-      rewardAmount: settings.rewardAmount,
+      multiplier,
+      baseReward,
+      finalReward,
       purchasedAt: Timestamp.now(),
       validUntil: Timestamp.fromDate(validUntil),
       status: "active",

@@ -45,6 +45,49 @@ function PlayingCard({ card }: { card: Card }) {
   )
 }
 
+// Rank badge component
+function RankBadge({ rank }: { rank: "S" | "A" | "B" | "C" }) {
+  const rankConfig = {
+    S: {
+      bg: "bg-gradient-to-r from-yellow-400 via-yellow-500 to-orange-500",
+      text: "text-white",
+      emoji: "✨",
+      label: "S RANK",
+      shadow: "shadow-yellow-500/50",
+    },
+    A: {
+      bg: "bg-gradient-to-r from-purple-400 via-purple-500 to-pink-500",
+      text: "text-white",
+      emoji: "⭐",
+      label: "A RANK",
+      shadow: "shadow-purple-500/50",
+    },
+    B: {
+      bg: "bg-gradient-to-r from-blue-400 via-blue-500 to-cyan-500",
+      text: "text-white",
+      emoji: "⚡",
+      label: "B RANK",
+      shadow: "shadow-blue-500/50",
+    },
+    C: {
+      bg: "bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600",
+      text: "text-white",
+      emoji: "◆",
+      label: "C RANK",
+      shadow: "shadow-gray-500/50",
+    },
+  }
+
+  const config = rankConfig[rank]
+
+  return (
+    <div className={`${config.bg} ${config.text} ${config.shadow} rounded-2xl p-6 shadow-2xl text-center`}>
+      <div className="text-5xl mb-2">{config.emoji}</div>
+      <div className="text-3xl font-bold tracking-wider">{config.label}</div>
+    </div>
+  )
+}
+
 export default function StackManHandDisplayPage() {
   const router = useRouter()
   const params = useParams()
@@ -99,9 +142,9 @@ export default function StackManHandDisplayPage() {
     }
 
     loadHand()
-  }, [handId, router])
+  }, [router, handId])
 
-  // Update current time every second
+  // Update time every second
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date())
@@ -126,79 +169,45 @@ export default function StackManHandDisplayPage() {
     )
   }
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString("ja-JP", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      weekday: "long",
-    })
+  const statusColors = {
+    active: "bg-green-100 text-green-800",
+    used: "bg-gray-100 text-gray-800",
+    expired: "bg-red-100 text-red-800",
+    replaced: "bg-orange-100 text-orange-800",
   }
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("ja-JP", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    })
+  const statusLabels = {
+    active: "有効",
+    used: "使用済み",
+    expired: "期限切れ",
+    replaced: "置き換え済み",
   }
-
-  const isExpired = hand.status === "expired" || currentTime > hand.validUntil.toDate()
-  const isUsed = hand.status === "used"
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 py-8">
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="mb-6">
-          <button
-            onClick={() => router.push("/stack-man-hand/purchase")}
-            className="text-white hover:text-purple-200"
-          >
-            ← 戻る
-          </button>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 py-8 px-4">
+      <div className="max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-white mb-2">Stack Man Hand</h1>
+          <div className="text-2xl font-mono text-yellow-400">
+            {currentTime.toLocaleString("ja-JP")}
+          </div>
         </div>
 
-        <div className="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl p-8 border border-white/20">
-          {/* Header */}
+        {/* Main Card */}
+        <div className="bg-white rounded-3xl shadow-2xl p-8 mb-6">
+          {/* Rank Badge */}
+          <div className="mb-8">
+            <RankBadge rank={hand.rank} />
+          </div>
+
+          {/* Multiplier Display */}
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-white mb-2">Stack Man Hand</h1>
-            <p className="text-purple-200">{hand.userName}</p>
-          </div>
-
-          {/* Current Date/Time (Anti-screenshot) */}
-          <div className="bg-black/30 rounded-2xl p-6 mb-8 text-center">
-            <div className="text-white text-2xl font-bold mb-2">
-              {formatDate(currentTime)}
-            </div>
-            <div className="text-purple-200 text-5xl font-mono font-bold">
-              {formatTime(currentTime)}
+            <div className="inline-block bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-2xl px-8 py-4 shadow-lg">
+              <div className="text-sm font-semibold mb-1">倍率</div>
+              <div className="text-6xl font-bold">{hand.multiplier}x</div>
             </div>
           </div>
-
-          {/* Status */}
-          {isUsed && (
-            <div className="bg-gray-900/50 border border-gray-700 rounded-2xl p-4 mb-8 text-center">
-              <div className="text-gray-300 text-lg font-bold">
-                使用済み - {hand.result === "win" ? "勝利 🎉" : "敗北"}
-              </div>
-            </div>
-          )}
-
-          {isExpired && !isUsed && (
-            <div className="bg-red-900/50 border border-red-700 rounded-2xl p-4 mb-8 text-center">
-              <div className="text-red-300 text-lg font-bold">
-                期限切れ
-              </div>
-            </div>
-          )}
-
-          {!isUsed && !isExpired && (
-            <div className="bg-green-900/50 border border-green-700 rounded-2xl p-4 mb-8 text-center">
-              <div className="text-green-300 text-lg font-bold">
-                有効 - 店舗で提示してください
-              </div>
-            </div>
-          )}
 
           {/* Cards */}
           <div className="flex justify-center gap-6 mb-8">
@@ -207,61 +216,72 @@ export default function StackManHandDisplayPage() {
             ))}
           </div>
 
-          {/* Hand Rank */}
-          <div className="text-center mb-8">
-            <div className="text-purple-200 text-sm mb-1">ハンドランク</div>
-            <div className="text-white text-3xl font-bold">{hand.handRank}</div>
+          {/* Hand Info */}
+          <div className="text-center mb-6">
+            <div className="text-2xl font-bold text-gray-900 mb-2">{hand.handRank}</div>
           </div>
 
           {/* Reward Info */}
-          <div className="bg-white/10 rounded-2xl p-6 mb-8">
-            <div className="grid grid-cols-2 gap-4 text-center">
-              <div>
-                <div className="text-purple-200 text-sm mb-1">購入価格</div>
-                <div className="text-white text-2xl font-bold">
-                  {hand.purchasePrice.toLocaleString()}
-                </div>
-                <div className="text-purple-300 text-sm">アプリチップ</div>
+          <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-2xl p-6 mb-6">
+            <div className="text-center">
+              <div className="text-sm text-gray-600 mb-2">獲得可能報酬</div>
+              <div className="text-5xl font-bold text-orange-600 mb-2">
+                {hand.finalReward.toLocaleString()}
               </div>
-              <div>
-                <div className="text-pink-200 text-sm mb-1">勝利報酬</div>
-                <div className="text-white text-2xl font-bold">
-                  {hand.rewardAmount.toLocaleString()}
-                </div>
-                <div className="text-pink-300 text-sm">店舗チップ</div>
+              <div className="text-sm text-gray-600">
+                店舗チップ ({hand.baseReward.toLocaleString()} × {hand.multiplier}倍)
               </div>
             </div>
           </div>
 
-          {/* Valid Until */}
-          <div className="text-center text-purple-200 text-sm">
-            <p>購入日時: {hand.purchasedAt.toDate().toLocaleString("ja-JP")}</p>
-            <p className="mt-1">
-              有効期限: {hand.validUntil.toDate().toLocaleString("ja-JP")}
-            </p>
+          {/* Status */}
+          <div className="flex justify-center mb-6">
+            <span className={`inline-flex items-center px-6 py-3 rounded-full text-lg font-semibold ${statusColors[hand.status]}`}>
+              {statusLabels[hand.status]}
+            </span>
           </div>
 
-          {/* Instructions */}
-          {!isUsed && !isExpired && (
-            <div className="mt-8 bg-yellow-900/30 border border-yellow-700/50 rounded-2xl p-6">
-              <h3 className="text-yellow-200 font-bold mb-3 flex items-center">
-                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                </svg>
-                使用方法
-              </h3>
-              <ol className="text-yellow-100 text-sm space-y-2">
-                <li>1. この画面を店舗スタッフに提示してください</li>
-                <li>2. スタッフがハンドの勝敗を判定します</li>
-                <li>3. 勝利すれば店舗チップを獲得できます！</li>
-              </ol>
+          {/* Date Info */}
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="bg-gray-50 rounded-xl p-4">
+              <div className="text-gray-600 mb-1">購入日時</div>
+              <div className="font-semibold text-gray-900">
+                {hand.purchasedAt.toDate().toLocaleString("ja-JP")}
+              </div>
             </div>
-          )}
+            <div className="bg-gray-50 rounded-xl p-4">
+              <div className="text-gray-600 mb-1">有効期限</div>
+              <div className="font-semibold text-gray-900">
+                {hand.validUntil.toDate().toLocaleString("ja-JP")}
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Screenshot Warning */}
-        <div className="mt-6 text-center text-purple-200 text-sm">
-          <p>⚠️ スクリーンショットでの再利用を防ぐため、現在時刻が表示されています</p>
+        {/* Instructions */}
+        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-6 text-white">
+          <h2 className="text-xl font-bold mb-3">使用方法</h2>
+          <ol className="space-y-2 text-sm">
+            <li>1. この画面を店舗スタッフに提示してください</li>
+            <li>2. スタッフがハンドの勝敗を判定します</li>
+            <li>3. 勝利した場合、表示されている報酬額の店舗チップを獲得できます</li>
+          </ol>
+        </div>
+
+        {/* Buttons */}
+        <div className="space-y-3">
+          <button
+            onClick={() => router.push("/stack-man-hand/purchase")}
+            className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-bold text-lg hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg"
+          >
+            新しいハンドを購入
+          </button>
+          <button
+            onClick={() => router.push("/customer-view")}
+            className="w-full py-4 bg-white/20 backdrop-blur-sm text-white rounded-xl font-bold text-lg hover:bg-white/30 transition-all"
+          >
+            ホームに戻る
+          </button>
         </div>
       </div>
     </div>

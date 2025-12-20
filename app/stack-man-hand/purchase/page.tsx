@@ -246,14 +246,25 @@ export default function StackManHandPurchasePage() {
             </div>
           )}
 
-          {/* Purchase button */}
-          <button
-            onClick={handlePurchase}
-            disabled={remainingPurchases <= 0 || purchasing}
-            className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-bold text-lg hover:from-purple-700 hover:to-pink-700 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed transition-all shadow-lg"
-          >
-            {purchasing ? "購入中..." : remainingPurchases > 0 ? "Stack Man Handを購入" : "購入できません"}
-          </button>
+          {/* Buttons */}
+          <div className="space-y-3">
+            <button
+              onClick={handlePurchase}
+              disabled={remainingPurchases <= 0 || purchasing}
+              className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-bold text-lg hover:from-purple-700 hover:to-pink-700 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed transition-all shadow-lg"
+            >
+              {purchasing ? "購入中..." : remainingPurchases > 0 ? "Stack Man Handを購入" : "購入できません"}
+            </button>
+            
+            {todayHands.length > 0 && (
+              <button
+                onClick={() => router.push("/stack-man-hand/my-hands")}
+                className="w-full py-3 bg-white border-2 border-purple-600 text-purple-600 rounded-xl font-bold hover:bg-purple-50 transition-all"
+              >
+                本日のハンド一覧を見る ({todayHands.length}枚)
+              </button>
+            )}
+          </div>
 
           {remainingPurchases <= 0 && (
             <div className="mt-4 bg-orange-50 border border-orange-200 rounded-xl p-4">
