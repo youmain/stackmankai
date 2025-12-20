@@ -236,7 +236,8 @@ export const advancePhase = async (
   const updatedPlayers = gameData.players.map(p => ({
     ...p,
     currentBet: 0,
-    lastAction: undefined, // Reset lastAction for new betting round
+    // Only reset lastAction for players who can still act (not all-in)
+    lastAction: p.isAllIn ? p.lastAction : undefined,
   }))
   
   // Find first active player after dealer
