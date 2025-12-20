@@ -1124,6 +1124,10 @@ ${availableExamples.slice(0, 5).join("\n")}
                     <p className="text-lg font-semibold text-gray-900">{getDisplayName(linkedPlayer)}</p>
                   </div>
                   <div>
+                    <p className="text-sm text-gray-600">ホーム店舗</p>
+                    <p className="text-lg font-semibold text-gray-900">{linkedPlayer.storeName || "未設定"}</p>
+                  </div>
+                  <div>
                     <p className="text-sm text-gray-600">貯スタック</p>
                     <p className="text-lg font-semibold text-blue-600">
                       {linkedPlayer.systemBalance?.toLocaleString() || 0}💰
