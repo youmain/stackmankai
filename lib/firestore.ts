@@ -1504,16 +1504,31 @@ export const updateCustomerAccount = async (customerId: string, data: Partial<Cu
   await updateDoc(doc(getCustomerAccountsCollection(), customerId), { ...data, updatedAt: serverTimestamp() })
 }
 
-export const linkPlayerToCustomer = async (customerId: string, playerUniqueId: string, playerName: string): Promise<void> => {
+export const linkPlayerToCustomer = async (customerId: string, playerUniqueId: string, playerName: string, storeId?: string): Promise<void> => {
   if (!isFirebaseConfigured()) return
   
   // Find player by uniqueId
   const playersCollection = getPlayersCollection()
-  const q = query(playersCollection, where("uniqueId", "==", playerUniqueId))
+  let q = query(playersCollection, where("uniqueId", "==", playerUniqueId))
+  
+  // If storeId is provided, add it to the query for more precise matching
+  if (storeId) {
+    q = query(playersCollection, where("uniqueId", "==", playerUniqueId), where("storeId", "==", storeId))
+  }
+  
   const querySnapshot = await getDocs(q)
   
   if (querySnapshot.empty) {
-    throw new Error(`プレイヤーID ${playerUniqueId} が見つかりません`)
+    throw new Error(`プレイヤーID ${playerUniqueId} が見つかりません。店舗スタッフに正しいプレイヤーIDをご確認ください。`)
+  }
+  
+  // Check if multiple players found (should not happen with uniqueId)
+  if (querySnapshot.docs.length > 1) {
+    log.warn("複数のプレイヤーが見つかりました", { playerUniqueId, count: querySnapshot.docs.length })
+    // If storeId was not provided, throw error asking for it
+    if (!storeId) {
+      throw new Error(`複数のプレイヤーが見つかりました。店舗コードを指定してください。`)
+    }
   }
   
   const playerDoc = querySnapshot.docs[0]
@@ -1527,6 +1542,8 @@ export const linkPlayerToCustomer = async (customerId: string, playerUniqueId: s
     storeId: playerData.storeId,
     storeName: playerData.storeName || "店舗",
   })
+  
+  log.info("プレイヤー紐づけ完了", { customerId, playerDocId, playerName: playerData.name })
   
   // Update player with customer link (optional, if needed)
   // await updatePlayer(playerDocId, { customerId })

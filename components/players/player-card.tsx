@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Plus, Wallet, History, Trash2, Play, Square, Edit, Crown, Clock } from 'lucide-react'
+import { Plus, Wallet, History, Trash2, Play, Square, Edit, Crown, Clock, QrCode } from 'lucide-react'
 import type { Player } from "@/types"
 
 interface PlayerCardProps {
@@ -19,6 +19,7 @@ interface PlayerCardProps {
   onStartGame: (player: Player) => void
   onManageGame: (player: Player) => void
   onDelete: (player: Player) => void
+  onShowQRCode?: (player: Player) => void
 }
 
 export function PlayerCard({
@@ -34,6 +35,7 @@ export function PlayerCard({
   onStartGame,
   onManageGame,
   onDelete,
+  onShowQRCode,
 }: PlayerCardProps) {
   const playerName = typeof player.name === "string" ? player.name : (player.name as any)?.name || "プレイヤー"
 
@@ -129,6 +131,17 @@ export function PlayerCard({
               <Edit className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5 mr-1" />
               編集
             </Button>
+            {player.uniqueId && onShowQRCode && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onShowQRCode(player)}
+                className="w-full text-xs sm:text-sm lg:text-base lg:py-2 bg-purple-50 border-purple-200 text-purple-800 hover:bg-purple-100"
+              >
+                <QrCode className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5 mr-1" />
+                QRコード表示
+              </Button>
+            )}
             <Button
               variant="outline"
               size="sm"

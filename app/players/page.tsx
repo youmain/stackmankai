@@ -32,6 +32,7 @@ import { PasswordSettingsModal } from "@/components/password-settings-modal"
 import { PlayerStatusModal } from "@/components/player-status-modal" // PlayerStatusModalのインポートを追加
 import { PlayerEditModal } from "@/components/player-edit-modal" // Added player edit modal import
 import { SimpleBulkImport } from "@/components/simple-bulk-import" // SimpleBulkImportコンポーネントをインポート
+import { PlayerQRCodeModal } from "@/components/player-qr-code-modal" // プレイヤーQRコードモーダルをインポート
 import { PlayerCard } from "@/components/players/player-card"
 import { PlayingPlayersCard } from "@/components/players/playing-players-card"
 import { RakeSummaryCard } from "@/components/players/rake-summary-card"
@@ -57,6 +58,8 @@ export default function PlayersPage() {
   const [showPasswordModal, setShowPasswordModal] = useState(false)
   const [showPasswordSettings, setShowPasswordSettings] = useState(false)
   const [showQRCodeModal, setShowQRCodeModal] = useState(false)
+  const [showPlayerQRCodeModal, setShowPlayerQRCodeModal] = useState(false)
+  const [qrCodePlayer, setQRCodePlayer] = useState<Player | null>(null)
   const [showPlayerEditModal, setShowPlayerEditModal] = useState(false) // Added player edit modal state
   const [showJSONImportModal, setShowJSONImportModal] = useState(false) // Added JSON import modal state
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null)
@@ -776,6 +779,10 @@ export default function PlayersPage() {
                     onStartGame={handleStartGame}
                     onManageGame={handleManageGame}
                     onDelete={handleDeletePlayer}
+                    onShowQRCode={(player) => {
+                      setQRCodePlayer(player)
+                      setShowPlayerQRCodeModal(true)
+                    }}
                   />
                 </div>
               )
@@ -889,6 +896,15 @@ export default function PlayersPage() {
             onStatusChange={handleStatusChange}
           />
         )}
+
+        <PlayerQRCodeModal
+          player={qrCodePlayer}
+          isOpen={showPlayerQRCodeModal}
+          onClose={() => {
+            setShowPlayerQRCodeModal(false)
+            setQRCodePlayer(null)
+          }}
+        />
       </div>
     </AuthGuard>
   )

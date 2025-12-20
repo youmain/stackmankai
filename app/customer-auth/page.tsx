@@ -40,6 +40,8 @@ export default function CustomerAuthPage() {
     playerId: "",
   })
 
+  const [showQRScanner, setShowQRScanner] = useState(false)
+
   useEffect(() => {
     const hideCompletion = localStorage.getItem("hidePlayerLinkingCompletion")
     if (hideCompletion === "true") {
@@ -508,6 +510,48 @@ export default function CustomerAuthPage() {
                     "プレイヤーIDを紐づける"
                   )}
                 </Button>
+
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-white px-2 text-muted-foreground">または</span>
+                  </div>
+                </div>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setShowQRScanner(!showQRScanner)}
+                >
+                  {showQRScanner ? "QRコードスキャンを閉じる" : "QRコードで紐づける"}
+                </Button>
+
+                {showQRScanner && (
+                  <div className="p-4 border rounded-lg bg-gray-50">
+                    <p className="text-sm text-center text-gray-600 mb-2">
+                      店舗から受け取ったQRコードデータを貼り付けてください
+                    </p>
+                    <textarea
+                      className="w-full p-2 border rounded text-sm font-mono"
+                      rows={4}
+                      placeholder='{"storeId":"...","playerId":"...",...}'
+                      onChange={(e) => {
+                        try {
+                          const data = JSON.parse(e.target.value)
+                          if (data.playerUniqueId) {
+                            setLinkForm({ playerId: data.playerUniqueId })
+                            setShowQRScanner(false)
+                          }
+                        } catch (err) {
+                          // Invalid JSON, ignore
+                        }
+                      }}
+                    />
+                  </div>
+                )}
               </form>
 
               <div className="space-y-2">
