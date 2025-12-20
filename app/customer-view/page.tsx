@@ -1054,6 +1054,21 @@ ${availableExamples.slice(0, 5).join("\n")}
                   </Button>
                   
                   <Separator />
+                  
+                  {/* Stack Man Hand購入ボタン */}
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-base py-3"
+                    onClick={() => {
+                      router.push('/stack-man-hand/purchase')
+                      setIsMenuOpen(false)
+                    }}
+                  >
+                    <Gift className="h-5 w-5 mr-3" />
+                    Stack Man Hand購入
+                  </Button>
+                  
+                  <Separator />
 
                   <Button
                     variant="outline"
@@ -1114,11 +1129,15 @@ ${availableExamples.slice(0, 5).join("\n")}
                       {linkedPlayer.systemBalance?.toLocaleString() || 0}💰
                     </p>
                   </div>
-                  <div>
+                  <div 
+                    className="cursor-pointer hover:bg-green-50 p-2 rounded-lg transition-colors"
+                    onClick={() => router.push('/stack-man-hand/purchase')}
+                  >
                     <p className="text-sm text-gray-600">スタポカ貯スタック</p>
                     <p className="text-lg font-semibold text-green-600">
                       {linkedPlayer.systemBalance?.toLocaleString() || 0}💰
                     </p>
+                    <p className="text-xs text-green-500 mt-1">クリックでStack Man Hand購入</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">CP (Cashback Points)</p>
