@@ -72,8 +72,25 @@ const isRoundComplete = (game: PokerGameState): boolean => {
       }))
     })
     
-    // 全員がアクションしていない場合は、まだラウンド完了ではない
+    // 全員がアクションしていない場合
     if (!allHaveActed) {
+      // 相手が全員オールインかチェック
+      const opponents = nonFoldedPlayers.filter(p => !actionablePlayers.includes(p))
+      const allOpponentsAllIn = opponents.length > 0 && opponents.every(p => p.isAllIn)
+      
+      if (allOpponentsAllIn) {
+        // 全員のcurrentBetを確認
+        const maxBet = Math.max(0, ...game.players.map(p => p.currentBet || 0))
+        
+        if (maxBet === 0) {
+          // 新しいラウンド開始直後、まだ誰もベットしていない
+          // 相手が全員オールインなので、ラウンド完了
+          console.log('[isRoundComplete] New round with all opponents all-in, round complete')
+          return true
+        }
+      }
+      
+      // それ以外の場合は、まだラウンド完了ではない
       return false
     }
     
