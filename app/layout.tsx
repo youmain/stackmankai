@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { AuthProvider } from "@/contexts/auth-context"
 import { Toaster } from "@/components/ui/toaster"
+import { ScheduledTasksRunner } from "@/components/scheduled-tasks-runner"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -29,6 +30,7 @@ export default function RootLayout({
       <body>
         <AuthProvider>{children}</AuthProvider>
         <Toaster />
+        <ScheduledTasksRunner />
       </body>
     </html>
   )
