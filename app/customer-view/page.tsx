@@ -1111,7 +1111,13 @@ ${availableExamples.slice(0, 5).join("\n")}
                   <div>
                     <p className="text-sm text-gray-600">貯スタック</p>
                     <p className="text-lg font-semibold text-blue-600">
-                      {linkedPlayer.systemBalance?.toLocaleString() || 0}©
+                      {linkedPlayer.systemBalance?.toLocaleString() || 0}💰
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">スタポカ貯スタック</p>
+                    <p className="text-lg font-semibold text-green-600">
+                      {linkedPlayer.systemBalance?.toLocaleString() || 0}💰
                     </p>
                   </div>
                   <div>
