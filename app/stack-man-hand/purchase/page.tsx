@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { getStackManHandSettings, purchaseStackManHand, getActiveStackManHands } from "@/lib/stack-man-hand"
+import { doc, getDoc } from "firebase/firestore"
+import { getDb } from "@/lib/firebase"
+import { getStackManHandSettings, purchaseStackManHand, getTodayStackManHands, calculateRemainingPurchases } from "@/lib/stack-man-hand"
 import type { StackManHandSettings, StackManHand } from "@/types/stack-man-hand"
 
 export default function StackManHandPurchasePage() {
@@ -13,8 +15,12 @@ export default function StackManHandPurchasePage() {
   const [userId, setUserId] = useState("")
   const [userName, setUserName] = useState("")
   const [settings, setSettings] = useState<StackManHandSettings | null>(null)
-  const [activeHands, setActiveHands] = useState<StackManHand[]>([])
+  const [todayHands, setTodayHands] = useState<StackManHand[]>([])
   const [currentStack, setCurrentStack] = useState(0)
+  const [remainingPurchases, setRemainingPurchases] = useState(0)
+  const [maxPurchases, setMaxPurchases] = useState(0)
+  const [purchasedToday, setPurchasedToday] = useState(0)
+  const [minimumStack, setMinimumStack] = useState(10000)
 
   useEffect(() => {
     const loadData = async () => {
@@ -43,14 +49,26 @@ export default function StackManHandPurchasePage() {
         }
         setSettings(storeSettings)
 
-        // Load active hands
-        const hands = await getActiveStackManHands(storeIdFromStorage, userIdFromStorage)
-        setActiveHands(hands)
-
         // Get current stack (from localStorage or fetch from Firestore)
         const stackFromStorage = localStorage.getItem("currentStack")
-        if (stackFromStorage) {
-          setCurrentStack(Number(stackFromStorage))
+        const stack = stackFromStorage ? Number(stackFromStorage) : 0
+        setCurrentStack(stack)
+
+        // Load today's hands
+        const hands = await getTodayStackManHands(storeIdFromStorage, userIdFromStorage)
+        setTodayHands(hands)
+
+        // Calculate remaining purchases
+        const purchaseInfo = await calculateRemainingPurchases(storeIdFromStorage, userIdFromStorage, stack)
+        setMaxPurchases(purchaseInfo.maxPurchases)
+        setPurchasedToday(purchaseInfo.purchasedToday)
+        setRemainingPurchases(purchaseInfo.remaining)
+        
+        // Get minimum stack from store
+        const storeDoc = await getDoc(doc(getDb()!, "stores", storeIdFromStorage))
+        if (storeDoc.exists()) {
+          const storeData = storeDoc.data()
+          setMinimumStack(storeData.stackResetSettings?.minimumStack || 10000)
         }
       } catch (error) {
         console.error("Error loading data:", error)
@@ -66,13 +84,8 @@ export default function StackManHandPurchasePage() {
   const handlePurchase = async () => {
     if (!settings || !storeId || !userId) return
 
-    if (currentStack < settings.purchasePrice) {
-      alert("チップが不足しています")
-      return
-    }
-
-    if (activeHands.length > 0) {
-      alert("本日分のStack Man Handは既に購入済みです")
+    if (remainingPurchases <= 0) {
+      alert("これ以上購入できません。ポーカーで勝ってチップを増やしてください！")
       return
     }
 
@@ -166,54 +179,90 @@ export default function StackManHandPurchasePage() {
             </div>
           </div>
 
-          {/* Current stack */}
-          <div className="bg-gray-50 rounded-xl p-4 mb-6">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">現在のアプリチップ</span>
-              <span className="text-2xl font-bold text-gray-900">
+          {/* Stack info */}
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="bg-gray-50 rounded-xl p-4">
+              <div className="text-sm text-gray-600 mb-1">現在のスタック</div>
+              <div className="text-2xl font-bold text-gray-900">
                 {currentStack.toLocaleString()}
-              </span>
+              </div>
+            </div>
+            <div className="bg-blue-50 rounded-xl p-4">
+              <div className="text-sm text-blue-600 mb-1">最低保証額</div>
+              <div className="text-2xl font-bold text-blue-900">
+                {minimumStack.toLocaleString()}
+              </div>
             </div>
           </div>
 
-          {/* Active hands */}
-          {activeHands.length > 0 && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 mb-6">
-              <div className="flex items-center mb-2">
-                <svg className="w-5 h-5 text-yellow-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                </svg>
-                <span className="font-bold text-yellow-900">本日分は購入済みです</span>
+          {/* Purchase info */}
+          <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 mb-6">
+            <div className="text-center mb-4">
+              <div className="text-sm text-purple-600 mb-2">本日の購入状況</div>
+              <div className="text-5xl font-bold text-purple-900 mb-2">
+                {remainingPurchases}
               </div>
-              <p className="text-sm text-yellow-800">
-                購入したハンドを表示するには、下のボタンをクリックしてください。
-              </p>
-              <button
-                onClick={() => router.push(`/stack-man-hand/display/${activeHands[0].id}`)}
-                className="mt-4 w-full px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
-              >
-                ハンドを表示
-              </button>
+              <div className="text-sm text-purple-600">
+                あと{remainingPurchases}回購入できます
+              </div>
+            </div>
+            <div className="flex justify-between text-sm text-purple-700 border-t border-purple-200 pt-3">
+              <span>購入済み: {purchasedToday}回</span>
+              <span>購入可能: {maxPurchases}回</span>
+            </div>
+          </div>
+
+          {/* Today's hands */}
+          {todayHands.length > 0 && (
+            <div className="bg-white border border-gray-200 rounded-xl p-4 mb-6">
+              <h3 className="font-bold text-gray-900 mb-3">本日購入したハンド</h3>
+              <div className="space-y-2">
+                {todayHands.map((hand) => (
+                  <button
+                    key={hand.id}
+                    onClick={() => router.push(`/stack-man-hand/display/${hand.id}`)}
+                    className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <div className="text-left">
+                      <div className="font-mono text-sm font-bold text-gray-900">{hand.handRank}</div>
+                      <div className="text-xs text-gray-600">
+                        {hand.purchasedAt.toDate().toLocaleTimeString("ja-JP")}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${
+                        hand.status === "active" ? "bg-green-100 text-green-800" :
+                        hand.status === "used" ? "bg-gray-100 text-gray-800" :
+                        "bg-red-100 text-red-800"
+                      }`}>
+                        {hand.status === "active" ? "有効" :
+                         hand.status === "used" ? "使用済み" :
+                         "期限切れ"}
+                      </span>
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
           {/* Purchase button */}
-          {activeHands.length === 0 && (
-            <button
-              onClick={handlePurchase}
-              disabled={!canPurchase || purchasing}
-              className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-bold text-lg hover:from-purple-700 hover:to-pink-700 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed transition-all shadow-lg"
-            >
-              {purchasing ? "購入中..." : canPurchase ? "Stack Man Handを購入" : "購入できません"}
-            </button>
-          )}
+          <button
+            onClick={handlePurchase}
+            disabled={remainingPurchases <= 0 || purchasing}
+            className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-bold text-lg hover:from-purple-700 hover:to-pink-700 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed transition-all shadow-lg"
+          >
+            {purchasing ? "購入中..." : remainingPurchases > 0 ? "Stack Man Handを購入" : "購入できません"}
+          </button>
 
-          {!canPurchase && activeHands.length === 0 && (
-            <p className="text-center text-sm text-red-600 mt-4">
-              {currentStack < settings.purchasePrice
-                ? "チップが不足しています"
-                : "購入できません"}
-            </p>
+          {remainingPurchases <= 0 && (
+            <div className="mt-4 bg-orange-50 border border-orange-200 rounded-xl p-4">
+              <p className="text-center text-sm text-orange-800">
+                <span className="font-bold">購入するにはポーカーで勝ってチップを増やしてください！</span>
+                <br />
+                最低保証額（{minimumStack.toLocaleString()}）以上のチップが必要です。
+              </p>
+            </div>
           )}
 
           {/* Business hours */}

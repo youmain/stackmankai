@@ -100,29 +100,21 @@ export const purchaseStackManHand = async (
     const playerData = playerDoc.data()
     const currentStack = playerData.systemBalance || 0
     
-    // Check if player has enough chips
-    if (currentStack < settings.purchasePrice) {
-      return { success: false, message: "チップが不足しています" }
+    // Get minimum stack from store settings
+    const storeDoc = await getDoc(doc(db, "stores", storeId))
+    if (!storeDoc.exists()) {
+      return { success: false, message: "店舗が見つかりません" }
     }
+    const storeData = storeDoc.data()
+    const minimumStack = storeData.stackResetSettings?.minimumStack || 10000
     
-    // Check if player already has an active hand for today
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    const tomorrow = new Date(today)
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    
-    const handsRef = collection(db, "stores", storeId, "stackManHands")
-    const existingHandQuery = query(
-      handsRef,
-      where("userId", "==", userId),
-      where("status", "==", "active"),
-      where("purchasedAt", ">=", Timestamp.fromDate(today)),
-      where("purchasedAt", "<", Timestamp.fromDate(tomorrow))
-    )
-    const existingHandSnapshot = await getDocs(existingHandQuery)
-    
-    if (!existingHandSnapshot.empty) {
-      return { success: false, message: "本日分のStack Man Handは既に購入済みです" }
+    // Check if player has enough chips above minimum stack
+    const availableChips = currentStack - minimumStack
+    if (availableChips < settings.purchasePrice) {
+      return { 
+        success: false, 
+        message: `購入には最低保証額（${minimumStack.toLocaleString()}）以上のチップが必要です` 
+      }
     }
     
     // Generate random hand
@@ -188,6 +180,75 @@ export const getActiveStackManHands = async (
     id: doc.id,
     ...doc.data(),
   })) as StackManHand[]
+}
+
+/**
+ * Get player's Stack Man Hands purchased today
+ */
+export const getTodayStackManHands = async (
+  storeId: string,
+  userId: string
+): Promise<StackManHand[]> => {
+  const db = getDb()
+  if (!db) throw new Error("Firestore is not initialized")
+  
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const tomorrow = new Date(today)
+  tomorrow.setDate(tomorrow.getDate() + 1)
+  
+  const handsRef = collection(db, "stores", storeId, "stackManHands")
+  const handsQuery = query(
+    handsRef,
+    where("userId", "==", userId),
+    where("purchasedAt", ">=", Timestamp.fromDate(today)),
+    where("purchasedAt", "<", Timestamp.fromDate(tomorrow))
+  )
+  
+  const snapshot = await getDocs(handsQuery)
+  return snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as StackManHand[]
+}
+
+/**
+ * Calculate how many more hands can be purchased today
+ */
+export const calculateRemainingPurchases = async (
+  storeId: string,
+  userId: string,
+  currentStack: number
+): Promise<{ maxPurchases: number; purchasedToday: number; remaining: number }> => {
+  const db = getDb()
+  if (!db) throw new Error("Firestore is not initialized")
+  
+  // Get store settings
+  const storeDoc = await getDoc(doc(db, "stores", storeId))
+  if (!storeDoc.exists()) {
+    return { maxPurchases: 0, purchasedToday: 0, remaining: 0 }
+  }
+  
+  const storeData = storeDoc.data()
+  const settings = storeData.stackManHandSettings
+  const minimumStack = storeData.stackResetSettings?.minimumStack || 10000
+  
+  if (!settings || !settings.enabled) {
+    return { maxPurchases: 0, purchasedToday: 0, remaining: 0 }
+  }
+  
+  // Calculate max purchases based on available chips
+  const availableChips = currentStack - minimumStack
+  const maxPurchases = Math.floor(availableChips / settings.purchasePrice)
+  
+  // Get today's purchases
+  const todayHands = await getTodayStackManHands(storeId, userId)
+  const purchasedToday = todayHands.length
+  
+  // Calculate remaining
+  const remaining = Math.max(0, maxPurchases - purchasedToday)
+  
+  return { maxPurchases, purchasedToday, remaining }
 }
 
 /**
