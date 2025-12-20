@@ -85,13 +85,23 @@ const isRoundComplete = (game: PokerGameState): boolean => {
     
     // 全員がアクション済みで、ベット額が揃っている場合
     if (allHaveSameBet) {
+      console.log('[isRoundComplete] All actionable players have same bet, round complete')
       return true
     }
     
     // ベット額が揃っていないが、相手が全員オールインの場合
-    // （例: Player Aが9,800オールイン、Player Bが9,800コールして200残る）
     const opponents = nonFoldedPlayers.filter(p => !actionablePlayers.includes(p))
     const allOpponentsAllIn = opponents.length > 0 && opponents.every(p => p.isAllIn)
+    
+    console.log('[isRoundComplete] Opponents check:', {
+      opponents: opponents.length,
+      allOpponentsAllIn,
+      opponentsDetails: opponents.map(p => ({
+        name: p.userName,
+        isAllIn: p.isAllIn,
+        currentBet: p.currentBet
+      }))
+    })
     
     if (allOpponentsAllIn && actionablePlayers.length === 1) {
       // アクション可能なプレイヤーがアクション済みかチェック
