@@ -267,9 +267,23 @@ export const advancePhase = async (
     updatedAt: serverTimestamp(),
   }))
   
-  // If all remaining players are all-in, continue advancing automatically
+  // If all remaining players are all-in, or if all opponents are all-in, continue advancing automatically
   const actionablePlayers = updatedPlayers.filter(p => !p.isFolded && !p.isAllIn)
-  if (actionablePlayers.length === 0) {
+  const nonFoldedPlayers = updatedPlayers.filter(p => !p.isFolded)
+  const allInPlayers = nonFoldedPlayers.filter(p => p.isAllIn)
+  
+  // 全員オールイン、または相手が全員オールインの場合は自動進行
+  const shouldAutoAdvance = actionablePlayers.length === 0 || 
+    (actionablePlayers.length > 0 && allInPlayers.length > 0 && actionablePlayers.length + allInPlayers.length === nonFoldedPlayers.length)
+  
+  console.log('[advancePhase] Auto-advance check:', {
+    actionablePlayers: actionablePlayers.length,
+    allInPlayers: allInPlayers.length,
+    nonFoldedPlayers: nonFoldedPlayers.length,
+    shouldAutoAdvance
+  })
+  
+  if (shouldAutoAdvance) {
     // Add delay before auto-advancing to next phase for better UX
     let delay = 0
     
