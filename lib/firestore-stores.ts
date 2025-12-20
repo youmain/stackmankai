@@ -70,6 +70,16 @@ export async function registerStore(
       status: "active",
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
+      // Stack Man Hand default settings
+      stackManHandSettings: {
+        enabled: true,
+        purchasePrice: 1000,
+        rewardAmount: 5000,
+        businessHours: {
+          open: "12:00",
+          close: "23:59"
+        }
+      },
     })
     
     return {
