@@ -273,10 +273,9 @@ export const advancePhase = async (
   const nonFoldedPlayers = updatedPlayers.filter(p => !p.isFolded)
   const allInPlayers = nonFoldedPlayers.filter(p => p.isAllIn)
   
-  // 全員オールイン、または相手が全員オールインでアクション可能なプレイヤーが全員アクション済みの場合は自動進行
-  const shouldAutoAdvance = actionablePlayers.length === 0 || 
-    (actionablePlayers.length > 0 && allInPlayers.length > 0 && 
-     actionablePlayers.every(p => p.lastAction !== undefined && p.lastAction !== null))
+  // 全員オールイン、またはオールインプレイヤーがいる場合は自動進行
+  // advancePhaseはisRoundCompleteがtrueの時だけ呼ばれるので、既に全員アクション済み
+  const shouldAutoAdvance = actionablePlayers.length === 0 || allInPlayers.length > 0
   
   console.log('[advancePhase] Auto-advance check:', {
     actionablePlayers: actionablePlayers.length,
