@@ -81,12 +81,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               const account = JSON.parse(savedCustomerAccount) as CustomerAccount
               setCustomerAccountState(account)
               setUserType("customer")
+              
+              console.log("[Auth] ✅ 顧客セッション復元成功:", {
+                email: account.email,
+                playerId: account.playerId,
+                playerName: account.playerName
+              })
+              
+              // sessionStorageにも保存（次回のリロードに備える）
+              if (!sessionStorage.getItem("auth_customerAccount")) {
+                sessionStorage.setItem("auth_customerAccount", savedCustomerAccount)
+                sessionStorage.setItem("auth_userType", "customer")
+              }
             } else {
               sessionStorage.removeItem("auth_customerAccount")
+              localStorage.removeItem("auth_customerAccount")
             }
           } catch (parseError) {
             handleError(parseError, "顧客アカウント情報解析")
             sessionStorage.removeItem("auth_customerAccount")
+            localStorage.removeItem("auth_customerAccount")
           }
         }
       } catch (error) {
