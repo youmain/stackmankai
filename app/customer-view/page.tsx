@@ -207,6 +207,8 @@ export default function CustomerView() {
           playerId: player.id,
           playerName: player.name,
           pokerName: player.pokerName,
+          storeName: player.storeName,
+          storeId: player.storeId,
         })
       }
 
