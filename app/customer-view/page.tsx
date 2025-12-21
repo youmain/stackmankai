@@ -251,10 +251,14 @@ export default function CustomerView() {
         console.log("[v0] Checking storeName update condition:", {
           hasStoreId: !!linkedPlayer.storeId,
           storeName: linkedPlayer.storeName,
+          storeNameType: typeof linkedPlayer.storeName,
           needsUpdate: !linkedPlayer.storeName || linkedPlayer.storeName === "未設定" || linkedPlayer.storeName === ""
         })
         
-        if (linkedPlayer.storeId && (!linkedPlayer.storeName || linkedPlayer.storeName === "未設定" || linkedPlayer.storeName === "")) {
+        // TEMPORARY: Force update storeName for debugging (remove after testing)
+        const forceUpdate = true
+        
+        if (linkedPlayer.storeId && (forceUpdate || !linkedPlayer.storeName || linkedPlayer.storeName === "未設定" || linkedPlayer.storeName === "")) {
           console.log("[v0] Player storeName is missing, fetching from store...")
           console.log("[v0] Player storeId:", linkedPlayer.storeId)
           console.log("[v0] Player document ID:", linkedPlayer.id)
