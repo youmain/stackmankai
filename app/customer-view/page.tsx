@@ -248,14 +248,14 @@ export default function CustomerView() {
             const playerName = linkedPlayer.name || linkedPlayer.pokerName || `プレイヤー${linkedPlayer.uniqueId}`
             await updateCustomerAccount(customerAccount.id, {
               storeId: linkedPlayer.storeId,
-              storeName: linkedPlayer.storeName || "店舗",
+              storeName: linkedPlayer.storeName || "未設定",
               playerName: playerName,
             })
             // Update local customerAccount state
             setCustomerAccount({
               ...customerAccount,
               storeId: linkedPlayer.storeId,
-              storeName: linkedPlayer.storeName || "店舗",
+              storeName: linkedPlayer.storeName || "未設定",
               playerName: playerName,
             })
             console.log("[v0] CustomerAccount updated successfully")
@@ -292,7 +292,7 @@ export default function CustomerView() {
               
               if (storeDoc.exists()) {
                 const storeData = storeDoc.data()
-                const storeName = storeData.storeName || "店舗"
+                const storeName = storeData.storeName || "未設定"
                 
                 console.log("[v0] Store found:", storeName)
                 
