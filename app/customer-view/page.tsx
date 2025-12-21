@@ -248,9 +248,16 @@ export default function CustomerView() {
         }
         
         // プレイヤーのstoreNameが未設定の場合、店舗情報から取得して更新
+        console.log("[v0] Checking storeName update condition:", {
+          hasStoreId: !!linkedPlayer.storeId,
+          storeName: linkedPlayer.storeName,
+          needsUpdate: !linkedPlayer.storeName || linkedPlayer.storeName === "未設定" || linkedPlayer.storeName === ""
+        })
+        
         if (linkedPlayer.storeId && (!linkedPlayer.storeName || linkedPlayer.storeName === "未設定" || linkedPlayer.storeName === "")) {
           console.log("[v0] Player storeName is missing, fetching from store...")
           console.log("[v0] Player storeId:", linkedPlayer.storeId)
+          console.log("[v0] Player document ID:", linkedPlayer.id)
           try {
             const docFunc = await import("firebase/firestore").then(m => m.doc)
             const getDocFunc = await import("firebase/firestore").then(m => m.getDoc)
