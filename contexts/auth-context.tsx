@@ -40,11 +40,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return
         }
 
-        // sessionStorageから認証情報を取得
-        let savedUserName = sessionStorage.getItem("auth_userName")
-        let savedUserId = sessionStorage.getItem("auth_userId")
-        let savedUserType = sessionStorage.getItem("auth_userType") as "admin" | "customer" | null
-        const savedCustomerAccount = sessionStorage.getItem("auth_customerAccount")
+        // sessionStorageから認証情報を取得（localStorageもフォールバックとして使用）
+        let savedUserName = sessionStorage.getItem("auth_userName") || localStorage.getItem("auth_userName")
+        let savedUserId = sessionStorage.getItem("auth_userId") || localStorage.getItem("auth_userId")
+        let savedUserType = (sessionStorage.getItem("auth_userType") || localStorage.getItem("auth_userType")) as "admin" | "customer" | null
+        const savedCustomerAccount = sessionStorage.getItem("auth_customerAccount") || localStorage.getItem("auth_customerAccount")
 
         // sessionStorageになければlocalStorageから取得（従業員/オーナーログイン用）
         let isLocalStorageAuth = false
@@ -166,8 +166,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setCustomerAccountState(account)
     setUserType("customer")
 
-    sessionStorage.setItem("auth_customerAccount", JSON.stringify(account))
+    // sessionStorageとlocalStorageの両方に保存
+    const accountJson = JSON.stringify(account)
+    sessionStorage.setItem("auth_customerAccount", accountJson)
     sessionStorage.setItem("auth_userType", "customer")
+    localStorage.setItem("auth_customerAccount", accountJson)
+    localStorage.setItem("auth_userType", "customer")
   }
 
   const signOut = async () => {
@@ -189,6 +193,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     sessionStorage.removeItem("auth_userId")
     sessionStorage.removeItem("auth_customerAccount")
     sessionStorage.removeItem("auth_userType")
+    localStorage.removeItem("auth_userName")
+    localStorage.removeItem("auth_userId")
+    localStorage.removeItem("auth_customerAccount")
+    localStorage.removeItem("auth_userType")
   }
 
   return (
