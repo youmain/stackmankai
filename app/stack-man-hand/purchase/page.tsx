@@ -23,6 +23,11 @@ export default function StackManHandPurchasePage() {
 
   useEffect(() => {
     const loadData = async () => {
+      // Wait for auth to load
+      if (customerAccount === undefined) {
+        return // Still loading
+      }
+
       // Check authentication
       if (!customerAccount?.storeId || !customerAccount?.playerId) {
         alert("ログインしてください")
@@ -132,11 +137,28 @@ export default function StackManHandPurchasePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 py-8 px-4">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-4">
+              <h1 className="text-xl sm:text-2xl font-bold text-purple-800">Stack Man Hand 購入</h1>
+            </div>
+            <button
+              onClick={() => router.push("/customer-view")}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+            >
+              ← マイページに戻る
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="max-w-2xl mx-auto">
-        {/* Header */}
+        {/* Description */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-purple-800 mb-2">Stack Man Hand 購入</h1>
           <p className="text-gray-600">ランダムなポーカーハンドを購入して、店舗で報酬を獲得しよう！</p>
         </div>
 
@@ -243,13 +265,6 @@ export default function StackManHandPurchasePage() {
           </div>
         )}
 
-        {/* Back Button */}
-        <button
-          onClick={() => router.push("/customer-view")}
-          className="w-full bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-lg hover:bg-gray-300 transition-colors"
-        >
-          戻る
-        </button>
       </div>
     </div>
   )
