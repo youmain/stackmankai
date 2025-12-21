@@ -54,21 +54,37 @@ export default function StackManHandPurchasePage() {
         })
         
         const playersRef = collection(getDb()!, "players")
-        // Search by uniqueId only (storeId condition removed to handle data inconsistency)
-        const playerQuery = query(playersRef, 
+        
+        // Try to find player by uniqueId first
+        let playerQuery = query(playersRef, 
           where("uniqueId", "==", customerAccount.playerId)
         )
-        const playerSnapshot = await getDocs(playerQuery)
+        let playerSnapshot = await getDocs(playerQuery)
         
-        console.log("Player search result:", {
+        console.log("Player search by uniqueId:", {
+          playerId: customerAccount.playerId,
           empty: playerSnapshot.empty,
           count: playerSnapshot.docs.length
         })
         
+        // If not found by uniqueId, try to find by document ID
         if (playerSnapshot.empty) {
-          alert(`プレイヤー情報がありません。\nplayerId: ${customerAccount.playerId}`)
-          router.push("/customer-view")
-          return
+          console.log("Player not found by uniqueId, trying document ID...")
+          const playerDocRef = doc(getDb()!, "players", customerAccount.playerId)
+          const playerDocSnap = await getDoc(playerDocRef)
+          
+          if (playerDocSnap.exists()) {
+            console.log("Player found by document ID")
+            // Create a fake snapshot array with the found document
+            playerSnapshot = {
+              empty: false,
+              docs: [playerDocSnap]
+            } as any
+          } else {
+            alert(`プレイヤー情報がありません。\nplayerId: ${customerAccount.playerId}`)
+            router.push("/customer-view")
+            return
+          }
         }
         
         // Verify storeId matches (but don't fail if it doesn't)
