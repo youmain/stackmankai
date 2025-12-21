@@ -52,8 +52,8 @@ export default function StackManHandPurchasePage() {
         })
         
         const playersRef = collection(getDb()!, "players")
+        // Search by uniqueId only (storeId condition removed to handle data inconsistency)
         const playerQuery = query(playersRef, 
-          where("storeId", "==", customerAccount.storeId),
           where("uniqueId", "==", customerAccount.playerId)
         )
         const playerSnapshot = await getDocs(playerQuery)
@@ -64,13 +64,21 @@ export default function StackManHandPurchasePage() {
         })
         
         if (playerSnapshot.empty) {
-          alert(`プレイヤー情報がありません。\nstoreId: ${customerAccount.storeId}\nplayerId: ${customerAccount.playerId}`)
+          alert(`プレイヤー情報がありません。\nplayerId: ${customerAccount.playerId}`)
           router.push("/customer-view")
           return
         }
         
+        // Verify storeId matches (but don't fail if it doesn't)
         const playerDoc = playerSnapshot.docs[0]
         const playerData = playerDoc.data()
+        if (playerData.storeId !== customerAccount.storeId) {
+          console.warn("StoreId mismatch:", {
+            expected: customerAccount.storeId,
+            actual: playerData.storeId
+          })
+        }
+        
         const stack = playerData.systemBalance || 0
         setCurrentStack(stack)
 
