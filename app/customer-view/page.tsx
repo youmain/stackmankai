@@ -23,6 +23,7 @@ import {
   resetPlayerStatistics,
   subscribeToPointHistory,
   cancelPlayerAccount,
+  updatePlayer,
 } from "@/lib/firestore"
 import type { Player, DailyRanking, MonthlyPoints, StoreRankingSettings, RakeHistory, CustomerAccount } from "@/types"
 import PlayerDetailedDataModal from "@/components/player-detailed-data-modal"
@@ -243,6 +244,36 @@ export default function CustomerView() {
             console.log("[v0] CustomerAccount updated successfully")
           } catch (error) {
             console.error("[v0] Error updating customerAccount:", error)
+          }
+        }
+        
+        // プレイヤーのstoreNameが未設定の場合、店舗情報から取得して更新
+        if (linkedPlayer.storeId && !linkedPlayer.storeName) {
+          console.log("[v0] Player storeName is missing, fetching from store...")
+          try {
+            const storesRef = await import("firebase/firestore").then(m => m.collection)
+            const getDocsFunc = await import("firebase/firestore").then(m => m.getDocs)
+            const queryFunc = await import("firebase/firestore").then(m => m.query)
+            const whereFunc = await import("firebase/firestore").then(m => m.where)
+            const getDbFunc = await import("@/lib/firebase").then(m => m.getDb)
+            
+            const db = getDbFunc()
+            if (db) {
+              const storesCollection = storesRef(db, "stores")
+              const storeQuery = queryFunc(storesCollection, whereFunc("storeId", "==", linkedPlayer.storeId))
+              const storeSnapshot = await getDocsFunc(storeQuery)
+              
+              if (!storeSnapshot.empty) {
+                const storeData = storeSnapshot.docs[0].data()
+                const storeName = storeData.storeName || "店舗"
+                
+                // プレイヤーのstoreNameを更新
+                await updatePlayer(linkedPlayer.id, { storeName })
+                console.log("[v0] Player storeName updated:", storeName)
+              }
+            }
+          } catch (error) {
+            console.error("[v0] Error updating player storeName:", error)
           }
         }
       }

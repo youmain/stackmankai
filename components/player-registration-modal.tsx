@@ -65,10 +65,12 @@ export function PlayerRegistrationModal({ open, onClose }: PlayerRegistrationMod
     setLoading(true)
     try {
       const storeId = localStorage.getItem("storeId") || ""
+      const storeName = localStorage.getItem("storeName") || ""
       const playerData: any = {
         name: name.trim(),
         systemBalance: stackAmount,
         storeId: storeId,
+        storeName: storeName,
       }
       
       // オプションフィールドは値がある場合のみ追加
