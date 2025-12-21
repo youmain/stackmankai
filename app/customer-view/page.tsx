@@ -250,26 +250,29 @@ export default function CustomerView() {
         // プレイヤーのstoreNameが未設定の場合、店舗情報から取得して更新
         if (linkedPlayer.storeId && !linkedPlayer.storeName) {
           console.log("[v0] Player storeName is missing, fetching from store...")
+          console.log("[v0] Player storeId:", linkedPlayer.storeId)
           try {
-            const storesRef = await import("firebase/firestore").then(m => m.collection)
-            const getDocsFunc = await import("firebase/firestore").then(m => m.getDocs)
-            const queryFunc = await import("firebase/firestore").then(m => m.query)
-            const whereFunc = await import("firebase/firestore").then(m => m.where)
+            const docFunc = await import("firebase/firestore").then(m => m.doc)
+            const getDocFunc = await import("firebase/firestore").then(m => m.getDoc)
             const getDbFunc = await import("@/lib/firebase").then(m => m.getDb)
             
             const db = getDbFunc()
             if (db) {
-              const storesCollection = storesRef(db, "stores")
-              const storeQuery = queryFunc(storesCollection, whereFunc("storeId", "==", linkedPlayer.storeId))
-              const storeSnapshot = await getDocsFunc(storeQuery)
+              // Use document ID directly instead of querying by storeId field
+              const storeDocRef = docFunc(db, "stores", linkedPlayer.storeId)
+              const storeDoc = await getDocFunc(storeDocRef)
               
-              if (!storeSnapshot.empty) {
-                const storeData = storeSnapshot.docs[0].data()
+              if (storeDoc.exists()) {
+                const storeData = storeDoc.data()
                 const storeName = storeData.storeName || "店舗"
+                
+                console.log("[v0] Store found:", storeName)
                 
                 // プレイヤーのstoreNameを更新
                 await updatePlayer(linkedPlayer.id, { storeName })
                 console.log("[v0] Player storeName updated:", storeName)
+              } else {
+                console.warn("[v0] Store document not found:", linkedPlayer.storeId)
               }
             }
           } catch (error) {
