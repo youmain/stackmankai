@@ -273,6 +273,7 @@ export default function StackManHandPurchasePage() {
         )}
 
       </div>
+      </div>
     </div>
   )
 }
