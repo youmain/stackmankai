@@ -216,6 +216,21 @@ export default function CustomerView() {
 
   // linkedPlayerが見つかった時にstoreIdを自動更新
   useEffect(() => {
+    console.log("[v0] === useEffect triggered ===")
+    console.log("[v0] linkedPlayer:", linkedPlayer ? {
+      id: linkedPlayer.id,
+      name: linkedPlayer.name,
+      uniqueId: linkedPlayer.uniqueId,
+      storeId: linkedPlayer.storeId,
+      storeName: linkedPlayer.storeName
+    } : "NOT FOUND")
+    console.log("[v0] customerAccount:", customerAccount ? {
+      id: customerAccount.id,
+      playerId: customerAccount.playerId,
+      playerName: customerAccount.playerName,
+      storeId: customerAccount.storeId
+    } : "NOT FOUND")
+    
     const updateStoreIdIfNeeded = async () => {
       if (linkedPlayer && customerAccount) {
         // storeIdまたはplayerNameが未設定または不正な場合に更新
