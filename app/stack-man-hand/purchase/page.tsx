@@ -20,6 +20,8 @@ export default function StackManHandPurchasePage() {
   const [maxPurchases, setMaxPurchases] = useState(0)
   const [purchasedToday, setPurchasedToday] = useState(0)
   const [minimumStack, setMinimumStack] = useState(10000)
+  const [playerName, setPlayerName] = useState("")
+  const [storeName, setStoreName] = useState("")
 
   useEffect(() => {
     const loadData = async () => {
@@ -81,6 +83,7 @@ export default function StackManHandPurchasePage() {
         
         const stack = playerData.systemBalance || 0
         setCurrentStack(stack)
+        setPlayerName(playerData.name || customerAccount.playerName || "")
 
         // Load today's hands
         const hands = await getTodayStackManHands(customerAccount.storeId, customerAccount.playerId)
@@ -97,6 +100,7 @@ export default function StackManHandPurchasePage() {
         if (storeDoc.exists()) {
           const storeData = storeDoc.data()
           setMinimumStack(storeData.stackResetSettings?.minimumStack || 10000)
+          setStoreName(storeData.storeName || storeData.name || "")
         }
       } catch (error) {
         console.error("Error loading data:", error)
@@ -182,6 +186,25 @@ export default function StackManHandPurchasePage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="max-w-2xl mx-auto">
+        {/* Player Info */}
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg shadow-lg p-6 mb-6">
+          <h2 className="text-xl font-bold text-gray-800 mb-4">プレイヤー情報</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <p className="text-sm text-gray-600">プレイヤー名</p>
+              <p className="text-lg font-semibold text-gray-800">{playerName}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">店舗名</p>
+              <p className="text-lg font-semibold text-gray-800">{storeName}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">プレイヤーID</p>
+              <p className="text-lg font-semibold text-gray-800">{customerAccount?.playerId}</p>
+            </div>
+          </div>
+        </div>
+
         {/* Description */}
         <div className="text-center mb-8">
           <p className="text-gray-600">ランダムなポーカーハンドを購入して、店舗で報酬を獲得しよう！</p>
