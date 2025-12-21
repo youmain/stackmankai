@@ -48,54 +48,79 @@ export default function StackManHandPurchasePage() {
         setSettings(storeSettings)
 
         // Get current stack from Firestore
-        console.log("Searching for player:", {
+        console.log("[Purchase] Searching for player:", {
           storeId: customerAccount.storeId,
-          playerId: customerAccount.playerId
+          playerId: customerAccount.playerId,
+          type: typeof customerAccount.playerId
         })
         
         const playersRef = collection(getDb()!, "players")
         
-        // Try to find player by uniqueId first
-        let playerQuery = query(playersRef, 
-          where("uniqueId", "==", customerAccount.playerId)
-        )
-        let playerSnapshot = await getDocs(playerQuery)
+        // Try to find player by document ID first (most common case)
+        let playerDoc = null
+        let playerData = null
         
-        console.log("Player search by uniqueId:", {
-          playerId: customerAccount.playerId,
-          empty: playerSnapshot.empty,
-          count: playerSnapshot.docs.length
-        })
-        
-        // If not found by uniqueId, try to find by document ID
-        if (playerSnapshot.empty) {
-          console.log("Player not found by uniqueId, trying document ID...")
+        try {
+          console.log("[Purchase] Trying document ID first...")
           const playerDocRef = doc(getDb()!, "players", customerAccount.playerId)
           const playerDocSnap = await getDoc(playerDocRef)
           
           if (playerDocSnap.exists()) {
-            console.log("Player found by document ID")
-            // Create a fake snapshot array with the found document
-            playerSnapshot = {
-              empty: false,
-              docs: [playerDocSnap]
-            } as any
-          } else {
-            alert(`プレイヤー情報がありません。\nplayerId: ${customerAccount.playerId}`)
-            router.push("/customer-view")
-            return
+            console.log("[Purchase] Player found by document ID")
+            playerDoc = playerDocSnap
+            playerData = playerDocSnap.data()
+          }
+        } catch (error) {
+          console.error("[Purchase] Error getting player by document ID:", error)
+        }
+        
+        // If not found by document ID, try uniqueId
+        if (!playerDoc) {
+          console.log("[Purchase] Player not found by document ID, trying uniqueId...")
+          let playerQuery = query(playersRef, 
+            where("uniqueId", "=="", customerAccount.playerId)
+          )
+          let playerSnapshot = await getDocs(playerQuery)
+          
+          console.log("[Purchase] Player search by uniqueId:", {
+            playerId: customerAccount.playerId,
+            empty: playerSnapshot.empty,
+            count: playerSnapshot.docs.length
+          })
+          
+          if (!playerSnapshot.empty) {
+            playerDoc = playerSnapshot.docs[0]
+            playerData = playerDoc.data()
+            console.log("[Purchase] Player found by uniqueId")
           }
         }
         
+        // If still not found, show error
+        if (!playerDoc || !playerData) {
+          console.error("[Purchase] Player not found:", {
+            playerId: customerAccount.playerId,
+            storeId: customerAccount.storeId
+          })
+          alert(`プレイヤー情報が見つかりません。\nプレイヤーID: ${customerAccount.playerId}`)
+          router.push("/customer-view")
+          return
+        }
+        
+        console.log("[Purchase] Player data loaded:", {
+          id: playerDoc.id,
+          name: playerData.name,
+          storeId: playerData.storeId,
+          systemBalance: playerData.systemBalance
+        })
+        
         // Verify storeId matches (but don't fail if it doesn't)
-        const playerDoc = playerSnapshot.docs[0]
-        const playerData = playerDoc.data()
         if (playerData.storeId !== customerAccount.storeId) {
-          console.warn("StoreId mismatch:", {
+          console.warn("[Purchase] StoreId mismatch:", {
             expected: customerAccount.storeId,
             actual: playerData.storeId
           })
         }
+
         
         const stack = playerData.systemBalance || 0
         setCurrentStack(stack)
