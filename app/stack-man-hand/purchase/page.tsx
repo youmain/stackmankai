@@ -176,11 +176,31 @@ export default function StackManHandPurchasePage() {
         // Redirect to display page
         router.push(`/stack-man-hand/display/${result.handId}`)
       } else {
-        alert(result.message)
+        // 詳細なエラー情報を表示
+        const errorDetails = [
+          `エラー: ${result.message}`,
+          ``,
+          `デバッグ情報:`,
+          `- 店舗ID: ${customerAccount.storeId}`,
+          `- プレイヤーID: ${customerAccount.playerId}`,
+          `- プレイヤー名: ${customerAccount.playerName || "未設定"}`,
+        ].join("\n")
+        alert(errorDetails)
       }
     } catch (error) {
       console.error("Error purchasing Stack Man Hand:", error)
-      alert("購入に失敗しました")
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      const errorDetails = [
+        `購入に失敗しました`,
+        ``,
+        `エラー: ${errorMessage}`,
+        ``,
+        `デバッグ情報:`,
+        `- 店舗ID: ${customerAccount?.storeId || "未設定"}`,
+        `- プレイヤーID: ${customerAccount?.playerId || "未設定"}`,
+        `- プレイヤー名: ${customerAccount?.playerName || "未設定"}`,
+      ].join("\n")
+      alert(errorDetails)
     } finally {
       setPurchasing(false)
     }
