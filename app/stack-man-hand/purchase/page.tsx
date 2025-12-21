@@ -120,7 +120,8 @@ export default function StackManHandPurchasePage() {
         }
       } catch (error) {
         console.error("Error loading data:", error)
-        alert("データの読み込みに失敗しました")
+        const errorMessage = error instanceof Error ? error.message : String(error)
+        alert(`データの読み込みに失敗しました\n\nエラー: ${errorMessage}`)
       } finally {
         setLoading(false)
       }
