@@ -46,6 +46,11 @@ export default function StackManHandPurchasePage() {
         setSettings(storeSettings)
 
         // Get current stack from Firestore
+        console.log("Searching for player:", {
+          storeId: customerAccount.storeId,
+          playerId: customerAccount.playerId
+        })
+        
         const playersRef = collection(getDb()!, "players")
         const playerQuery = query(playersRef, 
           where("storeId", "==", customerAccount.storeId),
@@ -53,8 +58,13 @@ export default function StackManHandPurchasePage() {
         )
         const playerSnapshot = await getDocs(playerQuery)
         
+        console.log("Player search result:", {
+          empty: playerSnapshot.empty,
+          count: playerSnapshot.docs.length
+        })
+        
         if (playerSnapshot.empty) {
-          alert("プレイヤー情報が見つかりません")
+          alert(`プレイヤー情報がありません。\nstoreId: ${customerAccount.storeId}\nplayerId: ${customerAccount.playerId}`)
           router.push("/customer-view")
           return
         }
