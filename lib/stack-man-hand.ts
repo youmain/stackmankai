@@ -133,16 +133,66 @@ export const purchaseStackManHand = async (
     }
     
     // Get player's current stack
-    const playersRef = collection(db, "players", `store_${storeId}`, "players")
-    const playerQuery = query(playersRef, where("uniqueId", "==", userId))
-    const playerSnapshot = await getDocs(playerQuery)
+    console.log("[Purchase] Searching for player:", {
+      storeId,
+      userId,
+      type: typeof userId
+    })
     
-    if (playerSnapshot.empty) {
+    const playersRef = collection(db, "players")
+    
+    // Try to find player by document ID first (most common case)
+    let playerDoc = null
+    let playerData = null
+    
+    try {
+      console.log("[Purchase] Trying document ID first...")
+      const playerDocRef = doc(db, "players", userId)
+      const playerDocSnap = await getDoc(playerDocRef)
+      
+      if (playerDocSnap.exists()) {
+        console.log("[Purchase] Player found by document ID")
+        playerDoc = playerDocSnap
+        playerData = playerDocSnap.data()
+      }
+    } catch (error) {
+      console.error("[Purchase] Error getting player by document ID:", error)
+    }
+    
+    // If not found by document ID, try uniqueId
+    if (!playerDoc) {
+      console.log("[Purchase] Player not found by document ID, trying uniqueId...")
+      const playerQuery = query(playersRef, where("uniqueId", "==", userId))
+      const playerSnapshot = await getDocs(playerQuery)
+      
+      console.log("[Purchase] Player search by uniqueId:", {
+        userId,
+        empty: playerSnapshot.empty,
+        count: playerSnapshot.docs.length
+      })
+      
+      if (!playerSnapshot.empty) {
+        playerDoc = playerSnapshot.docs[0]
+        playerData = playerDoc.data()
+        console.log("[Purchase] Player found by uniqueId")
+      }
+    }
+    
+    // If still not found, return error
+    if (!playerDoc || !playerData) {
+      console.error("[Purchase] Player not found:", {
+        userId,
+        storeId
+      })
       return { success: false, message: "プレイヤーが見つかりません" }
     }
     
-    const playerDoc = playerSnapshot.docs[0]
-    const playerData = playerDoc.data()
+    console.log("[Purchase] Player data loaded:", {
+      id: playerDoc.id,
+      name: playerData.name,
+      storeId: playerData.storeId,
+      systemBalance: playerData.systemBalance
+    })
     const currentStack = playerData.systemBalance || 0
     
     // Get minimum stack from store settings
