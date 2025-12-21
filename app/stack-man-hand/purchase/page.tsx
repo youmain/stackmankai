@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { doc, getDoc } from "firebase/firestore"
+import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore"
 import { getDb } from "@/lib/firebase"
 import { useAuth } from "@/contexts/auth-context"
 import { getStackManHandSettings, purchaseStackManHand, getTodayStackManHands, calculateRemainingPurchases } from "@/lib/stack-man-hand"
@@ -46,13 +46,20 @@ export default function StackManHandPurchasePage() {
         setSettings(storeSettings)
 
         // Get current stack from Firestore
-        const playerDoc = await getDoc(doc(getDb()!, "players", customerAccount.playerId))
-        if (!playerDoc.exists()) {
+        const playersRef = collection(getDb()!, "players")
+        const playerQuery = query(playersRef, 
+          where("storeId", "==", customerAccount.storeId),
+          where("uniqueId", "==", customerAccount.playerId)
+        )
+        const playerSnapshot = await getDocs(playerQuery)
+        
+        if (playerSnapshot.empty) {
           alert("プレイヤー情報が見つかりません")
           router.push("/customer-view")
           return
         }
         
+        const playerDoc = playerSnapshot.docs[0]
         const playerData = playerDoc.data()
         const stack = playerData.systemBalance || 0
         setCurrentStack(stack)
