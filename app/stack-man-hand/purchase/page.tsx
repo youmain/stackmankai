@@ -78,7 +78,7 @@ export default function StackManHandPurchasePage() {
         if (!playerDoc) {
           console.log("[Purchase] Player not found by document ID, trying uniqueId...")
           let playerQuery = query(playersRef, 
-            where("uniqueId", "=="", customerAccount.playerId)
+            where("uniqueId", "==", customerAccount.playerId)
           )
           let playerSnapshot = await getDocs(playerQuery)
           
