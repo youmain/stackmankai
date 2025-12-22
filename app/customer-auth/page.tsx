@@ -140,7 +140,11 @@ export default function CustomerAuthPage() {
         storeId: storeInfo.storeId,
         storeName: storeInfo.storeName,
       }))
-      console.log("[v0] 💾 localStorageにユーザー情報保存:", testCustomer.email)
+      console.log("[Auth] 💾 localStorageにユーザー情報保存:", testCustomer.email)
+
+      // auth-contextに保存（sessionStorage/localStorageにも保存される）
+      localStorage.setItem("auth_customerAccount", JSON.stringify(testCustomer))
+      localStorage.setItem("auth_userType", "customer")
 
       setCurrentCustomer(testCustomer)
       setSuccess("無料登録が完了しました！プレイヤーIDを紐づけてください。")

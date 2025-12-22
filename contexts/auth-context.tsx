@@ -31,6 +31,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    let unsubscribe: (() => void) | undefined
+    
     const initializeAuth = async () => {
       try {
         if (!isFirebaseConfigured()) {
@@ -44,7 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const { onAuthStateChanged } = await import("@/lib/firebase-auth")
         const { getCustomerByEmail } = await import("@/lib/firestore")
         
-        const unsubscribe = onAuthStateChanged(async (user) => {
+        unsubscribe = onAuthStateChanged(async (user) => {
           console.log("[Auth] Firebase Auth状態変更:", user ? user.email : "未ログイン")
           
           if (user && user.email) {
@@ -77,8 +79,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           await restoreFromLocalStorage()
           setLoading(false)
         })
-        
-        return () => unsubscribe()
       } catch (error) {
         console.error("[Auth] 初期化エラー:", error)
         // エラー時もlocalStorageからの復元を試みる
@@ -127,6 +127,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     initializeAuth()
+    
+    // クリーンアップ関数: コンポーネントアンマウント時にリスナーを解除
+    return () => {
+      if (unsubscribe) {
+        unsubscribe()
+        console.log("[Auth] onAuthStateChanged リスナーを解除")
+      }
+    }
   }, [])
 
   useEffect(() => {

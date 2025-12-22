@@ -14,6 +14,7 @@ const log = createModuleLogger("FirebaseAuth")
 
 /**
  * メールアドレスとパスワードで新規ユーザーを作成
+ * 永続ログインを有効化（登録後もログイン状態を維持）
  */
 export async function createUser(email: string, password: string): Promise<UserCredential> {
   const auth = getAuthInstance()
@@ -22,6 +23,9 @@ export async function createUser(email: string, password: string): Promise<UserC
   }
 
   try {
+    // 永続ログインを有効化（登録後もログイン状態を維持）
+    await setPersistence(auth, browserLocalPersistence)
+    
     const userCredential = await createUserWithEmailAndPassword(auth, email, password)
     log.info(`ユーザー作成成功: ${email}`)
     return userCredential
