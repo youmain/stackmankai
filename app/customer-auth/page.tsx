@@ -169,14 +169,43 @@ export default function CustomerAuthPage() {
       }
 
       // Firebase Authでログイン（パスワード認証 + 永続ログイン）
-      const { signIn } = await import("@/lib/firebase-auth")
-      await signIn(loginForm.email, loginForm.password)
+      const { signIn, getCurrentUser } = await import("@/lib/firebase-auth")
+      const userCredential = await signIn(loginForm.email, loginForm.password)
       console.log("[Auth] ✅ Firebase Authログイン成功:", loginForm.email)
 
       // Firestoreから顧客情報を取得
-      const customer = await getCustomerByEmail(loginForm.email)
+      let customer = await getCustomerByEmail(loginForm.email)
+      
+      // 自動修復: Firebase AuthにはあるがFirestoreにない場合、自動作成
       if (!customer) {
-        throw new Error("顧客情報が見つかりません")
+        console.warn("[Auth] ⚠️ 顧客情報が見つかりません。自動作成します...")
+        
+        // 店舗情報の確認
+        if (!storeInfo || !storeInfo.storeId) {
+          throw new Error("顧客情報が見つからず、店舗情報もありません。再度登録してください。")
+        }
+        
+        // Firestoreのみに顧客情報を作成（Firebase Authユーザーは既に存在）
+        const { createCustomerInFirestore } = await import("@/lib/firestore")
+        const customerId = await createCustomerInFirestore(
+          {
+            storeId: storeInfo.storeId,
+            storeName: storeInfo.storeName,
+            isBetaTester: true,
+            subscriptionStatus: "free_trial",
+          },
+          loginForm.email,
+          userCredential.user.uid
+        )
+        
+        console.log("[Auth] ✅ 顧客情報を自動作成しました:", customerId)
+        
+        // 作成した顧客情報を取得
+        customer = await getCustomerByEmail(loginForm.email)
+        
+        if (!customer) {
+          throw new Error("顧客情報の作成に失敗しました")
+        }
       }
 
       // 店舗情報の確認（ログイン時は顧客データから取得、なければlocalStorageから）

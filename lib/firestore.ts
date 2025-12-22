@@ -1499,6 +1499,23 @@ export const createCustomerAccount = async (data: Partial<CustomerAccount>, emai
   return docRef.id
 }
 
+/**
+ * Firestoreのみに顧客情報を作成（Firebase Authユーザーは既に存在する場合）
+ * 自動修復用
+ */
+export const createCustomerInFirestore = async (data: Partial<CustomerAccount>, email: string, uid: string): Promise<string> => {
+  if (!isFirebaseConfigured()) return `mock_customer_${Date.now()}`
+  
+  const customersCollection = getCustomerAccountsCollection()
+  const docRef = await addDoc(customersCollection, {
+    ...data,
+    uid: uid,
+    email: email,
+    createdAt: serverTimestamp()
+  })
+  return docRef.id
+}
+
 export const updateCustomerAccount = async (customerId: string, data: Partial<CustomerAccount>): Promise<void> => {
   if (!isFirebaseConfigured()) return
   await updateDoc(doc(getCustomerAccountsCollection(), customerId), { ...data, updatedAt: serverTimestamp() })

@@ -69,6 +69,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 
                 setLoading(false)
                 return
+              } else {
+                // 顧客情報が見つからない → ログアウト
+                console.error("[Auth] ⚠️ 顧客情報が見つかりません。ログアウトします。")
+                const { signOutUser } = await import("@/lib/firebase-auth")
+                await signOutUser()
+                setError("アカウント情報が見つかりません。再度登録してください。")
+                setLoading(false)
+                return
               }
             } catch (error) {
               console.error("[Auth] 顧客情報取得エラー:", error)
