@@ -254,14 +254,43 @@ export const purchaseStackManHand = async (
       updatedAt: serverTimestamp(),
     })
     
+    // Purchase succeeded - return success even if subsequent operations fail
     return {
       success: true,
       message: "Stack Man Handを購入しました",
       handId: handDocRef.id,
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error purchasing Stack Man Hand:", error)
-    return { success: false, message: "購入に失敗しました" }
+    
+    // Check if it's a Firestore error
+    if (error?.code) {
+      switch (error.code) {
+        case 'resource-exhausted':
+          return { 
+            success: false, 
+            message: "Firestoreの読み取り制限に達しました。\n\n午前9時（日本時間）にリセットされます。\nしばらく待ってから再度お試しください。" 
+          }
+        case 'permission-denied':
+          return { 
+            success: false, 
+            message: "アクセス権限がありません。\n\n再度ログインしてください。" 
+          }
+        case 'unavailable':
+          return { 
+            success: false, 
+            message: "Firestoreに接続できません。\n\nネットワーク接続を確認してください。" 
+          }
+        default:
+          return { 
+            success: false, 
+            message: `購入に失敗しました\n\nエラーコード: ${error.code}` 
+          }
+      }
+    }
+    
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    return { success: false, message: `購入に失敗しました\n\n${errorMessage}` }
   }
 }
 
