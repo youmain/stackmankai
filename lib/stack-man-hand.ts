@@ -259,36 +259,9 @@ export const purchaseStackManHand = async (
       message: "Stack Man Handを購入しました",
       handId: handDocRef.id,
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error purchasing Stack Man Hand:", error)
-    
-    // Firestoreエラーコードに基づいて詳細なメッセージを返す
-    if (error?.code === "resource-exhausted") {
-      return { 
-        success: false, 
-        message: "現在、アクセスが集中しています。しばらく待ってから再度お試しください。\n\n💡 ヒント: Firestoreのクォータは午前9時（日本時間）にリセットされます。" 
-      }
-    }
-    
-    if (error?.code === "permission-denied") {
-      return { 
-        success: false, 
-        message: "アクセス権限がありません。再ログインしてください。" 
-      }
-    }
-    
-    if (error?.code === "unavailable") {
-      return { 
-        success: false, 
-        message: "サーバーに接続できません。インターネット接続を確認してください。" 
-      }
-    }
-    
-    const errorMessage = error?.message || "不明なエラー"
-    return { 
-      success: false, 
-      message: `購入に失敗しました: ${errorMessage}` 
-    }
+    return { success: false, message: "購入に失敗しました" }
   }
 }
 
