@@ -18,8 +18,7 @@ export default function MyStackManHandsPage() {
       const userIdFromStorage = localStorage.getItem("userId")
 
       if (!storeIdFromStorage || !userIdFromStorage) {
-        alert("ログインしてください")
-        router.push("/customer-auth")
+        setLoading(false)
         return
       }
 
@@ -46,6 +45,22 @@ export default function MyStackManHandsPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-gray-600">読み込み中...</div>
+      </div>
+    )
+  }
+
+  if (!storeId || !userId) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600 mb-4">ログインが必要です</p>
+          <button
+            onClick={() => router.push("/customer-auth")}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            ログインページへ
+          </button>
+        </div>
       </div>
     )
   }
