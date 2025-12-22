@@ -172,9 +172,9 @@ export default function StackManHandPurchasePage() {
       )
       
       if (result.success) {
-        alert(result.message)
-        // Redirect to display page
-        router.push(`/stack-man-hand/display/${result.handId}`)
+        alert(result.message + "\n\n購入したハンドは「保有ハンド一覧」から確認できます。")
+        // Reload the page to update remaining purchases
+        window.location.reload()
       } else {
         // Show error message from the purchase function
         alert(result.message)
