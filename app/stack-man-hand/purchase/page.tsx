@@ -345,32 +345,74 @@ export default function StackManHandPurchasePage() {
               <h2 className="text-xl font-bold text-gray-800">本日購入したハンド</h2>
             </div>
             <div className="grid grid-cols-1 gap-3">
-              {todayHands.map((hand) => (
-                <div
-                  key={hand.id}
-                  onClick={() => router.push(`/stack-man-hand/display/${hand.id}`)}
-                  className="border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="flex gap-1">
-                        {hand.cards.map((card, idx) => (
-                          <PlayingCard
-                            key={idx}
-                            card={{ suit: card.suit, rank: card.rank }}
-                            size="sm"
-                          />
-                        ))}
+              {todayHands.map((hand) => {
+                const rankConfig = {
+                  S: {
+                    bg: "bg-gradient-to-r from-yellow-50 to-orange-50",
+                    border: "border-yellow-400",
+                    badge: "bg-gradient-to-r from-yellow-400 to-orange-500",
+                    emoji: "✨",
+                    shadow: "shadow-lg shadow-yellow-500/20"
+                  },
+                  A: {
+                    bg: "bg-gradient-to-r from-purple-50 to-pink-50",
+                    border: "border-purple-400",
+                    badge: "bg-gradient-to-r from-purple-400 to-pink-500",
+                    emoji: "⭐",
+                    shadow: "shadow-lg shadow-purple-500/20"
+                  },
+                  B: {
+                    bg: "bg-gradient-to-r from-blue-50 to-cyan-50",
+                    border: "border-blue-400",
+                    badge: "bg-gradient-to-r from-blue-400 to-cyan-500",
+                    emoji: "⚡",
+                    shadow: "shadow-md shadow-blue-500/20"
+                  },
+                  C: {
+                    bg: "bg-gray-50",
+                    border: "border-gray-300",
+                    badge: "bg-gradient-to-r from-gray-400 to-gray-500",
+                    emoji: "◆",
+                    shadow: "shadow"
+                  }
+                }
+                const config = rankConfig[hand.rank]
+                
+                return (
+                  <div
+                    key={hand.id}
+                    onClick={() => router.push(`/stack-man-hand/display/${hand.id}`)}
+                    className={`border-2 ${config.border} ${config.bg} rounded-xl p-4 cursor-pointer hover:scale-[1.02] transition-all ${config.shadow}`}
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div className={`${config.badge} text-white px-3 py-1 rounded-lg text-sm font-bold flex items-center gap-1`}>
+                        <span>{config.emoji}</span>
+                        <span>{hand.rank} RANK</span>
                       </div>
-                      <p className="text-sm text-gray-600">{hand.handRank}</p>
+                      <div className="text-right">
+                        <p className="text-2xl font-bold text-purple-600">{hand.multiplier}x</p>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-lg font-bold text-purple-600">{hand.multiplier}x</p>
-                      <p className="text-sm text-gray-600">{hand.finalReward.toLocaleString()}💰</p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="flex gap-2">
+                          {hand.cards.map((card, idx) => (
+                            <PlayingCard
+                              key={idx}
+                              card={{ suit: card.suit, rank: card.rank }}
+                              size="md"
+                            />
+                          ))}
+                        </div>
+                        <p className="text-base font-semibold text-gray-800">{hand.handRank}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-lg font-bold text-orange-600">{hand.finalReward.toLocaleString()}💰</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         )}
