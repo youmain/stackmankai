@@ -173,8 +173,8 @@ export default function StackManHandPurchasePage() {
       
       if (result.success) {
         alert(result.message + "\n\n購入したハンドは「保有ハンド一覧」から確認できます。")
-        // Reload the page to update remaining purchases
-        window.location.reload()
+        setPurchasing(false)
+        // Note: Remaining purchases count will update on next page visit
       } else {
         // Show error message from the purchase function
         alert(result.message)
