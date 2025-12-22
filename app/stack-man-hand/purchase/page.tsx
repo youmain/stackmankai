@@ -109,7 +109,8 @@ export default function StackManHandPurchasePage() {
           id: playerDoc.id,
           name: playerData.name,
           storeId: playerData.storeId,
-          systemBalance: playerData.systemBalance
+          systemBalance: playerData.systemBalance,
+          stapokaBalance: playerData.stapokaBalance
         })
         
         // Verify storeId matches (but don't fail if it doesn't)
@@ -120,8 +121,8 @@ export default function StackManHandPurchasePage() {
           })
         }
 
-        
-        const stack = playerData.systemBalance || 0
+        // スタポカバランスがない場合はsystemBalanceを使用（既存プレイヤー対応）
+        const stack = playerData.stapokaBalance ?? playerData.systemBalance ?? 0
         setCurrentStack(stack)
         setPlayerName(playerData.name || customerAccount.playerName || "")
 
@@ -295,8 +296,8 @@ export default function StackManHandPurchasePage() {
           <h2 className="text-xl font-bold text-gray-800 mb-4">現在の状況</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-sm text-gray-600">現在のスタック</p>
-              <p className="text-2xl font-bold text-blue-600">{currentStack.toLocaleString()}💰</p>
+              <p className="text-sm text-gray-600">スタポカ貯スタック</p>
+              <p className="text-2xl font-bold text-green-600">{currentStack.toLocaleString()}💰</p>
             </div>
             <div>
               <p className="text-sm text-gray-600">最低保証額</p>

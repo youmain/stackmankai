@@ -10,6 +10,7 @@ export interface FirestorePlayer {
   pokerName?: string
   furigana?: string
   systemBalance: number
+  stapokaBalance?: number // スタポカ(チャットポーカー)のチップ残高 - Stack Man Hand購入に使用
   rewardPoints?: number
   currentGameId?: string
   isPlaying: boolean

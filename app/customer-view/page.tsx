@@ -1199,7 +1199,7 @@ ${availableExamples.slice(0, 5).join("\n")}
                   >
                     <p className="text-sm text-gray-600">スタポカ貯スタック</p>
                     <p className="text-lg font-semibold text-green-600">
-                      {linkedPlayer.systemBalance?.toLocaleString() || 0}💰
+                      {(linkedPlayer.stapokaBalance ?? linkedPlayer.systemBalance ?? 0).toLocaleString()}💰
                     </p>
                     <p className="text-xs text-green-500 mt-1">クリックでStack Man Hand購入</p>
                   </div>

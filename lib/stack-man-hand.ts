@@ -191,9 +191,11 @@ export const purchaseStackManHand = async (
       id: playerDoc.id,
       name: playerData.name,
       storeId: playerData.storeId,
-      systemBalance: playerData.systemBalance
+      systemBalance: playerData.systemBalance,
+      stapokaBalance: playerData.stapokaBalance
     })
-    const currentStack = playerData.systemBalance || 0
+    // スタポカバランスがない場合はsystemBalanceを使用（既存プレイヤー対応）
+    const currentStack = playerData.stapokaBalance ?? playerData.systemBalance ?? 0
     
     // Get minimum stack from store settings
     const storeDoc = await getDoc(doc(db, "stores", storeId))
@@ -248,11 +250,20 @@ export const purchaseStackManHand = async (
     
     const handDocRef = await addDoc(handsRef, handData)
     
-    // Deduct chips from player
-    await updateDoc(playerDoc.ref, {
-      systemBalance: currentStack - settings.purchasePrice,
+    // Deduct chips from player's stapoka balance
+    const updateData: any = {
       updatedAt: serverTimestamp(),
-    })
+    }
+    
+    // スタポカバランスが存在する場合はそれを更新、ない場合は新規作成
+    if (playerData.stapokaBalance !== undefined) {
+      updateData.stapokaBalance = currentStack - settings.purchasePrice
+    } else {
+      // 既存プレイヤーの場合: systemBalanceをstapokaBalanceにコピーしてから減算
+      updateData.stapokaBalance = currentStack - settings.purchasePrice
+    }
+    
+    await updateDoc(playerDoc.ref, updateData)
     
     // Purchase succeeded - return success even if subsequent operations fail
     return {
