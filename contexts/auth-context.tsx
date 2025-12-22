@@ -40,75 +40,90 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return
         }
 
-        // sessionStorageから認証情報を取得（localStorageもフォールバックとして使用）
-        let savedUserName = sessionStorage.getItem("auth_userName") || localStorage.getItem("auth_userName")
-        let savedUserId = sessionStorage.getItem("auth_userId") || localStorage.getItem("auth_userId")
-        let savedUserType = (sessionStorage.getItem("auth_userType") || localStorage.getItem("auth_userType")) as "admin" | "customer" | null
-        const savedCustomerAccount = sessionStorage.getItem("auth_customerAccount") || localStorage.getItem("auth_customerAccount")
-
-        // sessionStorageになければlocalStorageから取得（従業員/オーナーログイン用）
-        let isLocalStorageAuth = false
-        if (!savedUserName || !savedUserId) {
-          const storeId = localStorage.getItem("storeId")
-          const userName = localStorage.getItem("userName") || localStorage.getItem("employeeName")
-          const uid = localStorage.getItem("uid")
+        // Firebase Authの認証状態を監視（永続ログインのコア）
+        const { onAuthStateChanged } = await import("@/lib/firebase-auth")
+        const { getCustomerByEmail } = await import("@/lib/firestore")
+        
+        const unsubscribe = onAuthStateChanged(async (user) => {
+          console.log("[Auth] Firebase Auth状態変更:", user ? user.email : "未ログイン")
           
-          if (storeId && userName && uid) {
-            savedUserName = userName
-            savedUserId = uid
-            savedUserType = "admin"
-            isLocalStorageAuth = true
-          }
-        }
-
-        if (savedUserName && savedUserId && savedUserType === "admin") {
-          setUserNameState(savedUserName)
-          setUserId(savedUserId)
-          setUserType("admin")
-
-          // localStorage認証（従業員/オーナー）の場合はFirestore更新をスキップ
-          if (!isLocalStorageAuth) {
+          if (user && user.email) {
+            // Firebase Authでログイン済み - Firestoreから顧客情報を取得
             try {
+              const customer = await getCustomerByEmail(user.email)
+              if (customer) {
+                setCustomerAccountState(customer)
+                setUserType("customer")
+                
+                // localStorageにも保存（他のコンポーネントとの互換性）
+                localStorage.setItem("auth_customerAccount", JSON.stringify(customer))
+                localStorage.setItem("auth_userType", "customer")
+                
+                console.log("[Auth] ✅ Firebase Authから顧客セッション復元:", {
+                  email: customer.email,
+                  playerId: customer.playerId,
+                  playerName: customer.playerName
+                })
+                
+                setLoading(false)
+                return
+              }
+            } catch (error) {
+              console.error("[Auth] 顧客情報取得エラー:", error)
+            }
+          }
+          
+          // Firebase Authでログインしていない - localStorageから復元を試みる（従業員用）
+          await restoreFromLocalStorage()
+          setLoading(false)
+        })
+        
+        return () => unsubscribe()
+      } catch (error) {
+        console.error("[Auth] 初期化エラー:", error)
+        // エラー時もlocalStorageからの復元を試みる
+        await restoreFromLocalStorage()
+        setLoading(false)
+      }
+    }
+    
+    const restoreFromLocalStorage = async () => {
+      // sessionStorageから認証情報を取得（localStorageもフォールバックとして使用）
+      let savedUserName = sessionStorage.getItem("auth_userName") || localStorage.getItem("auth_userName")
+      let savedUserId = sessionStorage.getItem("auth_userId") || localStorage.getItem("auth_userId")
+      let savedUserType = (sessionStorage.getItem("auth_userType") || localStorage.getItem("auth_userType")) as "admin" | "customer" | null
+
+      // sessionStorageになければlocalStorageから取得（従業員/オーナーログイン用）
+      let isLocalStorageAuth = false
+      if (!savedUserName || !savedUserId) {
+        const storeId = localStorage.getItem("storeId")
+        const userName = localStorage.getItem("userName") || localStorage.getItem("employeeName")
+        const uid = localStorage.getItem("uid")
+        
+        if (storeId && userName && uid) {
+          savedUserName = userName
+          savedUserId = uid
+          savedUserType = "admin"
+          isLocalStorageAuth = true
+        }
+      }
+
+      if (savedUserName && savedUserId && savedUserType === "admin") {
+        setUserNameState(savedUserName)
+        setUserId(savedUserId)
+        setUserType("admin")
+
+        // localStorage認証（従業員/オーナー）の場合はFirestore更新をスキップ
+        if (!isLocalStorageAuth) {
+          try {
               await updateUserOnlineStatus(savedUserId, true)
             } catch (firebaseError) {
               handleFirebaseError(firebaseError, "オンライン状態更新")
               setError("Firebase接続エラーが発生しました。設定を確認してください。")
-            }
-          }
-        } else if (savedCustomerAccount && savedUserType === "customer") {
-          try {
-            if (savedCustomerAccount && savedCustomerAccount !== "null" && savedCustomerAccount !== "undefined") {
-              const account = JSON.parse(savedCustomerAccount) as CustomerAccount
-              setCustomerAccountState(account)
-              setUserType("customer")
-              
-              console.log("[Auth] ✅ 顧客セッション復元成功:", {
-                email: account.email,
-                playerId: account.playerId,
-                playerName: account.playerName
-              })
-              
-              // sessionStorageにも保存（次回のリロードに備える）
-              if (!sessionStorage.getItem("auth_customerAccount")) {
-                sessionStorage.setItem("auth_customerAccount", savedCustomerAccount)
-                sessionStorage.setItem("auth_userType", "customer")
-              }
-            } else {
-              sessionStorage.removeItem("auth_customerAccount")
-              localStorage.removeItem("auth_customerAccount")
-            }
-          } catch (parseError) {
-            handleError(parseError, "顧客アカウント情報解析")
-            sessionStorage.removeItem("auth_customerAccount")
-            localStorage.removeItem("auth_customerAccount")
           }
         }
-      } catch (error) {
-        handleError(error, "認証初期化")
-        setError("認証の初期化に失敗しました。")
-      } finally {
-        setLoading(false)
       }
+      // 顧客アカウントはlocalStorageからは復元しない（Firebase Authで管理）
     }
 
     initializeAuth()

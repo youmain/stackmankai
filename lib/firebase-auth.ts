@@ -2,6 +2,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  setPersistence,
+  browserLocalPersistence,
   type User,
   type UserCredential,
 } from "firebase/auth"
@@ -31,6 +33,7 @@ export async function createUser(email: string, password: string): Promise<UserC
 
 /**
  * メールアドレスとパスワードでサインイン
+ * 永続ログインを有効化（ブラウザを閉じてもログイン状態を維持）
  */
 export async function signIn(email: string, password: string): Promise<UserCredential> {
   const auth = getAuthInstance()
@@ -39,6 +42,9 @@ export async function signIn(email: string, password: string): Promise<UserCrede
   }
 
   try {
+    // 永続ログインを有効化（ネイティブアプリと同じ動作）
+    await setPersistence(auth, browserLocalPersistence)
+    
     const userCredential = await signInWithEmailAndPassword(auth, email, password)
     log.info(`サインイン成功: ${email}`)
     return userCredential

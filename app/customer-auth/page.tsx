@@ -164,13 +164,16 @@ export default function CustomerAuthPage() {
         return
       }
 
+      // Firebase Authでログイン（パスワード認証 + 永続ログイン）
+      const { signIn } = await import("@/lib/firebase-auth")
+      await signIn(loginForm.email, loginForm.password)
+      console.log("[Auth] ✅ Firebase Authログイン成功:", loginForm.email)
+
+      // Firestoreから顧客情報を取得
       const customer = await getCustomerByEmail(loginForm.email)
       if (!customer) {
-        throw new Error("メールアドレスまたはパスワードが正しくありません")
+        throw new Error("顧客情報が見つかりません")
       }
-
-      sessionStorage.setItem("currentUserEmail", loginForm.email)
-      console.log("[v0] 💾 セッションにメールアドレス保存:", loginForm.email)
 
       // 店舗情報の確認（ログイン時は顧客データから取得、なければlocalStorageから）
       const finalStoreId = customer.storeId || storeInfo?.storeId
@@ -180,22 +183,45 @@ export default function CustomerAuthPage() {
         throw new Error("店舗情報が見つかりません。店舗ログインページに移動してください。")
       }
 
+      // 顧客情報を完全な形で保存
+      const fullCustomer = {
+        ...customer,
+        storeId: finalStoreId,
+        storeName: finalStoreName,
+      }
+
       // localStorageにユーザー情報を保存（投稿作成用）
       localStorage.setItem("currentUser", JSON.stringify({
-        id: customer.id,
-        name: customer.name || customer.email,
-        email: customer.email,
+        id: fullCustomer.id,
+        name: fullCustomer.name || fullCustomer.email,
+        email: fullCustomer.email,
         type: "customer",
         storeId: finalStoreId,
         storeName: finalStoreName,
       }))
-      console.log("[v0] 💾 localStorageにユーザー情報保存:", customer.email)
+      console.log("[Auth] 💾 localStorageにユーザー情報保存:", fullCustomer.email)
 
-      setCurrentCustomer(customer)
+      // auth-contextに保存（sessionStorage/localStorageにも保存される）
+      localStorage.setItem("auth_customerAccount", JSON.stringify(fullCustomer))
+      localStorage.setItem("auth_userType", "customer")
+
+      setCurrentCustomer(fullCustomer)
       setSuccess("ログインしました")
       setLoginForm({ email: "", password: "" })
-    } catch (error) {
-      setError(error instanceof Error ? error.message : "ログインに失敗しました")
+    } catch (error: any) {
+      console.error("[Auth] ❌ ログインエラー:", error)
+      
+      // Firebase Authのエラーメッセージを日本語化
+      let errorMessage = "ログインに失敗しました"
+      if (error.code === "auth/invalid-credential" || error.code === "auth/wrong-password" || error.code === "auth/user-not-found") {
+        errorMessage = "メールアドレスまたはパスワードが正しくありません"
+      } else if (error.code === "auth/too-many-requests") {
+        errorMessage = "ログイン試行回数が多すぎます。しばらく待ってから再度お試しください。"
+      } else if (error.message) {
+        errorMessage = error.message
+      }
+      
+      setError(errorMessage)
     } finally {
       setIsLoading(false)
     }
