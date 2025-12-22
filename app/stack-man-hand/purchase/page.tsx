@@ -7,6 +7,7 @@ import { getDb } from "@/lib/firebase"
 import { useAuth } from "@/contexts/auth-context"
 import { getStackManHandSettings, purchaseStackManHand, getTodayStackManHands, calculateRemainingPurchases } from "@/lib/stack-man-hand"
 import type { StackManHandSettings, StackManHand } from "@/types/stack-man-hand"
+import { PlayingCard } from "@/components/poker-table/playing-card"
 
 export default function StackManHandPurchasePage() {
   const router = useRouter()
@@ -340,27 +341,27 @@ export default function StackManHandPurchasePage() {
         {/* Today's Hands */}
         {todayHands.length > 0 && (
           <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-            <div className="flex items-center justify-between mb-4">
+            <div className="mb-4">
               <h2 className="text-xl font-bold text-gray-800">本日購入したハンド</h2>
-              <button
-                onClick={() => router.push("/stack-man-hand/my-hands")}
-                className="text-purple-600 hover:text-purple-700 font-semibold"
-              >
-                一覧を見る →
-              </button>
             </div>
             <div className="grid grid-cols-1 gap-3">
-              {todayHands.slice(0, 3).map((hand) => (
+              {todayHands.map((hand) => (
                 <div
                   key={hand.id}
                   onClick={() => router.push(`/stack-man-hand/display/${hand.id}`)}
                   className="border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-gray-50 transition-colors"
                 >
                   <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-semibold text-gray-800">
-                        {hand.cards.map(c => `${c.rank}${c.suit}`).join(" ")}
-                      </p>
+                    <div className="flex items-center gap-4">
+                      <div className="flex gap-1">
+                        {hand.cards.map((card, idx) => (
+                          <PlayingCard
+                            key={idx}
+                            card={{ suit: card.suit, rank: card.rank }}
+                            size="sm"
+                          />
+                        ))}
+                      </div>
                       <p className="text-sm text-gray-600">{hand.handRank}</p>
                     </div>
                     <div className="text-right">
