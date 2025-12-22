@@ -10,7 +10,7 @@ import type { StackManHandSettings, StackManHand } from "@/types/stack-man-hand"
 
 export default function StackManHandPurchasePage() {
   const router = useRouter()
-  const { customerAccount } = useAuth()
+  const { customerAccount, loading: authLoading } = useAuth()
   const [loading, setLoading] = useState(true)
   const [purchasing, setPurchasing] = useState(false)
   const [settings, setSettings] = useState<StackManHandSettings | null>(null)
@@ -26,7 +26,7 @@ export default function StackManHandPurchasePage() {
   useEffect(() => {
     const loadData = async () => {
       // Wait for auth to load
-      if (customerAccount === undefined) {
+      if (authLoading) {
         return // Still loading
       }
 
@@ -153,7 +153,7 @@ export default function StackManHandPurchasePage() {
     }
 
     loadData()
-  }, [router, customerAccount])
+  }, [customerAccount, authLoading, router])
 
   const handlePurchase = async () => {
     if (!settings || !customerAccount?.storeId || !customerAccount?.playerId) return
