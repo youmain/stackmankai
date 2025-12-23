@@ -384,22 +384,31 @@ export const calculateRemainingPurchases = async (
     return { maxPurchases: 0, purchasedToday: 0, remaining: 0 }
   }
   
-  // Calculate max purchases based on available chips
-  const availableChips = currentStack - minimumStack
+  // Get today's purchases first
+  const todayHands = await getTodayStackManHands(storeId, userId)
+  const purchasedToday = todayHands.length
+  
+  // Calculate already spent chips
+  const alreadySpent = purchasedToday * settings.purchasePrice
+  
+  // Restore initial stack (before any purchases today)
+  const initialStack = currentStack + alreadySpent
+  
+  // Calculate max purchases based on available chips from initial stack
+  const availableChips = initialStack - minimumStack
   const maxPurchases = Math.floor(availableChips / settings.purchasePrice)
   
   // Debug logging
   console.log('calculateRemainingPurchases:', {
     currentStack,
     minimumStack,
+    purchasedToday,
+    alreadySpent,
+    initialStack,
     availableChips,
     purchasePrice: settings.purchasePrice,
     maxPurchases
   })
-  
-  // Get today's purchases
-  const todayHands = await getTodayStackManHands(storeId, userId)
-  const purchasedToday = todayHands.length
   
   // Calculate remaining
   const remaining = Math.max(0, maxPurchases - purchasedToday)
