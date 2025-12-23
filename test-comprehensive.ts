@@ -240,6 +240,8 @@ console.log("-".repeat(80))
 // All players all-in
 const game1: PokerGameState = {
   id: "test", storeId: "test", phase: "preflop", pot: 20000,
+  createdAt: new Date(),
+  updatedAt: new Date(),
   communityCards: [], currentBet: 10000, minRaise: 100,
   dealerIndex: 0, smallBlindIndex: 1, bigBlindIndex: 2, currentPlayerIndex: 0,
   players: [

@@ -1,0 +1,60 @@
+[
+  {
+    "type": "metadata",
+    "exportDate": "2025-10-02T00:54:36.384Z",
+    "exportedBy": "インフルエンサー",
+    "summary": {
+      "totalPlayers": 4,
+      "totalTransactions": 0,
+      "totalRakeRecords": 0,
+      "totalSystemBalance": 275000,
+      "totalPurchaseAmount": 0,
+      "totalRake": 0
+    }
+  },
+  {
+    "type": "player",
+    "id": "demo-player-1",
+    "name": "山田太郎",
+    "systemBalance": 50000,
+    "isSpecial": false,
+    "isPlaying": false,
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "updatedAt": "2025-01-10T00:00:00.000Z",
+    "purchaseAmount": 0
+  },
+  {
+    "type": "player",
+    "id": "demo-player-2",
+    "name": "佐藤花子",
+    "systemBalance": 75000,
+    "isSpecial": false,
+    "isPlaying": true,
+    "currentGameId": "demo-game-1",
+    "createdAt": "2025-01-02T00:00:00.000Z",
+    "updatedAt": "2025-01-10T00:00:00.000Z",
+    "purchaseAmount": 0
+  },
+  {
+    "type": "player",
+    "id": "demo-player-3",
+    "name": "鈴木一郎",
+    "systemBalance": 30000,
+    "isSpecial": false,
+    "isPlaying": false,
+    "createdAt": "2025-01-03T00:00:00.000Z",
+    "updatedAt": "2025-01-10T00:00:00.000Z",
+    "purchaseAmount": 0
+  },
+  {
+    "type": "player",
+    "id": "demo-player-4",
+    "name": "田中美咲",
+    "systemBalance": 120000,
+    "isSpecial": true,
+    "isPlaying": false,
+    "createdAt": "2025-01-04T00:00:00.000Z",
+    "updatedAt": "2025-01-10T00:00:00.000Z",
+    "purchaseAmount": 0
+  }
+]

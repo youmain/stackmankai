@@ -6,7 +6,9 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "migrate:store-isolation": "tsx scripts/migrate-store-isolation.ts",
+    "check:data-integrity": "tsx scripts/check-data-integrity.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "latest",
@@ -63,6 +65,7 @@
     "react-day-picker": "latest",
     "react-dom": "19.2.1",
     "react-hook-form": "latest",
+    "react-is": "^19.2.3",
     "react-resizable-panels": "latest",
     "recharts": "latest",
     "sonner": "latest",

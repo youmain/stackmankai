@@ -1,0 +1,64 @@
+{
+  "projectName": "YouMain",
+  "version": "0.1.0",
+  "structure": {
+    "root": "/",
+    "src": "/app",
+    "public": "/public",
+    "components": "/components",
+    "pages": "/pages",
+    "api": "/pages/api",
+    "styles": "/app/globals.css",
+    "utils": "/utils",
+    "lib": "/lib",
+    "models": "/models",
+    "store": "/store"
+  },
+  "dependencies": {
+    "frontend": [
+      "react",
+      "react-dom",
+      "next",
+      "@react-three/fiber",
+      "@react-three/drei",
+      "three",
+      "zustand"
+    ],
+    "backend": [
+      "mongodb",
+      "bcrypt",
+      "next-auth"
+    ],
+    "dev": [
+      "typescript",
+      "eslint",
+      "tailwindcss"
+    ]
+  },
+  "mainComponents": [
+    "ThreeDRoom",
+    "Room",
+    "Warehouse",
+    "Model",
+    "MovementControls",
+    "CameraControls",
+    "Shop"
+  ],
+  "api": [
+    "/api/auth/[...nextauth]",
+    "/api/auth/signup",
+    "/api/collection"
+  ],
+  "database": {
+    "type": "MongoDB",
+    "collections": [
+      "users",
+      "collections"
+    ]
+  },
+  "authentication": {
+    "type": "JWT",
+    "provider": "next-auth"
+  }
+}
+

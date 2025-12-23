@@ -1,0 +1,6056 @@
+{
+  "exportDate": "2025-09-17T05:30:31.841Z",
+  "exportedBy": "インフルエンサー",
+  "summary": {
+    "totalPlayers": 95,
+    "totalTransactions": 536,
+    "totalRakeRecords": 15,
+    "totalSystemBalance": 4101770,
+    "totalPurchaseAmount": 43300,
+    "totalRake": 32310
+  },
+  "players": [
+    {
+      "id": "xRQ8qVU0GBDdXj4d70rL",
+      "name": "あいさ",
+      "systemBalance": 32500,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:20:26.138Z",
+      "updatedAt": "2025-09-03T08:20:26.138Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "xdMMuOJp0AQ8CH5yYM1O",
+      "name": "あおやまあやき",
+      "systemBalance": 35800,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:13:06.792Z",
+      "updatedAt": "2025-09-03T08:13:06.792Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "VyOXYsrgJ20CZMEL4xor",
+      "name": "あかい",
+      "systemBalance": 14400,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:02:40.798Z",
+      "updatedAt": "2025-09-03T08:02:40.798Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "d81ixXj3JUAZZi1fT5bb",
+      "name": "あかねちゃん",
+      "systemBalance": 23800,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:10:18.078Z",
+      "updatedAt": "2025-09-03T08:10:18.078Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "1Zf2HWhP7zodiCj7L20K",
+      "name": "あんさん",
+      "systemBalance": 193100,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T07:57:03.190Z",
+      "updatedAt": "2025-09-10T15:18:48.698Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "xiGC7uZd5IiRHoAHlsBW",
+      "name": "いお",
+      "systemBalance": 25850,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:03:11.698Z",
+      "updatedAt": "2025-09-03T08:03:11.698Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "RYVl0CMOOAfhtWNE0Cki",
+      "name": "いくた",
+      "systemBalance": 7000,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:09:47.617Z",
+      "updatedAt": "2025-09-03T08:09:47.617Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "puIpiXnBM3pXazPgDN7z",
+      "name": "いけはら",
+      "systemBalance": 73150,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:11:58.588Z",
+      "updatedAt": "2025-09-03T08:11:58.588Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "naTTLqMjbLqpHfYztN3U",
+      "name": "いけみやれい",
+      "systemBalance": 22100,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:08:34.462Z",
+      "updatedAt": "2025-09-03T08:08:34.462Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "ZeRQG3DYix6ZBI5TbfbD",
+      "name": "いぬまきりょう",
+      "systemBalance": 25300,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:24:07.697Z",
+      "updatedAt": "2025-09-03T08:24:07.697Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "e9mIPgvPDC6fgEKjQ3B6",
+      "name": "いまなかゆうすけ",
+      "systemBalance": 25250,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:01:32.737Z",
+      "updatedAt": "2025-09-03T08:01:32.737Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "DwAKdtmPpL71cGpmS2yC",
+      "name": "うじたさん",
+      "systemBalance": 25200,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:21:40.791Z",
+      "updatedAt": "2025-09-03T08:21:40.791Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "Dn4iin5qxK5yy83hVv2i",
+      "name": "うめき",
+      "systemBalance": 9200,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:28:22.098Z",
+      "updatedAt": "2025-09-03T08:28:22.098Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "shEIFLM2mrHQsIREmkRE",
+      "name": "うめのゆうすけ",
+      "systemBalance": 55850,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:07:41.090Z",
+      "updatedAt": "2025-09-03T08:07:41.090Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "6SRwzGqOfegCJM9afRXy",
+      "name": "えすのいし",
+      "systemBalance": 11100,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:27:09.667Z",
+      "updatedAt": "2025-09-03T08:27:09.667Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "tCQgBsqPwXk6QtmWN7ni",
+      "name": "おおかわこうへい",
+      "systemBalance": 12500,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:03:42.223Z",
+      "updatedAt": "2025-09-03T08:03:42.223Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "pENJJRenFpdfk9Z15qJw",
+      "name": "おおさわ",
+      "systemBalance": 35800,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-04T12:30:26.079Z",
+      "updatedAt": "2025-09-04T14:58:56.952Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "9gMnJmvxsP83QhH9r27s",
+      "name": "おおしま",
+      "systemBalance": 16900,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:03:23.518Z",
+      "updatedAt": "2025-09-03T08:03:23.518Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "55cElswaIxb0TmeavBh6",
+      "name": "おとなし",
+      "systemBalance": 27750,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:00:51.467Z",
+      "updatedAt": "2025-09-03T08:00:51.467Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "4Gs40Q5sjIlZaBNFT4H9",
+      "name": "おばたくん",
+      "systemBalance": 21900,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:06:34.307Z",
+      "updatedAt": "2025-09-03T08:06:34.307Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "Gm4MtEb1EfKpExXMfoL4",
+      "name": "かず",
+      "systemBalance": 2500,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:33:49.980Z",
+      "updatedAt": "2025-09-03T08:33:49.980Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "pcvxEKZ5RT0TcvA8ndB0",
+      "name": "かわむら",
+      "systemBalance": 8500,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:33:02.579Z",
+      "updatedAt": "2025-09-03T08:33:02.579Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "KD0XuJznevonAPqTgeCQ",
+      "name": "かわもとこうき",
+      "systemBalance": 12100,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:31:31.191Z",
+      "updatedAt": "2025-09-03T08:31:31.191Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "K7S6LEvRRsniPmucMLrn",
+      "name": "きくちさん",
+      "systemBalance": 0,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:23:23.608Z",
+      "updatedAt": "2025-09-14T15:03:02.201Z",
+      "purchaseAmount": 10000
+    },
+    {
+      "id": "gU6lS409qqSD0ywfxCpC",
+      "name": "きこう",
+      "systemBalance": 66700,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:25:52.231Z",
+      "updatedAt": "2025-09-03T08:25:52.231Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "Iw7b142uLjtnPJQeaDLF",
+      "name": "きたざき",
+      "systemBalance": 10100,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:02:53.157Z",
+      "updatedAt": "2025-09-03T08:02:53.157Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "jzsACrpGU3Vx1f5OjUex",
+      "name": "きよ",
+      "systemBalance": 48300,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:28:47.787Z",
+      "updatedAt": "2025-09-03T08:28:47.787Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "OqPaOkqRRpk9osw4OBEr",
+      "name": "くまさきゆうし",
+      "systemBalance": 27300,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:24:40.622Z",
+      "updatedAt": "2025-09-03T08:24:40.622Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "lt8F47hytNmTicqUYOAI",
+      "name": "こう",
+      "systemBalance": 10000,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-04T12:30:05.154Z",
+      "updatedAt": "2025-09-04T12:30:05.154Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "e29iytneboujRvjxZvTD",
+      "name": "こうじ",
+      "systemBalance": 25600,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:33:11.737Z",
+      "updatedAt": "2025-09-03T08:33:11.737Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "TE5BFAgOSP4SzN7qfLwL",
+      "name": "こうたろう",
+      "systemBalance": 8750,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:02:28.961Z",
+      "updatedAt": "2025-09-03T08:02:28.961Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "pVMWrraYayxSpCOkli5z",
+      "name": "さくらいさん",
+      "systemBalance": 24500,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:16:37.587Z",
+      "updatedAt": "2025-09-15T15:14:41.810Z",
+      "purchaseAmount": 33300
+    },
+    {
+      "id": "SqGmHA65w0IrpfoVMIJ5",
+      "name": "さすけ",
+      "systemBalance": 4020,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:15:29.927Z",
+      "updatedAt": "2025-09-14T08:30:48.666Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "sVv9C8WvR4xViijjXqgL",
+      "name": "ざくさん",
+      "systemBalance": 21100,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:33:40.037Z",
+      "updatedAt": "2025-09-03T08:33:40.037Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "QtxTkNmKzYjZCBc4ojRx",
+      "name": "しまずさん",
+      "systemBalance": 13200,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:23:07.028Z",
+      "updatedAt": "2025-09-03T08:23:07.028Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "WOL70mVAt3R11sirWPAm",
+      "name": "しまもと",
+      "systemBalance": 25800,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:00:36.138Z",
+      "updatedAt": "2025-09-03T08:00:36.138Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "Cpo1qJWcx3gO4x431cPw",
+      "name": "しみずさん",
+      "systemBalance": 152600,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:17:44.678Z",
+      "updatedAt": "2025-09-14T15:03:18.326Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "znBETFpZO72LhPwSIfK4",
+      "name": "しゅうや",
+      "systemBalance": 19300,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:27:35.348Z",
+      "updatedAt": "2025-09-03T08:27:35.348Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "4gKPzDvg1qtEspoYmKRD",
+      "name": "しょうたさん",
+      "systemBalance": 20550,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:10:29.107Z",
+      "updatedAt": "2025-09-03T08:10:29.107Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "weQDmanV4Eprga8X3NmF",
+      "name": "しょうり",
+      "systemBalance": 9000,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:29:13.618Z",
+      "updatedAt": "2025-09-03T08:29:13.618Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "LChk5TsEKpywhBhe2W1l",
+      "name": "じょうじ",
+      "systemBalance": 12700,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:24:23.101Z",
+      "updatedAt": "2025-09-03T08:24:23.101Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "jfJnme0eJzOjUbSlXD5y",
+      "name": "そらちゃん",
+      "systemBalance": 18500,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:07:58.618Z",
+      "updatedAt": "2025-09-03T08:07:58.618Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "JDBhso7p1PtJsavMiPtj",
+      "name": "たいが",
+      "systemBalance": 1600,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:34:49.262Z",
+      "updatedAt": "2025-09-03T08:34:49.262Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "hGnzTwyH8qPeb6uaHwNQ",
+      "name": "たかし",
+      "systemBalance": 4600,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:02:03.128Z",
+      "updatedAt": "2025-09-03T08:02:03.128Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "rHLlIklsMMz6REkk4yCc",
+      "name": "たなか",
+      "systemBalance": 3600,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:34:37.457Z",
+      "updatedAt": "2025-09-03T08:34:37.457Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "HMKfpyxXp2XES3HKkF9u",
+      "name": "たにぐちこう",
+      "systemBalance": 25800,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:06:15.558Z",
+      "updatedAt": "2025-09-03T08:06:15.558Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "hw18UAixTC4Er5V1pPx6",
+      "name": "たにぐちじゅんいち",
+      "systemBalance": 19200,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:16:23.632Z",
+      "updatedAt": "2025-09-03T08:16:23.632Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "7M3xdSJNFfpIV1JK4HnH",
+      "name": "たにむ",
+      "systemBalance": 2100,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:27:47.947Z",
+      "updatedAt": "2025-09-03T08:27:47.947Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "Got0L7WkfEANDG2NH8Nh",
+      "name": "だいや",
+      "systemBalance": 15000,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:00:20.068Z",
+      "updatedAt": "2025-09-03T08:00:20.068Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "cHWxDs4ljMfpAGwX9jl4",
+      "name": "ちはる",
+      "systemBalance": 9900,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:32:31.058Z",
+      "updatedAt": "2025-09-03T08:32:31.058Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "4bqtsKNRp2t5OXEwNIU2",
+      "name": "つじもとひろあき",
+      "systemBalance": 15100,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:20:14.864Z",
+      "updatedAt": "2025-09-03T08:20:14.864Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "AOlRV8q2pUGw6af9y7Ow",
+      "name": "つだ",
+      "systemBalance": 16500,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:02:14.698Z",
+      "updatedAt": "2025-09-03T08:02:14.698Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "4fHZoYJhStLe878glamH",
+      "name": "とのむらこういちろう",
+      "systemBalance": 1900,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:26:49.278Z",
+      "updatedAt": "2025-09-03T08:26:49.278Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "UG4ofVLezJg9qxzC8Wey",
+      "name": "ともき",
+      "systemBalance": 0,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-07T10:09:15.300Z",
+      "updatedAt": "2025-09-07T15:06:57.926Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "pgnExMOdyXmCUJQRXp39",
+      "name": "ともや",
+      "systemBalance": 10350,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T07:57:32.526Z",
+      "updatedAt": "2025-09-03T07:57:32.526Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "VPEQ3LXPvf49H6xLSzTm",
+      "name": "なかいりょうた",
+      "systemBalance": 50700,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T07:57:52.802Z",
+      "updatedAt": "2025-09-03T07:57:52.802Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "6dmSFI120TAfQzu2I9NT",
+      "name": "なな",
+      "systemBalance": 17600,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-10T15:24:28.854Z",
+      "updatedAt": "2025-09-10T15:24:28.854Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "UyvkfHJrcbiqq3i4UGLy",
+      "name": "ななみん",
+      "systemBalance": 10800,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T07:59:50.602Z",
+      "updatedAt": "2025-09-03T07:59:50.602Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "hgIjcmGKtItIUYI4eQkg",
+      "name": "なな彼氏",
+      "systemBalance": 12300,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-10T15:24:54.358Z",
+      "updatedAt": "2025-09-10T15:24:54.358Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "3stsXiFLvwCcKLxvPU14",
+      "name": "はな",
+      "systemBalance": 36400,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T07:59:36.618Z",
+      "updatedAt": "2025-09-03T07:59:36.618Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "PaeEetaJuR6aVj2x63at",
+      "name": "はやしりょうのすけ",
+      "systemBalance": 4600,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:28:06.442Z",
+      "updatedAt": "2025-09-03T08:28:06.442Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "xjiX0A1EZr324XkAUqak",
+      "name": "はやと",
+      "systemBalance": 16500,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:26:17.438Z",
+      "updatedAt": "2025-09-03T08:26:17.438Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "ykeGJTnd1vABtPsZrjnq",
+      "name": "はるか",
+      "systemBalance": 98250,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:29:49.607Z",
+      "updatedAt": "2025-09-14T15:04:19.946Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "XV8TQmguxM5X4RBG74R6",
+      "name": "はるかねくん",
+      "systemBalance": 176800,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:10:43.539Z",
+      "updatedAt": "2025-09-15T15:15:24.519Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "4ih45TRCVXuO2lSQUaSV",
+      "name": "ひじり",
+      "systemBalance": 26200,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:33:24.987Z",
+      "updatedAt": "2025-09-03T08:33:24.987Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "yLJY8heXHdPtRu5xPGWB",
+      "name": "ひなみ",
+      "systemBalance": 6100,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:34:23.857Z",
+      "updatedAt": "2025-09-03T08:34:23.857Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "1USzMcOImQtuJGiodf20",
+      "name": "ひらんさん",
+      "systemBalance": 122200,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:15:05.688Z",
+      "updatedAt": "2025-09-16T15:30:33.293Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "fqAC3BWRCl5tBkdVMOMw",
+      "name": "ひろし(大)くん",
+      "systemBalance": 6000,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:13:54.328Z",
+      "updatedAt": "2025-09-03T08:13:54.328Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "eYkfIggC6W663aNyj0ol",
+      "name": "びしゃり",
+      "systemBalance": 4700,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:18:08.251Z",
+      "updatedAt": "2025-09-03T08:18:08.251Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "ksZWptAYmIpnmZbGKq7i",
+      "name": "ふぐたゆうや",
+      "systemBalance": 20100,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:25:02.907Z",
+      "updatedAt": "2025-09-03T08:25:02.907Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "aZxcWWLPDMFI41G6Nt2s",
+      "name": "ふじいともやす",
+      "systemBalance": 13700,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:20:54.627Z",
+      "updatedAt": "2025-09-03T08:20:54.627Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "9zTKgCWKklXSkCAVc2SX",
+      "name": "ぶうさん",
+      "systemBalance": 8500,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T07:57:18.601Z",
+      "updatedAt": "2025-09-10T15:14:52.457Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "UMF41ZwR9s08kZlH4TOo",
+      "name": "ほりかわだいき",
+      "systemBalance": 38000,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:01:52.847Z",
+      "updatedAt": "2025-09-03T08:01:52.847Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "9Qw08ctrKxK2j5q7eVqQ",
+      "name": "まさおさん",
+      "systemBalance": 33400,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:19:00.987Z",
+      "updatedAt": "2025-09-03T08:19:00.987Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "w5BZDxiBIsIKUGXOg3eh",
+      "name": "まつざきともき",
+      "systemBalance": 18800,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T07:59:25.165Z",
+      "updatedAt": "2025-09-03T07:59:25.165Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "Fe4offCgxmlRXPGHpxHi",
+      "name": "みずはらやすなり",
+      "systemBalance": 16350,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T07:56:38.932Z",
+      "updatedAt": "2025-09-03T07:56:38.932Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "AqvdeHM3wdWvgr0TvjAs",
+      "name": "みなみしょうご",
+      "systemBalance": 14400,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:22:09.547Z",
+      "updatedAt": "2025-09-03T08:22:09.547Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "1hZkWD95ikZHg3H1QNE2",
+      "name": "みや",
+      "systemBalance": 20000,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T09:02:58.998Z",
+      "updatedAt": "2025-09-03T09:02:58.998Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "4RrbmXSVWdDwpGG0k1el",
+      "name": "みやざきつよし",
+      "systemBalance": 42800,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:14:45.637Z",
+      "updatedAt": "2025-09-03T08:14:45.637Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "OmBiImi7TyoeuOLGQoXl",
+      "name": "みやもとたけし",
+      "systemBalance": 72400,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:11:06.107Z",
+      "updatedAt": "2025-09-16T15:30:51.503Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "bNmvmqJmxth4hAUIiee7",
+      "name": "もりおかひろよし",
+      "systemBalance": 28900,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:29:34.197Z",
+      "updatedAt": "2025-09-03T08:29:34.197Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "htAKQJnUk98mHrs8MiVX",
+      "name": "もりもと",
+      "systemBalance": 20500,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:27:22.228Z",
+      "updatedAt": "2025-09-03T08:27:22.228Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "WSsB9cMFG9ZHFpAm6ge3",
+      "name": "やべたいしゅう",
+      "systemBalance": 11050,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:17:06.627Z",
+      "updatedAt": "2025-09-03T08:17:06.627Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "vHdCmfYDSzcknDEILmTD",
+      "name": "やべてんしょう",
+      "systemBalance": 22050,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:16:52.188Z",
+      "updatedAt": "2025-09-03T08:16:52.188Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "zYaFkgBlrkL1DQ88MaOm",
+      "name": "やまだ",
+      "systemBalance": 8400,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:18:37.568Z",
+      "updatedAt": "2025-09-03T08:18:37.568Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "iHTFxdokUDXSdoO75BBF",
+      "name": "よしだ",
+      "systemBalance": 2200,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:34:07.757Z",
+      "updatedAt": "2025-09-03T08:34:07.757Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "zuVJWLnYoKMwmgnM7FAu",
+      "name": "よしてるくん",
+      "systemBalance": 13000,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:17:23.864Z",
+      "updatedAt": "2025-09-03T08:17:23.864Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "tNr4eixwjf3faWISvocm",
+      "name": "らむさん",
+      "systemBalance": 102200,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:07:03.857Z",
+      "updatedAt": "2025-09-03T08:07:03.857Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "O1bvZTQIwR9F6w1OkjXg",
+      "name": "りく(違う方)",
+      "systemBalance": 13650,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:32:11.597Z",
+      "updatedAt": "2025-09-03T08:32:11.597Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "og8L9oqLuqYd53kC9feA",
+      "name": "りゅうさん",
+      "systemBalance": 159400,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:28:59.097Z",
+      "updatedAt": "2025-09-16T15:31:06.724Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "Gw0U8ydOxAwf8FkUZa7x",
+      "name": "りゅうたくん",
+      "systemBalance": 441550,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:09:35.050Z",
+      "updatedAt": "2025-09-15T15:17:21.108Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "JbwiaANYuXordjglptmx",
+      "name": "れおくん",
+      "systemBalance": 38650,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:15:19.047Z",
+      "updatedAt": "2025-09-03T08:15:19.047Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "DU0iHt4Pt4i73BTIqLQq",
+      "name": "スティッチ",
+      "systemBalance": 30200,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T08:28:37.047Z",
+      "updatedAt": "2025-09-03T08:28:37.047Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "gpirietY2oA7JRLRjsbp",
+      "name": "メタルエイジ",
+      "systemBalance": 13900,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-09T06:35:58.482Z",
+      "updatedAt": "2025-09-09T06:35:58.482Z",
+      "purchaseAmount": 0
+    },
+    {
+      "id": "0G6CTLiflPPoAYIfbFAl",
+      "name": "山本慶太",
+      "systemBalance": 947300,
+      "isSpecial": false,
+      "isPlaying": false,
+      "currentGameId": null,
+      "createdAt": "2025-09-03T15:15:15.538Z",
+      "updatedAt": "2025-09-15T12:50:43.913Z",
+      "purchaseAmount": 0
+    }
+  ],
+  "transactions": [
+    {
+      "id": "bgfpmRFX2uQ44ch1sDlD",
+      "playerId": "og8L9oqLuqYd53kC9feA",
+      "type": "game_cashout",
+      "amount": 23200,
+      "description": "ゲーム終了: りゅうさんのゲーム (最終: 23200©, 損益: -6800©)",
+      "createdBy": "りき",
+      "createdAt": "2025-09-16T15:31:06.724Z"
+    },
+    {
+      "id": "FQdA0exJIDtjxIX6kolC",
+      "playerId": "OmBiImi7TyoeuOLGQoXl",
+      "type": "game_cashout",
+      "amount": 12400,
+      "description": "ゲーム終了: みやもとたけしのゲーム (最終: 12400©, 損益: -1900©)",
+      "createdBy": "りき",
+      "createdAt": "2025-09-16T15:30:51.503Z"
+    },
+    {
+      "id": "UxfuyA3P3bKGrCELHGvl",
+      "playerId": "1USzMcOImQtuJGiodf20",
+      "type": "game_cashout",
+      "amount": 22200,
+      "description": "ゲーム終了: ひらんさんのゲーム (最終: 22200©, 損益: +5800©)",
+      "createdBy": "りき",
+      "createdAt": "2025-09-16T15:30:33.293Z"
+    },
+    {
+      "id": "fFbGys2iEHGEMEJ6FZaQ",
+      "playerId": "og8L9oqLuqYd53kC9feA",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうさんのゲーム (バイイン: 30000©, システム残高から使用)",
+      "createdBy": "りき",
+      "createdAt": "2025-09-16T14:20:48.193Z"
+    },
+    {
+      "id": "xZPEfWJ6MUQgZE8nuwRO",
+      "playerId": "1USzMcOImQtuJGiodf20",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ひらんさんのゲーム (バイイン: 16400©, システム残高から使用)",
+      "createdBy": "りき",
+      "createdAt": "2025-09-16T14:19:46.267Z"
+    },
+    {
+      "id": "GqMQlM2yKGAeCPjtTCHR",
+      "playerId": "OmBiImi7TyoeuOLGQoXl",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: みやもとたけしのゲーム (バイイン: 14300©, システム残高から使用)",
+      "createdBy": "りき",
+      "createdAt": "2025-09-16T14:19:13.913Z"
+    },
+    {
+      "id": "SMOgxqQ8ozmJj7WR58fx",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "type": "game_cashout",
+      "amount": 42000,
+      "description": "ゲーム終了: りゅうたくんのゲーム (最終: 42000©, 損益: +22000©)",
+      "createdBy": "ひじり",
+      "createdAt": "2025-09-15T15:17:21.108Z"
+    },
+    {
+      "id": "2zSFrHbR7zcS5xIYT7OK",
+      "playerId": "XV8TQmguxM5X4RBG74R6",
+      "type": "game_cashout",
+      "amount": 14200,
+      "description": "ゲーム終了: はるかねくんのゲーム (最終: 14200©, 損益: -15800©)",
+      "createdBy": "ひじり",
+      "createdAt": "2025-09-15T15:15:24.519Z"
+    },
+    {
+      "id": "uPb3STLpZVw2BihMGQIX",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "type": "game_cashout",
+      "amount": 24500,
+      "description": "ゲーム終了: さくらいさんのゲーム (最終: 24500©, 損益: -35500©)",
+      "createdBy": "ひじり",
+      "createdAt": "2025-09-15T15:14:41.810Z"
+    },
+    {
+      "id": "BmlEZYDdb3msWno5hE6j",
+      "playerId": "og8L9oqLuqYd53kC9feA",
+      "type": "game_cashout",
+      "amount": 56000,
+      "description": "ゲーム終了: りゅうさんのゲーム (最終: 56000©, 損益: +26000©)",
+      "createdBy": "ひじり",
+      "createdAt": "2025-09-15T15:14:03.225Z"
+    },
+    {
+      "id": "RbuwxpH2zxfyUYpwyN1G",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "type": "game_additional",
+      "amount": -20000,
+      "description": "追加購入: さくらいさんのゲーム (20000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-15T14:13:26.756Z"
+    },
+    {
+      "id": "RRKELKAYDzAMaUtUCLnL",
+      "playerId": "og8L9oqLuqYd53kC9feA",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうさんのゲーム (バイイン: 30000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-15T13:22:18.262Z"
+    },
+    {
+      "id": "lJXwB6ePDY9FuINULOLD",
+      "playerId": "0G6CTLiflPPoAYIfbFAl",
+      "type": "game_cashout",
+      "amount": 13700,
+      "description": "ゲーム終了: 山本慶太のゲーム (最終: 13700©, 損益: +3700©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-15T12:50:43.913Z"
+    },
+    {
+      "id": "EPHgMS3fNnOhI4W3Gpcq",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "type": "game_additional",
+      "amount": -13300,
+      "description": "追加購入: さくらいさんのゲーム (13300©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-15T12:34:49.966Z"
+    },
+    {
+      "id": "Z92mhRlQ60EY5yGe6mG1",
+      "playerId": "XV8TQmguxM5X4RBG74R6",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: はるかねくんのゲーム (15000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-15T12:20:54.152Z"
+    },
+    {
+      "id": "DKksu98Ymq8R6oJEKjiC",
+      "playerId": "0G6CTLiflPPoAYIfbFAl",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: 山本慶太のゲーム (バイイン: 10000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-15T12:11:21.297Z"
+    },
+    {
+      "id": "rxU2IgozElu0IQJCSKO6",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さくらいさんのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-15T12:05:19.193Z"
+    },
+    {
+      "id": "ktW4h8bR2JAeiHas9mPB",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうたくんのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-15T12:05:06.571Z"
+    },
+    {
+      "id": "R1yEXBDSwAGsVm8wIMvQ",
+      "playerId": "XV8TQmguxM5X4RBG74R6",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: はるかねくんのゲーム (バイイン: 15000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-15T12:04:47.676Z"
+    },
+    {
+      "id": "pEnweDLdx8j5YFb1BB8J",
+      "playerId": "ykeGJTnd1vABtPsZrjnq",
+      "type": "game_cashout",
+      "amount": 22000,
+      "description": "ゲーム終了: はるかのゲーム (最終: 22000©, 損益: +7000©)",
+      "createdBy": "？",
+      "createdAt": "2025-09-14T15:04:19.946Z"
+    },
+    {
+      "id": "B64JtV8a92uwuAmY92MY",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "type": "game_cashout",
+      "amount": 14400,
+      "description": "ゲーム終了: りゅうたくんのゲーム (最終: 14400©, 損益: -5600©)",
+      "createdBy": "？",
+      "createdAt": "2025-09-14T15:03:34.532Z"
+    },
+    {
+      "id": "QtdEMnUopV3KHRrDNAJA",
+      "playerId": "Cpo1qJWcx3gO4x431cPw",
+      "type": "game_cashout",
+      "amount": 3200,
+      "description": "ゲーム終了: しみずさんのゲーム (最終: 3200©, 損益: -11800©)",
+      "createdBy": "？",
+      "createdAt": "2025-09-14T15:03:18.326Z"
+    },
+    {
+      "id": "fkeXdmaLs3kGP9j8CvA2",
+      "playerId": "K7S6LEvRRsniPmucMLrn",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: きくちさんのゲーム (最終: 0©, 損益: -10000©)",
+      "createdBy": "？",
+      "createdAt": "2025-09-14T15:03:02.201Z"
+    },
+    {
+      "id": "OlUvkAC9zKr2PIQBHker",
+      "playerId": "1USzMcOImQtuJGiodf20",
+      "type": "game_cashout",
+      "amount": 14000,
+      "description": "ゲーム終了: ひらんさんのゲーム (最終: 14000©, 損益: -6000©)",
+      "createdBy": "？",
+      "createdAt": "2025-09-14T15:02:34.776Z"
+    },
+    {
+      "id": "XXA6v336EcmhfLVQW0yC",
+      "playerId": "1USzMcOImQtuJGiodf20",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: ひらんさんのゲーム (10000©, システム残高から使用)",
+      "createdBy": "？",
+      "createdAt": "2025-09-14T13:24:57.972Z"
+    },
+    {
+      "id": "pwq2Sv8yLfZmNUxGktrW",
+      "playerId": "K7S6LEvRRsniPmucMLrn",
+      "type": "game_buy_in",
+      "amount": -10000,
+      "description": "ゲーム参加: きくちさんのゲーム (バイイン: 10000©, 購入: 10000©)",
+      "createdBy": "？",
+      "createdAt": "2025-09-14T12:35:11.043Z"
+    },
+    {
+      "id": "KonPCIwNLlXxhnppNpM5",
+      "playerId": "1USzMcOImQtuJGiodf20",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: ひらんさんのゲーム (5000©, システム残高から使用)",
+      "createdBy": "？",
+      "createdAt": "2025-09-14T12:32:05.457Z"
+    },
+    {
+      "id": "zoHgbY1bz87J1MtfnpOr",
+      "playerId": "1USzMcOImQtuJGiodf20",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ひらんさんのゲーム (バイイン: 5000©, システム残高から使用)",
+      "createdBy": "？",
+      "createdAt": "2025-09-14T12:10:23.351Z"
+    },
+    {
+      "id": "YlkeHgPogyi4XFRNnYsR",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうたくんのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "？",
+      "createdAt": "2025-09-14T12:10:01.511Z"
+    },
+    {
+      "id": "AF9CmvBSAmS6OInc22kf",
+      "playerId": "Cpo1qJWcx3gO4x431cPw",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: しみずさんのゲーム (バイイン: 15000©, システム残高から使用)",
+      "createdBy": "？",
+      "createdAt": "2025-09-14T12:09:39.592Z"
+    },
+    {
+      "id": "5e3gpl6T0VMBIXMWegWz",
+      "playerId": "ykeGJTnd1vABtPsZrjnq",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: はるかのゲーム (バイイン: 15000©, システム残高から使用)",
+      "createdBy": "る",
+      "createdAt": "2025-09-14T12:07:10.401Z"
+    },
+    {
+      "id": "hBxeJpcNkktP99NYObIl",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: りゅうたくんのゲーム (最終: 0©, 損益: -1540©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-14T08:30:54.110Z"
+    },
+    {
+      "id": "mAUQ9X48FNDBSzzlYWIi",
+      "playerId": "SqGmHA65w0IrpfoVMIJ5",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: さすけのゲーム (最終: 0©, 損益: -1870©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-14T08:30:48.666Z"
+    },
+    {
+      "id": "71uJ9iC0bHN7F6W4COvZ",
+      "playerId": "SqGmHA65w0IrpfoVMIJ5",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さすけのゲーム (バイイン: 1870©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-14T08:30:39.676Z"
+    },
+    {
+      "id": "uBO59d4SAAkoiTW8IrIZ",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうたくんのゲーム (バイイン: 1540©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-14T08:30:27.491Z"
+    },
+    {
+      "id": "ckPOgcWx2ex2085PFv7b",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "type": "game_cashout",
+      "amount": 27500,
+      "description": "ゲーム終了: りゅうたくんのゲーム (最終: 27500©, 損益: +7500©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-14T08:24:35.107Z"
+    },
+    {
+      "id": "e7ON838XfF4LnsBRPEW8",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうたくんのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-14T08:24:27.066Z"
+    },
+    {
+      "id": "nU7V7oN7HGuchlE9c5JV",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "type": "game_cashout",
+      "amount": 21800,
+      "description": "ゲーム終了: さくらいさんのゲーム (最終: 21800©, 損益: +1800©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-14T08:23:40.298Z"
+    },
+    {
+      "id": "rApThgp0KDOeysQ9RlNF",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さくらいさんのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-14T08:23:32.801Z"
+    },
+    {
+      "id": "kCZwZG54ZxX0ft3NruE8",
+      "playerId": "OmBiImi7TyoeuOLGQoXl",
+      "type": "game_cashout",
+      "amount": 16400,
+      "description": "ゲーム終了: みやもとたけしのゲーム (最終: 16400©, 損益: -23600©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-14T08:23:10.127Z"
+    },
+    {
+      "id": "CXTvOOlToNcxqchTmBRK",
+      "playerId": "OmBiImi7TyoeuOLGQoXl",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: みやもとたけしのゲーム (バイイン: 40000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-14T08:22:57.897Z"
+    },
+    {
+      "id": "sRtxiPhkcecmJfTZ1bP8",
+      "playerId": "ykeGJTnd1vABtPsZrjnq",
+      "type": "game_cashout",
+      "amount": 18400,
+      "description": "ゲーム終了: はるかのゲーム (最終: 18400©, 損益: +3400©)",
+      "createdBy": "なくら",
+      "createdAt": "2025-09-11T13:27:07.276Z"
+    },
+    {
+      "id": "laohACJ0YRslGmXeOWiW",
+      "playerId": "Cpo1qJWcx3gO4x431cPw",
+      "type": "game_cashout",
+      "amount": 24400,
+      "description": "ゲーム終了: しみずさんのゲーム (最終: 24400©, 損益: +9400©)",
+      "createdBy": "なくら",
+      "createdAt": "2025-09-11T13:25:38.957Z"
+    },
+    {
+      "id": "vpb3CnLiU3grtULG8vAI",
+      "playerId": "ykeGJTnd1vABtPsZrjnq",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: はるかのゲーム (バイイン: 15000©, システム残高から使用)",
+      "createdBy": "なくら",
+      "createdAt": "2025-09-11T12:00:54.484Z"
+    },
+    {
+      "id": "8VfLf1KV9s86t1NhES5V",
+      "playerId": "Cpo1qJWcx3gO4x431cPw",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: しみずさんのゲーム (バイイン: 15000©, システム残高から使用)",
+      "createdBy": "なくら",
+      "createdAt": "2025-09-11T12:00:32.433Z"
+    },
+    {
+      "id": "8kLPiNSCTWY74F2ktBAx",
+      "playerId": "ykeGJTnd1vABtPsZrjnq",
+      "type": "game_cashout",
+      "amount": 25000,
+      "description": "ゲーム終了: はるかのゲーム (最終: 25000©, 損益: +15000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T17:53:46.927Z"
+    },
+    {
+      "id": "BR8nyiZw4C9EvaO6tiq0",
+      "playerId": "ykeGJTnd1vABtPsZrjnq",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: はるかのゲーム (バイイン: 10000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T17:53:33.848Z"
+    },
+    {
+      "id": "DhAkfUKpAzodCM5rNkuE",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: りゅうたくんのゲーム (最終: 0©, 損益: -15000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T17:53:22.031Z"
+    },
+    {
+      "id": "a1T7d3e8tpbmCeYT0C1D",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうたくんのゲーム (バイイン: 15000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T17:53:16.811Z"
+    },
+    {
+      "id": "RaQtnXoNwwdhODWqY6FB",
+      "playerId": "SqGmHA65w0IrpfoVMIJ5",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: さすけのゲーム (最終: 0©, 損益: -1210©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T15:21:59.197Z"
+    },
+    {
+      "id": "xVQnIgtYOdOS4Pmaljmc",
+      "playerId": "SqGmHA65w0IrpfoVMIJ5",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さすけのゲーム (バイイン: 1210©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T15:21:54.657Z"
+    },
+    {
+      "id": "kfrs9JlIcGw97UqgLm3L",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: りゅうたくんのゲーム (最終: 0©, 損益: -7090©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T15:21:28.422Z"
+    },
+    {
+      "id": "VH5sYorCSvHWOrnM1DC1",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうたくんのゲーム (バイイン: 7090©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T15:21:23.793Z"
+    },
+    {
+      "id": "D2eFK52NGcB3tAwVfZOa",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "type": "withdrawal",
+      "amount": -20000,
+      "description": "システム残高調整",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T15:19:10.023Z"
+    },
+    {
+      "id": "OZ82Ho2CiXtLg2UbB1Kl",
+      "playerId": "1Zf2HWhP7zodiCj7L20K",
+      "type": "game_cashout",
+      "amount": 27500,
+      "description": "ゲーム終了: あんさんのゲーム (最終: 27500©, 損益: -32500©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T15:18:48.698Z"
+    },
+    {
+      "id": "QXMY2GnNZoU8E10SlE92",
+      "playerId": "1Zf2HWhP7zodiCj7L20K",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: あんさんのゲーム (バイイン: 60000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T15:18:38.927Z"
+    },
+    {
+      "id": "hvrioTymLE4ZbVqKeG5c",
+      "playerId": "og8L9oqLuqYd53kC9feA",
+      "type": "game_cashout",
+      "amount": 3600,
+      "description": "ゲーム終了: りゅうさんのゲーム (最終: 3600©, 損益: -26400©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T15:18:26.517Z"
+    },
+    {
+      "id": "k4iddwo09a4GDqmnycFv",
+      "playerId": "og8L9oqLuqYd53kC9feA",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうさんのゲーム (バイイン: 30000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T15:18:01.412Z"
+    },
+    {
+      "id": "SZKB47VvetlRaEQpi80V",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "type": "game_cashout",
+      "amount": 61000,
+      "description": "ゲーム終了: りゅうたくんのゲーム (最終: 61000©, 損益: +21000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T15:17:29.122Z"
+    },
+    {
+      "id": "spDg6l2IvHvhdi1MwzvK",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: りゅうたくんのゲーム (20000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T15:17:17.102Z"
+    },
+    {
+      "id": "HpVtWR8eKDdYin1pFUi8",
+      "playerId": "SqGmHA65w0IrpfoVMIJ5",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: さすけのゲーム (最終: 0©, 損益: -15000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T15:16:44.887Z"
+    },
+    {
+      "id": "3NbTHqoonUefJpEOj5o3",
+      "playerId": "0G6CTLiflPPoAYIfbFAl",
+      "type": "game_cashout",
+      "amount": 14100,
+      "description": "ゲーム終了: 山本慶太のゲーム (最終: 14100©, 損益: -5900©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T15:16:04.492Z"
+    },
+    {
+      "id": "DZyFZtEJT0f8neLATtIk",
+      "playerId": "0G6CTLiflPPoAYIfbFAl",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: 山本慶太のゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T15:15:56.307Z"
+    },
+    {
+      "id": "xySQSbPIcf2DxfJB5HtW",
+      "playerId": "9zTKgCWKklXSkCAVc2SX",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: ぶうさんのゲーム (最終: 0©, 損益: -31500©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T15:14:52.457Z"
+    },
+    {
+      "id": "FZ3Ektxx8kygI1LCHpLJ",
+      "playerId": "9zTKgCWKklXSkCAVc2SX",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ぶうさんのゲーム (バイイン: 31500©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T15:14:45.611Z"
+    },
+    {
+      "id": "4uQHaA1r7htqpqRjiltk",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "type": "game_cashout",
+      "amount": 24000,
+      "description": "ゲーム終了: さくらいさんのゲーム (最終: 24000©, 損益: +4000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T15:06:58.658Z"
+    },
+    {
+      "id": "ZxeP8hrHO32Bx1iCTmoE",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さくらいさんのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T15:06:47.483Z"
+    },
+    {
+      "id": "cj8LjZNWYJLalutDRiBE",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "type": "game_cashout",
+      "amount": 40900,
+      "description": "ゲーム終了: さくらいさんのゲーム (最終: 40900©, 損益: -11700©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T15:06:16.813Z"
+    },
+    {
+      "id": "2voNZfWH1UIsCNJt0MVQ",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうたくんのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T12:54:56.399Z"
+    },
+    {
+      "id": "9vShTjjSqIoIw7FFUpLU",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "type": "game_additional",
+      "amount": -20000,
+      "description": "追加購入: さくらいさんのゲーム (20000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T12:46:23.389Z"
+    },
+    {
+      "id": "UXUcEgILtpNwkIJIhESw",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: さくらいさんのゲーム (2600©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T12:46:17.041Z"
+    },
+    {
+      "id": "8mSRKvhX5ZOG1iTfmXz8",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: さくらいさんのゲーム (10000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T12:01:11.728Z"
+    },
+    {
+      "id": "9nFk0z9SVFsdIeb9Sali",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さくらいさんのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T11:42:36.709Z"
+    },
+    {
+      "id": "H3gXkwjeeiDDtvSkFJO2",
+      "playerId": "SqGmHA65w0IrpfoVMIJ5",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さすけのゲーム (バイイン: 15000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-10T11:42:24.908Z"
+    },
+    {
+      "id": "CvvOT2ngfRGWrsVM0u3J",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: りゅうたくんのゲーム (最終: 0©, 損益: -9730©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-08T16:07:49.687Z"
+    },
+    {
+      "id": "8SKpBgDRx2oD97WE8Uef",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうたくんのゲーム (バイイン: 9730©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-08T16:07:42.634Z"
+    },
+    {
+      "id": "xzwvrpShZN1J7Z4n9szv",
+      "playerId": "SqGmHA65w0IrpfoVMIJ5",
+      "type": "game_cashout",
+      "amount": 550,
+      "description": "ゲーム終了: さすけのゲーム (最終: 550©, 損益: -8740©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-08T16:06:52.828Z"
+    },
+    {
+      "id": "UAKh6WHPulhe8RHvRuLm",
+      "playerId": "SqGmHA65w0IrpfoVMIJ5",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さすけのゲーム (バイイン: 9290©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-08T16:06:38.073Z"
+    },
+    {
+      "id": "29FlqJm4qgrIu8eGFtCx",
+      "playerId": "ykeGJTnd1vABtPsZrjnq",
+      "type": "game_cashout",
+      "amount": 6900,
+      "description": "ゲーム終了: はるかのゲーム (最終: 6900©, 損益: -23100©)",
+      "createdBy": "ひじり",
+      "createdAt": "2025-09-08T15:25:51.270Z"
+    },
+    {
+      "id": "rpkUKKoA1Q3n0HJAnzpr",
+      "playerId": "ykeGJTnd1vABtPsZrjnq",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: はるかのゲーム (バイイン: 30000©, システム残高から使用)",
+      "createdBy": "ひじり",
+      "createdAt": "2025-09-08T15:25:43.739Z"
+    },
+    {
+      "id": "bLslP7HHpkWYKE21Q5Zt",
+      "playerId": "SqGmHA65w0IrpfoVMIJ5",
+      "type": "game_cashout",
+      "amount": 10900,
+      "description": "ゲーム終了: さすけのゲーム (最終: 10900©, 損益: -4100©)",
+      "createdBy": "ひじり",
+      "createdAt": "2025-09-08T15:25:22.625Z"
+    },
+    {
+      "id": "d5R5qOkE4f4ZrE0hsD71",
+      "playerId": "SqGmHA65w0IrpfoVMIJ5",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さすけのゲーム (バイイン: 15000©, システム残高から使用)",
+      "createdBy": "ひじり",
+      "createdAt": "2025-09-08T15:25:13.177Z"
+    },
+    {
+      "id": "VakUDPlw7626hs8gskti",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "type": "game_cashout",
+      "amount": 59800,
+      "description": "ゲーム終了: りゅうたくんのゲーム (最終: 59800©, 損益: +39800©)",
+      "createdBy": "ひじり",
+      "createdAt": "2025-09-08T15:24:37.898Z"
+    },
+    {
+      "id": "pwCWcea0ynaKmnAKTknC",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうたくんのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "ひじり",
+      "createdAt": "2025-09-08T15:24:25.656Z"
+    },
+    {
+      "id": "PCcgCEWfmzYgtn9hEgB5",
+      "playerId": "XV8TQmguxM5X4RBG74R6",
+      "type": "game_cashout",
+      "amount": 40300,
+      "description": "ゲーム終了: はるかねくんのゲーム (最終: 40300©, 損益: +10300©)",
+      "createdBy": "ひじり",
+      "createdAt": "2025-09-08T15:13:16.200Z"
+    },
+    {
+      "id": "bsyTarZajsXQiT9gWD6a",
+      "playerId": "XV8TQmguxM5X4RBG74R6",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: はるかねくんのゲーム (バイイン: 30000©, システム残高から使用)",
+      "createdBy": "ひじり",
+      "createdAt": "2025-09-08T15:12:58.272Z"
+    },
+    {
+      "id": "YePDLICr4I4D1fRiDTgP",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "type": "game_cashout",
+      "amount": 16400,
+      "description": "ゲーム終了: さくらいさんのゲーム (最終: 16400©, 損益: -3600©)",
+      "createdBy": "ひじり",
+      "createdAt": "2025-09-08T15:12:00.716Z"
+    },
+    {
+      "id": "0BVGH4HzIjcw6OHWZfVa",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さくらいさんのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "ひじり",
+      "createdAt": "2025-09-08T15:11:34.775Z"
+    },
+    {
+      "id": "Q0HgkiGXTxM3paZgEEFC",
+      "playerId": "0G6CTLiflPPoAYIfbFAl",
+      "type": "game_cashout",
+      "amount": 71600,
+      "description": "ゲーム終了: 山本慶太のゲーム (最終: 71600©, 損益: +21600©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-07T15:09:29.421Z"
+    },
+    {
+      "id": "OD0G1zFc27rTxGmtAEhY",
+      "playerId": "0G6CTLiflPPoAYIfbFAl",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: 山本慶太のゲーム (バイイン: 50000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-07T15:08:29.427Z"
+    },
+    {
+      "id": "cvsQml8XqkqUk0rOjJVM",
+      "playerId": "OmBiImi7TyoeuOLGQoXl",
+      "type": "game_cashout",
+      "amount": 57900,
+      "description": "ゲーム終了: みやもとたけしのゲーム (最終: 57900©, 損益: +37900©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-07T15:07:46.307Z"
+    },
+    {
+      "id": "HFDU9yk0cIkvwYKXR6Gy",
+      "playerId": "SqGmHA65w0IrpfoVMIJ5",
+      "type": "game_cashout",
+      "amount": 12800,
+      "description": "ゲーム終了: さすけのゲーム (最終: 12800©, 損益: -32200©)",
+      "createdBy": "る",
+      "createdAt": "2025-09-07T15:07:05.322Z"
+    },
+    {
+      "id": "SkyLhejzof3sYiGWXRHD",
+      "playerId": "UG4ofVLezJg9qxzC8Wey",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: ともきのゲーム (最終: 0©, 損益: -20000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-07T15:06:57.926Z"
+    },
+    {
+      "id": "IdpvBsAKpX6LJmostHJV",
+      "playerId": "ykeGJTnd1vABtPsZrjnq",
+      "type": "game_cashout",
+      "amount": 20200,
+      "description": "ゲーム終了: はるかのゲーム (最終: 20200©, 損益: -9800©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-07T15:06:42.717Z"
+    },
+    {
+      "id": "qIwa8jgzSpLqKZjqf7hx",
+      "playerId": "1USzMcOImQtuJGiodf20",
+      "type": "game_cashout",
+      "amount": 41200,
+      "description": "ゲーム終了: ひらんさんのゲーム (最終: 41200©, 損益: +1200©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-07T15:05:48.667Z"
+    },
+    {
+      "id": "W1Q65o7rBJZsmtmgqtaT",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: さくらいさんのゲーム (最終: 0©, 損益: -40000©)",
+      "createdBy": "りき",
+      "createdAt": "2025-09-07T14:56:31.198Z"
+    },
+    {
+      "id": "p7z2bc7wWqKSnZgy309s",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "type": "game_cashout",
+      "amount": 9100,
+      "description": "ゲーム終了: りゅうたくんのゲーム (最終: 9100©, 損益: -30900©)",
+      "createdBy": "りき",
+      "createdAt": "2025-09-07T14:47:18.498Z"
+    },
+    {
+      "id": "8fwHjfZmnRcoV4OO2Udc",
+      "playerId": "K7S6LEvRRsniPmucMLrn",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: きくちさんのゲーム (最終: 0©, 損益: -17000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-07T14:44:16.923Z"
+    },
+    {
+      "id": "ob8UQd1RGZyPbBwfzFC6",
+      "playerId": "1USzMcOImQtuJGiodf20",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: ひらんさんのゲーム (20000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-07T13:36:56.898Z"
+    },
+    {
+      "id": "pgoSvSGtUmhmg9ETYO6N",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: さくらいさんのゲーム (10000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-07T13:20:58.923Z"
+    },
+    {
+      "id": "CMwvUKXMvCwdyMh8aS9L",
+      "playerId": "UG4ofVLezJg9qxzC8Wey",
+      "type": "game_additional",
+      "amount": -10000,
+      "description": "追加購入: ともきのゲーム (10000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-07T12:51:41.732Z"
+    },
+    {
+      "id": "IUEcfJeQaU8z7lOqR1QR",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さくらいさんのゲーム (バイイン: 30000©, システム残高から使用)",
+      "createdBy": "りき",
+      "createdAt": "2025-09-07T12:24:04.448Z"
+    },
+    {
+      "id": "E8XgyHtTcQ59rPx8ATMe",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: りゅうたくんのゲーム (20000©, システム残高から使用)",
+      "createdBy": "る",
+      "createdAt": "2025-09-07T12:11:26.632Z"
+    },
+    {
+      "id": "Sfm06595qTWnBAn0faYm",
+      "playerId": "K7S6LEvRRsniPmucMLrn",
+      "type": "game_additional",
+      "amount": -10000,
+      "description": "追加購入: きくちさんのゲーム (10000©)",
+      "createdBy": "りき",
+      "createdAt": "2025-09-07T12:05:09.553Z"
+    },
+    {
+      "id": "98C0fZ76QBCf6kR0Qld8",
+      "playerId": "SqGmHA65w0IrpfoVMIJ5",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: さすけのゲーム (10000©, システム残高から使用)",
+      "createdBy": "る",
+      "createdAt": "2025-09-07T11:35:04.772Z"
+    },
+    {
+      "id": "MvfxAq1jDrV6di4zwFbT",
+      "playerId": "1USzMcOImQtuJGiodf20",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ひらんさんのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "りき",
+      "createdAt": "2025-09-07T11:34:25.866Z"
+    },
+    {
+      "id": "P9wyXiskZi4QiXr9kroH",
+      "playerId": "SqGmHA65w0IrpfoVMIJ5",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さすけのゲーム (バイイン: 35000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-07T11:15:26.173Z"
+    },
+    {
+      "id": "yzmoF78LXmCbUJj3u2oq",
+      "playerId": "K7S6LEvRRsniPmucMLrn",
+      "type": "game_buy_in",
+      "amount": -5850,
+      "description": "ゲーム参加: きくちさんのゲーム (バイイン: 7000©, 購入: 5850©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-07T11:00:15.907Z"
+    },
+    {
+      "id": "GbQ4vHRQP5Ff5RCbC6x5",
+      "playerId": "ykeGJTnd1vABtPsZrjnq",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: はるかのゲーム (15000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-07T10:41:17.061Z"
+    },
+    {
+      "id": "5QiYsnJwGYG40OHzPCgX",
+      "playerId": "OmBiImi7TyoeuOLGQoXl",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: みやもとたけしのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-07T10:22:37.988Z"
+    },
+    {
+      "id": "ON6XiSBmIduW7Zj7fZvl",
+      "playerId": "UG4ofVLezJg9qxzC8Wey",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ともきのゲーム (バイイン: 10000©, システム残高から使用)",
+      "createdBy": "りき",
+      "createdAt": "2025-09-07T10:13:27.067Z"
+    },
+    {
+      "id": "36S54IjAVHjC04ET2AWD",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうたくんのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "りき",
+      "createdAt": "2025-09-07T10:09:41.621Z"
+    },
+    {
+      "id": "22Bd9shkjPM4jIraKrQo",
+      "playerId": "ykeGJTnd1vABtPsZrjnq",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: はるかのゲーム (バイイン: 15000©, システム残高から使用)",
+      "createdBy": "りき",
+      "createdAt": "2025-09-07T10:09:31.121Z"
+    },
+    {
+      "id": "GWNUWizWcKqpR1B09Nzo",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: りゅうたくんのゲーム (最終: 0©, 損益: -6000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-06T18:51:51.496Z"
+    },
+    {
+      "id": "pa4rWVFvdNvUcGQIACZ0",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうたくんのゲーム (バイイン: 6000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-06T18:51:43.094Z"
+    },
+    {
+      "id": "32yFIx5ecn9bSIhmEYdb",
+      "playerId": "og8L9oqLuqYd53kC9feA",
+      "type": "game_cashout",
+      "amount": 11000,
+      "description": "ゲーム終了: りゅうさんのゲーム (最終: 11000©, 損益: +1000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-06T18:51:32.534Z"
+    },
+    {
+      "id": "LttlI0l4iSpCdc5gXTfy",
+      "playerId": "og8L9oqLuqYd53kC9feA",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうさんのゲーム (バイイン: 10000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-06T18:51:23.357Z"
+    },
+    {
+      "id": "SNfebtqr1944HMgP7L8Q",
+      "playerId": "SqGmHA65w0IrpfoVMIJ5",
+      "type": "game_cashout",
+      "amount": 25000,
+      "description": "ゲーム終了: さすけのゲーム (最終: 25000©, 損益: +15000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-05T15:12:31.262Z"
+    },
+    {
+      "id": "YQ6k2gnl8R0WFaY0aAyP",
+      "playerId": "SqGmHA65w0IrpfoVMIJ5",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さすけのゲーム (バイイン: 10000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-05T15:12:22.558Z"
+    },
+    {
+      "id": "fJ2Kk18ObJ8adieSlePx",
+      "playerId": "OmBiImi7TyoeuOLGQoXl",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: みやもとたけしのゲーム (最終: 0©, 損益: -10000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-05T10:53:53.418Z"
+    },
+    {
+      "id": "wDstrG0G4EhGZsGY7Cu5",
+      "playerId": "OmBiImi7TyoeuOLGQoXl",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: みやもとたけしのゲーム (バイイン: 10000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-05T10:53:46.187Z"
+    },
+    {
+      "id": "wUzvSjvqvnm2GzfFoM15",
+      "playerId": "OmBiImi7TyoeuOLGQoXl",
+      "type": "game_cashout",
+      "amount": 70000,
+      "description": "ゲーム終了: みやもとたけしのゲーム (最終: 70000©, 損益: +60000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-05T10:53:30.693Z"
+    },
+    {
+      "id": "bqjIxVqCOqJ7AVwuHPDz",
+      "playerId": "OmBiImi7TyoeuOLGQoXl",
+      "type": "game_buy_in",
+      "amount": -10000,
+      "description": "ゲーム参加: みやもとたけしのゲーム (バイイン: 10000©, 購入: 10000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-05T10:53:19.648Z"
+    },
+    {
+      "id": "ddlOw2AWNHvsL5aOA07N",
+      "playerId": "SqGmHA65w0IrpfoVMIJ5",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: さすけのゲーム (最終: 0©, 損益: -3960©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-05T09:36:45.447Z"
+    },
+    {
+      "id": "XhmMzBkivtG3pxudVoxI",
+      "playerId": "SqGmHA65w0IrpfoVMIJ5",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さすけのゲーム (バイイン: 3960©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-05T09:36:36.488Z"
+    },
+    {
+      "id": "daiSCsRBaR4ASCDig0Xe",
+      "playerId": "0G6CTLiflPPoAYIfbFAl",
+      "type": "game_cashout",
+      "amount": 2500,
+      "description": "ゲーム終了: 山本慶太のゲーム (最終: 2500©, 損益: -17500©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-05T09:36:02.703Z"
+    },
+    {
+      "id": "5ih7rwWZchWboX0eQbPX",
+      "playerId": "pENJJRenFpdfk9Z15qJw",
+      "type": "game_cashout",
+      "amount": 35800,
+      "description": "ゲーム終了: おおさわのゲーム (最終: 35800©, 損益: +18800©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-04T14:58:56.952Z"
+    },
+    {
+      "id": "mQtZ1J659t8MufOhFUJ5",
+      "playerId": "og8L9oqLuqYd53kC9feA",
+      "type": "game_cashout",
+      "amount": 27500,
+      "description": "ゲーム終了: りゅうさんのゲーム (最終: 27500©, 損益: -2500©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-04T14:58:46.964Z"
+    },
+    {
+      "id": "fO1eKbUDkDWEgI7VNMBo",
+      "playerId": "ykeGJTnd1vABtPsZrjnq",
+      "type": "game_cashout",
+      "amount": 12500,
+      "description": "ゲーム終了: はるかのゲーム (最終: 12500©, 損益: -2500©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-04T14:58:25.772Z"
+    },
+    {
+      "id": "eAFKaOXjzhqEt1b5VQu7",
+      "playerId": "SqGmHA65w0IrpfoVMIJ5",
+      "type": "game_cashout",
+      "amount": 28100,
+      "description": "ゲーム終了: さすけのゲーム (最終: 28100©, 損益: +13100©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-04T14:58:09.056Z"
+    },
+    {
+      "id": "7qtJcf4rzjVK7yga09nf",
+      "playerId": "ykeGJTnd1vABtPsZrjnq",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: はるかのゲーム (バイイン: 15000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-04T14:45:38.757Z"
+    },
+    {
+      "id": "VUkPgy3HIU3MfLFu6ZZF",
+      "playerId": "pENJJRenFpdfk9Z15qJw",
+      "type": "game_buy_in",
+      "amount": -7000,
+      "description": "ゲーム参加: おおさわのゲーム (バイイン: 17000©, 購入: 7000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-04T12:30:35.619Z"
+    },
+    {
+      "id": "IO4ZXQx5qH0c24Q0SlYP",
+      "playerId": "0G6CTLiflPPoAYIfbFAl",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: 山本慶太のゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-04T12:11:49.690Z"
+    },
+    {
+      "id": "9g5ahSRDOomIlBlJyrtj",
+      "playerId": "SqGmHA65w0IrpfoVMIJ5",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さすけのゲーム (バイイン: 15000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-04T12:09:55.234Z"
+    },
+    {
+      "id": "0AntJfmFdw4C9do22b3S",
+      "playerId": "og8L9oqLuqYd53kC9feA",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうさんのゲーム (バイイン: 30000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-04T12:09:44.677Z"
+    },
+    {
+      "id": "5ft0mQAr9RLz9fd827Pa",
+      "playerId": "0G6CTLiflPPoAYIfbFAl",
+      "type": "game_cashout",
+      "amount": 5400,
+      "description": "ゲーム終了: 山本慶太のゲーム (最終: 5400©, 損益: -54600©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-03T15:15:48.871Z"
+    },
+    {
+      "id": "Iyas8fca9CF9FYZ2z05u",
+      "playerId": "0G6CTLiflPPoAYIfbFAl",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: 山本慶太のゲーム (バイイン: 60000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-03T15:15:33.853Z"
+    },
+    {
+      "id": "EgXj8ImJS5NYD1yBrCzO",
+      "playerId": "OmBiImi7TyoeuOLGQoXl",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: みやもとたけしのゲーム (最終: 0©, 損益: -35000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-03T15:14:55.577Z"
+    },
+    {
+      "id": "sGOkRgeZw8K4piA16VZX",
+      "playerId": "ykeGJTnd1vABtPsZrjnq",
+      "type": "game_cashout",
+      "amount": 24400,
+      "description": "ゲーム終了: はるかのゲーム (最終: 24400©, 損益: -5600©)",
+      "createdBy": "なっち",
+      "createdAt": "2025-09-03T15:14:55.345Z"
+    },
+    {
+      "id": "uzOhHM2TXGIa68E7xc83",
+      "playerId": "og8L9oqLuqYd53kC9feA",
+      "type": "game_cashout",
+      "amount": 41100,
+      "description": "ゲーム終了: りゅうさんのゲーム (最終: 41100©, 損益: +11100©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-03T15:14:41.233Z"
+    },
+    {
+      "id": "qyiLOyx1jrotlFFNLS7T",
+      "playerId": "1USzMcOImQtuJGiodf20",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: ひらんさんのゲーム (最終: 0©, 損益: -15000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-03T15:14:17.613Z"
+    },
+    {
+      "id": "TYxHevv6mWhXXG7mhGR1",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "type": "game_cashout",
+      "amount": 67000,
+      "description": "ゲーム終了: さくらいさんのゲーム (最終: 67000©, 損益: +37000©)",
+      "createdBy": "なっち",
+      "createdAt": "2025-09-03T15:13:16.547Z"
+    },
+    {
+      "id": "wfQaKYTRC0LSUpuRDVI3",
+      "playerId": "SqGmHA65w0IrpfoVMIJ5",
+      "type": "game_cashout",
+      "amount": 43000,
+      "description": "ゲーム終了: さすけのゲーム (最終: 43000©, 損益: +25800©)",
+      "createdBy": "なっち",
+      "createdAt": "2025-09-03T15:12:04.945Z"
+    },
+    {
+      "id": "EY0Ie61yza1c2tiMBogI",
+      "playerId": "K7S6LEvRRsniPmucMLrn",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: きくちさんのゲーム (最終: 0©, 損益: -20000©)",
+      "createdBy": "なっち",
+      "createdAt": "2025-09-03T15:11:39.035Z"
+    },
+    {
+      "id": "Id59iAxIi99RpC0mHGYO",
+      "playerId": "1USzMcOImQtuJGiodf20",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: ひらんさんのゲーム (5000©, システム残高から使用)",
+      "createdBy": "なっち",
+      "createdAt": "2025-09-03T13:11:01.670Z"
+    },
+    {
+      "id": "iikNbz5ia4fwYXczDU4C",
+      "playerId": "1USzMcOImQtuJGiodf20",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ひらんさんのゲーム (バイイン: 10000©, システム残高から使用)",
+      "createdBy": "なっち",
+      "createdAt": "2025-09-03T12:39:22.282Z"
+    },
+    {
+      "id": "KdRbajQWCPHAPCApDVbx",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: さくらいさんのゲーム (10000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-03T12:14:57.161Z"
+    },
+    {
+      "id": "rNAD9VqCnIuxSjIoPgjW",
+      "playerId": "og8L9oqLuqYd53kC9feA",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうさんのゲーム (バイイン: 30000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-03T12:12:47.326Z"
+    },
+    {
+      "id": "tFGo3gHdhsxd7ssIpGFy",
+      "playerId": "OmBiImi7TyoeuOLGQoXl",
+      "type": "game_additional",
+      "amount": -10000,
+      "description": "追加購入: みやもとたけしのゲーム (10000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-03T12:11:04.432Z"
+    },
+    {
+      "id": "IXjfWQqzRcrRLyW6BkYx",
+      "playerId": "ykeGJTnd1vABtPsZrjnq",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: はるかのゲーム (15000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-03T12:10:52.091Z"
+    },
+    {
+      "id": "Yce2ym9N6bUZoSOzy6Rx",
+      "playerId": "OmBiImi7TyoeuOLGQoXl",
+      "type": "game_additional",
+      "amount": -10000,
+      "description": "追加購入: みやもとたけしのゲーム (10000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-03T11:39:15.866Z"
+    },
+    {
+      "id": "jit4nnVHAqzYpZUB9gIV",
+      "playerId": "ykeGJTnd1vABtPsZrjnq",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: はるかのゲーム (バイイン: 15000©, システム残高から使用)",
+      "createdBy": "なっち",
+      "createdAt": "2025-09-03T11:30:26.565Z"
+    },
+    {
+      "id": "dpdJgVWQD4F5bU9PfoSe",
+      "playerId": "K7S6LEvRRsniPmucMLrn",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: きくちさんのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "なっち",
+      "createdAt": "2025-09-03T11:29:12.556Z"
+    },
+    {
+      "id": "EkrLFQWyajVIDpYkvHzO",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さくらいさんのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "なっち",
+      "createdAt": "2025-09-03T11:26:06.190Z"
+    },
+    {
+      "id": "iZBpA6ko7dw6lGJ7JZJr",
+      "playerId": "OmBiImi7TyoeuOLGQoXl",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: みやもとたけしのゲーム (バイイン: 15000©, システム残高から使用)",
+      "createdBy": "なっち",
+      "createdAt": "2025-09-03T11:25:45.372Z"
+    },
+    {
+      "id": "vC37UDMKMavzqPSCiYZO",
+      "playerId": "SqGmHA65w0IrpfoVMIJ5",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さすけのゲーム (バイイン: 17200©, システム残高から使用)",
+      "createdBy": "なっち",
+      "createdAt": "2025-09-03T10:52:44.900Z"
+    },
+    {
+      "id": "Yy43f2DRbbAdysnl6xUF",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "type": "game_cashout",
+      "amount": 20000,
+      "description": "ゲーム終了: さくらいさんのゲーム (最終: 20000©, 損益: +10000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-03T09:02:34.221Z"
+    },
+    {
+      "id": "xRd4JY7ah7UqMrB1CC9r",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さくらいさんのゲーム (バイイン: 10000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-03T09:02:11.381Z"
+    },
+    {
+      "id": "GcqSyCfYGJXYupTbzT5u",
+      "playerId": "ykeGJTnd1vABtPsZrjnq",
+      "type": "deposit",
+      "amount": 100000,
+      "description": "システム残高調整",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-03T08:35:18.918Z"
+    },
+    {
+      "id": "S38kqg7l2Q7fWE5q8Bbl",
+      "playerId": "Ly4xxZXB05Ny6HPtle5F",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: りゅうたくんのゲーム (最終: 0©, 損益: -20000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-03T07:54:17.157Z"
+    },
+    {
+      "id": "9QtrVCbiib8AF8F7dGSX",
+      "playerId": "FzNZKbgvdluiItgzFLfM",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: しみずさんのゲーム (最終: 0©, 損益: -15000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-03T07:54:11.726Z"
+    },
+    {
+      "id": "FFKFmKkBA59nuTuYrM5B",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: さくらいさんのゲーム (最終: 0©, 損益: -6800©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-03T07:54:05.522Z"
+    },
+    {
+      "id": "bajKdZbR9OIlQfKaV0LX",
+      "playerId": "Oab427k9FORGJvMY9vKd",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: あんさんのゲーム (最終: 0©, 損益: -40000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-09-03T07:53:59.597Z"
+    },
+    {
+      "id": "EI3TiTVIqfWViiRDlmES",
+      "playerId": "k8fjnyHMpZUHBxrn3rUn",
+      "type": "game_cashout",
+      "amount": 41900,
+      "description": "ゲーム終了: りゅうさんのゲーム (最終: 41900©, 損益: +11900©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-25T14:30:54.112Z"
+    },
+    {
+      "id": "HISx6GsJ27k2J0Kza8gg",
+      "playerId": "Ly4xxZXB05Ny6HPtle5F",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうたくんのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "ひじり",
+      "createdAt": "2025-08-25T13:25:48.213Z"
+    },
+    {
+      "id": "X3oNNneXTzrcYu9lXAFB",
+      "playerId": "Oab427k9FORGJvMY9vKd",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: あんさんのゲーム (20000©, システム残高から使用)",
+      "createdBy": "ひじり",
+      "createdAt": "2025-08-25T13:22:31.819Z"
+    },
+    {
+      "id": "GLQehY3aMUYXfK3oXCLR",
+      "playerId": "gt3uUZ5uhpwsM7sAPv8f",
+      "type": "game_cashout",
+      "amount": 5900,
+      "description": "ゲーム終了: 慶太のゲーム (最終: 5900©, 損益: -24100©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-25T12:39:53.562Z"
+    },
+    {
+      "id": "Z2gfQp1tlNsVJhRU6rG6",
+      "playerId": "Oab427k9FORGJvMY9vKd",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: あんさんのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-25T12:39:43.508Z"
+    },
+    {
+      "id": "zeS2es3Be0Vq1k2Jhz03",
+      "playerId": "gt3uUZ5uhpwsM7sAPv8f",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: 慶太のゲーム (バイイン: 30000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-25T12:10:13.723Z"
+    },
+    {
+      "id": "b3u3YDscBVqd36X8JEI0",
+      "playerId": "k8fjnyHMpZUHBxrn3rUn",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうさんのゲーム (バイイン: 30000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-25T11:58:16.767Z"
+    },
+    {
+      "id": "AhLu24Gv6Ssjh0LSCuJQ",
+      "playerId": "FzNZKbgvdluiItgzFLfM",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: しみずさんのゲーム (バイイン: 15000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-25T11:53:50.147Z"
+    },
+    {
+      "id": "K3Clj5Yzhbige4mm8m1M",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さくらいさんのゲーム (バイイン: 6800©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-25T11:53:43.552Z"
+    },
+    {
+      "id": "qsqBQU3ycw1zpbVxEgr0",
+      "playerId": "Ly4xxZXB05Ny6HPtle5F",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: りゅうたくんのゲーム (最終: 0©, 損益: -46880©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-24T17:49:41.558Z"
+    },
+    {
+      "id": "u1J1E3LeANE8iXl7uPvr",
+      "playerId": "Ly4xxZXB05Ny6HPtle5F",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうたくんのゲーム (バイイン: 46880©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-24T17:49:32.263Z"
+    },
+    {
+      "id": "pt7bF17403RrNwm6Twzx",
+      "playerId": "Ly4xxZXB05Ny6HPtle5F",
+      "type": "game_cashout",
+      "amount": 10000,
+      "description": "ゲーム終了: りゅうたくんのゲーム (最終: 10000©, 損益: +0©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-24T17:48:58.143Z"
+    },
+    {
+      "id": "Peql2sryLgCib3jPtNwS",
+      "playerId": "Ly4xxZXB05Ny6HPtle5F",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうたくんのゲーム (バイイン: 10000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-24T17:48:38.387Z"
+    },
+    {
+      "id": "d7sn6mU2YOInU6YUPx50",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_cashout",
+      "amount": 40000,
+      "description": "ゲーム終了: さくらいさんのゲーム (最終: 40000©, 損益: +30000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-24T17:48:26.323Z"
+    },
+    {
+      "id": "zIfSaQxnmdFfY7UA37Pr",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さくらいさんのゲーム (バイイン: 10000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-24T17:48:16.236Z"
+    },
+    {
+      "id": "c9BVfX36C9x4cJsHjQXy",
+      "playerId": "tvMrfftkSAAIbG6xs9V9",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 0©, 損益: -8000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-24T10:17:20.554Z"
+    },
+    {
+      "id": "OpqaLzdCK48oEj3cBOT7",
+      "playerId": "tvMrfftkSAAIbG6xs9V9",
+      "type": "game_additional",
+      "amount": -5000,
+      "description": "追加購入: ぴよのゲーム (5000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-24T09:21:27.892Z"
+    },
+    {
+      "id": "WzgejJp4qMNcfxBL0w6s",
+      "playerId": "tvMrfftkSAAIbG6xs9V9",
+      "type": "game_buy_in",
+      "amount": -3000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 3000©, 購入: 3000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-24T08:20:51.598Z"
+    },
+    {
+      "id": "ZUheH0gu5evBjxuTO5jf",
+      "playerId": "tvMrfftkSAAIbG6xs9V9",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 0©, 損益: -5000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-24T07:52:56.191Z"
+    },
+    {
+      "id": "pjL9oPB7EHx5kyD1t5QF",
+      "playerId": "tvMrfftkSAAIbG6xs9V9",
+      "type": "game_buy_in",
+      "amount": -5000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 5000©, 購入: 5000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-24T07:48:05.201Z"
+    },
+    {
+      "id": "65Adm6eiv4InVGBL7jC7",
+      "playerId": "tvMrfftkSAAIbG6xs9V9",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 0©, 損益: -10000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-24T07:32:43.579Z"
+    },
+    {
+      "id": "GWT1cSXZz3UGwxAktK00",
+      "playerId": "tvMrfftkSAAIbG6xs9V9",
+      "type": "game_buy_in",
+      "amount": -9000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 10000©, 購入: 9000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-24T07:30:26.392Z"
+    },
+    {
+      "id": "sNrSF1eMCiDA4EiOo6W6",
+      "playerId": "jbrxxzyoLqJ2KLY7UXpb",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: むむのゲーム (最終: 0©, 損益: -5000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-24T07:03:11.517Z"
+    },
+    {
+      "id": "w1DE7csJf0xhO14VmLqH",
+      "playerId": "jbrxxzyoLqJ2KLY7UXpb",
+      "type": "game_buy_in",
+      "amount": -5000,
+      "description": "ゲーム参加: むむのゲーム (バイイン: 5000©, 購入: 5000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-24T05:14:45.265Z"
+    },
+    {
+      "id": "YKmOk3ZxTTefv5PlEdT7",
+      "playerId": "ZyVr2do4kdy6idKqzpV8",
+      "type": "deposit",
+      "amount": 0,
+      "description": "通常仕様に変更",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-24T01:58:41.240Z"
+    },
+    {
+      "id": "5Z7EXDC1e7pU8bVLpJfY",
+      "playerId": "ZyVr2do4kdy6idKqzpV8",
+      "type": "deposit",
+      "amount": 0,
+      "description": "差引仕様に変更",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-24T01:47:53.019Z"
+    },
+    {
+      "id": "oGYWcu8XEdEM2DfeT0y2",
+      "playerId": "ZyVr2do4kdy6idKqzpV8",
+      "type": "deposit",
+      "amount": 0,
+      "description": "特別仕様に変更",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-24T01:32:55.304Z"
+    },
+    {
+      "id": "eNhD8KecOGKCsdx2dN5Y",
+      "playerId": "ZyVr2do4kdy6idKqzpV8",
+      "type": "deposit",
+      "amount": 0,
+      "description": "差引仕様に変更",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-24T01:27:45.855Z"
+    },
+    {
+      "id": "H3R10KbK41Fpc3ilMvEs",
+      "playerId": "ZyVr2do4kdy6idKqzpV8",
+      "type": "deposit",
+      "amount": 0,
+      "description": "特別仕様有効化",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-24T01:01:49.369Z"
+    },
+    {
+      "id": "prP2hY579VBBFrXMzmj2",
+      "playerId": "vX2RWJT48nB2qKBnzbEN",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 0©, 損益: -10000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-23T17:42:50.618Z"
+    },
+    {
+      "id": "HP4uu9tgfRVA5kYrE47x",
+      "playerId": "vX2RWJT48nB2qKBnzbEN",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 10000©, システム残高から使用)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-23T17:42:32.189Z"
+    },
+    {
+      "id": "kl6nE295LRbiMkHeujCr",
+      "playerId": "vX2RWJT48nB2qKBnzbEN",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 0©, 損益: -10000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-23T17:42:04.243Z"
+    },
+    {
+      "id": "kJRjo3efnKS1jFY7zdMn",
+      "playerId": "vX2RWJT48nB2qKBnzbEN",
+      "type": "deposit",
+      "amount": 0,
+      "description": "特別仕様有効化",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-23T17:41:45.394Z"
+    },
+    {
+      "id": "oGXK7cLBdSK9l2DwMSRG",
+      "playerId": "vX2RWJT48nB2qKBnzbEN",
+      "type": "game_buy_in",
+      "amount": -10000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 10000©, 購入: 10000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-23T17:41:33.920Z"
+    },
+    {
+      "id": "qWMY4tPWE3XdupJTfzHJ",
+      "playerId": "RUhIq9Nq2N6U3oQPtjKU",
+      "type": "game_cashout",
+      "amount": 6800,
+      "description": "ゲーム終了: ザックのゲーム (最終: 6800©, 損益: -3200©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T15:27:05.102Z"
+    },
+    {
+      "id": "fuhzumJDpfwIWMdSbMTB",
+      "playerId": "RUhIq9Nq2N6U3oQPtjKU",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ザックのゲーム (バイイン: 10000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T15:26:42.783Z"
+    },
+    {
+      "id": "YfrV0SEoQ900Ca6KUuzm",
+      "playerId": "RUhIq9Nq2N6U3oQPtjKU",
+      "type": "game_cashout",
+      "amount": 24300,
+      "description": "ゲーム終了: ザックのゲーム (最終: 24300©, 損益: +4300©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T15:17:26.754Z"
+    },
+    {
+      "id": "OAjgrh498Fv5GWO3cAQ1",
+      "playerId": "zHcegWyRpy0qWAHlqY1E",
+      "type": "game_cashout",
+      "amount": 8000,
+      "description": "ゲーム終了: るきのゲーム (最終: 8000©, 損益: -16300©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T15:17:16.007Z"
+    },
+    {
+      "id": "Sq1NeKgCZ7fXsdL5OoXb",
+      "playerId": "zHcegWyRpy0qWAHlqY1E",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: るきのゲーム (バイイン: 24300©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T15:16:48.872Z"
+    },
+    {
+      "id": "OomDfsUibNPaOzNw5K5H",
+      "playerId": "zHcegWyRpy0qWAHlqY1E",
+      "type": "game_cashout",
+      "amount": 24300,
+      "description": "ゲーム終了: るきのゲーム (最終: 24300©, 損益: +9300©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T15:16:33.962Z"
+    },
+    {
+      "id": "pA88XI4Q62xqKTF7Xwa0",
+      "playerId": "Ly4xxZXB05Ny6HPtle5F",
+      "type": "game_cashout",
+      "amount": 46000,
+      "description": "ゲーム終了: りゅうたくんのゲーム (最終: 46000©, 損益: +26000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T15:16:22.652Z"
+    },
+    {
+      "id": "KDRBZno02W8jGBFvlRQN",
+      "playerId": "k8fjnyHMpZUHBxrn3rUn",
+      "type": "game_cashout",
+      "amount": 21400,
+      "description": "ゲーム終了: りゅうさんのゲーム (最終: 21400©, 損益: -38600©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T15:16:04.142Z"
+    },
+    {
+      "id": "sIEYbhzZThB7NsIi8Uvd",
+      "playerId": "LYpSi817G8mozY3QnrHb",
+      "type": "game_cashout",
+      "amount": 16500,
+      "description": "ゲーム終了: ひらんさんのゲーム (最終: 16500©, 損益: -7800©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T15:15:39.483Z"
+    },
+    {
+      "id": "AmQe6ChC0pLNLZfon890",
+      "playerId": "LYpSi817G8mozY3QnrHb",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ひらんさんのゲーム (バイイン: 24300©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T15:15:25.627Z"
+    },
+    {
+      "id": "7Eak8iHunp37PtMOmWUh",
+      "playerId": "LYpSi817G8mozY3QnrHb",
+      "type": "game_cashout",
+      "amount": 24300,
+      "description": "ゲーム終了: ひらんさんのゲーム (最終: 24300©, 損益: +4300©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T15:14:54.632Z"
+    },
+    {
+      "id": "iZvCS66ueEDPXxihG14d",
+      "playerId": "ZyVr2do4kdy6idKqzpV8",
+      "type": "game_cashout",
+      "amount": 21300,
+      "description": "ゲーム終了: はるかのゲーム (最終: 21300©, 損益: -8700©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T15:14:29.767Z"
+    },
+    {
+      "id": "53eWQgcRCKFKffgXK5E5",
+      "playerId": "FzNZKbgvdluiItgzFLfM",
+      "type": "game_cashout",
+      "amount": 27600,
+      "description": "ゲーム終了: しみずさんのゲーム (最終: 27600©, 損益: +19600©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T15:14:03.022Z"
+    },
+    {
+      "id": "6W2uvkk18Dn0UjXVtqbE",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_cashout",
+      "amount": 16800,
+      "description": "ゲーム終了: さくらいさんのゲーム (最終: 16800©, 損益: -300©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T15:13:39.652Z"
+    },
+    {
+      "id": "GMJgx0LKkUXRlKLOmZUw",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: さくらいさんのゲーム (9100©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T15:05:23.952Z"
+    },
+    {
+      "id": "FrtPEEFbCPMIAVM0IwRr",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さくらいさんのゲーム (バイイン: 8000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T14:57:52.111Z"
+    },
+    {
+      "id": "LqnuUwcDu1jqiIcs7tdJ",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_cashout",
+      "amount": 8000,
+      "description": "ゲーム終了: さくらいさんのゲーム (最終: 8000©, 損益: -13400©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T14:57:41.302Z"
+    },
+    {
+      "id": "hu3RL61Fn5PbYcExx1yp",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さくらいさんのゲーム (バイイン: 21400©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T14:55:06.613Z"
+    },
+    {
+      "id": "irl2TKV0qBePzzVDt48X",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_cashout",
+      "amount": 21400,
+      "description": "ゲーム終了: さくらいさんのゲーム (最終: 21400©, 損益: +11400©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T14:54:52.116Z"
+    },
+    {
+      "id": "sjUA6yCWE60JictRj27K",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さくらいさんのゲーム (バイイン: 10000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T14:54:26.695Z"
+    },
+    {
+      "id": "qpyKUwyEOlaOjetkGtdL",
+      "playerId": "FzNZKbgvdluiItgzFLfM",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: しみずさんのゲーム (バイイン: 8000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T14:54:09.237Z"
+    },
+    {
+      "id": "wlurpU4d724xNezVOu71",
+      "playerId": "FzNZKbgvdluiItgzFLfM",
+      "type": "game_cashout",
+      "amount": 8000,
+      "description": "ゲーム終了: しみずさんのゲーム (最終: 8000©, 損益: -7000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T14:53:54.357Z"
+    },
+    {
+      "id": "meDtF3egPLlLP9WpiofJ",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_cashout",
+      "amount": 10000,
+      "description": "ゲーム終了: さくらいさんのゲーム (最終: 10000©, 損益: +2000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T14:53:43.228Z"
+    },
+    {
+      "id": "kwgXzDjDQVWP6WysLIa9",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さくらいさんのゲーム (バイイン: 8000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T14:53:12.451Z"
+    },
+    {
+      "id": "5kLlpdqGDUoI09PsBjQ0",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_cashout",
+      "amount": 8000,
+      "description": "ゲーム終了: さくらいさんのゲーム (最終: 8000©, 損益: -8500©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T14:52:40.517Z"
+    },
+    {
+      "id": "OvYE1wwkNc8KM4RKU56I",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さくらいさんのゲーム (バイイン: 16500©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T14:49:43.158Z"
+    },
+    {
+      "id": "IKVmTSEnSOVSI23AK9Yx",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_cashout",
+      "amount": 16500,
+      "description": "ゲーム終了: さくらいさんのゲーム (最終: 16500©, 損益: +0©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T14:49:19.818Z"
+    },
+    {
+      "id": "RbKRvLZGKseJA2xyxkv1",
+      "playerId": "Oab427k9FORGJvMY9vKd",
+      "type": "game_cashout",
+      "amount": 10000,
+      "description": "ゲーム終了: あんさんのゲーム (最終: 10000©, 損益: +0©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T14:49:01.647Z"
+    },
+    {
+      "id": "xhxlaofaBdGv6tGG0x89",
+      "playerId": "Oab427k9FORGJvMY9vKd",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: あんさんのゲーム (バイイン: 10000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T14:48:48.722Z"
+    },
+    {
+      "id": "w7wkXdInp9pfl38DRxfg",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さくらいさんのゲーム (バイイン: 16500©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T14:46:16.347Z"
+    },
+    {
+      "id": "E6hu8pYIIBWbY1sloUcJ",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_cashout",
+      "amount": 16500,
+      "description": "ゲーム終了: さくらいさんのゲーム (最終: 16500©, 損益: +0©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T14:45:55.119Z"
+    },
+    {
+      "id": "YGgkRUMVgN5n1UhwoS8K",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さくらいさんのゲーム (バイイン: 16500©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T14:44:39.597Z"
+    },
+    {
+      "id": "8w7FlqowKnVL8JBDmNhl",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_cashout",
+      "amount": 16500,
+      "description": "ゲーム終了: さくらいさんのゲーム (最終: 16500©, 損益: +0©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T14:44:26.598Z"
+    },
+    {
+      "id": "GZSjTukcDGbJld5FaxC4",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さくらいさんのゲーム (バイイン: 16500©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T14:44:11.763Z"
+    },
+    {
+      "id": "aLBU2kPFp5kTS55xx1WQ",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_cashout",
+      "amount": 16500,
+      "description": "ゲーム終了: さくらいさんのゲーム (最終: 16500©, 損益: +0©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T14:43:52.377Z"
+    },
+    {
+      "id": "QJSLZ3ybJzSILsSOrtKM",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さくらいさんのゲーム (バイイン: 16500©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T14:43:39.028Z"
+    },
+    {
+      "id": "RPdSMF6xD11XKyYr9mdG",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_cashout",
+      "amount": 16500,
+      "description": "ゲーム終了: さくらいさんのゲーム (最終: 16500©, 損益: -13500©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T14:41:49.643Z"
+    },
+    {
+      "id": "Ubp5vtgpr28kmhghvIgQ",
+      "playerId": "k8fjnyHMpZUHBxrn3rUn",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: りゅうさんのゲーム (20000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-23T13:56:47.607Z"
+    },
+    {
+      "id": "Sa2umgWx4bonc9Q6Vi38",
+      "playerId": "RUhIq9Nq2N6U3oQPtjKU",
+      "type": "game_buy_in",
+      "amount": -3200,
+      "description": "ゲーム参加: ザックのゲーム (バイイン: 20000©, 購入: 3200©)",
+      "createdBy": "りき",
+      "createdAt": "2025-08-23T13:34:10.567Z"
+    },
+    {
+      "id": "H1WM3zZ4eZFgAlWVEnDt",
+      "playerId": "FzNZKbgvdluiItgzFLfM",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: しみずさんのゲーム (バイイン: 15000©, システム残高から使用)",
+      "createdBy": "りき",
+      "createdAt": "2025-08-23T13:18:59.815Z"
+    },
+    {
+      "id": "8IRKYYvNEIREQzD0xSye",
+      "playerId": "k8fjnyHMpZUHBxrn3rUn",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: りゅうさんのゲーム (10000©, システム残高から使用)",
+      "createdBy": "る",
+      "createdAt": "2025-08-23T13:04:45.953Z"
+    },
+    {
+      "id": "9AibItJ40MpCdMO9oIab",
+      "playerId": "LYpSi817G8mozY3QnrHb",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ひらんさんのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "る",
+      "createdAt": "2025-08-23T12:57:13.778Z"
+    },
+    {
+      "id": "nv4g3TMjWvbqDbVZhXI5",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: さくらいさんのゲーム (10000©, システム残高から使用)",
+      "createdBy": "る",
+      "createdAt": "2025-08-23T12:41:30.554Z"
+    },
+    {
+      "id": "ZeBXylJfApOcCH0VXoYu",
+      "playerId": "ZyVr2do4kdy6idKqzpV8",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: はるかのゲーム (15000©, システム残高から使用)",
+      "createdBy": "る",
+      "createdAt": "2025-08-23T12:36:51.663Z"
+    },
+    {
+      "id": "2riOm4I4X6xpkwtNWvLH",
+      "playerId": "k8fjnyHMpZUHBxrn3rUn",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうさんのゲーム (バイイン: 30000©, システム残高から使用)",
+      "createdBy": "りき",
+      "createdAt": "2025-08-23T12:05:15.224Z"
+    },
+    {
+      "id": "DKfIK92iLZMD7F2HxTLs",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さくらいさんのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "りき",
+      "createdAt": "2025-08-23T11:40:25.137Z"
+    },
+    {
+      "id": "xNx7eYiFvn4t2VsqlLoB",
+      "playerId": "zHcegWyRpy0qWAHlqY1E",
+      "type": "game_buy_in",
+      "amount": -5255,
+      "description": "ゲーム参加: るきのゲーム (バイイン: 15000©, 購入: 5255©)",
+      "createdBy": "る",
+      "createdAt": "2025-08-23T11:07:25.389Z"
+    },
+    {
+      "id": "5mt8c2o3YKH4pOy9lEUg",
+      "playerId": "ZyVr2do4kdy6idKqzpV8",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: はるかのゲーム (バイイン: 15000©, システム残高から使用)",
+      "createdBy": "る",
+      "createdAt": "2025-08-23T11:06:15.343Z"
+    },
+    {
+      "id": "tPUti8oJwMD18o95xwgK",
+      "playerId": "Ly4xxZXB05Ny6HPtle5F",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうたくんのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "る",
+      "createdAt": "2025-08-23T11:06:03.019Z"
+    },
+    {
+      "id": "TU1WCm8e9yh6WFe2kunE",
+      "playerId": "LYpSi817G8mozY3QnrHb",
+      "type": "game_cashout",
+      "amount": 33800,
+      "description": "ゲーム終了: ひらんさんのゲーム (最終: 33800©, 損益: +13800©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-22T15:42:57.128Z"
+    },
+    {
+      "id": "AT0Gsk4OMBwgHkzeQnJg",
+      "playerId": "LYpSi817G8mozY3QnrHb",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ひらんさんのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-22T15:42:49.123Z"
+    },
+    {
+      "id": "SEypLECXt88vc7jEmYdw",
+      "playerId": "Ly4xxZXB05Ny6HPtle5F",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: りゅうたくんのゲーム (最終: 0©, 損益: -2420©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-22T15:40:26.554Z"
+    },
+    {
+      "id": "9hPuyhsMa5RN10wuYzvY",
+      "playerId": "Ly4xxZXB05Ny6HPtle5F",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうたくんのゲーム (バイイン: 2420©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-22T15:40:20.993Z"
+    },
+    {
+      "id": "gtx7PDOCjfqHuOXeOeRV",
+      "playerId": "Ly4xxZXB05Ny6HPtle5F",
+      "type": "game_cashout",
+      "amount": 1500,
+      "description": "ゲーム終了: りゅうたくんのゲーム (最終: 1500©, 損益: -18500©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-22T15:40:11.522Z"
+    },
+    {
+      "id": "Qo7hrKxqNuqC8HTG7pOT",
+      "playerId": "Ly4xxZXB05Ny6HPtle5F",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうたくんのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-22T15:39:55.992Z"
+    },
+    {
+      "id": "ig1c2eGtq2dUjh9JTAJY",
+      "playerId": "zHcegWyRpy0qWAHlqY1E",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: るきのゲーム (最終: 0©, 損益: -40000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-22T15:39:43.088Z"
+    },
+    {
+      "id": "ZfrTqxGtJuJhilukayTg",
+      "playerId": "zHcegWyRpy0qWAHlqY1E",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: るきのゲーム (バイイン: 40000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-22T15:39:37.023Z"
+    },
+    {
+      "id": "rEDhEa3Udc2Kypajeb4Q",
+      "playerId": "k8fjnyHMpZUHBxrn3rUn",
+      "type": "game_cashout",
+      "amount": 49200,
+      "description": "ゲーム終了: りゅうさんのゲーム (最終: 49200©, 損益: +19200©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-22T15:37:38.119Z"
+    },
+    {
+      "id": "NaQZsh1Dpjd6XRC512al",
+      "playerId": "k8fjnyHMpZUHBxrn3rUn",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうさんのゲーム (バイイン: 30000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-22T15:37:28.557Z"
+    },
+    {
+      "id": "VfcXO8MiJUAxJkt61bOX",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_cashout",
+      "amount": 26000,
+      "description": "ゲーム終了: さくらいさんのゲーム (最終: 26000©, 損益: -14000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-22T15:34:29.692Z"
+    },
+    {
+      "id": "NMHUccQ5tukbAwhgV2tn",
+      "playerId": "FbkTJ4EncPvp95VBvdnc",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: さくらいさんのゲーム (バイイン: 40000©, システム残高から使用)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-22T15:34:17.202Z"
+    },
+    {
+      "id": "kVOXKg0qPUNM0ovgTD3P",
+      "playerId": "mrqWfSGeWJsW1jwF5ymE",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: せいやのゲーム (最終: 0©, 損益: -15000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-21T10:23:44.914Z"
+    },
+    {
+      "id": "zyxs4R4Njy0h2Bd2JZed",
+      "playerId": "mrqWfSGeWJsW1jwF5ymE",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: せいやのゲーム (バイイン: 15000©, システム残高から使用)",
+      "createdBy": "なっち",
+      "createdAt": "2025-08-21T02:57:13.496Z"
+    },
+    {
+      "id": "fZNGwSnDFv12aiEBg2lK",
+      "playerId": "Pypu1k8NT4KmfIKTnxyG",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: めめのゲーム (最終: 0©, 損益: -30000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-21T01:38:18.341Z"
+    },
+    {
+      "id": "QwawxfrmdXvcUC5cSXnG",
+      "playerId": "a4Iz0EdR9YKtVBIrMZh9",
+      "type": "deposit",
+      "amount": 0,
+      "description": "特別仕様有効化",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-21T01:38:04.824Z"
+    },
+    {
+      "id": "693brp1lovt33DlpEYUP",
+      "playerId": "Pypu1k8NT4KmfIKTnxyG",
+      "type": "game_buy_in",
+      "amount": -10000,
+      "description": "ゲーム参加: めめのゲーム (バイイン: 30000©, 購入: 10000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-21T01:37:49.567Z"
+    },
+    {
+      "id": "oARmE8TjJJLlR5TMHydM",
+      "playerId": "a4Iz0EdR9YKtVBIrMZh9",
+      "type": "deposit",
+      "amount": 0,
+      "description": "特別仕様無効化",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-21T01:37:06.834Z"
+    },
+    {
+      "id": "CEad3W225ABkcNadnE3B",
+      "playerId": "a4Iz0EdR9YKtVBIrMZh9",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: なっちのゲーム (最終: 0©, 損益: -5000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-21T01:29:17.282Z"
+    },
+    {
+      "id": "QYWC9PiPMPmrsKHI04LJ",
+      "playerId": "a4Iz0EdR9YKtVBIrMZh9",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: なっちのゲーム (バイイン: 5000©, システム残高から使用)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-21T01:29:04.614Z"
+    },
+    {
+      "id": "H7RT2GG2Xk3JpWDIWwKo",
+      "playerId": "a4Iz0EdR9YKtVBIrMZh9",
+      "type": "game_cashout",
+      "amount": 15000,
+      "description": "ゲーム終了: なっちのゲーム (最終: 15000©, 損益: -25000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-21T01:27:40.996Z"
+    },
+    {
+      "id": "JAuDTURIjv4xUPRZoNL1",
+      "playerId": "a4Iz0EdR9YKtVBIrMZh9",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: なっちのゲーム (20000©, システム残高から使用)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-21T01:27:23.580Z"
+    },
+    {
+      "id": "fTcMypfYXg0nhCSDKxlv",
+      "playerId": "a4Iz0EdR9YKtVBIrMZh9",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: なっちのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-21T01:27:00.072Z"
+    },
+    {
+      "id": "Eh1wJEIwkNgXp2uHDwfy",
+      "playerId": "a4Iz0EdR9YKtVBIrMZh9",
+      "type": "deposit",
+      "amount": 0,
+      "description": "特別仕様有効化",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-21T01:26:40.488Z"
+    },
+    {
+      "id": "8BRtGhbbEGlxKAubv0Vm",
+      "playerId": "jEhyHlvx3u7Ng74D2OoB",
+      "type": "withdrawal",
+      "amount": -74000,
+      "description": "システム残高調整",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-20T15:28:09.518Z"
+    },
+    {
+      "id": "URX4Y4erP6rOtrni8fbJ",
+      "playerId": "a4Iz0EdR9YKtVBIrMZh9",
+      "type": "withdrawal",
+      "amount": -15000,
+      "description": "システム残高調整",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-20T15:27:19.255Z"
+    },
+    {
+      "id": "l0LnvfVrR1WPtZPNB9Nq",
+      "playerId": "a4Iz0EdR9YKtVBIrMZh9",
+      "type": "game_cashout",
+      "amount": 25000,
+      "description": "ゲーム終了: なっちのゲーム (最終: 25000©, 損益: +5000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-20T15:16:57.593Z"
+    },
+    {
+      "id": "zVWOWZIz0ZmCNvL5Lsie",
+      "playerId": "a4Iz0EdR9YKtVBIrMZh9",
+      "type": "game_additional",
+      "amount": -10000,
+      "description": "追加購入: なっちのゲーム (10000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-20T15:16:44.098Z"
+    },
+    {
+      "id": "2YlUJYHxr1HvRhQc1eoQ",
+      "playerId": "a4Iz0EdR9YKtVBIrMZh9",
+      "type": "game_buy_in",
+      "amount": -5000,
+      "description": "ゲーム参加: なっちのゲーム (バイイン: 10000©, 購入: 5000©)",
+      "createdBy": "山本慶太",
+      "createdAt": "2025-08-20T15:16:13.783Z"
+    },
+    {
+      "id": "i23sQVwQSiyGfBMQfvN2",
+      "playerId": "jEhyHlvx3u7Ng74D2OoB",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: 北治隆介のゲーム (最終: 0©, 損益: -15000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-20T14:31:14.931Z"
+    },
+    {
+      "id": "CtXHRfSgvl38Mqe4odEF",
+      "playerId": "a4Iz0EdR9YKtVBIrMZh9",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: なっちのゲーム (最終: 0©, 損益: -5000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-20T14:31:05.535Z"
+    },
+    {
+      "id": "dSv0tYdPx77p0Q5nCZjn",
+      "playerId": "jEhyHlvx3u7Ng74D2OoB",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: 北治隆介のゲーム (バイイン: 15000©, システム残高から使用)",
+      "createdBy": "なっち",
+      "createdAt": "2025-08-20T14:29:58.938Z"
+    },
+    {
+      "id": "mxBH7Ey0CHBk5fCmpAj9",
+      "playerId": "a4Iz0EdR9YKtVBIrMZh9",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: なっちのゲーム (バイイン: 5000©, システム残高から使用)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-20T14:28:54.822Z"
+    },
+    {
+      "id": "onTCGKNsl94S3RqYfzGn",
+      "playerId": "a4Iz0EdR9YKtVBIrMZh9",
+      "type": "game_cashout",
+      "amount": 10000,
+      "description": "ゲーム終了: なっちのゲーム (最終: 10000©, 損益: -10000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-20T14:27:12.131Z"
+    },
+    {
+      "id": "hBvMisS99ypFNmvLYaiF",
+      "playerId": "a4Iz0EdR9YKtVBIrMZh9",
+      "type": "game_buy_in",
+      "amount": -5000,
+      "description": "ゲーム参加: なっちのゲーム (バイイン: 20000©, 購入: 5000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-20T14:26:59.447Z"
+    },
+    {
+      "id": "757fTBuIlq4S7xArt6qg",
+      "playerId": "jEhyHlvx3u7Ng74D2OoB",
+      "type": "game_cashout",
+      "amount": 4000,
+      "description": "ゲーム終了: 北治隆介のゲーム (最終: 4000©, 損益: -11000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-20T14:25:02.925Z"
+    },
+    {
+      "id": "hs5XOydXGJPXJ4CUF5lN",
+      "playerId": "jEhyHlvx3u7Ng74D2OoB",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: 北治隆介のゲーム (10000©, システム残高から使用)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-20T14:24:30.416Z"
+    },
+    {
+      "id": "FYK4WXV8siY4gCBFaBmX",
+      "playerId": "jEhyHlvx3u7Ng74D2OoB",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: 北治隆介のゲーム (バイイン: 5000©, システム残高から使用)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-20T14:24:18.122Z"
+    },
+    {
+      "id": "GjFQTEhWp91Bhzn8HlMZ",
+      "playerId": "D7axzv4PWnWCVaGcJOi5",
+      "type": "game_cashout",
+      "amount": 30000,
+      "description": "ゲーム終了: 北治隆介のゲーム (最終: 30000©, 損益: -25000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-20T04:49:00.674Z"
+    },
+    {
+      "id": "yXJTNYUxa6pwtmgo4wOK",
+      "playerId": "D7axzv4PWnWCVaGcJOi5",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: 北治隆介のゲーム (50000©, システム残高から使用)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-20T04:47:52.263Z"
+    },
+    {
+      "id": "2QBJr1eutyo0TfcToPWo",
+      "playerId": "D7axzv4PWnWCVaGcJOi5",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: 北治隆介のゲーム (バイイン: 5000©, システム残高から使用)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-20T04:45:17.717Z"
+    },
+    {
+      "id": "8P4SsJmR1rOhglaFJVkA",
+      "playerId": "D7axzv4PWnWCVaGcJOi5",
+      "type": "game_cashout",
+      "amount": 12600,
+      "description": "ゲーム終了: 北治隆介のゲーム (最終: 12600©, 損益: -37400©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-20T01:22:15.827Z"
+    },
+    {
+      "id": "McBalYdylfGZYg196MMU",
+      "playerId": "D7axzv4PWnWCVaGcJOi5",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: 北治隆介のゲーム (20000©, システム残高から使用)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-20T01:21:59.669Z"
+    },
+    {
+      "id": "J6bWc9xff3PG4cjtMFnb",
+      "playerId": "D7axzv4PWnWCVaGcJOi5",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: 北治隆介のゲーム (バイイン: 30000©, システム残高から使用)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-20T01:21:45.713Z"
+    },
+    {
+      "id": "M6ghccMro8H2attD5ZdO",
+      "playerId": "DfXQyBQ81ngDM04Mm80i",
+      "type": "game_cashout",
+      "amount": 35000,
+      "description": "ゲーム終了: りゅうすけのゲーム (最終: 35000©, 損益: +5000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T18:56:06.653Z"
+    },
+    {
+      "id": "7x4f1HFVtUtedAUOoXWB",
+      "playerId": "DfXQyBQ81ngDM04Mm80i",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: りゅうすけのゲーム (10000©, システム残高から使用)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T18:55:55.410Z"
+    },
+    {
+      "id": "rF0Ftn3IcwsIhqslULiH",
+      "playerId": "DfXQyBQ81ngDM04Mm80i",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: りゅうすけのゲーム (10000©, システム残高から使用)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T18:55:51.223Z"
+    },
+    {
+      "id": "OI2S6TPznSoP9rdmlbuc",
+      "playerId": "DfXQyBQ81ngDM04Mm80i",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうすけのゲーム (バイイン: 10000©, システム残高から使用)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T18:55:33.119Z"
+    },
+    {
+      "id": "eOCaZy6CBeMcq4ARJd5d",
+      "playerId": "DfXQyBQ81ngDM04Mm80i",
+      "type": "game_cashout",
+      "amount": 1000,
+      "description": "ゲーム終了: りゅうすけのゲーム (最終: 1000©, 損益: -5000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T18:39:49.217Z"
+    },
+    {
+      "id": "7ArX6d7OWYIHrtpcMJsX",
+      "playerId": "DfXQyBQ81ngDM04Mm80i",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: りゅうすけのゲーム (1000©, システム残高から使用)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T18:39:40.073Z"
+    },
+    {
+      "id": "6BDtZG7UklmP4THZNrCU",
+      "playerId": "DfXQyBQ81ngDM04Mm80i",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうすけのゲーム (バイイン: 5000©, システム残高から使用)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T18:39:27.780Z"
+    },
+    {
+      "id": "hyRZzumIa1gp3PsA7rCh",
+      "playerId": "DfXQyBQ81ngDM04Mm80i",
+      "type": "game_cashout",
+      "amount": 30000,
+      "description": "ゲーム終了: りゅうすけのゲーム (最終: 30000©, 損益: +5000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T18:39:02.089Z"
+    },
+    {
+      "id": "lOphZIqDmDzhQLkxK4ZH",
+      "playerId": "DfXQyBQ81ngDM04Mm80i",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: りゅうすけのゲーム (10000©, システム残高から使用)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T18:38:37.498Z"
+    },
+    {
+      "id": "0OS1qAfnNoyArCqeYlZF",
+      "playerId": "DfXQyBQ81ngDM04Mm80i",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうすけのゲーム (バイイン: 15000©, システム残高から使用)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T18:38:27.087Z"
+    },
+    {
+      "id": "xR7gqzPEGMHxKCiMKMgJ",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_cashout",
+      "amount": 10000,
+      "description": "ゲーム終了: りゅうすけのゲーム (最終: 10000©, 損益: +0©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T18:28:47.947Z"
+    },
+    {
+      "id": "djUUgZDGT2ay9fzJ2K5b",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうすけのゲーム (バイイン: 10000©, システム残高から使用)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T18:09:01.596Z"
+    },
+    {
+      "id": "cwHi3Dl3CdHUAfXrNp7H",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_cashout",
+      "amount": 10000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 10000©, 損益: +0©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T18:05:46.814Z"
+    },
+    {
+      "id": "V1oaSGXBewFJlw8rRvdZ",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 10000©, システム残高から使用)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T18:05:37.675Z"
+    },
+    {
+      "id": "B2oQ5HKQgAkHVUtpRFn9",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_cashout",
+      "amount": 150000,
+      "description": "ゲーム終了: りゅうすけのゲーム (最終: 150000©, 損益: +95000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T18:03:55.469Z"
+    },
+    {
+      "id": "hgZldpXlHz0QGddVB8VY",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうすけのゲーム (バイイン: 55000©, システム残高から使用)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T18:03:11.343Z"
+    },
+    {
+      "id": "8jldTcdv3gK4PtmiCMsh",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_cashout",
+      "amount": 10000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 10000©, 損益: -10000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T17:54:29.139Z"
+    },
+    {
+      "id": "J8OaEsrry76JwSB7dd6g",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_additional",
+      "amount": -10000,
+      "description": "追加購入: ぴよのゲーム (10000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T17:54:23.032Z"
+    },
+    {
+      "id": "YLyZNnAgCkJzaEm50V8u",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_buy_in",
+      "amount": -5000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 10000©, 購入: 5000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T17:53:55.221Z"
+    },
+    {
+      "id": "xaQpf4xCLW4YFpvgF29j",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_cashout",
+      "amount": 5000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 5000©, 損益: -15000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T17:35:55.155Z"
+    },
+    {
+      "id": "tHVsX1qiIM0Jv6NL8UCU",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_additional",
+      "amount": -10000,
+      "description": "追加購入: ぴよのゲーム (10000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T17:34:37.004Z"
+    },
+    {
+      "id": "R3LC2K7TWcgnEza8vv8l",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_buy_in",
+      "amount": -5000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 10000©, 購入: 5000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T17:34:24.290Z"
+    },
+    {
+      "id": "y4MVIqVGPox41IGbinb4",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_cashout",
+      "amount": 30000,
+      "description": "ゲーム終了: りゅうすけのゲーム (最終: 30000©, 損益: +5000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T17:30:57.960Z"
+    },
+    {
+      "id": "iACjU3yXkQrNAwAACq5A",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: りゅうすけのゲーム (10000©, システム残高から使用)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T17:30:32.308Z"
+    },
+    {
+      "id": "vhLNyJh35trj4LNJyeM4",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうすけのゲーム (バイイン: 15000©, システム残高から使用)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T17:30:15.022Z"
+    },
+    {
+      "id": "31l1KGcLsYWPeeiBbZqH",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_cashout",
+      "amount": 5000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 5000©, 損益: -10000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T17:24:10.092Z"
+    },
+    {
+      "id": "XG6nIkqSQWSKc5abvWEG",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_additional",
+      "amount": -5000,
+      "description": "追加購入: ぴよのゲーム (5000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T17:23:40.230Z"
+    },
+    {
+      "id": "JZ18RX036p1YEkTKPfYc",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_buy_in",
+      "amount": -9500,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 10000©, 購入: 9500©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T17:23:25.907Z"
+    },
+    {
+      "id": "QAJInlzejUsrgWcNfwqm",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_cashout",
+      "amount": 500,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 500©, 損益: -19500©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T16:44:56.359Z"
+    },
+    {
+      "id": "A0qtBTTqCnoDwYbRPW4C",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_additional",
+      "amount": -10000,
+      "description": "追加購入: ぴよのゲーム (10000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-19T16:44:44.904Z"
+    },
+    {
+      "id": "8ztiprsVOI9lRdg6PE3l",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_buy_in",
+      "amount": -5000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 10000©, 購入: 5000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T16:44:19.947Z"
+    },
+    {
+      "id": "y3bwmMgaj6lHaKl8WvRF",
+      "playerId": "e0PE8sAuCyZCQkwqprPQ",
+      "type": "game_cashout",
+      "amount": 11500,
+      "description": "ゲーム終了: むむのゲーム (最終: 11500©, 損益: -8500©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T16:31:01.944Z"
+    },
+    {
+      "id": "qdpPxTbWQvV2d41R3ssh",
+      "playerId": "e0PE8sAuCyZCQkwqprPQ",
+      "type": "game_additional",
+      "amount": -5000,
+      "description": "追加購入: むむのゲーム (5000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-19T16:30:46.853Z"
+    },
+    {
+      "id": "YsmG0eqE3SBP98i6xekl",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 0©, 損益: -10000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T16:30:31.627Z"
+    },
+    {
+      "id": "PDXsn2IdjhproYDDxdqE",
+      "playerId": "e0PE8sAuCyZCQkwqprPQ",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: むむのゲーム (バイイン: 10000©, システム残高から使用)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T16:30:04.550Z"
+    },
+    {
+      "id": "MCIH3NakLGPwhR5lr6oO",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 10000©, システム残高から使用)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T16:29:55.430Z"
+    },
+    {
+      "id": "26lGBRaB49T4V0DT2dGb",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_cashout",
+      "amount": 40000,
+      "description": "ゲーム終了: りゅうすけのゲーム (最終: 40000©, 損益: +10000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T16:29:06.523Z"
+    },
+    {
+      "id": "QyfTXQuN1yT141N0SAhQ",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうすけのゲーム (バイイン: 30000©, システム残高から使用)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T16:28:51.499Z"
+    },
+    {
+      "id": "pAvUNevGoiiG5bQtCeg3",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_cashout",
+      "amount": 40000,
+      "description": "ゲーム終了: りゅうすけのゲーム (最終: 40000©, 損益: +5000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T16:28:06.196Z"
+    },
+    {
+      "id": "E15daZZBP9nYLWDsp3Hr",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_additional",
+      "amount": -5000,
+      "description": "追加購入: りゅうすけのゲーム (5000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-19T16:27:44.831Z"
+    },
+    {
+      "id": "cr1MjVMdSyUlLpiFB3rg",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうすけのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T16:27:31.073Z"
+    },
+    {
+      "id": "ns8ecguQZkSzkLDcy3A6",
+      "playerId": "e0PE8sAuCyZCQkwqprPQ",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: むむのゲーム (最終: 0©, 損益: -40000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T16:27:00.242Z"
+    },
+    {
+      "id": "jM8IVdl9G9rIit7d4rql",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_cashout",
+      "amount": 15000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 15000©, 損益: +0©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T16:26:18.288Z"
+    },
+    {
+      "id": "AadUTt6o9KTakvjmfAjY",
+      "playerId": "e0PE8sAuCyZCQkwqprPQ",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: むむのゲーム (10000©, システム残高から使用)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-19T16:26:02.787Z"
+    },
+    {
+      "id": "bmVwsv5NrOqqHjizT4aU",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_buy_in",
+      "amount": -7000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 15000©, 購入: 7000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T16:25:24.390Z"
+    },
+    {
+      "id": "6WqoywbWBayCVymPTXhN",
+      "playerId": "e0PE8sAuCyZCQkwqprPQ",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: むむのゲーム (バイイン: 30000©, システム残高から使用)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T16:25:07.765Z"
+    },
+    {
+      "id": "QwEt3g19jx8Qs7TM4JoU",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_cashout",
+      "amount": 8000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 8000©, 損益: -2000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T16:24:22.666Z"
+    },
+    {
+      "id": "a0pENIRHMl6QYP6JAsLJ",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_additional",
+      "amount": -5000,
+      "description": "追加購入: ぴよのゲーム (5000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-19T16:24:07.535Z"
+    },
+    {
+      "id": "FnputCNBkttECtcjlL0s",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_buy_in",
+      "amount": -2000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 5000©, 購入: 2000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T16:23:57.428Z"
+    },
+    {
+      "id": "bMI6rAxObQLP95so99fH",
+      "playerId": "e0PE8sAuCyZCQkwqprPQ",
+      "type": "game_cashout",
+      "amount": 25000,
+      "description": "ゲーム終了: むむのゲーム (最終: 25000©, 損益: +5000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T16:19:59.949Z"
+    },
+    {
+      "id": "5jncvnNs4LBZn5hIUbdj",
+      "playerId": "e0PE8sAuCyZCQkwqprPQ",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: むむのゲーム (10000©, システム残高から使用)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-19T16:19:31.762Z"
+    },
+    {
+      "id": "Hki9nNtW5nP2Xhve21xg",
+      "playerId": "e0PE8sAuCyZCQkwqprPQ",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: むむのゲーム (バイイン: 10000©, システム残高から使用)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T16:19:11.990Z"
+    },
+    {
+      "id": "V10q5YeXymoA7Je1xLtd",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_cashout",
+      "amount": 30000,
+      "description": "ゲーム終了: りゅうすけのゲーム (最終: 30000©, 損益: -5000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T16:18:15.992Z"
+    },
+    {
+      "id": "S3tCHdvxzbkDmVHjBGiY",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_additional",
+      "amount": -5000,
+      "description": "追加購入: りゅうすけのゲーム (5000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-19T16:17:57.608Z"
+    },
+    {
+      "id": "GwFwkG32Y3uMLzOY5uKp",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_buy_in",
+      "amount": -29000,
+      "description": "ゲーム参加: りゅうすけのゲーム (バイイン: 30000©, 購入: 29000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T16:17:38.261Z"
+    },
+    {
+      "id": "l4CPwbjkg7sZTj4dS4js",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_cashout",
+      "amount": 3000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 3000©, 損益: -4000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T16:17:16.641Z"
+    },
+    {
+      "id": "ubcdVaZntWGKXXzcGvIk",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_additional",
+      "amount": -2000,
+      "description": "追加購入: ぴよのゲーム (2000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-19T16:16:56.374Z"
+    },
+    {
+      "id": "sVNve7S1zd2UJGUfYT53",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 3000©, システム残高から使用)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T16:16:42.316Z"
+    },
+    {
+      "id": "Rm8KDHiKcTctBEE1rlAo",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_cashout",
+      "amount": 1000,
+      "description": "ゲーム終了: りゅうすけのゲーム (最終: 1000©, 損益: -4000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T16:10:15.511Z"
+    },
+    {
+      "id": "QYuxukI2m2nWYPtn7BAJ",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_additional",
+      "amount": -2000,
+      "description": "追加購入: りゅうすけのゲーム (2000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-19T16:09:59.947Z"
+    },
+    {
+      "id": "hCnyY6Z1aIe1f1IpSbD6",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうすけのゲーム (バイイン: 3000©, システム残高から使用)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T16:09:47.176Z"
+    },
+    {
+      "id": "lbqNUSP7qKzZRUBYQKqc",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_cashout",
+      "amount": 5000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 5000©, 損益: -500©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T16:06:48.626Z"
+    },
+    {
+      "id": "D8hYPSOjBHvQYTq8ZV8d",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_additional",
+      "amount": -2500,
+      "description": "追加購入: ぴよのゲーム (2500©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-19T16:06:39.085Z"
+    },
+    {
+      "id": "EvIGEVCzCZHcwF3mYJvw",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 3000©, システム残高から使用)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T16:06:25.395Z"
+    },
+    {
+      "id": "nUAWbT7zfAx6xhUE3X8w",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_cashout",
+      "amount": 4000,
+      "description": "ゲーム終了: りゅうすけのゲーム (最終: 4000©, 損益: -6000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T16:03:26.169Z"
+    },
+    {
+      "id": "jlj37sKdiDqKuHrnvZ3f",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_additional",
+      "amount": -5000,
+      "description": "追加購入: りゅうすけのゲーム (5000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-19T16:02:57.789Z"
+    },
+    {
+      "id": "UWV7f4aEnSYtidcGXg1Z",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_buy_in",
+      "amount": -4000,
+      "description": "ゲーム参加: りゅうすけのゲーム (バイイン: 5000©, 購入: 4000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T16:02:40.170Z"
+    },
+    {
+      "id": "rAJ7KEQHoOhMKHscP4Ho",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_cashout",
+      "amount": 3500,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 3500©, 損益: -3500©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T16:02:11.589Z"
+    },
+    {
+      "id": "TBtpIctOB2c3Zqy7lz1D",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_additional",
+      "amount": -4000,
+      "description": "追加購入: ぴよのゲーム (4000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-19T16:01:52.686Z"
+    },
+    {
+      "id": "2F7FtogggIHNbWGqdQgk",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_buy_in",
+      "amount": -2000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 3000©, 購入: 2000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T16:01:40.761Z"
+    },
+    {
+      "id": "txekcT3HwJTsN4E9F2ZX",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_cashout",
+      "amount": 1000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 1000©, 損益: -4000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T16:01:13.803Z"
+    },
+    {
+      "id": "oXtgherExVHyi8fHrOmJ",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_buy_in",
+      "amount": -2000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 5000©, 購入: 2000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T15:59:21.291Z"
+    },
+    {
+      "id": "IUliTkXIkRBk5caXEpSW",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_cashout",
+      "amount": 3000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 3000©, 損益: -1000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T15:57:49.615Z"
+    },
+    {
+      "id": "hhmTgywoIBiJBxGmtY6M",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_additional",
+      "amount": -1000,
+      "description": "追加購入: ぴよのゲーム (1000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-19T15:57:39.341Z"
+    },
+    {
+      "id": "UhgQJhFfz4kC6qIO1qtd",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 3000©, システム残高から使用)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T15:57:11.298Z"
+    },
+    {
+      "id": "WhSgme6W6QO94q5XSWK6",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_cashout",
+      "amount": 5000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 5000©, 損益: -3000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T15:49:27.205Z"
+    },
+    {
+      "id": "JxjyxdugH8azIJSC4gwe",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_additional",
+      "amount": -3000,
+      "description": "追加購入: ぴよのゲーム (3000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-19T15:49:13.240Z"
+    },
+    {
+      "id": "HY9VyzmYBcZpvyVcIjcs",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_additional",
+      "amount": -3000,
+      "description": "追加購入: ぴよのゲーム (3000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-19T15:48:52.638Z"
+    },
+    {
+      "id": "M3IdMkP5Xpjb78HRvVe3",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_buy_in",
+      "amount": -2000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 3000©, 購入: 2000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T15:48:42.055Z"
+    },
+    {
+      "id": "W906NoNGTo8oGP68eIMg",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_cashout",
+      "amount": 1000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 1000©, 損益: -500©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T15:42:14.422Z"
+    },
+    {
+      "id": "tzEMb8k7bF7mvxp7uEvU",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_additional",
+      "amount": -1500,
+      "description": "追加購入: ぴよのゲーム (1500©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-19T15:41:51.812Z"
+    },
+    {
+      "id": "Xyboa1zIWFI0O6vMZ0xq",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 1500©, システム残高から使用)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T15:41:36.850Z"
+    },
+    {
+      "id": "7a9SdCyVCUgb35N6SPZx",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_cashout",
+      "amount": 1000,
+      "description": "ゲーム終了: りゅうすけのゲーム (最終: 1000©, 損益: -7000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T15:41:04.372Z"
+    },
+    {
+      "id": "afpybDlfLvD1scD9CcgF",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_additional",
+      "amount": -5000,
+      "description": "追加購入: りゅうすけのゲーム (5000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-19T15:39:47.224Z"
+    },
+    {
+      "id": "3roS67XtBtqJ8Ot0we8n",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_buy_in",
+      "amount": -3000,
+      "description": "ゲーム参加: りゅうすけのゲーム (バイイン: 3000©, 購入: 3000©)",
+      "createdBy": "1",
+      "createdAt": "2025-08-19T15:39:40.285Z"
+    },
+    {
+      "id": "HH2Ku4DDgcCRYgF3w8zP",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_cashout",
+      "amount": 3000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 3000©, 損益: +0©)",
+      "createdBy": "1",
+      "createdAt": "2025-08-19T15:39:00.545Z"
+    },
+    {
+      "id": "4aPyhJX10zs83ndm52gn",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_additional",
+      "amount": -3000,
+      "description": "追加購入: ぴよのゲーム (3000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-19T15:38:32.205Z"
+    },
+    {
+      "id": "iOJ5T52K7Amk1Ed5lD6u",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 3000©, システム残高から使用)",
+      "createdBy": "1",
+      "createdAt": "2025-08-19T15:37:55.005Z"
+    },
+    {
+      "id": "hIsvJgFStEGlUyFjzeWF",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_cashout",
+      "amount": 3000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 3000©, 損益: -6000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T15:37:34.403Z"
+    },
+    {
+      "id": "KJiru7l0WkYdATegm1Ip",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_additional",
+      "amount": -3000,
+      "description": "追加購入: ぴよのゲーム (3000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T15:27:43.681Z"
+    },
+    {
+      "id": "AcVgwU9BaIY6lf8Impcn",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_additional",
+      "amount": -3000,
+      "description": "追加購入: ぴよのゲーム (3000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-19T15:27:43.542Z"
+    },
+    {
+      "id": "uyLrXRLXT37esZI3Lq9x",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_buy_in",
+      "amount": -3000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 3000©, 購入: 3000©)",
+      "createdBy": "りゅ",
+      "createdAt": "2025-08-19T15:27:33.993Z"
+    },
+    {
+      "id": "u0r7fTMWDoCzBwLX8FTK",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 0©, 損益: -5000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T15:12:18.105Z"
+    },
+    {
+      "id": "PFKWfIIFSpavvWIgM3KZ",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_additional",
+      "amount": -1000,
+      "description": "追加購入: ぴよのゲーム (1000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-19T15:11:29.550Z"
+    },
+    {
+      "id": "GI0auAIYsTDTp95f3OSt",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_additional",
+      "amount": -1000,
+      "description": "追加購入: ぴよのゲーム (1000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-19T15:11:29.391Z"
+    },
+    {
+      "id": "T9gFOdKYYpekoPF8A8oJ",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_buy_in",
+      "amount": -3000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 3000©, 購入: 3000©)",
+      "createdBy": "隆介",
+      "createdAt": "2025-08-19T13:14:31.577Z"
+    },
+    {
+      "id": "vTu5flUecvy0yWTj4PfI",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_additional",
+      "amount": -3000,
+      "description": "追加購入: ぴよのゲーム (3000©)",
+      "createdBy": "たぬ",
+      "createdAt": "2025-08-19T12:29:52.323Z"
+    },
+    {
+      "id": "jE8U4L144uOjCjpCBciF",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_additional",
+      "amount": -3000,
+      "description": "追加購入: ぴよのゲーム (3000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-19T12:29:52.167Z"
+    },
+    {
+      "id": "KWAZ0s1gr3WhLofMTt5q",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_buy_in",
+      "amount": -3000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 3000©, 購入: 3000©)",
+      "createdBy": "たぬ",
+      "createdAt": "2025-08-19T12:29:28.929Z"
+    },
+    {
+      "id": "ZohSOAklaIkajd04IQiL",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_buy_in",
+      "amount": -2000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 2000©, 購入: 2000©)",
+      "createdBy": "たぬ",
+      "createdAt": "2025-08-19T12:23:30.670Z"
+    },
+    {
+      "id": "xfkzcO0irhFbMrfJVuDv",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_buy_in",
+      "amount": -1000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 1000©, 購入: 1000©)",
+      "createdBy": "たぬ",
+      "createdAt": "2025-08-19T12:13:37.933Z"
+    },
+    {
+      "id": "6ARTDZbiH2vk5b7ATiDc",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 0©, 損益: -2000©)",
+      "createdBy": "たぬ",
+      "createdAt": "2025-08-19T12:13:09.911Z"
+    },
+    {
+      "id": "IjVJPSp1GWwR18OmfDZQ",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_buy_in",
+      "amount": -2000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 5000©, 購入: 2000©)",
+      "createdBy": "たぬ",
+      "createdAt": "2025-08-19T12:12:23.289Z"
+    },
+    {
+      "id": "yBBKkpr2t4CSropXXGET",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: りゅうすけのゲーム (最終: 0©, 損益: -5000©)",
+      "createdBy": "１",
+      "createdAt": "2025-08-19T08:55:39.442Z"
+    },
+    {
+      "id": "LrYbxMzrTk3BBIpxLGZk",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_buy_in",
+      "amount": -5000,
+      "description": "ゲーム参加: りゅうすけのゲーム (バイイン: 5000©, 購入: 5000©)",
+      "createdBy": "たぬ",
+      "createdAt": "2025-08-19T08:49:20.306Z"
+    },
+    {
+      "id": "jUK2RBDRzZ7dFYSVF4t5",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_cashout",
+      "amount": 3000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 3000©, 損益: +1000©)",
+      "createdBy": "きたじ",
+      "createdAt": "2025-08-19T08:46:57.745Z"
+    },
+    {
+      "id": "YyF8vRxY6m9yNeqjB97P",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_additional",
+      "amount": -1000,
+      "description": "追加購入: ぴよのゲーム (1000©)",
+      "createdBy": "きたじ",
+      "createdAt": "2025-08-19T08:46:42.437Z"
+    },
+    {
+      "id": "98ALe14bX10bJrL5ZtQA",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_additional",
+      "amount": -1000,
+      "description": "追加購入: ぴよのゲーム (1000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-19T08:46:42.345Z"
+    },
+    {
+      "id": "qTfQPNfw3w2KrBLmH6Cs",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 7000©, システム残高から使用)",
+      "createdBy": "きたじ",
+      "createdAt": "2025-08-19T08:46:27.143Z"
+    },
+    {
+      "id": "n8ssjw9AERagW5mMgfgH",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_cashout",
+      "amount": 16000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 16000©, 損益: +11000©)",
+      "createdBy": "１",
+      "createdAt": "2025-08-19T08:02:11.276Z"
+    },
+    {
+      "id": "ro0ouodCuaXuqzD2DI1g",
+      "playerId": "xeGCzxulEuRbOgjo9w3n",
+      "type": "game_buy_in",
+      "amount": -5000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 15000©, 購入: 5000©)",
+      "createdBy": "１",
+      "createdAt": "2025-08-19T08:01:53.385Z"
+    },
+    {
+      "id": "P2UJeQ4Ymf3SMpoQRcux",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: りゅうすけのゲーム (最終: 0©, 損益: +0©)",
+      "createdBy": "１",
+      "createdAt": "2025-08-19T07:58:59.542Z"
+    },
+    {
+      "id": "XQykJXHrtMP0mOxSjei4",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: りゅうすけのゲーム (1000©, システム残高から使用)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-19T07:53:08.232Z"
+    },
+    {
+      "id": "qYTVSvBfJn1UI5c08Qbe",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: りゅうすけのゲーム (1000©, システム残高から使用)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-19T07:52:37.043Z"
+    },
+    {
+      "id": "v4toQk8xnJ78OJN5XmND",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうすけのゲーム (バイイン: 1000©, システム残高から使用)",
+      "createdBy": "１",
+      "createdAt": "2025-08-19T07:50:43.237Z"
+    },
+    {
+      "id": "uorMKDXEPN2ukaVoQgRq",
+      "playerId": "OIuWN7u4exvvgc5HZXMD",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうすけのゲーム (バイイン: 2000©, システム残高から使用)",
+      "createdBy": "１",
+      "createdAt": "2025-08-19T07:48:41.030Z"
+    },
+    {
+      "id": "1x9xw7S5vXxkOShFmGw9",
+      "playerId": "krVultLA1vIC1RV1Mosz",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: むむのゲーム (バイイン: 3000©, システム残高から使用)",
+      "createdBy": "１",
+      "createdAt": "2025-08-19T06:38:23.165Z"
+    },
+    {
+      "id": "9H9pMWC5cdNPp2IeL55i",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 0©, 損益: -3000©)",
+      "createdBy": "１",
+      "createdAt": "2025-08-19T06:38:06.665Z"
+    },
+    {
+      "id": "umHuIdm94jswTycefgYh",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_cashout",
+      "amount": 1,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 1©, 損益: -2999©)",
+      "createdBy": "きたじ",
+      "createdAt": "2025-08-19T06:29:39.026Z"
+    },
+    {
+      "id": "Onfx3bDI0JICMffaM14J",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -1000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 1000©, 購入: 1000©)",
+      "createdBy": "きたじ",
+      "createdAt": "2025-08-19T06:28:07.200Z"
+    },
+    {
+      "id": "9tzJa3Nl4QUH5jrToVVh",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 0©, 損益: -3000©)",
+      "createdBy": "きたじ",
+      "createdAt": "2025-08-19T06:14:30.814Z"
+    },
+    {
+      "id": "1b9tHwqP1vznV0c9Mdda",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -3000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 3000©, 購入: 3000©)",
+      "createdBy": "たぬ",
+      "createdAt": "2025-08-19T03:15:30.024Z"
+    },
+    {
+      "id": "kzqJHNf4hjYJ1klwWReP",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -3000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 3000©, 購入: 3000©)",
+      "createdBy": "きたじ",
+      "createdAt": "2025-08-18T15:36:31.093Z"
+    },
+    {
+      "id": "6cgHG7nywewshCBuTsi7",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -3000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 3000©, 購入: 3000©)",
+      "createdBy": "たぬ",
+      "createdAt": "2025-08-18T14:49:30.217Z"
+    },
+    {
+      "id": "QvZqSLSQssThZKiQhKqG",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -5000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 5000©, 購入: 5000©)",
+      "createdBy": "きたじ",
+      "createdAt": "2025-08-18T12:51:08.233Z"
+    },
+    {
+      "id": "R0IzMtgFpRdnBjWUn7SE",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -5000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 5000©, 購入: 5000©)",
+      "createdBy": "たぬ",
+      "createdAt": "2025-08-18T12:50:38.089Z"
+    },
+    {
+      "id": "tCbM1u5xhe9KtHsqMZlY",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -2000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 2000©, 購入: 2000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-18T06:08:01.110Z"
+    },
+    {
+      "id": "jogws7XmXZYcCDUI5LRS",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -3000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 3000©, 購入: 3000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-18T06:04:24.812Z"
+    },
+    {
+      "id": "A53srkIMkUIy1HcHSKJh",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -3000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 3000©, 購入: 3000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-18T06:00:49.687Z"
+    },
+    {
+      "id": "DliCr61YYnkJQMbRkJzq",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -3000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 3000©, 購入: 3000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-18T05:47:12.149Z"
+    },
+    {
+      "id": "9PLyir5WLXhLAdVAKb8m",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 0©, 損益: -4000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-18T05:45:33.782Z"
+    },
+    {
+      "id": "1QeQFK7nSf37HhoVn2qK",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": -1000,
+      "description": "追加購入: ぴよのゲーム (1000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-18T05:44:52.386Z"
+    },
+    {
+      "id": "i0TIwQLWrn4HwP94W09q",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": -1000,
+      "description": "追加購入: ぴよのゲーム (1000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-18T05:44:52.293Z"
+    },
+    {
+      "id": "mFc3zXEkOVQxJJq65ApD",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -2000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 2000©, 購入: 2000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-18T05:33:36.824Z"
+    },
+    {
+      "id": "jFVjVbANuTY0xh2wARhx",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -2000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 2000©, 購入: 2000©)",
+      "createdBy": "きたじ",
+      "createdAt": "2025-08-18T05:31:15.357Z"
+    },
+    {
+      "id": "Z2Mj2YXDemHXH5RGqfDM",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -30000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 30000©, 購入: 30000©)",
+      "createdBy": "たぬ",
+      "createdAt": "2025-08-18T05:27:00.675Z"
+    },
+    {
+      "id": "okm4dSsoOAwxEtMSGkum",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -3000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 3000©, 購入: 3000©)",
+      "createdBy": "たぬ",
+      "createdAt": "2025-08-18T05:26:42.858Z"
+    },
+    {
+      "id": "QP4HDbUaWV2UqAKNpGOH",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": -5000,
+      "description": "追加購入: ぴよのゲーム (5000©)",
+      "createdBy": "きたじ",
+      "createdAt": "2025-08-18T05:17:28.967Z"
+    },
+    {
+      "id": "Y5N9eka8hDlHuo6J2FX1",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": -5000,
+      "description": "追加購入: ぴよのゲーム (5000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-18T05:17:28.878Z"
+    },
+    {
+      "id": "s9pmuRElIamyjUeyWQ3Q",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": -5000,
+      "description": "追加購入: ぴよのゲーム (5000©)",
+      "createdBy": "たぬ",
+      "createdAt": "2025-08-18T05:16:42.647Z"
+    },
+    {
+      "id": "jLVIYSRrtqojzSZxOP9w",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": -5000,
+      "description": "追加購入: ぴよのゲーム (5000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-18T05:16:42.550Z"
+    },
+    {
+      "id": "b8nrGq7x8u9yCq4C7aes",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -5000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 5000©, 購入: 5000©)",
+      "createdBy": "たぬ",
+      "createdAt": "2025-08-18T05:12:23.027Z"
+    },
+    {
+      "id": "VDUDOfegt0f0dxpMpDGA",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -10000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 10000©, 購入: 10000©)",
+      "createdBy": "きたじ",
+      "createdAt": "2025-08-18T05:01:16.640Z"
+    },
+    {
+      "id": "lEX8e3QMIjCl3nP8jw4K",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -5000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 5000©, 購入: 5000©)",
+      "createdBy": "たぬ",
+      "createdAt": "2025-08-18T00:13:10.985Z"
+    },
+    {
+      "id": "63QozqxGdlDrdpVzdhLZ",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -5000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 5000©, 購入: 5000©)",
+      "createdBy": "たぬ",
+      "createdAt": "2025-08-17T23:24:40.848Z"
+    },
+    {
+      "id": "dSmOBUQCVh7BwCD77hBh",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -1000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 1000©, 購入: 1000©)",
+      "createdBy": "きたじ",
+      "createdAt": "2025-08-17T23:08:15.178Z"
+    },
+    {
+      "id": "xGti0nhVAvgujrTJvURf",
+      "playerId": "oeYSynJ6Vjsy2t4bEMjU",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: りゅうすけのゲーム (最終: 0©, 損益: +0©)",
+      "createdBy": "隆介",
+      "createdAt": "2025-08-17T16:47:26.324Z"
+    },
+    {
+      "id": "iI3Sd2ReFDzPxuQE4Hpw",
+      "playerId": "oeYSynJ6Vjsy2t4bEMjU",
+      "type": "game_cashout",
+      "amount": 5000,
+      "description": "ゲーム終了: りゅうすけのゲーム (最終: 5000©, 損益: +5000©)",
+      "createdBy": "隆介",
+      "createdAt": "2025-08-17T16:46:20.435Z"
+    },
+    {
+      "id": "JvoVLhjh8fRGp9xb5AeP",
+      "playerId": "pWyootrD79FE1O44ms16",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: めめのゲーム (最終: 0©, 損益: +0©)",
+      "createdBy": "隆介",
+      "createdAt": "2025-08-17T16:45:40.245Z"
+    },
+    {
+      "id": "V8xO2Y6MQqavZlC6U6hQ",
+      "playerId": "krVultLA1vIC1RV1Mosz",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: むむのゲーム (最終: 0©, 損益: +0©)",
+      "createdBy": "きたじ",
+      "createdAt": "2025-08-17T16:45:25.700Z"
+    },
+    {
+      "id": "YKXVUiEbcy4SxTiuzgRE",
+      "playerId": "oeYSynJ6Vjsy2t4bEMjU",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: りゅうすけのゲーム (最終: 0©, 損益: +0©)",
+      "createdBy": "隆介",
+      "createdAt": "2025-08-17T16:44:58.925Z"
+    },
+    {
+      "id": "faig48RL0tRALXL8YoGa",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 0©, 損益: -3000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-17T15:41:45.413Z"
+    },
+    {
+      "id": "AOuxIX7DO2GoMhrMqIHL",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": -1000,
+      "description": "追加購入: ぴよのゲーム (1000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-17T15:41:32.823Z"
+    },
+    {
+      "id": "abTr95gXOQs1hZ3gkFKl",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": -1000,
+      "description": "追加購入: ぴよのゲーム (1000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-17T15:41:32.689Z"
+    },
+    {
+      "id": "sfg5l5DCuaDGVKjQsAO5",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -1000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 1000©, 購入: 1000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-17T15:40:37.892Z"
+    },
+    {
+      "id": "bPxDQvEDlWt1QousDVQ6",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 0©, 損益: +0©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-17T15:40:24.563Z"
+    },
+    {
+      "id": "Yz6kEv6wZx0VhivhIhvj",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: ぴよのゲーム (4000©, システム残高から使用)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-17T15:40:13.097Z"
+    },
+    {
+      "id": "2siQgvORoUXib5G0OAQr",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 1000©, システム残高から使用)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-17T15:39:46.337Z"
+    },
+    {
+      "id": "blqMRHOtzPbuqrQgOuxg",
+      "playerId": "pWyootrD79FE1O44ms16",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: めめのゲーム (最終: 0©, 損益: +0©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-17T15:37:20.318Z"
+    },
+    {
+      "id": "EDO95ytKH9DP7gNigr8v",
+      "playerId": "pWyootrD79FE1O44ms16",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: めめのゲーム (最終: 0©, 損益: +0©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-17T15:34:14.760Z"
+    },
+    {
+      "id": "s4D3Zl25SJxklgSjJrAP",
+      "playerId": "pWyootrD79FE1O44ms16",
+      "type": "withdrawal",
+      "amount": -50445,
+      "description": "システム残高調整",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-17T15:33:06.667Z"
+    },
+    {
+      "id": "ukr9gD3rHedZ3vTcNJcD",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 5000©, システム残高から使用)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-17T15:32:37.594Z"
+    },
+    {
+      "id": "DLoj0iU1oKlQ7WADElEl",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_cashout",
+      "amount": 10000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 10000©, 損益: -5000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-17T15:26:15.945Z"
+    },
+    {
+      "id": "EBsDEE2n61TuBHLJ0s7g",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": -5000,
+      "description": "追加購入: ぴよのゲーム (5000©)",
+      "createdBy": "隆介",
+      "createdAt": "2025-08-17T13:34:58.310Z"
+    },
+    {
+      "id": "swjQHZjNtSrIbP1Z6jzF",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": -5000,
+      "description": "追加購入: ぴよのゲーム (5000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-17T13:34:58.174Z"
+    },
+    {
+      "id": "bUpQBt923sh4lXO2qV4r",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -50000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 50000©, 購入: 50000©)",
+      "createdBy": "隆介",
+      "createdAt": "2025-08-17T05:32:32.656Z"
+    },
+    {
+      "id": "HMIg3s3O6H7hVQkA6aF3",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -5000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 5000©, 購入: 5000©)",
+      "createdBy": "きたじ",
+      "createdAt": "2025-08-16T18:15:51.464Z"
+    },
+    {
+      "id": "bISpYXWGxJq23RohiJAX",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "deposit",
+      "amount": 0,
+      "description": "システム残高調整",
+      "createdBy": "きたじ",
+      "createdAt": "2025-08-16T18:15:43.371Z"
+    },
+    {
+      "id": "hVqSfYE4wbTNAiqHohOa",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -5000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 10000©, 購入: 5000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-16T05:48:30.034Z"
+    },
+    {
+      "id": "LZjrJrb7gA5DF8CkhCbe",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_cashout",
+      "amount": 5000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 5000©, 損益: -10000©)",
+      "createdBy": "キコーナ",
+      "createdAt": "2025-08-16T05:48:06.926Z"
+    },
+    {
+      "id": "1bz4CBYifiwZb8LI4qll",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": -5000,
+      "description": "追加購入: ぴよのゲーム (5000©)",
+      "createdBy": "キコーナ",
+      "createdAt": "2025-08-16T05:47:47.411Z"
+    },
+    {
+      "id": "PxHsa6unLOqckzNRepjJ",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": -5000,
+      "description": "追加購入: ぴよのゲーム (5000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-16T05:47:47.163Z"
+    },
+    {
+      "id": "VCB1c3lBHyEd39K9nLqH",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -5000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 5000©, 購入: 5000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-16T05:47:32.977Z"
+    },
+    {
+      "id": "Dfb4p6f1m5pBON2Ytj6N",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -5000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 5000©, 購入: 5000©)",
+      "createdBy": "キコーナ",
+      "createdAt": "2025-08-16T05:44:50.288Z"
+    },
+    {
+      "id": "nsZGBnlPEllgNhLzYu26",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -5000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 10000©, 購入: 5000©)",
+      "createdBy": "隆介",
+      "createdAt": "2025-08-16T05:31:25.705Z"
+    },
+    {
+      "id": "j55a42Jh8w9rYRhuQxy2",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 5000©, システム残高から使用)",
+      "createdBy": "きたじ",
+      "createdAt": "2025-08-16T04:39:32.917Z"
+    },
+    {
+      "id": "0KSQyT3I5MjL0JgaGErJ",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_cashout",
+      "amount": 10000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 10000©, 損益: -20000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-16T03:13:34.126Z"
+    },
+    {
+      "id": "5anSKkJHY4U17JmM2XNB",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": -10000,
+      "description": "追加購入: ぴよのゲーム (10000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-16T03:13:20.325Z"
+    },
+    {
+      "id": "Z7uq4bInsMZxtaVkFn0P",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": -10000,
+      "description": "追加購入: ぴよのゲーム (10000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-16T03:13:20.234Z"
+    },
+    {
+      "id": "7lZBlb8Xmt6Yre8Fjup4",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -10000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 10000©, 購入: 10000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-16T03:13:10.316Z"
+    },
+    {
+      "id": "12U0J40qijLsaY1SDsIE",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: ぴよのゲーム (10000©, システム残高から使用)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-16T02:21:32.003Z"
+    },
+    {
+      "id": "kvRDQTGP3ILC7kWmXU9H",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 30000©, システム残高から使用)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-16T02:21:20.397Z"
+    },
+    {
+      "id": "7W4yqL1QjQM2Am20OKez",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_cashout",
+      "amount": 10000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 10000©, 損益: +10000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-16T02:21:02.872Z"
+    },
+    {
+      "id": "7wM84iYST3HkuhfD0CWM",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-16T02:20:48.279Z"
+    },
+    {
+      "id": "rDcliTl4P9jMJlG45J9D",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_cashout",
+      "amount": 50000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 50000©, 損益: +30000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-16T02:16:25.503Z"
+    },
+    {
+      "id": "uUYyTRZPPzOQgVHpbIa5",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": -10000,
+      "description": "追加購入: ぴよのゲーム (10000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-16T02:16:04.919Z"
+    },
+    {
+      "id": "0UyoQuuRUOb5pua65Ayp",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": -10000,
+      "description": "追加購入: ぴよのゲーム (10000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-16T02:16:04.827Z"
+    },
+    {
+      "id": "KaCxRX5rFqGrQdMrELmE",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 30000©, システム残高から使用)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-16T02:15:52.684Z"
+    },
+    {
+      "id": "a40tCMZV4jmc8I9FjBVf",
+      "playerId": "krVultLA1vIC1RV1Mosz",
+      "type": "game_cashout",
+      "amount": 25000,
+      "description": "ゲーム終了: むむのゲーム (最終: 25000©, 損益: +25000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-16T02:03:50.959Z"
+    },
+    {
+      "id": "AfnjNxLTbL98UKMaupif",
+      "playerId": "krVultLA1vIC1RV1Mosz",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: むむのゲーム (バイイン: 30000©, システム残高から使用)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-16T02:03:19.847Z"
+    },
+    {
+      "id": "0qMKdeiBio4qy5YnaCSm",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_cashout",
+      "amount": 30000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 30000©, 損益: +30000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-16T02:01:25.390Z"
+    },
+    {
+      "id": "ahJ3dC8BwIGj56dIBS30",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 20000©, システム残高から使用)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-16T02:01:06.674Z"
+    },
+    {
+      "id": "mRxjB34fd9aHkgYsj5KM",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_cashout",
+      "amount": 40000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 40000©, 損益: +10000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-16T01:58:55.322Z"
+    },
+    {
+      "id": "RhrY2M4n6xS1Yz432ubP",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -30000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 30000©, 購入: 30000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-16T01:58:39.858Z"
+    },
+    {
+      "id": "QNX36x1vs8PakjdPw5yo",
+      "playerId": "krVultLA1vIC1RV1Mosz",
+      "type": "game_cashout",
+      "amount": 40000,
+      "description": "ゲーム終了: むむのゲーム (最終: 40000©, 損益: +10000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-16T01:57:49.775Z"
+    },
+    {
+      "id": "haAnAIHxY116LSBWjvSK",
+      "playerId": "krVultLA1vIC1RV1Mosz",
+      "type": "game_buy_in",
+      "amount": -30000,
+      "description": "ゲーム参加: むむのゲーム (バイイン: 30000©, 購入: 30000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-16T01:57:33.304Z"
+    },
+    {
+      "id": "2qurgcsjUbtRZjm3k9sE",
+      "playerId": "pWyootrD79FE1O44ms16",
+      "type": "game_cashout",
+      "amount": 25000,
+      "description": "ゲーム終了: めめのゲーム (最終: 25000©, 損益: +25000©)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-16T01:55:37.698Z"
+    },
+    {
+      "id": "bImjHvp0y8kqniAR8agw",
+      "playerId": "pWyootrD79FE1O44ms16",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: めめのゲーム (バイイン: 30000©, システム残高から使用)",
+      "createdBy": "ゆめいん",
+      "createdAt": "2025-08-16T01:55:19.838Z"
+    },
+    {
+      "id": "iPJhxkYjaoGJ0iHKtX6p",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -50000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 50000©, 購入: 50000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-16T01:36:10.953Z"
+    },
+    {
+      "id": "5l8t6dhdq0yMfepf6Ior",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 0©, 損益: -5000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-16T01:33:59.682Z"
+    },
+    {
+      "id": "azQ0jePCsYxy4Gpqc4CB",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -5000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 5000©, 購入: 5000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-16T01:33:18.244Z"
+    },
+    {
+      "id": "Dblg1isC1EHu7jpSMEhB",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": -20000,
+      "description": "追加購入: ぴよのゲーム (20000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-16T01:22:16.505Z"
+    },
+    {
+      "id": "J3GCVaC9HDj3DJTe1N5p",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": -20000,
+      "description": "追加購入: ぴよのゲーム (20000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-16T01:22:16.394Z"
+    },
+    {
+      "id": "SMt08GuwnHfn9vPu8pTx",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -10000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 60000©, 購入: 10000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-16T01:19:11.203Z"
+    },
+    {
+      "id": "g36G9NBoa7i816qcKQ4v",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "deposit",
+      "amount": 10000,
+      "description": "システム残高調整",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-16T01:17:27.207Z"
+    },
+    {
+      "id": "NmdoqLkYkLj6FiTBsLoL",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "deposit",
+      "amount": 0,
+      "description": "システム残高調整",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-16T01:11:08.380Z"
+    },
+    {
+      "id": "WjIOCdMGQDcsAI3jfPoT",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "deposit",
+      "amount": 10000,
+      "description": "システム残高調整",
+      "createdBy": "不明なユーザー",
+      "createdAt": "2025-08-16T01:05:01.433Z"
+    },
+    {
+      "id": "v7JKiU4l27bFzQm9uWND",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "deposit",
+      "amount": 10000,
+      "description": "システム残高調整",
+      "createdBy": "不明なユーザー",
+      "createdAt": "2025-08-16T01:01:05.053Z"
+    },
+    {
+      "id": "1xeOO6DbA7fzihoL5Pn5",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "deposit",
+      "amount": 5000,
+      "description": "システム残高調整",
+      "createdBy": "不明なユーザー",
+      "createdAt": "2025-08-16T00:53:14.433Z"
+    },
+    {
+      "id": "bu3xoTeEjFquJcWT5prZ",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "deposit",
+      "amount": 0,
+      "description": "システム残高調整",
+      "createdBy": "不明",
+      "createdAt": "2025-08-16T00:51:04.736Z"
+    },
+    {
+      "id": "NnFKq02FRicS9UyQKJEJ",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 5000©, システム残高から使用)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-16T00:48:03.311Z"
+    },
+    {
+      "id": "WERt8HhPdzunQA9Gsxkh",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "deposit",
+      "amount": 10000,
+      "description": "システム残高調整",
+      "createdBy": "",
+      "createdAt": "2025-08-16T00:47:41.008Z"
+    },
+    {
+      "id": "mjknFX9f2pLsjXP5tIK5",
+      "playerId": "pWyootrD79FE1O44ms16",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: めめのゲーム (バイイン: 10000©, システム残高から使用)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-16T00:40:39.118Z"
+    },
+    {
+      "id": "jeHxoZMT4yo0JGWFOsep",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_cashout",
+      "amount": 10000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 10000©, 損益: -10000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-15T17:45:00.627Z"
+    },
+    {
+      "id": "9sbLGxbmBgP42qVWcQk6",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": -10000,
+      "description": "追加購入: ぴよのゲーム (10000©)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-15T17:44:49.664Z"
+    },
+    {
+      "id": "e6XkuyvvHYXGLufTSVbT",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": -10000,
+      "description": "追加購入: ぴよのゲーム (10000©)",
+      "createdBy": "操作者",
+      "createdAt": "2025-08-15T17:44:49.583Z"
+    },
+    {
+      "id": "kNf9ORzqkjFRzlbrdrHO",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 15000©, システム残高から使用)",
+      "createdBy": "インフルエンサー",
+      "createdAt": "2025-08-15T17:44:35.042Z"
+    },
+    {
+      "id": "1uxSNsQepFblVSDld5lr",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_cashout",
+      "amount": 20000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 20000©, 損益: -5000©)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T12:50:47.295Z"
+    },
+    {
+      "id": "ZPK3bE613r8XRONuLPy2",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": -10000,
+      "description": "追加購入: ぴよのゲーム (10000©)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T12:50:29.933Z"
+    },
+    {
+      "id": "VElVgbZygpYvwmGKMrnn",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": -10000,
+      "description": "追加購入: ぴよのゲーム (10000©)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T12:50:29.841Z"
+    },
+    {
+      "id": "u3sSW0lgRTaFn5vXwxs6",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -5000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 20000©, 購入: 5000©)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T12:50:09.239Z"
+    },
+    {
+      "id": "8ndrWCKLWfnDhjlipBh6",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_cashout",
+      "amount": 15000,
+      "description": "ゲーム終了: ぴよのゲーム (最終: 15000©, 損益: +0©)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T07:54:20.269Z"
+    },
+    {
+      "id": "ReWCE2kDqHtJsYzlSvt5",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": -5000,
+      "description": "追加購入: ぴよのゲーム (5000©)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T07:46:36.594Z"
+    },
+    {
+      "id": "XSAvL0SRJXVqh4IlI3uL",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_additional",
+      "amount": -5000,
+      "description": "追加購入: ぴよのゲーム (5000©)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T07:46:36.493Z"
+    },
+    {
+      "id": "vNMHhZIum6SLNR3OzTwv",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -5000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 5000©, 購入: 5000©)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T07:46:20.546Z"
+    },
+    {
+      "id": "RB6sHqKaE7V4MyS2blhy",
+      "playerId": "krVultLA1vIC1RV1Mosz",
+      "type": "game_additional",
+      "amount": -2000,
+      "description": "追加購入: むむのゲーム (2000©)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T07:06:19.557Z"
+    },
+    {
+      "id": "gMNInanZl9U7c03AStbp",
+      "playerId": "krVultLA1vIC1RV1Mosz",
+      "type": "game_buy_in",
+      "amount": -1000,
+      "description": "ゲーム参加: むむのゲーム (バイイン: 5000©, 購入: 1000©)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T07:06:01.445Z"
+    },
+    {
+      "id": "bZFhaQkA1u3RE8sbPZV3",
+      "playerId": "pWyootrD79FE1O44ms16",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: めめのゲーム (バイイン: 5000©, システム残高から使用)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T06:48:44.080Z"
+    },
+    {
+      "id": "CZpKVEssJ5lp26csdk5f",
+      "playerId": "pWyootrD79FE1O44ms16",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: めめのゲーム (バイイン: 5555©, システム残高から使用)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T06:45:07.210Z"
+    },
+    {
+      "id": "MOQykJK4k0RzS4uqH3ZM",
+      "playerId": "pWyootrD79FE1O44ms16",
+      "type": "game_cashout",
+      "amount": 10000,
+      "description": "ゲーム終了: めめのゲーム (最終: 10000©, 損益: +10000©)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T05:36:08.034Z"
+    },
+    {
+      "id": "6JbUjnVbnlOKu1accRFJ",
+      "playerId": "pWyootrD79FE1O44ms16",
+      "type": "game_additional",
+      "amount": 0,
+      "description": "追加スタック: めめのゲーム (5000©, システム残高から使用)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T05:35:55.670Z"
+    },
+    {
+      "id": "aNgw32wFPYWcRp8WSR5w",
+      "playerId": "pWyootrD79FE1O44ms16",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: めめのゲーム (バイイン: 5000©, システム残高から使用)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T05:35:42.628Z"
+    },
+    {
+      "id": "iYthbQXq3W2Gh25r244v",
+      "playerId": "pWyootrD79FE1O44ms16",
+      "type": "game_cashout",
+      "amount": 15000,
+      "description": "ゲーム終了: めめのゲーム (最終: 15000©, 損益: +15000©)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T05:33:02.165Z"
+    },
+    {
+      "id": "mmHwVVCRH3FtsNqxcgXx",
+      "playerId": "pWyootrD79FE1O44ms16",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: めめのゲーム (バイイン: 5000©, システム残高から使用)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T05:32:26.687Z"
+    },
+    {
+      "id": "irqLtvqzZ9KAhIUGx8xh",
+      "playerId": "pWyootrD79FE1O44ms16",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: めめのゲーム (バイイン: 10000©, システム残高から使用)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T05:29:53.303Z"
+    },
+    {
+      "id": "OuKufxwEKcq7Bp4gv2gt",
+      "playerId": "pWyootrD79FE1O44ms16",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: めめのゲーム (バイイン: 10000©, システム残高から使用)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T05:15:22.649Z"
+    },
+    {
+      "id": "gV4W9zQCtggqs0K0jfUi",
+      "playerId": "pWyootrD79FE1O44ms16",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: めめのゲーム (バイイン: 5000©, システム残高から使用)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T03:42:32.538Z"
+    },
+    {
+      "id": "97IcacSdo0ujU2NPHJs6",
+      "playerId": "AbNXoBJ9lMdQWnw9OwqB",
+      "type": "game_buy_in",
+      "amount": -10000,
+      "description": "ゲーム参加: ぴよのゲーム (バイイン: 10000©, 購入: 10000©)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T03:33:40.555Z"
+    },
+    {
+      "id": "2J78RmwPIDpu1wvw3HFW",
+      "playerId": "pWyootrD79FE1O44ms16",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: めめのゲーム (バイイン: 15000©, システム残高から使用)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T03:28:00.980Z"
+    },
+    {
+      "id": "4SSDPY5wRJ6ErhbLfD3X",
+      "playerId": "pWyootrD79FE1O44ms16",
+      "type": "game_cashout",
+      "amount": 0,
+      "description": "ゲーム終了: めめのゲーム (最終: 0©, 損益: +0©)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T03:19:08.636Z"
+    },
+    {
+      "id": "WtA3xMlsDCULdQMzpxjZ",
+      "playerId": "pWyootrD79FE1O44ms16",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: めめのゲーム (バイイン: 30000©, システム残高から使用)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T03:18:31.683Z"
+    },
+    {
+      "id": "O7NyRgPz4vJrsp7cLtZm",
+      "playerId": "krVultLA1vIC1RV1Mosz",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: むむのゲーム (バイイン: 1000©, システム残高から使用)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T03:13:25.719Z"
+    },
+    {
+      "id": "iEdC0odf5s7Pv8S2tMxJ",
+      "playerId": "krVultLA1vIC1RV1Mosz",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: むむのゲーム (バイイン: 5000©, システム残高から使用)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T03:01:15.695Z"
+    },
+    {
+      "id": "oroL8OczOyNZnao34jOa",
+      "playerId": "oeYSynJ6Vjsy2t4bEMjU",
+      "type": "game_buy_in",
+      "amount": 0,
+      "description": "ゲーム参加: りゅうすけのゲーム (バイイン: 1000©, システム残高から使用)",
+      "createdBy": "system",
+      "createdAt": "2025-08-15T02:38:27.710Z"
+    },
+    {
+      "id": "4114uIF4syd7xhd0iYwY",
+      "playerId": "oeYSynJ6Vjsy2t4bEMjU",
+      "type": "deposit",
+      "amount": 26000,
+      "description": "システム残高調整",
+      "createdBy": "9K0uQTiuCkbMHjBkfStm51vaFdR2",
+      "createdAt": "2025-08-15T01:59:38.090Z"
+    },
+    {
+      "id": "jIFFltQUpJKg8yJRZork",
+      "playerId": "oeYSynJ6Vjsy2t4bEMjU",
+      "type": "deposit",
+      "amount": 4000,
+      "description": "システム残高調整",
+      "createdBy": "8UEDe574IwZiGLJfj6rGnkxEbZz2",
+      "createdAt": "2025-08-15T01:41:09.298Z"
+    }
+  ],
+  "rakeHistory": [
+    {
+      "id": "vqOG2BGJz4YjUbqmX5i6",
+      "playerId": "og8L9oqLuqYd53kC9feA",
+      "playerName": "りゅうさん",
+      "gameId": "6N2Pm9Sn3f4osQvTBBbS",
+      "buyIn": 30000,
+      "additionalStack": 0,
+      "finalStack": 23200,
+      "rake": 6800,
+      "createdAt": "2025-09-16T15:31:06.636Z"
+    },
+    {
+      "id": "LqSQjxyVY4d4YXfNsC7u",
+      "playerId": "OmBiImi7TyoeuOLGQoXl",
+      "playerName": "みやもとたけし",
+      "gameId": "JyR8beQHljSF1n2BajhQ",
+      "buyIn": 14300,
+      "additionalStack": 0,
+      "finalStack": 12400,
+      "rake": 1900,
+      "createdAt": "2025-09-16T15:30:51.416Z"
+    },
+    {
+      "id": "3tKhdySVKA0qE1fJc9kD",
+      "playerId": "1USzMcOImQtuJGiodf20",
+      "playerName": "ひらんさん",
+      "gameId": "oxxZKB8TuLBiNYGKkVqe",
+      "buyIn": 16400,
+      "additionalStack": 0,
+      "finalStack": 22200,
+      "rake": -5800,
+      "createdAt": "2025-09-16T15:30:33.201Z"
+    },
+    {
+      "id": "WYyTuvbzeWE7RrdJhXFL",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "playerName": "りゅうたくん",
+      "gameId": "UiKaK7THyEP5MwjOJBPO",
+      "buyIn": 20000,
+      "additionalStack": 0,
+      "finalStack": 42000,
+      "rake": -22000,
+      "createdAt": "2025-09-15T15:17:21.032Z"
+    },
+    {
+      "id": "xANPC0o6lqCSGKOG2Pzw",
+      "playerId": "XV8TQmguxM5X4RBG74R6",
+      "playerName": "はるかねくん",
+      "gameId": "r96CeQjx4e4zVRdfRJmE",
+      "buyIn": 15000,
+      "additionalStack": 15000,
+      "finalStack": 14200,
+      "rake": 15800,
+      "createdAt": "2025-09-15T15:15:24.412Z"
+    },
+    {
+      "id": "dutc73r9PMKVnBM5ADQC",
+      "playerId": "pVMWrraYayxSpCOkli5z",
+      "playerName": "さくらいさん",
+      "gameId": "hB8oAeYK8WppHBuCLxVx",
+      "buyIn": 20000,
+      "additionalStack": 40000,
+      "finalStack": 24500,
+      "rake": 35500,
+      "createdAt": "2025-09-15T15:14:41.697Z"
+    },
+    {
+      "id": "jg6jadNCQbA3wAkeww15",
+      "playerId": "og8L9oqLuqYd53kC9feA",
+      "playerName": "りゅうさん",
+      "gameId": "HOu4XIFfzK1xuwuOgMgq",
+      "buyIn": 30000,
+      "additionalStack": 0,
+      "finalStack": 56000,
+      "rake": -26000,
+      "createdAt": "2025-09-15T15:14:03.121Z"
+    },
+    {
+      "id": "lM2pgK1lARfHBvX01d8n",
+      "playerId": "0G6CTLiflPPoAYIfbFAl",
+      "playerName": "山本慶太",
+      "gameId": "jxjDrvz6qGcmWhsgpJE9",
+      "buyIn": 10000,
+      "additionalStack": 0,
+      "finalStack": 13700,
+      "rake": -3700,
+      "createdAt": "2025-09-15T12:50:43.813Z"
+    },
+    {
+      "id": "5UdGw5ajlmNOVDQ0186j",
+      "playerId": "ykeGJTnd1vABtPsZrjnq",
+      "playerName": "はるか",
+      "gameId": "TnXO76pl1JNF8lbh2MCH",
+      "buyIn": 15000,
+      "additionalStack": 0,
+      "finalStack": 22000,
+      "rake": -7000,
+      "createdAt": "2025-09-14T15:04:19.836Z"
+    },
+    {
+      "id": "kSt5V6GP3pgOwsadZgLW",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "playerName": "りゅうたくん",
+      "gameId": "ZFCM4BoYRMW5L1xweGWt",
+      "buyIn": 20000,
+      "additionalStack": 0,
+      "finalStack": 14400,
+      "rake": 5600,
+      "createdAt": "2025-09-14T15:03:34.452Z"
+    },
+    {
+      "id": "0vLf0vkfEzU0ux2M3Qbu",
+      "playerId": "Cpo1qJWcx3gO4x431cPw",
+      "playerName": "しみずさん",
+      "gameId": "uPyBPzPFbsbSeMs4Omec",
+      "buyIn": 15000,
+      "additionalStack": 0,
+      "finalStack": 3200,
+      "rake": 11800,
+      "createdAt": "2025-09-14T15:03:18.250Z"
+    },
+    {
+      "id": "IvXG8otu8p9BWurvEoUl",
+      "playerId": "K7S6LEvRRsniPmucMLrn",
+      "playerName": "きくちさん",
+      "gameId": "RqQD9wlr4zTK08IshRBn",
+      "buyIn": 10000,
+      "additionalStack": 0,
+      "finalStack": 0,
+      "rake": 10000,
+      "createdAt": "2025-09-14T15:03:02.108Z"
+    },
+    {
+      "id": "TtwiICwOqEE3CSMk2BDa",
+      "playerId": "1USzMcOImQtuJGiodf20",
+      "playerName": "ひらんさん",
+      "gameId": "HSEEuoOE8bKjUfQJXlvb",
+      "buyIn": 5000,
+      "additionalStack": 15000,
+      "finalStack": 14000,
+      "rake": 6000,
+      "createdAt": "2025-09-14T15:02:34.692Z"
+    },
+    {
+      "id": "Gcztr9i1SJE71Nsshgzb",
+      "playerId": "Gw0U8ydOxAwf8FkUZa7x",
+      "playerName": "りゅうたくん",
+      "gameId": "qDXdodtVW8sIOQ3Y9BMh",
+      "buyIn": 1540,
+      "additionalStack": 0,
+      "finalStack": 0,
+      "rake": 1540,
+      "createdAt": "2025-09-14T08:30:54.040Z"
+    },
+    {
+      "id": "w8kMPCBfhNejjpYJh6Da",
+      "playerId": "SqGmHA65w0IrpfoVMIJ5",
+      "playerName": "さすけ",
+      "gameId": "oyff9l2GNxEIjuFATpwZ",
+      "buyIn": 1870,
+      "additionalStack": 0,
+      "finalStack": 0,
+      "rake": 1870,
+      "createdAt": "2025-09-14T08:30:48.590Z"
+    }
+  ],
+  "purchaseHistory": {
+    "pVMWrraYayxSpCOkli5z": 33300,
+    "K7S6LEvRRsniPmucMLrn": 10000
+  }
+}

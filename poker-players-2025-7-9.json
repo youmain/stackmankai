@@ -1,0 +1,16 @@
+{
+  "players": [
+    {
+      "id": "1751984499662",
+      "name": "ゆめいん",
+      "currentStack": 0,
+      "totalBuyIn": 25000,
+      "totalCashOut": 20000,
+      "netProfit": -5000,
+      "gamesPlayed": 2,
+      "visitedToday": true
+    }
+  ],
+  "exportDate": "2025-07-08T15:51:57.349Z",
+  "version": "1.0"
+}

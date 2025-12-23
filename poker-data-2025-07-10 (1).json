@@ -1,0 +1,95 @@
+{
+  "players": [
+    {
+      "name": "インフルエンサー",
+      "currentChips": 20000,
+      "totalBuyIn": 10000,
+      "totalCashOut": 20000,
+      "totalProfit": 10000,
+      "gameCount": 1,
+      "status": "inactive",
+      "initialAmount": 0,
+      "id": "1752136337166"
+    },
+    {
+      "name": "１",
+      "currentChips": 20000,
+      "totalBuyIn": 10000,
+      "totalCashOut": 20000,
+      "totalProfit": 10000,
+      "gameCount": 1,
+      "status": "inactive",
+      "initialAmount": 0,
+      "id": "1752139649357"
+    }
+  ],
+  "gameSessions": [
+    {
+      "id": "1752139663946",
+      "playerId": "1752139649357",
+      "playerName": "１",
+      "buyIn": 10000,
+      "startTime": "2025-07-10T09:27:43.946Z",
+      "status": "completed",
+      "endTime": "2025-07-10T09:28:40.629Z",
+      "cashOut": 20000
+    }
+  ],
+  "receipts": [
+    {
+      "id": "receipt-1752139663946",
+      "playerId": "1752139649357",
+      "playerName": "１",
+      "date": "2025/7/10",
+      "items": [
+        {
+          "name": "バイイン",
+          "amount": 10000,
+          "type": "neutral"
+        },
+        {
+          "name": "©増減",
+          "amount": 10000,
+          "type": "neutral"
+        },
+        {
+          "name": "最終©残高",
+          "amount": 20000,
+          "type": "neutral"
+        },
+        {
+          "name": "チャージ",
+          "amount": 1000,
+          "type": "neutral"
+        },
+        {
+          "name": "ソフトドリンク",
+          "amount": 0,
+          "type": "neutral"
+        },
+        {
+          "name": "スタック購入",
+          "amount": 0,
+          "type": "negative"
+        },
+        {
+          "name": "小計",
+          "amount": 1500,
+          "type": "neutral"
+        },
+        {
+          "name": "消費税",
+          "amount": 150,
+          "type": "neutral"
+        },
+        {
+          "name": "アルコール",
+          "amount": 500,
+          "type": "neutral"
+        }
+      ],
+      "total": 1650,
+      "status": "completed"
+    }
+  ]
+}

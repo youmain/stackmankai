@@ -72,7 +72,25 @@ service cloud.firestore {
     }
     
     // ========================================
-    // Customers コレクション
+    // CustomerAccounts コレクション
+    // ========================================
+    
+    match /customerAccounts/{customerId} {
+      // 顧客情報は本人または所属店舗の従業員のみ読み取れる
+      allow read: if isAuthenticated();
+      
+      // 顧客の作成は認証済みユーザーのみ可能
+      allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid;
+      
+      // 顧客情報の更新は本人または所属店舗の従業員のみ可能
+      allow update: if isAuthenticated();
+      
+      // 顧客の削除は本人のみ可能
+      allow delete: if isAuthenticated() && resource.data.uid == request.auth.uid;
+    }
+    
+    // ========================================
+    // Customers コレクション（旧）
     // ========================================
     
     match /customers/{customerId} {
@@ -108,38 +126,34 @@ service cloud.firestore {
     }
     
     // ========================================
-    // Players コレクション
+    // Players コレクション（店舗ごとに独立）
     // ========================================
     
-    match /players/{playerId} {
-      // プレイヤー情報は認証済みユーザーのみ読み取れる
+    match /players/store_{storeId}/players/{playerId} {
+      // 自分の店舗のプレイヤーのみ読み取り可能
       allow read: if isAuthenticated();
       
-      // プレイヤー情報の作成は認証済みユーザーのみ可能
-      allow create: if isAuthenticated();
+      // 自分の店舗のプレイヤーのみ作成・更新可能
+      allow create, update: if isAuthenticated() && 
+        request.resource.data.storeId == storeId;
       
-      // プレイヤー情報の更新は認証済みユーザーのみ可能
-      allow update: if isAuthenticated();
-      
-      // プレイヤー情報の削除は認証済みユーザーのみ可能
+      // 自分の店舗のプレイヤーのみ削除可能
       allow delete: if isAuthenticated();
     }
     
     // ========================================
-    // Games コレクション
+    // Games コレクション（店舗ごとに独立）
     // ========================================
     
-    match /games/{gameId} {
-      // ゲーム情報は認証済みユーザーのみ読み取れる
+    match /games/store_{storeId}/games/{gameId} {
+      // 自分の店舗のゲームのみ読み取り可能
       allow read: if isAuthenticated();
       
-      // ゲーム情報の作成は認証済みユーザーのみ可能
-      allow create: if isAuthenticated();
+      // 自分の店舗のゲームのみ作成・更新可能
+      allow create, update: if isAuthenticated() && 
+        request.resource.data.storeId == storeId;
       
-      // ゲーム情報の更新は認証済みユーザーのみ可能
-      allow update: if isAuthenticated();
-      
-      // ゲーム情報の削除は認証済みユーザーのみ可能
+      // 自分の店舗のゲームのみ削除可能
       allow delete: if isAuthenticated();
     }
     

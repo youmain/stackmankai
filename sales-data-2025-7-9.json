@@ -1,0 +1,22 @@
+{
+  "dailySales": [
+    {
+      "date": "2025/7/9",
+      "operatingRevenue": 10000,
+      "cashRevenue": 31540,
+      "totalRevenue": 41540,
+      "isConfirmed": true,
+      "confirmedAt": "2025-07-09T05:52:17.032Z"
+    }
+  ],
+  "monthlyTotals": [
+    {
+      "month": "2025年07月",
+      "operatingRevenue": 10000,
+      "cashRevenue": 31540,
+      "totalRevenue": 41540
+    }
+  ],
+  "exportDate": "2025-07-09T05:53:25.538Z",
+  "version": "1.0"
+}
