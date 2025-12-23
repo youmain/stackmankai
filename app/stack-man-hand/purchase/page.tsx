@@ -173,9 +173,7 @@ export default function StackManHandPurchasePage() {
       )
       
       if (result.success) {
-        alert(result.message + "\n\n購入したハンドは「保有ハンド一覧」から確認できます。")
-        
-        // 購入成功後、自動的にページをリロードして最新情報を表示
+        // 購入成功後、自動的にページをリロードして購入したハンドを表示
         window.location.reload()
       } else {
         // Show error message from the purchase function
