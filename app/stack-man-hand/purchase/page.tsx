@@ -261,16 +261,16 @@ export default function StackManHandPurchasePage() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-gray-600">購入価格</p>
-              <p className="text-2xl font-bold text-blue-600">{settings.purchasePrice.toLocaleString()}💰</p>
+              <p className="text-2xl font-bold text-blue-600">{settings?.purchasePrice?.toLocaleString() ?? '---'}💰</p>
             </div>
             <div>
               <p className="text-sm text-gray-600">基礎報酬</p>
-              <p className="text-2xl font-bold text-green-600">{settings.rewardAmount.toLocaleString()}💰</p>
+              <p className="text-2xl font-bold text-green-600">{settings?.rewardAmount?.toLocaleString() ?? '---'}💰</p>
             </div>
             <div className="col-span-2">
               <p className="text-sm text-gray-600">営業時間</p>
               <p className="text-lg font-semibold text-gray-800">
-                {settings.businessHours.open} - {settings.businessHours.close}
+                {settings?.businessHours?.open ?? '---'} - {settings?.businessHours?.close ?? '---'}
               </p>
             </div>
           </div>
@@ -309,7 +309,7 @@ export default function StackManHandPurchasePage() {
               disabled={purchasing}
               className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-4 px-6 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {purchasing ? "購入中..." : `Stack Man Handを購入（${settings.purchasePrice.toLocaleString()}💰）`}
+              {purchasing ? "購入中..." : `Stack Man Handを購入（${settings?.purchasePrice?.toLocaleString() ?? '---'}💰）`}
             </button>
           ) : (
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
