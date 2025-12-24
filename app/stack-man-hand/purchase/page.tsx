@@ -54,45 +54,30 @@ export default function StackManHandPurchasePage() {
           type: typeof customerAccount.playerId
         })
         
-        const playersRef = collection(getDb()!, "players")
-        
-        // Try to find player by document ID first (most common case)
+        // 店舗分離構造に対応: players/store_{storeId}/players/{playerId}
         let playerDoc = null
         let playerData = null
         
         try {
-          console.log("[Purchase] Trying document ID first...")
-          const playerDocRef = doc(getDb()!, "players", customerAccount.playerId)
+          console.log("[Purchase] Getting player from store-isolated structure...")
+          const playerDocRef = doc(
+            getDb()!, 
+            "players", 
+            `store_${customerAccount.storeId}`, 
+            "players", 
+            customerAccount.playerId
+          )
           const playerDocSnap = await getDoc(playerDocRef)
           
           if (playerDocSnap.exists()) {
-            console.log("[Purchase] Player found by document ID")
+            console.log("[Purchase] Player found in store-isolated structure")
             playerDoc = playerDocSnap
             playerData = playerDocSnap.data()
+          } else {
+            console.log("[Purchase] Player not found in store-isolated structure")
           }
         } catch (error) {
-          console.error("[Purchase] Error getting player by document ID:", error)
-        }
-        
-        // If not found by document ID, try uniqueId
-        if (!playerDoc) {
-          console.log("[Purchase] Player not found by document ID, trying uniqueId...")
-          let playerQuery = query(playersRef, 
-            where("uniqueId", "==", customerAccount.playerId)
-          )
-          let playerSnapshot = await getDocs(playerQuery)
-          
-          console.log("[Purchase] Player search by uniqueId:", {
-            playerId: customerAccount.playerId,
-            empty: playerSnapshot.empty,
-            count: playerSnapshot.docs.length
-          })
-          
-          if (!playerSnapshot.empty) {
-            playerDoc = playerSnapshot.docs[0]
-            playerData = playerDoc.data()
-            console.log("[Purchase] Player found by uniqueId")
-          }
+          console.error("[Purchase] Error getting player:", error)
         }
         
         // If still not found, show error
