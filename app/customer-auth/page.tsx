@@ -47,23 +47,6 @@ export default function CustomerAuthPage() {
     if (hideCompletion === "true") {
       setShouldShowCompletion(false)
     }
-    
-    // 店舗情報を取得
-    const storeId = localStorage.getItem("storeId")
-    const storeName = localStorage.getItem("storeName")
-    const storeCode = localStorage.getItem("storeCode")
-    
-    if (storeId && storeName) {
-      setStoreInfo({
-        storeId,
-        storeName,
-        storeCode,
-      })
-      console.log("[v0] 🏪 店舗情報をlocalStorageから読み込み:", { storeId, storeName, storeCode })
-    } else {
-      console.warn("[v0] ⚠️ localStorageに店舗情報がありません")
-      setError("店舗情報が見つかりません。店舗ログインページに移動してください。")
-    }
   }, [])
 
   const handleHideCompletionChange = (checked: boolean) => {
@@ -104,16 +87,12 @@ export default function CustomerAuthPage() {
         throw new Error("このメールアドレスは既に登録されています")
       }
 
-      // 店舗情報の確認
-      if (!storeInfo || !storeInfo.storeId) {
-        throw new Error("店舗情報が見つかりません。店舗ログインページに移動してください。")
-      }
-
       // Firestoreに顧客アカウントを作成（Firebase Auth統合）
+      // 店舗情報は後で追加されるため、登録時はnullでもOK
       const customerId = await createCustomerAccount(
         {
-          storeId: storeInfo.storeId,
-          storeName: storeInfo.storeName,
+          storeId: storeInfo?.storeId || null,
+          storeName: storeInfo?.storeName || null,
           isBetaTester: true,
           subscriptionStatus: "free_trial",
         },
@@ -127,8 +106,8 @@ export default function CustomerAuthPage() {
         isBetaTester: true,
         registeredAt: new Date().toISOString(),
         subscriptionStatus: "free_trial",
-        storeId: storeInfo.storeId,
-        storeName: storeInfo.storeName,
+        storeId: storeInfo?.storeId || null,
+        storeName: storeInfo?.storeName || null,
       }
 
       // localStorageにユーザー情報を保存（投稿作成用）
@@ -137,8 +116,8 @@ export default function CustomerAuthPage() {
         name: testCustomer.email,
         email: testCustomer.email,
         type: "customer",
-        storeId: storeInfo.storeId,
-        storeName: storeInfo.storeName,
+        storeId: storeInfo?.storeId || null,
+        storeName: storeInfo?.storeName || null,
       }))
       console.log("[Auth] 💾 localStorageにユーザー情報保存:", testCustomer.email)
 
@@ -180,17 +159,12 @@ export default function CustomerAuthPage() {
       if (!customer) {
         console.warn("[Auth] ⚠️ 顧客情報が見つかりません。自動作成します...")
         
-        // 店舗情報の確認
-        if (!storeInfo || !storeInfo.storeId) {
-          throw new Error("顧客情報が見つからず、店舗情報もありません。再度登録してください。")
-        }
-        
         // Firestoreのみに顧客情報を作成（Firebase Authユーザーは既に存在）
         const { createCustomerInFirestore } = await import("@/lib/firestore")
         const customerId = await createCustomerInFirestore(
           {
-            storeId: storeInfo.storeId,
-            storeName: storeInfo.storeName,
+            storeId: storeInfo?.storeId || null,
+            storeName: storeInfo?.storeName || null,
             isBetaTester: true,
             subscriptionStatus: "free_trial",
           },
@@ -209,12 +183,8 @@ export default function CustomerAuthPage() {
       }
 
       // 店舗情報の確認（ログイン時は顧客データから取得、なければlocalStorageから）
-      const finalStoreId = customer.storeId || storeInfo?.storeId
-      const finalStoreName = customer.storeName || storeInfo?.storeName
-      
-      if (!finalStoreId || !finalStoreName) {
-        throw new Error("店舗情報が見つかりません。店舗ログインページに移動してください。")
-      }
+      const finalStoreId = customer.storeId || storeInfo?.storeId || null
+      const finalStoreName = customer.storeName || storeInfo?.storeName || null
 
       // 顧客情報を完全な形で保存
       const fullCustomer = {
