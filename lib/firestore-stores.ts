@@ -137,7 +137,8 @@ export async function loginStoreOwner(
 ): Promise<Store | null> {
   try {
     // Firebase Authenticationでサインイン
-    await signIn(ownerEmail, ownerPassword)
+    const userCredential = await signIn(ownerEmail, ownerPassword)
+    const uid = userCredential.user.uid
     
     const storesRef = collection(db, "stores")
     const q = query(storesRef, where("ownerEmail", "==", ownerEmail))
@@ -152,6 +153,7 @@ export async function loginStoreOwner(
     
     return {
       id: storeDoc.id,
+      uid: uid,
       ...storeData,
     } as Store
   } catch (error) {

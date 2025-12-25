@@ -89,7 +89,7 @@ export default function AdminPage() {
         </header>
 
         {/* モバイルメニュー */}
-        <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+        <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen} modal={false}>
           <SheetContent side="right" className="w-80">
             <SheetHeader>
               <SheetTitle className="text-lg">メニュー</SheetTitle>

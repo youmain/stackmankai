@@ -83,6 +83,7 @@ export default function StoreLoginPage() {
       localStorage.setItem("storeName", store.name)
       localStorage.setItem("storeEmail", store.email)
       localStorage.setItem("userName", store.name)
+      localStorage.setItem("uid", store.uid || "")
       localStorage.setItem("isStoreOwner", "true")
 
       // ダッシュボードへリダイレクト
