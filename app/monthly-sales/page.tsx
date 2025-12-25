@@ -21,7 +21,11 @@ export default function MonthlySalesPage() {
   const [selectedSalesData, setSelectedSalesData] = useState<DailySales | null>(null)
 
   useEffect(() => {
+    // localStorageからstoreIdを取得
+    const storeId = localStorage.getItem("storeId")
+    
     const unsubscribeDailySales = subscribeToDailySales(
+      storeId,
       (data) => {
         setDailySales(data)
         setLoading(false)

@@ -1203,13 +1203,26 @@ export const subscribeToMonthlyRankings = (callback: (rankings: any[]) => void, 
   })
 }
 
-export const subscribeToDailySales = (callback: (sales: DailySales[]) => void): (() => void) => {
+export const subscribeToDailySales = (
+  storeId: string | null,
+  callback: (sales: DailySales[]) => void
+): (() => void) => {
   if (!isFirebaseConfigured()) {
     callback([])
     return () => {}
   }
   const salesCollection = getDailySalesCollection()
-  const q = query(salesCollection, orderBy("date", "desc"), limit(30))
+  let q
+  if (storeId) {
+    q = query(
+      salesCollection,
+      where("storeId", "==", storeId),
+      orderBy("date", "desc"),
+      limit(30)
+    )
+  } else {
+    q = query(salesCollection, orderBy("date", "desc"), limit(30))
+  }
   return onSnapshot(q, (snapshot) => {
     const sales = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as DailySales)
     callback(sales)
@@ -1675,7 +1688,10 @@ export const getPostById = async (postId: string): Promise<Post | null> => {
 
 // --- History Subscriptions ---
 
-export const subscribeToPlayerPurchaseHistory = (callback: (history: Record<string, number>) => void): (() => void) => {
+export const subscribeToPlayerPurchaseHistory = (
+  storeId: string | null,
+  callback: (history: Record<string, number>) => void
+): (() => void) => {
   if (!isFirebaseConfigured()) {
     callback({})
     return () => {}
@@ -1684,7 +1700,14 @@ export const subscribeToPlayerPurchaseHistory = (callback: (history: Record<stri
   // 購入履歴をpurchaseHistoryコレクションから取得
   const purchaseHistoryCollection = collection(getDb()!, "purchaseHistory")
   
-  return onSnapshot(purchaseHistoryCollection, (snapshot) => {
+  let q
+  if (storeId) {
+    q = query(purchaseHistoryCollection, where("storeId", "==", storeId))
+  } else {
+    q = query(purchaseHistoryCollection)
+  }
+  
+  return onSnapshot(q, (snapshot) => {
     const history: Record<string, number> = {}
     snapshot.docs.forEach((doc) => {
       const data = doc.data()

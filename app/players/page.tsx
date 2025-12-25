@@ -198,6 +198,7 @@ export default function PlayersPage() {
 
       console.log("[v0] 購入金額履歴リスナー開始")
       unsubscribePurchaseHistory = subscribeToPlayerPurchaseHistory(
+        storeId,
         (history) => {
           console.log("[v0] 💰 購入金額履歴同期受信:", Object.keys(history).length, "プレイヤー")
           setPlayerPurchaseHistory(history)

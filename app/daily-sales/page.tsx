@@ -36,6 +36,10 @@ export default function DailySalesPage() {
   useEffect(() => {
     console.log("[v0] 📊 日別売上ページ初期化開始")
 
+    // localStorageからstoreIdを取得
+    const storeId = localStorage.getItem("storeId")
+    console.log("[v0] 🏪 店舗ID:", storeId)
+
     const unsubscribeReceipts = subscribeToReceipts(
       (data) => {
         console.log("[v0] 📋 伝票データ同期受信:", data.length, "件")
@@ -97,6 +101,7 @@ export default function DailySalesPage() {
     )
 
     const unsubscribeDailySales = subscribeToDailySales(
+      storeId,
       (data) => {
         console.log("[v0] 📈 日別売上データ同期受信:", data.length, "件")
         setDailySales(data)
