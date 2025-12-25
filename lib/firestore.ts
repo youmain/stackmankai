@@ -883,7 +883,21 @@ export const endGameWithFinalStacks = async (
   }
 
   console.log("[v0] Game ended, updating rankings")
-  await updateProvisionalRankingForToday()
+  
+  // playersコレクションからstoreIdを取得
+  let storeId: string | undefined
+  if (finalStacks.length > 0) {
+    try {
+      const playerDoc = await getDoc(doc(getPlayersCollection(), finalStacks[0].playerId))
+      if (playerDoc.exists()) {
+        storeId = playerDoc.data().storeId
+      }
+    } catch (error) {
+      console.error("[v0] Error fetching player storeId:", error)
+    }
+  }
+  
+  await updateProvisionalRankingForToday(storeId)
 }
 
 // --- Receipt Functions ---
@@ -1346,12 +1360,20 @@ export const resetAllRankings = async (): Promise<void> => {
   }
 }
 
-export const updateProvisionalRankingForToday = async (): Promise<void> => {
+export const updateProvisionalRankingForToday = async (storeId?: string): Promise<void> => {
   if (!isFirebaseConfigured()) return
 
   try {
     const today = new Date().toISOString().split("T")[0] // YYYY-MM-DD format
-    const players = await getDocs(getPlayersCollection())
+    
+    // storeIdでフィルタリング
+    let playersQuery
+    if (storeId) {
+      playersQuery = query(getPlayersCollection(), where("storeId", "==", storeId))
+    } else {
+      playersQuery = getPlayersCollection()
+    }
+    const players = await getDocs(playersQuery)
     const storeSettings = await getStoreRankingSettings()
 
     if (!storeSettings) return
@@ -1431,10 +1453,12 @@ export const updateProvisionalRankingForToday = async (): Promise<void> => {
 
     // 日別ランキングを更新
     const dailyRankingsRef = getDailyRankingsCollection()
-    const rankingDocRef = doc(dailyRankingsRef, today)
+    const rankingDocId = storeId ? `${storeId}_${today}` : today
+    const rankingDocRef = doc(dailyRankingsRef, rankingDocId)
 
     await setDoc(rankingDocRef, {
       date: today,
+      storeId: storeId || null,
       rankings,
       isConfirmed: false,
       pointMultiplier,

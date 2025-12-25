@@ -229,7 +229,8 @@ export default function RankingsPage() {
 
       setIsRecalculating(true)
       console.log("[v0] 🔄 手動ランキング再計算開始")
-      await updateProvisionalRankingForToday()
+      const storeId = localStorage.getItem("storeId") || undefined
+      await updateProvisionalRankingForToday(storeId)
       console.log("[v0] ✅ 手動ランキング再計算完了")
     } catch (error) {
       console.error("[v0] ❌ 暫定ランキング保存エラー:", error)
