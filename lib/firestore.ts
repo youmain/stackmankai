@@ -1173,13 +1173,15 @@ export const subscribeToDailyRankings = (callback: (rankings: any[]) => void, st
   })
 }
 
-export const subscribeToMonthlyPoints = (year: number, month: number, callback: (points: any[]) => void): (() => void) => {
+export const subscribeToMonthlyPoints = (year: number, month: number, callback: (points: any[]) => void, storeId?: string | null): (() => void) => {
   if (!isFirebaseConfigured()) {
     callback(mockMonthlyPoints)
     return () => {}
   }
   const pointsCollection = getMonthlyPointsCollection()
-  const q = query(pointsCollection, orderBy("month", "desc"), limit(12))
+  const q = storeId
+    ? query(pointsCollection, where("storeId", "==", storeId), orderBy("month", "desc"), limit(12))
+    : query(pointsCollection, orderBy("month", "desc"), limit(12))
   return onSnapshot(q, (snapshot) => {
     const points = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
     callback(points)

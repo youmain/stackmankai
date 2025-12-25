@@ -596,7 +596,7 @@ ${availableExamples.slice(0, 5).join("\n")}
         console.log("[v0] 📈 月間RP同期受信:", points.length, "件")
         setMonthlyPoints(points)
         setDataLoaded((prev) => ({ ...prev, monthlyPoints: true }))
-      })
+      }, storeId)
 
     const unsubscribeStoreSettings = subscribeToStoreRankingSettings((settings) => {
       console.log("[v0] ⚙️ 店舗ランキング設定同期受信:", settings ? "1 件" : "0 件")
