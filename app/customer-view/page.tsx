@@ -614,7 +614,7 @@ ${availableExamples.slice(0, 5).join("\n")}
     const unsubscribeRakeHistory = subscribeToRakeHistory((history) => {
       console.log("[v0] 📊 レーキ履歴同期受信:", history.length, "件")
       setRakeHistory(history)
-    })
+    }, storeId)
 
     let unsubscribePointHistory: (() => void) | null = null
     if (linkedPlayer?.id) {
