@@ -1524,9 +1524,14 @@ export const createCustomerAccount = async (data: Partial<CustomerAccount>, emai
   if (!isFirebaseConfigured()) return `mock_customer_${Date.now()}`
   
   // Firebase Authenticationでユーザーを作成
-  const { createUser } = await import("./firebase-auth")
+  const { createUser, waitForAuthState } = await import("./firebase-auth")
   const userCredential = await createUser(email, password)
   const uid = userCredential.user.uid
+  
+  // 認証状態が確実に反映されるまで待機
+  log.info("[createCustomerAccount] 認証状態の反映を待機中...")
+  await waitForAuthState()
+  log.info("[createCustomerAccount] 認証状態が反映されました")
   
   const customersCollection = getCustomerAccountsCollection()
   const docRef = await addDoc(customersCollection, {

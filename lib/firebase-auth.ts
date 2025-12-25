@@ -99,3 +99,24 @@ export function onAuthStateChanged(callback: (user: User | null) => void): () =>
   const { onAuthStateChanged: onAuthStateChangedFn } = require("firebase/auth")
   return onAuthStateChangedFn(auth, callback)
 }
+
+/**
+ * 認証状態が反映されるまで待機
+ * Firebase Authの認証状態変更は非同期で伝播するため、
+ * Firestoreへの書き込み前に認証状態が確実に反映されるまで待つ
+ */
+export async function waitForAuthState(): Promise<User | null> {
+  const auth = getAuthInstance()
+  if (!auth) {
+    throw new Error("Firebase Authが初期化されていません")
+  }
+
+  return new Promise((resolve) => {
+    const { onAuthStateChanged: onAuthStateChangedFn } = require("firebase/auth")
+    const unsubscribe = onAuthStateChangedFn(auth, (user: User | null) => {
+      log.info(`[waitForAuthState] 認証状態確認: ${user ? `ログイン中 (${user.email})` : "未ログイン"}`)
+      unsubscribe()
+      resolve(user)
+    })
+  })
+}
