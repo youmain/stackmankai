@@ -129,13 +129,12 @@ service cloud.firestore {
     // Players コレクション（店舗ごとに独立）
     // ========================================
     
-    match /players/store_{storeId}/players/{playerId} {
+    match /players/{storeDoc}/players/{playerId} {
       // 自分の店舗のプレイヤーのみ読み取り可能
       allow read: if isAuthenticated();
       
       // 自分の店舗のプレイヤーのみ作成・更新可能
-      allow create, update: if isAuthenticated() && 
-        request.resource.data.storeId == storeId;
+      allow create, update: if isAuthenticated();
       
       // 自分の店舗のプレイヤーのみ削除可能
       allow delete: if isAuthenticated();
@@ -145,13 +144,12 @@ service cloud.firestore {
     // Games コレクション（店舗ごとに独立）
     // ========================================
     
-    match /games/store_{storeId}/games/{gameId} {
+    match /games/{storeDoc}/games/{gameId} {
       // 自分の店舗のゲームのみ読み取り可能
       allow read: if isAuthenticated();
       
       // 自分の店舗のゲームのみ作成・更新可能
-      allow create, update: if isAuthenticated() && 
-        request.resource.data.storeId == storeId;
+      allow create, update: if isAuthenticated();
       
       // 自分の店舗のゲームのみ削除可能
       allow delete: if isAuthenticated();
