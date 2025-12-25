@@ -246,16 +246,40 @@ export default function CustomerView() {
           })
           try {
             const playerName = linkedPlayer.name || linkedPlayer.pokerName || `プレイヤー${linkedPlayer.uniqueId}`
+            
+            // storesコレクションから店舗名を取得
+            let storeName = linkedPlayer.storeName || "未設定"
+            if (linkedPlayer.storeId) {
+              try {
+                const docFunc = await import("firebase/firestore").then(m => m.doc)
+                const getDocFunc = await import("firebase/firestore").then(m => m.getDoc)
+                const getDbFunc = await import("@/lib/firebase").then(m => m.getDb)
+                
+                const db = getDbFunc()
+                if (db) {
+                  const storeDocRef = docFunc(db, "stores", linkedPlayer.storeId)
+                  const storeDoc = await getDocFunc(storeDocRef)
+                  
+                  if (storeDoc.exists()) {
+                    const storeData = storeDoc.data()
+                    storeName = storeData.name || storeData.storeName || "未設定"
+                  }
+                }
+              } catch (storeError) {
+                console.error("[v0] Error fetching store name:", storeError)
+              }
+            }
+            
             await updateCustomerAccount(customerAccount.id, {
               storeId: linkedPlayer.storeId,
-              storeName: linkedPlayer.storeName || "未設定",
+              storeName: storeName,
               playerName: playerName,
             })
             // Update local customerAccount state
             setCustomerAccount({
               ...customerAccount,
               storeId: linkedPlayer.storeId,
-              storeName: linkedPlayer.storeName || "未設定",
+              storeName: storeName,
               playerName: playerName,
             })
             console.log("[v0] CustomerAccount updated successfully")
@@ -290,7 +314,7 @@ export default function CustomerView() {
               
               if (storeDoc.exists()) {
                 const storeData = storeDoc.data()
-                const storeName = storeData.storeName || "未設定"
+                const storeName = storeData.name || storeData.storeName || "未設定"
                 
                 console.log("[v0] Store found:", storeName)
                 
@@ -1185,7 +1209,7 @@ ${availableExamples.slice(0, 5).join("\n")}
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">ホーム店舗</p>
-                    <p className="text-lg font-semibold text-gray-900">{linkedPlayer.storeName || "未設定"}</p>
+                    <p className="text-lg font-semibold text-gray-900">{customerAccount.storeName || "未設定"}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">貯スタック</p>
