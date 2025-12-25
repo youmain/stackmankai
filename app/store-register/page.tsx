@@ -58,6 +58,7 @@ export default function StoreRegisterPage() {
     try {
       const result = await registerStore(formData)
       setGeneratedCode(result.storeCode)
+      setLoading(false) // ローディング状態を解除
 
       // localStorageに店舗情報を保存
       localStorage.setItem("storeId", result.storeId)
@@ -68,11 +69,23 @@ export default function StoreRegisterPage() {
 
       // 成功メッセージを表示後、ダッシュボードへリダイレクト
       setTimeout(() => {
-        router.push("/store-dashboard")
+        router.push("/admin")
       }, 5000)
-    } catch (err) {
+    } catch (err: any) {
       console.error("店舗登録エラー:", err)
-      setError("店舗登録に失敗しました。もう一度お試しください。")
+      let errorMessage = "店舗登録に失敗しました。"
+      
+      if (err.code === 'auth/email-already-in-use') {
+        errorMessage = "このメールアドレスは既に使用されています。"
+      } else if (err.code === 'auth/invalid-email') {
+        errorMessage = "メールアドレスの形式が正しくありません。"
+      } else if (err.code === 'auth/weak-password') {
+        errorMessage = "パスワードが弱すぎます。より強力なパスワードを設定してください。"
+      } else if (err.message) {
+        errorMessage += ` ${err.message}`
+      }
+      
+      setError(errorMessage)
       setLoading(false)
     }
   }
@@ -118,7 +131,7 @@ export default function StoreRegisterPage() {
           </p>
 
           <button
-            onClick={() => router.push("/store-dashboard")}
+            onClick={() => router.push("/admin")}
             className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
           >
             今すぐダッシュボードへ
