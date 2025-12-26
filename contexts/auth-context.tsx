@@ -50,7 +50,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           console.log("[Auth] Firebase Auth状態変更:", user ? user.email : "未ログイン")
           
           if (user && user.email) {
-            // Firebase Authでログイン済み - Firestoreから顧客情報を取得
+            // Firebase Authでログイン済み - まずlocalStorageから店舗情報を確認
+            const storeId = localStorage.getItem("storeId")
+            const isStoreOwner = localStorage.getItem("isStoreOwner")
+            
+            if (storeId && isStoreOwner === "true") {
+              // 店舗オーナーとしてログイン済み - localStorageから復元
+              console.log("[Auth] ✅ Firebase Authから店舗オーナーセッション検出")
+              await restoreFromLocalStorage()
+              setLoading(false)
+              return
+            }
+            
+            // 顧客としてログイン - Firestoreから顧客情報を取得
             try {
               const customer = await getCustomerByEmail(user.email)
               if (customer) {
