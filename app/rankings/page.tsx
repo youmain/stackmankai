@@ -89,17 +89,17 @@ export default function RankingsPage() {
     const unsubscribeDailyRankings = subscribeToDailyRankings((dailyData) => {
       console.log("[v0] Rankings Page - Daily rankings loaded:", dailyData.length)
       setDailyRankings(dailyData)
-    })
+    }, storeId)
 
     const unsubscribeMonthlyPoints = subscribeToMonthlyPoints(currentYear, currentMonth, (monthlyData) => {
       console.log("[v0] Rankings Page - Monthly points loaded:", monthlyData.length)
       setMonthlyPoints(monthlyData)
-    })
+    }, storeId)
 
     const unsubscribeMonthlyRankings = subscribeToMonthlyRankings((rankingData) => {
       console.log("[v0] Rankings Page - Monthly rankings loaded:", rankingData.length)
       setMonthlyRankings(rankingData)
-    })
+    }, storeId)
 
     const handleError = (error: any) => {
       console.error("[v0] Rankings Page - Subscription error:", error)
