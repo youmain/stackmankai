@@ -14,8 +14,6 @@ export default function StoreDashboardPage() {
     storeEmail: "",
     isStoreOwner: false,
   })
-  const [loading, setLoading] = useState(true)
-
   useEffect(() => {
     // localStorageから店舗情報を取得
                 const storeEmail = localStorage.getItem("storeEmail")

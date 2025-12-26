@@ -10,7 +10,6 @@ import type { InviteCode, Employee } from "@/types/employee"
 export default function StoreInvitesPage() {
   const { user, storeId, storeName, userName, isStoreOwner, loading } = useAuth()
   const router = useRouter()
-  const [loading, setLoading] = useState(false)
   const [inviteCodes, setInviteCodes] = useState<InviteCode[]>([])
   const [employees, setEmployees] = useState<Employee[]>([])
   const [storeInfo, setStoreInfo] = useState<any>(null)

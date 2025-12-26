@@ -12,10 +12,7 @@ import type { StackManHand, RakeCollection, StackReset } from "@/types/stack-man
 export default function StoreStackManHandAdminPage() {
   const { user, storeId, storeName, userName, isStoreOwner, loading } = useAuth()
   const router = useRouter()
-  const [loading, setLoading] = useState(true)
   const [processing, setProcessing] = useState(false)
-  const [storeId, setStoreId] = useState("")
-  const [storeName, setStoreName] = useState("")
   
   // Recent data
   const [recentHands, setRecentHands] = useState<StackManHand[]>([])
@@ -24,30 +21,25 @@ export default function StoreStackManHandAdminPage() {
 
   useEffect(() => {
     const loadData = async () => {
-      const storeIdFromStorage = localStorage.getItem("storeId")
-      const storeNameFromStorage = localStorage.getItem("storeName")
-            if (!storeIdFromStorage || !isStoreOwner) {
+      if (!storeId || !isStoreOwner) {
         alert("権限がありません")
         router.push("/store-dashboard")
         return
       }
-
-      setStoreId(storeIdFromStorage)
-      setStoreName(storeNameFromStorage || "")
 
       try {
         const db = getDb()
         if (!db) throw new Error("Firestore is not initialized")
 
         // Load recent Stack Man Hands
-        const handsRef = collection(db, "stores", storeIdFromStorage, "stackManHands")
+        const handsRef = collection(db, "stores", storeId, "stackManHands")
         const handsQuery = query(handsRef, orderBy("purchasedAt", "desc"), limit(10))
         const handsSnapshot = await getDocs(handsQuery)
         const hands = handsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as StackManHand[]
         setRecentHands(hands)
 
         // Load last rake collection
-        const rakeRef = collection(db, "stores", storeIdFromStorage, "rakeCollections")
+        const rakeRef = collection(db, "stores", storeId, "rakeCollections")
         const rakeQuery = query(rakeRef, orderBy("collectedAt", "desc"), limit(1))
         const rakeSnapshot = await getDocs(rakeQuery)
         if (!rakeSnapshot.empty) {
@@ -55,7 +47,7 @@ export default function StoreStackManHandAdminPage() {
         }
 
         // Load last stack reset
-        const resetRef = collection(db, "stores", storeIdFromStorage, "stackResets")
+        const resetRef = collection(db, "stores", storeId, "stackResets")
         const resetQuery = query(resetRef, orderBy("resetAt", "desc"), limit(1))
         const resetSnapshot = await getDocs(resetQuery)
         if (!resetSnapshot.empty) {
@@ -64,8 +56,6 @@ export default function StoreStackManHandAdminPage() {
       } catch (error) {
         console.error("Error loading data:", error)
         alert("データの読み込みに失敗しました")
-      } finally {
-        setLoading(false)
       }
     }
 

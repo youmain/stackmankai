@@ -94,12 +94,8 @@ export default function StackManHandDisplayPage() {
   const router = useRouter()
   const params = useParams()
   const handId = params.handId as string
-
-  const [loading, setLoading] = useState(true)
   const [hand, setHand] = useState<StackManHand | null>(null)
   const [currentTime, setCurrentTime] = useState(new Date())
-  const [storeId, setStoreId] = useState("")
-
   useEffect(() => {
     const loadHand = async () => {
       const storeIdFromStorage = localStorage.getItem("storeId")

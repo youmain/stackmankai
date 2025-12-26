@@ -25,7 +25,6 @@ export default function GameDetailPage() {
 
   const [game, setGame] = useState<Game | null>(null)
   const [players, setPlayers] = useState<Player[]>([])
-  const [loading, setLoading] = useState(true)
   const [showJoinModal, setShowJoinModal] = useState(false)
   const [showStackModal, setShowStackModal] = useState(false)
   const [showEndModal, setShowEndModal] = useState(false)

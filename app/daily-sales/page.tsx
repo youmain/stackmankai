@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useAuth } from "@/contexts/auth-context"
 import { AuthGuard } from "@/components/auth-guard"
 import { Header } from "@/components/header"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -28,7 +29,6 @@ export default function DailySalesPage() {
   const [rakeHistory, setRakeHistory] = useState<RakeHistory[]>([])
   const [dailySales, setDailySales] = useState<DailySales[]>([])
   const [dailyRankings, setDailyRankings] = useState<DailyRanking[]>([])
-  const [loading, setLoading] = useState(true)
   const [showHistoryModal, setShowHistoryModal] = useState(false)
   const [selectedSalesData, setSelectedSalesData] = useState<DailySales | null>(null)
   const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7))

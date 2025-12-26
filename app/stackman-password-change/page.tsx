@@ -1,5 +1,6 @@
 "use client"
 
+import { useAuth } from "@/contexts/auth-context"
 import type React from "react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"

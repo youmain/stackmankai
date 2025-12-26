@@ -1,5 +1,6 @@
 "use client"
 
+import { useAuth } from "@/contexts/auth-context"
 import { useState, useEffect } from "react"
 import { AuthGuard } from "@/components/auth-guard"
 import { Header } from "@/components/header"
@@ -14,7 +15,6 @@ import { SalesHistoryModal } from "@/components/sales-history-modal"
 export default function MonthlySalesPage() {
   const { user, storeId, storeName, userName, isStoreOwner, loading } = useAuth()
   const [dailySales, setDailySales] = useState<DailySales[]>([])
-  const [loading, setLoading] = useState(true)
   const [selectedMonth, setSelectedMonth] = useState(() => {
     return new Date().toISOString().slice(0, 7) // YYYY-MM format
   })

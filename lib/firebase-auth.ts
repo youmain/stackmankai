@@ -100,6 +100,9 @@ export function onAuthStateChanged(callback: (user: User | null) => void): () =>
   return onAuthStateChangedFn(auth, callback)
 }
 
+// エイリアス: signInWithEmailAndPassword として signIn をエクスポート
+export { signIn as signInWithEmailAndPassword }
+
 /**
  * 認証状態が反映されるまで待機
  * Firebase Authの認証状態変更は非同期で伝播するため、

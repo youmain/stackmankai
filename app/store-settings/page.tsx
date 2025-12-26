@@ -11,11 +11,7 @@ import type { StackManHandSettings, RakeSettings, StackResetSettings } from "@/t
 export default function StoreSettingsPage() {
   const { user, storeId, storeName, userName, isStoreOwner, loading } = useAuth()
   const router = useRouter()
-  const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [storeId, setStoreId] = useState("")
-  const [storeName, setStoreName] = useState("")
-  
   // Stack Man Hand Settings
   const [stackManHandEnabled, setStackManHandEnabled] = useState(false)
   const [purchasePrice, setPurchasePrice] = useState(1000)
@@ -35,21 +31,16 @@ export default function StoreSettingsPage() {
 
   useEffect(() => {
     const loadStoreSettings = async () => {
-      const storeIdFromStorage = localStorage.getItem("storeId")
-      const storeNameFromStorage = localStorage.getItem("storeName")
-            if (!storeIdFromStorage || !isStoreOwner) {
+      if (!storeId || !isStoreOwner) {
         router.push("/store-dashboard")
         return
       }
-
-      setStoreId(storeIdFromStorage)
-      setStoreName(storeNameFromStorage || "")
 
       try {
         const db = getDb()
         if (!db) throw new Error("Firestore is not initialized")
 
-        const storeDoc = await getDoc(doc(db, "stores", storeIdFromStorage))
+        const storeDoc = await getDoc(doc(db, "stores", storeId))
         if (storeDoc.exists()) {
           const storeData = storeDoc.data() as Store & {
             stackManHandSettings?: StackManHandSettings
@@ -83,8 +74,6 @@ export default function StoreSettingsPage() {
       } catch (error) {
         console.error("Error loading store settings:", error)
         alert("設定の読み込みに失敗しました")
-      } finally {
-        setLoading(false)
       }
     }
 
