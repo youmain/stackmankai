@@ -50,26 +50,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           console.log("[Auth] Firebase Auth状態変更:", user ? user.email : "未ログイン")
           
           if (user && user.email) {
-            // Firebase Authでログイン済み - まずlocalStorageから店舗情報を確認
-            const storeId = localStorage.getItem("storeId")
-            const isStoreOwner = localStorage.getItem("isStoreOwner")
-            
-            if (storeId && isStoreOwner === "true") {
-              // 店舗オーナーとしてログイン済み - localStorageから復元
-              console.log("[Auth] ✅ Firebase Authから店舗オーナーセッション検出")
-              await restoreFromLocalStorage()
-              setLoading(false)
-              return
-            }
-            
-            // 顧客としてログイン - Firestoreから顧客情報を取得
+            // Firebase Authでログイン済み - まず顧客アカウントの存在をチェック（優先）
             try {
               const customer = await getCustomerByEmail(user.email)
               if (customer) {
+                // 顧客アカウントが存在する場合は、localStorageの店舗オーナー情報をクリア
+                localStorage.removeItem("storeId")
+                localStorage.removeItem("isStoreOwner")
+                
                 setCustomerAccountState(customer)
                 setUserType("customer")
                 
-                // localStorageにも保存（他のコンポーネントとの互換性）
+                // localStorageに保存
                 localStorage.setItem("auth_customerAccount", JSON.stringify(customer))
                 localStorage.setItem("auth_userType", "customer")
                 
@@ -81,18 +73,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 
                 setLoading(false)
                 return
-              } else {
-                // 顧客情報が見つからない → ログアウト
-                console.error("[Auth] ⚠️ 顧客情報が見つかりません。ログアウトします。")
-                const { signOutUser } = await import("@/lib/firebase-auth")
-                await signOutUser()
-                setError("アカウント情報が見つかりません。再度登録してください。")
-                setLoading(false)
-                return
               }
             } catch (error) {
               console.error("[Auth] 顧客情報取得エラー:", error)
             }
+            
+            // 顧客アカウントが見つからない場合、店舗オーナーとしてチェック
+            const storeId = localStorage.getItem("storeId")
+            const isStoreOwner = localStorage.getItem("isStoreOwner")
+            
+            if (storeId && isStoreOwner === "true") {
+              // 店舗オーナーとしてログイン済み - localStorageから復元
+              console.log("[Auth] ✅ Firebase Authから店舗オーナーセッション検出")
+              await restoreFromLocalStorage()
+              setLoading(false)
+              return
+            }
+            
+            // 顧客も店舗オーナーも見つからない → ログアウト
+            console.error("[Auth] ⚠️ アカウント情報が見つかりません。ログアウトします。")
+            const { signOutUser } = await import("@/lib/firebase-auth")
+            await signOutUser()
+            setError("アカウント情報が見つかりません。再度登録してください。")
+            setLoading(false)
+            return
           }
           
           // Firebase Authでログインしていない - localStorageから復元を試みる（従業員用）
