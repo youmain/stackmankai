@@ -205,7 +205,7 @@ export default function RankingsPage() {
   )
 
   const isDoublePointDay =
-    storeSettings?.doublePointDays.some((date) => new Date(date).toISOString().split("T")[0] === today) || false
+    storeSettings?.doublePointDays?.some((date) => new Date(date).toISOString().split("T")[0] === today) || false
 
   const handleResetRankings = useCallback(async () => {
     try {
