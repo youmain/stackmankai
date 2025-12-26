@@ -205,7 +205,7 @@ export default function RankingsPage() {
   )
 
   const isDoublePointDay =
-    (storeSettings?.doublePointDays && Array.isArray(storeSettings.doublePointDays) && storeSettings.doublePointDays.some((date) => new Date(date).toISOString().split("T")[0] === today)) || false
+    storeSettings?.doublePointDays.some((date) => new Date(date).toISOString().split("T")[0] === today) || false
 
   const handleResetRankings = useCallback(async () => {
     try {
@@ -279,13 +279,8 @@ export default function RankingsPage() {
 
   const displayMonthlyRankings = useMemo(
     () => {
-      try {
-        const rankings = monthlyRankings.length > 0 && monthlyRankings[0]?.rankings ? monthlyRankings[0].rankings : monthlyRankingsCalculated
-        return Array.isArray(rankings) ? rankings.slice(0, 10) : [] // 10位まで制限
-      } catch (error) {
-        console.error('[v0] displayMonthlyRankings error:', error)
-        return []
-      }
+      const rankings = monthlyRankings.length > 0 ? monthlyRankings[0]?.rankings || [] : monthlyRankingsCalculated
+      return rankings.slice(0, 10) // 10位まで制限
     },
     [monthlyRankings, monthlyRankingsCalculated],
   )
