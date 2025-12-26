@@ -107,7 +107,7 @@ export default function ReceiptsPage() {
   }
 
   const filteredReceipts = receipts
-    .filter((receipt) => receipt.playerName.toLowerCase().includes(searchTerm.toLowerCase()))
+    .filter((receipt) => receipt.playerName?.toLowerCase().includes(searchTerm.toLowerCase()))
     .filter((receipt) => receipt.status !== "cancelled" && receipt.status !== "settled")
     .sort((a, b) => {
       // アクティブな伝票を上に表示
