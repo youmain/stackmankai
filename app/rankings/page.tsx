@@ -50,6 +50,7 @@ export default function RankingsPage() {
     authInitialized: false,
     firestoreConnected: false,
     subscriptionsActive: false,
+    storeId: null as string | null,
     errorMessages: [] as string[],
   })
 
@@ -63,13 +64,13 @@ export default function RankingsPage() {
 
   useEffect(() => {
     console.log("[v0] Rankings Page - Starting data subscriptions")
-    setDebugInfo((prev) => ({ ...prev, authInitialized: true, subscriptionsActive: true }))
+    const storeId = localStorage.getItem("storeId")
+    console.log("[v0] Rankings Page - storeId:", storeId)
+    setDebugInfo((prev) => ({ ...prev, authInitialized: true, subscriptionsActive: true, storeId }))
 
     const currentDate = new Date()
     const currentYear = currentDate.getFullYear()
     const currentMonth = currentDate.getMonth() + 1 // getMonth() returns 0-11, we need 1-12
-
-    const storeId = localStorage.getItem("storeId")
     const unsubscribePlayers = subscribeToPlayers((playersData) => {
       console.log("[v0] Rankings Page - Players loaded:", playersData.length)
       setPlayers(playersData)
@@ -84,7 +85,7 @@ export default function RankingsPage() {
     const unsubscribeStoreSettings = subscribeToStoreRankingSettings((settingsData) => {
       console.log("[v0] Rankings Page - Store settings loaded:", settingsData ? "Yes" : "No")
       setStoreRankingSettings(settingsData)
-    })
+    }, storeId || undefined)
 
     const unsubscribeDailyRankings = subscribeToDailyRankings((dailyData) => {
       console.log("[v0] Rankings Page - Daily rankings loaded:", dailyData.length)
@@ -358,7 +359,7 @@ export default function RankingsPage() {
           <CardContent>
             <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
               <h4 className="font-medium text-blue-800 mb-2">システム状態</h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-2 text-sm">
                 <div className="flex items-center space-x-2">
                   <span
                     className={`w-2 h-2 rounded-full ${debugInfo.authInitialized ? "bg-green-500" : "bg-red-500"}`}
@@ -376,6 +377,12 @@ export default function RankingsPage() {
                     className={`w-2 h-2 rounded-full ${debugInfo.subscriptionsActive ? "bg-green-500" : "bg-red-500"}`}
                   ></span>
                   <span>データ同期: {debugInfo.subscriptionsActive ? "アクティブ" : "非アクティブ"}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span
+                    className={`w-2 h-2 rounded-full ${debugInfo.storeId ? "bg-green-500" : "bg-red-500"}`}
+                  ></span>
+                  <span>Store ID: {debugInfo.storeId ? debugInfo.storeId.substring(0, 8) + "..." : "未設定"}</span>
                 </div>
               </div>
               {debugInfo.errorMessages.length > 0 && (
