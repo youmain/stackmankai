@@ -801,7 +801,11 @@ ${availableExamples.slice(0, 5).join("\n")}
     })
 
     const recentDays = Object.entries(dailyProfits)
-      .sort(([a], [b]) => b.localeCompare(a))
+      .sort(([a], [b]) => {
+        const aStr = String(a)
+        const bStr = String(b)
+        return bStr.localeCompare(aStr)
+      })
       .slice(0, 5)
       .reverse()
 
@@ -1824,7 +1828,11 @@ ${availableExamples.slice(0, 5).join("\n")}
                       {Array.from(
                         new Set(monthlyPoints.filter((points) => points.month !== currentMonthStr).map((p) => p.month)),
                       )
-                        .sort((a, b) => b.localeCompare(a))
+                        .sort((a, b) => {
+                          const aStr = String(a)
+                          const bStr = String(b)
+                          return bStr.localeCompare(aStr)
+                        })
                         .map((month) => {
                           const monthData = monthlyPoints
                             .filter((points) => points.month === month)
