@@ -562,6 +562,20 @@ ${availableExamples.slice(0, 5).join("\n")}
     const unsubscribeCustomers = subscribeToCustomerAccounts((customers) => {
       console.log("[v0] 👥 お客さんアカウント同期受信:", customers.length, "件")
 
+      // auth-contextから取得したcustomerAccountが存在する場合は、それを優先
+      // subscribeToCustomerAccountsは他の顧客情報の取得のみに使用
+      if (customerAccount) {
+        console.log("[v0] ✅ auth-contextからのcustomerAccountを使用:", {
+          email: customerAccount.email,
+          playerId: customerAccount.playerId,
+          playerName: customerAccount.playerName,
+        })
+        setCustomerAccounts(customers)
+        setDataLoaded((prev) => ({ ...prev, customers: true }))
+        return
+      }
+
+      // customerAccountが存在しない場合のみ、customersから選択
       if (customers.length > 0) {
         const currentUserEmail = sessionStorage.getItem("currentUserEmail")
         let targetCustomer = customers[0] // デフォルトは最初の顧客
