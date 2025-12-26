@@ -1257,10 +1257,10 @@ ${availableExamples.slice(0, 5).join("\n")}
                             const currentRank = linkedPlayer.membershipRank
                             const totalCP = linkedPlayer.totalCPEarned || 0
                             if (currentRank === "silver") {
-                              const required = storeSettings.membershipRankSettings.ranks.gold.requiredCP
+                              const required = storeSettings?.membershipRankSettings?.ranks?.gold?.requiredCP || 0
                               return `${(required - totalCP).toLocaleString()}CP`
                             } else if (currentRank === "gold") {
-                              const required = storeSettings.membershipRankSettings.ranks.platinum.requiredCP
+                              const required = storeSettings?.membershipRankSettings?.ranks?.platinum?.requiredCP || 0
                               return `${(required - totalCP).toLocaleString()}CP`
                             }
                             return "0CP"
@@ -1271,7 +1271,7 @@ ${availableExamples.slice(0, 5).join("\n")}
                         <p className="text-xs text-gray-500 mt-1">
                           シルバーまで: {(() => {
                             const totalCP = linkedPlayer.totalCPEarned || 0
-                            const required = storeSettings.membershipRankSettings.ranks.silver.requiredCP
+                            const required = storeSettings?.membershipRankSettings?.ranks?.silver?.requiredCP || 0
                             return `${(required - totalCP).toLocaleString()}CP`
                           })()}
                         </p>
@@ -1519,7 +1519,8 @@ ${availableExamples.slice(0, 5).join("\n")}
                       <div className="flex flex-wrap justify-center gap-2 text-sm">
                         {(() => {
                           const rank = linkedPlayer.membershipRank as "silver" | "gold" | "platinum"
-                          const benefits = storeSettings.membershipRankSettings.ranks[rank].benefits
+                          const benefits = storeSettings?.membershipRankSettings?.ranks?.[rank]?.benefits
+                          if (!benefits) return null
                           const items = []
                           if (benefits.cpBoostPercentage > 0) {
                             items.push(
@@ -1652,7 +1653,7 @@ ${availableExamples.slice(0, 5).join("\n")}
                           </div>
                           <div className="text-right">
                             <div className="font-bold text-xl sm:text-2xl text-blue-600">{points.totalPoints}RP</div>
-                            {index < 3 && storeSettings && (
+                            {index < 3 && storeSettings?.monthlyPrizes && (
                               <div className="text-xs sm:text-sm text-green-600 font-bold">
                                 プライズ:{" "}
                                 {index === 0
@@ -1891,7 +1892,7 @@ ${availableExamples.slice(0, 5).join("\n")}
 
               return (
                 storeSettings &&
-                storeSettings.doublePointDays.length > 0 && (
+                storeSettings.doublePointDays?.length > 0 && (
                   <Card className="bg-gradient-to-r from-yellow-50 via-orange-50 to-red-50 border-yellow-300 shadow-lg">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2 text-orange-800 text-lg sm:text-xl">
