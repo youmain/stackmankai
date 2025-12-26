@@ -840,7 +840,7 @@ ${availableExamples.slice(0, 5).join("\n")}
   const playingPlayers = players.filter((player) => player.isPlaying)
 
   const isDoublePointDay =
-    storeSettings?.doublePointDays.some((date) => new Date(date).toISOString().split("T")[0] === today) || false
+    storeSettings?.doublePointDays?.some((date) => new Date(date).toISOString().split("T")[0] === today) || false
 
   // 特別還元率の日判定
   const hasSpecialRate = useMemo(() => {
