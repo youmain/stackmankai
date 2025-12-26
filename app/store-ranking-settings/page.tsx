@@ -91,9 +91,9 @@ export default function StoreRankingSettingsPage() {
       const storeSettings = await getStoreRankingSettings()
       if (storeSettings) {
         setSettings(storeSettings)
-        setMonthlyPrizes(storeSettings.monthlyPrizes)
-        setPointSystem(storeSettings.pointSystem)
-        setDoublePointDays(storeSettings.doublePointDays)
+        setMonthlyPrizes(storeSettings.monthlyPrizes || { first: 10000, second: 5000, third: 3000 })
+        setPointSystem(storeSettings.pointSystem || { first: 8, second: 5, third: 3, fourth: 1, fifth: 1 })
+        setDoublePointDays(storeSettings.doublePointDays || [])
         if (storeSettings.cashbackPointsSettings) {
           setRewardPointsSettings(storeSettings.cashbackPointsSettings)
         }
