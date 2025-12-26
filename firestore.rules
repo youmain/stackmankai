@@ -126,32 +126,32 @@ service cloud.firestore {
     }
     
     // ========================================
-    // Players コレクション（フラット構造）
+    // Players コレクション（店舗ごとに独立）
     // ========================================
     
-    match /players/{playerId} {
-      // 認証済みユーザーは読み取り可能
+    match /players/{storeDoc}/players/{playerId} {
+      // 自分の店舗のプレイヤーのみ読み取り可能
       allow read: if isAuthenticated();
       
-      // 認証済みユーザーは作成・更新可能
+      // 自分の店舗のプレイヤーのみ作成・更新可能
       allow create, update: if isAuthenticated();
       
-      // 認証済みユーザーは削除可能
+      // 自分の店舗のプレイヤーのみ削除可能
       allow delete: if isAuthenticated();
     }
     
     // ========================================
-    // Games コレクション（フラット構造）
+    // Games コレクション（店舗ごとに独立）
     // ========================================
     
-    match /games/{gameId} {
-      // 認証済みユーザーは読み取り可能
+    match /games/{storeDoc}/games/{gameId} {
+      // 自分の店舗のゲームのみ読み取り可能
       allow read: if isAuthenticated();
       
-      // 認証済みユーザーは作成・更新可能
+      // 自分の店舗のゲームのみ作成・更新可能
       allow create, update: if isAuthenticated();
       
-      // 認証済みユーザーは削除可能
+      // 自分の店舗のゲームのみ削除可能
       allow delete: if isAuthenticated();
     }
     
@@ -174,10 +174,10 @@ service cloud.firestore {
     }
     
     // ========================================
-    // PokerGames コレクション（フラット構造）
+    // PokerGames コレクション
     // ========================================
     
-    match /pokerGames/{gameId} {
+    match /pokerGames/{storeDoc}/games/{gameId} {
       // ポーカーゲーム情報は認証済みユーザーのみ読み取れる
       allow read: if isAuthenticated();
       

@@ -1010,10 +1010,9 @@ export const subscribeToReceipts = (callback: (receipts: Receipt[]) => void, sto
     return () => {}
   }
   const receiptsCollection = getReceiptsCollection()
-  // インデックス不要のクエリに変更（storeIdフィルタのみ、orderByなし）
   const q = storeId
-    ? query(receiptsCollection, where("storeId", "==", storeId), limit(50))
-    : query(receiptsCollection, limit(50))
+    ? query(receiptsCollection, where("storeId", "==", storeId), orderBy("createdAt", "desc"), limit(50))
+    : query(receiptsCollection, orderBy("createdAt", "desc"), limit(50))
   return onSnapshot(q, (snapshot) => {
     const receipts = snapshot.docs.map((doc) => {
       const data = doc.data()
@@ -1029,13 +1028,7 @@ export const subscribeToReceipts = (callback: (receipts: Receipt[]) => void, sto
             : undefined,
       } as Receipt
     })
-    // クライアント側でcreatedAtで降順ソート
-    const sortedReceipts = receipts.sort((a, b) => {
-      const aTime = a.createdAt instanceof Date ? a.createdAt.getTime() : 0
-      const bTime = b.createdAt instanceof Date ? b.createdAt.getTime() : 0
-      return bTime - aTime
-    })
-    callback(sortedReceipts)
+    callback(receipts)
   })
 }
 
