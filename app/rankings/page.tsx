@@ -74,7 +74,9 @@ export default function RankingsPage() {
       console.log("[v0] Rankings Page - Players loaded:", playersData.length)
       setPlayers(playersData)
       setDebugInfo((prev) => ({ ...prev, firestoreConnected: true }))
-    }, undefined, storeId)
+    }, (error) => {
+      console.error("[v0] Rankings Page - Players error:", error)
+    }, storeId)
 
     const unsubscribeRakeHistory = subscribeToRakeHistory((rakeData) => {
       console.log("[v0] Rankings Page - Rake history loaded:", rakeData.length)
