@@ -129,13 +129,13 @@ export default function RankingsPage() {
     })
   }, [players, rakeHistory, dailyRankings, monthlyPoints, storeSettings])
 
-  const currentlyPlaying = players.filter((player) => player.isPlaying)
+  const currentlyPlaying = (players || []).filter((player) => player.isPlaying)
 
   const today = new Date().toISOString().split("T")[0]
   const currentMonthStr = new Date().toISOString().slice(0, 7) // YYYY-MM
   const currentMonth = new Date(currentMonthStr)
 
-  const todayRanking = dailyRankings.find((ranking) => {
+  const todayRanking = dailyRankings?.find((ranking) => {
     const rankingDate = typeof ranking.date === "string" ? new Date(ranking.date) : new Date()
     return rankingDate.toISOString().split("T")[0] === today
   })
@@ -153,10 +153,10 @@ export default function RankingsPage() {
     }
   }, [todayRanking])
 
-  const allTimeRankings = useMemo(() => calculateRankings(rakeHistory, players), [rakeHistory, players])
+  const allTimeRankings = useMemo(() => calculateRankings(rakeHistory || [], players || []), [rakeHistory, players])
 
   const monthlyGames = useMemo(() => {
-    return rakeHistory.filter((game) => {
+    return (rakeHistory || []).filter((game) => {
       const gameDate = typeof game.createdAt === "string" ? new Date(game.createdAt) : new Date()
       const gameMonth = new Date(gameDate.toISOString().slice(0, 7))
       return gameMonth.getFullYear() === currentMonth.getFullYear() && gameMonth.getMonth() === currentMonth.getMonth()
