@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useParams } from "next/navigation"
+import { useAuth } from "@/contexts/auth-context"
 import { AuthGuard } from "@/components/auth-guard"
 import { Header } from "@/components/header"
 import { Button } from "@/components/ui/button"
@@ -18,6 +19,7 @@ import { GameEndModal } from "@/components/game-end-modal"
 import Link from "next/link"
 
 export default function GameDetailPage() {
+  const { user, storeId, storeName, userName, isStoreOwner, loading } = useAuth()
   const params = useParams()
   const gameId = params.id as string
 
@@ -49,8 +51,7 @@ export default function GameDetailPage() {
       setLoading(false)
     })
 
-    const storeId = localStorage.getItem("storeId")
-    const unsubscribePlayers = subscribeToPlayers(setPlayers, undefined, storeId)
+        const unsubscribePlayers = subscribeToPlayers(setPlayers, undefined, storeId)
 
     return () => {
       unsubscribeGame()

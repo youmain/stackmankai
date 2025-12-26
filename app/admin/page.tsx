@@ -9,40 +9,30 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
-import { getAuth, signOut as firebaseSignOut } from "firebase/auth"
+import { useAuth } from "@/contexts/auth-context"
 
 export default function AdminPage() {
   const router = useRouter()
-  const [isStoreOwner, setIsStoreOwner] = useState(false)
-  const [storeName, setStoreName] = useState("")
-  const [userName, setUserName] = useState("")
-  const [loading, setLoading] = useState(true)
+  const { user, storeId, storeName, userName, isStoreOwner, loading, signOut } = useAuth()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
-    // localStorageから権限情報を取得
-    const storeId = localStorage.getItem("storeId")
-    const isOwner = localStorage.getItem("isStoreOwner") === "true"
-    const name = localStorage.getItem("storeName") || ""
-    const user = localStorage.getItem("userName") || localStorage.getItem("employeeName") || ""
-
-    if (!storeId) {
+    if (!loading && !user) {
       // ログインしていない場合はログインページへ
       router.push("/store-login")
       return
     }
-
-    setIsStoreOwner(isOwner)
-    setStoreName(name)
-    setUserName(user)
-    setLoading(false)
-  }, [router])
+    
+    if (!loading && user && user.role === "customer") {
+      // 顧客は管理画面にアクセスできない
+      router.push("/customer-view")
+      return
+    }
+  }, [loading, user, router])
 
   const handleSignOut = async () => {
     try {
-      const auth = getAuth()
-      await firebaseSignOut(auth)
-      localStorage.clear()
+      await signOut()
       router.push("/store-login")
     } catch (error) {
       console.error("ログアウトエラー:", error)

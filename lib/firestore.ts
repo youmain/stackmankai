@@ -2166,3 +2166,76 @@ export const subscribeToActiveUsers = (
     return () => {}
   }
 }
+
+
+// ========================================
+// Users Collection (Firebase Auth統一用)
+// ========================================
+
+/**
+ * ユーザーデータの型定義
+ */
+export interface UserData {
+  uid: string
+  email: string
+  role: "store_owner" | "employee" | "customer"
+  storeId?: string
+  storeName?: string
+  displayName?: string
+  createdAt?: Date
+  updatedAt?: Date
+}
+
+/**
+ * UIDからユーザーデータを取得
+ */
+export async function getUserData(uid: string): Promise<UserData | null> {
+  try {
+    const db = checkFirebaseConfig()
+    const userDoc = await getDoc(doc(db, "users", uid))
+    
+    if (!userDoc.exists()) {
+      console.log("[Firestore] ユーザーデータが見つかりません:", uid)
+      return null
+    }
+    
+    const data = userDoc.data()
+    return {
+      uid: userDoc.id,
+      email: data.email,
+      role: data.role,
+      storeId: data.storeId,
+      storeName: data.storeName,
+      displayName: data.displayName,
+      createdAt: data.createdAt?.toDate(),
+      updatedAt: data.updatedAt?.toDate(),
+    }
+  } catch (error) {
+    console.error("[Firestore] getUserData エラー:", error)
+    return null
+  }
+}
+
+/**
+ * ユーザーデータを作成または更新
+ */
+export async function createOrUpdateUserData(userData: UserData): Promise<void> {
+  try {
+    const db = checkFirebaseConfig()
+    const userRef = doc(db, "users", userData.uid)
+    
+    await setDoc(userRef, {
+      email: userData.email,
+      role: userData.role,
+      storeId: userData.storeId,
+      storeName: userData.storeName,
+      displayName: userData.displayName,
+      updatedAt: serverTimestamp(),
+    }, { merge: true })
+    
+    console.log("[Firestore] ユーザーデータを保存しました:", userData.uid)
+  } catch (error) {
+    console.error("[Firestore] createOrUpdateUserData エラー:", error)
+    throw error
+  }
+}

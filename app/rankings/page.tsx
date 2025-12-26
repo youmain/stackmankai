@@ -69,8 +69,7 @@ export default function RankingsPage() {
     const currentYear = currentDate.getFullYear()
     const currentMonth = currentDate.getMonth() + 1 // getMonth() returns 0-11, we need 1-12
 
-    const storeId = localStorage.getItem("storeId")
-    const unsubscribePlayers = subscribeToPlayers((playersData) => {
+        const unsubscribePlayers = subscribeToPlayers((playersData) => {
       console.log("[v0] Rankings Page - Players loaded:", playersData.length)
       setPlayers(playersData)
       setDebugInfo((prev) => ({ ...prev, firestoreConnected: true }))

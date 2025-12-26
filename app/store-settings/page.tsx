@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { useAuth } from "@/contexts/auth-context"
 import { doc, getDoc, updateDoc } from "firebase/firestore"
 import { getDb } from "@/lib/firebase"
 import type { Store } from "@/types/store"
 import type { StackManHandSettings, RakeSettings, StackResetSettings } from "@/types/stack-man-hand"
 
 export default function StoreSettingsPage() {
+  const { user, storeId, storeName, userName, isStoreOwner, loading } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -35,9 +37,7 @@ export default function StoreSettingsPage() {
     const loadStoreSettings = async () => {
       const storeIdFromStorage = localStorage.getItem("storeId")
       const storeNameFromStorage = localStorage.getItem("storeName")
-      const isStoreOwner = localStorage.getItem("isStoreOwner") === "true"
-
-      if (!storeIdFromStorage || !isStoreOwner) {
+            if (!storeIdFromStorage || !isStoreOwner) {
         router.push("/store-dashboard")
         return
       }

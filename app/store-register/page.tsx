@@ -60,13 +60,6 @@ export default function StoreRegisterPage() {
       setGeneratedCode(result.storeCode)
       setLoading(false) // ローディング状態を解除
 
-      // localStorageに店舗情報を保存
-      localStorage.setItem("storeId", result.storeId)
-      localStorage.setItem("storeCode", result.storeCode)
-      localStorage.setItem("storeName", formData.name)
-      localStorage.setItem("storeEmail", formData.email)
-      localStorage.setItem("isStoreOwner", "true")
-
       // 成功メッセージを表示後、ダッシュボードへリダイレクト
       setTimeout(() => {
         router.push("/admin")

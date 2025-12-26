@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter, useParams } from "next/navigation"
+import { useAuth } from "@/contexts/auth-context"
 import { doc, getDoc } from "firebase/firestore"
 import { getDb } from "@/lib/firebase"
 import type { StackManHand } from "@/types/stack-man-hand"
@@ -89,6 +90,7 @@ function RankBadge({ rank }: { rank: "S" | "A" | "B" | "C" }) {
 }
 
 export default function StackManHandDisplayPage() {
+  const { user, storeId, storeName, userName, isStoreOwner, loading } = useAuth()
   const router = useRouter()
   const params = useParams()
   const handId = params.handId as string

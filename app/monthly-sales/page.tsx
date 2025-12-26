@@ -12,6 +12,7 @@ import type { DailySales } from "@/types"
 import { SalesHistoryModal } from "@/components/sales-history-modal"
 
 export default function MonthlySalesPage() {
+  const { user, storeId, storeName, userName, isStoreOwner, loading } = useAuth()
   const [dailySales, setDailySales] = useState<DailySales[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedMonth, setSelectedMonth] = useState(() => {
@@ -22,9 +23,7 @@ export default function MonthlySalesPage() {
 
   useEffect(() => {
     // localStorageからstoreIdを取得
-    const storeId = localStorage.getItem("storeId")
-    
-    const unsubscribeDailySales = subscribeToDailySales(
+        const unsubscribeDailySales = subscribeToDailySales(
       storeId,
       (data) => {
         setDailySales(data)

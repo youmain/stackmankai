@@ -23,6 +23,7 @@ import { SalesHistoryModal } from "@/components/sales-history-modal"
 import { PasswordModal } from "@/components/password-modal"
 
 export default function DailySalesPage() {
+  const { user, storeId, storeName, userName, isStoreOwner, loading } = useAuth()
   const [receipts, setReceipts] = useState<Receipt[]>([])
   const [rakeHistory, setRakeHistory] = useState<RakeHistory[]>([])
   const [dailySales, setDailySales] = useState<DailySales[]>([])
@@ -37,8 +38,7 @@ export default function DailySalesPage() {
     console.log("[v0] 📊 日別売上ページ初期化開始")
 
     // localStorageからstoreIdを取得
-    const storeId = localStorage.getItem("storeId")
-    console.log("[v0] 🏪 店舗ID:", storeId)
+        console.log("[v0] 🏪 店舗ID:", storeId)
 
     const unsubscribeReceipts = subscribeToReceipts(
       (data) => {

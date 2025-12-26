@@ -35,8 +35,7 @@ export default function ReceiptsPage() {
     let unsubscribeReceipts: (() => void) | null = null
 
     try {
-      const storeId = localStorage.getItem("storeId")
-      unsubscribeReceipts = subscribeToReceipts(
+            unsubscribeReceipts = subscribeToReceipts(
         (newReceipts) => {
           setReceipts(newReceipts)
         },

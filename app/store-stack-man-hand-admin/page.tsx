@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { useAuth } from "@/contexts/auth-context"
 import { collection, query, where, getDocs, orderBy, limit } from "firebase/firestore"
 import { getDb } from "@/lib/firebase"
 import { collectRake, resetStacks } from "@/lib/scheduled-tasks"
@@ -9,6 +10,7 @@ import { useStackManHand } from "@/lib/stack-man-hand"
 import type { StackManHand, RakeCollection, StackReset } from "@/types/stack-man-hand"
 
 export default function StoreStackManHandAdminPage() {
+  const { user, storeId, storeName, userName, isStoreOwner, loading } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [processing, setProcessing] = useState(false)
@@ -24,9 +26,7 @@ export default function StoreStackManHandAdminPage() {
     const loadData = async () => {
       const storeIdFromStorage = localStorage.getItem("storeId")
       const storeNameFromStorage = localStorage.getItem("storeName")
-      const isStoreOwner = localStorage.getItem("isStoreOwner") === "true"
-
-      if (!storeIdFromStorage || !isStoreOwner) {
+            if (!storeIdFromStorage || !isStoreOwner) {
         alert("権限がありません")
         router.push("/store-dashboard")
         return

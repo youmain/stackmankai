@@ -215,6 +215,17 @@ export async function registerEmployee(data: EmployeeRegistrationData): Promise<
     
     await setDoc(employeeDocRef, employeeData)
     
+    // usersコレクションにユーザーデータを保存
+    const { createOrUpdateUserData } = await import("./firestore")
+    await createOrUpdateUserData({
+      uid: uid,
+      email: generatedEmail,
+      role: "employee",
+      storeId: inviteCode.storeId,
+      storeName: inviteCode.storeName,
+      displayName: data.displayName || data.username,
+    })
+    
     // 招待コードの使用回数を更新
     const inviteCodeDocRef = doc(db, "inviteCodes", inviteCode.id)
     await updateDoc(inviteCodeDocRef, {

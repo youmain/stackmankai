@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { useAuth } from "@/contexts/auth-context"
 
 export default function StoreDashboardPage() {
+  const { user, storeId, storeName, userName, isStoreOwner, loading } = useAuth()
   const router = useRouter()
   const [storeInfo, setStoreInfo] = useState({
     storeId: "",
@@ -16,13 +18,8 @@ export default function StoreDashboardPage() {
 
   useEffect(() => {
     // localStorageから店舗情報を取得
-    const storeId = localStorage.getItem("storeId")
-    const storeCode = localStorage.getItem("storeCode")
-    const storeName = localStorage.getItem("storeName")
-    const storeEmail = localStorage.getItem("storeEmail")
-    const isStoreOwner = localStorage.getItem("isStoreOwner") === "true"
-
-    if (!storeId || !storeCode) {
+                const storeEmail = localStorage.getItem("storeEmail")
+        if (!storeId || !storeCode) {
       // ログインしていない場合はログインページへ
       router.push("/store-login")
       return

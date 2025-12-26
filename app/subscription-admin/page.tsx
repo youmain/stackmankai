@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { useAuth } from "@/contexts/auth-context"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -21,6 +22,7 @@ import {
 import type { CustomerAccount, PaymentHistory, Player } from "@/types"
 
 export default function SubscriptionAdminPage() {
+  const { user, storeId, storeName, userName, isStoreOwner, loading } = useAuth()
   const router = useRouter()
   const [customers, setCustomers] = useState<CustomerAccount[]>([])
   const [paymentHistory, setPaymentHistory] = useState<PaymentHistory[]>([])
@@ -41,8 +43,7 @@ export default function SubscriptionAdminPage() {
       return
     }
 
-    const storeId = localStorage.getItem("storeId")
-    const unsubscribeCustomers = subscribeToCustomerAccounts(setCustomers)
+        const unsubscribeCustomers = subscribeToCustomerAccounts(setCustomers)
     const unsubscribePlayers = subscribeToPlayers(setPlayers, undefined, storeId)
 
     return () => {

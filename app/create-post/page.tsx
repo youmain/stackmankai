@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { useAuth } from "@/contexts/auth-context"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
@@ -21,6 +22,7 @@ import type { PostData, SituationData, PreflopData, FlopData, TurnData, RiverDat
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export default function CreatePostPage() {
+  const { user, storeId, storeName, userName, isStoreOwner, loading } = useAuth()
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1)
   const [isSaving, setIsSaving] = useState(false)
@@ -43,11 +45,7 @@ export default function CreatePostPage() {
     }
     
     // 店舗情報を取得
-    const storeId = localStorage.getItem("storeId")
-    const storeName = localStorage.getItem("storeName")
-    const storeCode = localStorage.getItem("storeCode")
-    
-    if (storeId && storeName) {
+                if (storeId && storeName) {
       setStoreInfo({
         storeId,
         storeName,

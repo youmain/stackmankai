@@ -207,6 +207,7 @@ const availableStores = [
 ]
 
 export default function PostsPage() {
+  const { user, storeId, storeName, userName, isStoreOwner, loading } = useAuth()
   const membershipStatus = useMembership()
   const [posts, setPosts] = useState<PostData[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -227,8 +228,7 @@ export default function PostsPage() {
 
   // localStorageから店舗情報を取得
   useEffect(() => {
-    const storeId = localStorage.getItem("storeId")
-    if (storeId) {
+        if (storeId) {
       setCurrentStoreId(storeId)
       console.log("🏪 店舗IDをlocalStorageから読み込み:", storeId)
     }

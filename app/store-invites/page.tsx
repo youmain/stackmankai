@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { useAuth } from "@/contexts/auth-context"
 import { Copy, Plus, Users, Calendar, CheckCircle, XCircle, MessageCircle, Share2 } from "lucide-react"
 import { createInviteCode, getStoreInviteCodes, getStoreEmployees } from "@/lib/firestore-employees"
 import type { InviteCode, Employee } from "@/types/employee"
 
 export default function StoreInvitesPage() {
+  const { user, storeId, storeName, userName, isStoreOwner, loading } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [inviteCodes, setInviteCodes] = useState<InviteCode[]>([])
@@ -16,10 +18,7 @@ export default function StoreInvitesPage() {
 
   useEffect(() => {
     // 店舗情報を取得
-    const storeId = localStorage.getItem("storeId")
-    const storeName = localStorage.getItem("storeName")
-    const storeCode = localStorage.getItem("storeCode")
-    const isOwner = localStorage.getItem("isStoreOwner") === "true"
+                const isOwner = localStorage.getItem("isStoreOwner") === "true"
 
     if (!storeId || !storeName || !isOwner) {
       alert("オーナー権限が必要です")

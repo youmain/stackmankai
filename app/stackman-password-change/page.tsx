@@ -12,6 +12,7 @@ import { Header } from "@/components/header"
 import { Lock, CheckCircle } from "lucide-react"
 
 export default function StackmanPasswordChangePage() {
+  const { user, storeId, storeName, userName, isStoreOwner, loading } = useAuth()
   const [currentPassword, setCurrentPassword] = useState("")
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")

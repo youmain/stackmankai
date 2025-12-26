@@ -82,6 +82,17 @@ export async function registerStore(
       },
     })
     
+    // usersコレクションにユーザーデータを保存
+    const { createOrUpdateUserData } = await import("./firestore")
+    await createOrUpdateUserData({
+      uid: uid,
+      email: data.ownerEmail,
+      role: "store_owner",
+      storeId: docRef.id,
+      storeName: data.name,
+      displayName: data.name,
+    })
+    
     return {
       storeId: docRef.id,
       storeCode: storeCode,
