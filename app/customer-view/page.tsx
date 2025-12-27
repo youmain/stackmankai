@@ -625,7 +625,7 @@ ${availableExamples.slice(0, 5).join("\n")}
         unsubscribePointHistory()
       }
     }
-  }, [currentYear, currentMonth, linkedPlayer?.id]) // Add linkedPlayer dependency
+  }, [currentYear, currentMonth, linkedPlayer?.id, customerAccount?.storeId]) // Add customerAccount dependency
 
   useEffect(() => {
     const allDataLoaded = Object.values(dataLoaded).every((loaded) => loaded)
