@@ -53,16 +53,17 @@ service cloud.firestore {
     
     match /users/{userId} {
       // 自分のユーザー情報のみ読み取り可能
-      allow read: if isAuthenticated() && request.auth.uid == userId;
+      // 注意: ヘルパー関数を使わず、直接チェックして循環参照を回避
+      allow read: if request.auth != null && request.auth.uid == userId;
       
       // ユーザー作成は本人のみ可能（登録時）
-      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
       
       // ユーザー情報の更新は本人のみ可能
-      allow update: if isAuthenticated() && request.auth.uid == userId;
+      allow update: if request.auth != null && request.auth.uid == userId;
       
       // ユーザーの削除は本人のみ可能
-      allow delete: if isAuthenticated() && request.auth.uid == userId;
+      allow delete: if request.auth != null && request.auth.uid == userId;
     }
     
     // ========================================
