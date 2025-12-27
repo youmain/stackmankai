@@ -157,7 +157,17 @@ export default function CustomerAuthPage() {
       // Firebase Authでログイン（パスワード認証 + 永続ログイン）
       console.log("[Auth] 🔑 Firebase Authログイン試行中...")
       const { signIn, getCurrentUser } = await import("@/lib/firebase-auth")
-      const userCredential = await signIn(loginForm.email, loginForm.password)
+      
+      // タイムアウト処理を追加（10秒）
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("ログインがタイムアウトしました。ネットワーク接続を確認してください。")), 10000)
+      )
+      
+      const userCredential = await Promise.race([
+        signIn(loginForm.email, loginForm.password),
+        timeoutPromise
+      ]) as any
+      
       console.log("[Auth] ✅ Firebase Authログイン成功:", loginForm.email)
 
       // Firestoreから顧客情報を取得
