@@ -217,6 +217,9 @@ export default function CustomerAuthPage() {
       setTimeout(() => {
         window.location.href = "/customer-view"
       }, 500)
+      
+      // リダイレクトするのでfinallyでsetIsLoading(false)を実行しない
+      return
     } catch (error: any) {
       console.error("[Auth] ❌ ログインエラー:", error)
       
@@ -231,8 +234,9 @@ export default function CustomerAuthPage() {
       }
       
       setError(errorMessage)
-    } finally {
       setIsLoading(false)
+    } finally {
+      // リダイレクト時はsetIsLoadingを実行しない
     }
   }
 
