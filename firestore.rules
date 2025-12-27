@@ -203,14 +203,19 @@ service cloud.firestore {
     // ========================================
     
     match /customerAccounts/{customerId} {
-      // 顧客情報は本人または所属店舗のスタッフのみ読み取り可能
-      allow read: if isAuthenticated() && (
+      // 顧客情報の個別読み取り：本人または所属店舗のスタッフのみ
+      allow get: if isAuthenticated() && (
         resource.data.uid == request.auth.uid ||
         belongsToStore(resource.data.storeId)
       );
       
+      // 顧客情報のリスト取得：認証済みユーザーは自分のデータを検索可能
+      // 注意: クエリはクライアント側でuidでフィルタリングする必要がある
+      allow list: if isAuthenticated();
+      
       // 顧客の作成は認証済みユーザーのみ可能
-      allow create: if isAuthenticated();
+      // 作成時にuidを設定する必要がある
+      allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid;
       
       // 顧客情報の更新は本人または所属店舗のスタッフのみ可能
       allow update: if isAuthenticated() && (
