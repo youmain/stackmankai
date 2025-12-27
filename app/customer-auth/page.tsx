@@ -211,6 +211,12 @@ export default function CustomerAuthPage() {
       setCurrentCustomer(fullCustomer)
       setSuccess("ログインしました")
       setLoginForm({ email: "", password: "" })
+      
+      // auth-contextのonAuthStateChangedが発火するまで少し待ってからリダイレクト
+      console.log("[Auth] 🚀 /customer-viewへリダイレクト")
+      setTimeout(() => {
+        window.location.href = "/customer-view"
+      }, 500)
     } catch (error: any) {
       console.error("[Auth] ❌ ログインエラー:", error)
       

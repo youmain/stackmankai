@@ -931,11 +931,8 @@ ${availableExamples.slice(0, 5).join("\n")}
     )
   }
 
-  // 認証されていない場合はログインページへリダイレクト
-  if (!customerAccount) {
-    router.push("/customer-auth")
-    return null
-  }
+  // customerAccountの読み込み完了を待つ（リダイレクトはしない）
+  // auth-contextが自動的に処理する
 
   return (
     <div className="min-h-screen bg-gray-50">
