@@ -55,6 +55,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     const initializeAuth = async () => {
       try {
+        // まずlocalStorageから顧客アカウントを読み込む（即座に表示するため）
+        if (typeof window !== "undefined") {
+          const savedCustomerAccount = localStorage.getItem("auth_customerAccount")
+          const savedUserType = localStorage.getItem("auth_userType")
+          
+          if (savedCustomerAccount && savedUserType === "customer") {
+            try {
+              const parsedAccount = JSON.parse(savedCustomerAccount)
+              console.log("[Auth] 💾 localStorageから顧客アカウントを復元:", parsedAccount.email)
+              setCustomerAccountState(parsedAccount)
+              setUser({
+                uid: parsedAccount.uid || "",
+                email: parsedAccount.email,
+                role: "customer",
+                storeId: parsedAccount.storeId,
+                storeName: parsedAccount.storeName,
+                playerName: parsedAccount.playerName,
+                playerId: parsedAccount.playerId,
+              })
+            } catch (e) {
+              console.error("[Auth] ❌ localStorageのパースエラー:", e)
+            }
+          }
+        }
+        
         if (!isFirebaseConfigured()) {
           console.warn("[Auth] ⚠️ v0プレビュー環境ではFirebaseが利用できません。")
           console.warn("[Auth] Vercelにデプロイすると正常に動作します。")
