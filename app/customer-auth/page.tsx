@@ -79,6 +79,7 @@ export default function CustomerAuthPage() {
 
       if (!isFirebaseConfigured) {
         setError("Firebase設定が必要です。Project Settingsで環境変数を設定してください。")
+        setIsLoading(false)
         return
       }
 
@@ -144,6 +145,7 @@ export default function CustomerAuthPage() {
     try {
       if (!isFirebaseConfigured) {
         setError("Firebase設定が必要です。Project Settingsで環境変数を設定してください。")
+        setIsLoading(false)
         return
       }
 
@@ -257,6 +259,7 @@ export default function CustomerAuthPage() {
 
       if (!isFirebaseConfigured) {
         setError("Firebase設定が必要です。Project Settingsで環境変数を設定してください。")
+        setIsLoading(false)
         return
       }
 
