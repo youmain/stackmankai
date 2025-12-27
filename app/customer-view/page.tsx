@@ -17,7 +17,6 @@ import {
   subscribeToMonthlyPoints,
   subscribeToStoreRankingSettings,
   subscribeToRakeHistory,
-  subscribeToCustomerAccounts,
   updateCustomerAccount,
   createCustomerAccount,
   resetPlayerStatistics,
@@ -128,7 +127,6 @@ export default function CustomerView() {
   const [currentRewardRate, setCurrentRewardRate] = useState<number>(5) // Track current reward rate
 
   const [isLoading, setIsLoading] = useState(true)
-  const [customerAccounts, setCustomerAccounts] = useState<CustomerAccount[]>([])
 
   const [dataLoaded, setDataLoaded] = useState({
     customers: false,
@@ -332,7 +330,7 @@ export default function CustomerView() {
       }
     }
     updateStoreIdIfNeeded()
-  }, [linkedPlayer, customerAccount])
+  }, [linkedPlayer, customerAccount?.id, customerAccount?.storeId, customerAccount?.playerName])
 
   useEffect(() => {
     const handlePaymentCompletion = async () => {
@@ -559,63 +557,13 @@ ${availableExamples.slice(0, 5).join("\n")}
 
     initializeAuth()
 
-    const unsubscribeCustomers = subscribeToCustomerAccounts((customers) => {
-      console.log("[v0] 👥 お客さんアカウント同期受信:", customers.length, "件")
-
-      // auth-contextから取得したcustomerAccountが存在する場合は、それを優先
-      // subscribeToCustomerAccountsは他の顧客情報の取得のみに使用
-      if (customerAccount) {
-        console.log("[v0] ✅ auth-contextからのcustomerAccountを使用:", {
-          email: customerAccount.email,
-          playerId: customerAccount.playerId,
-          playerName: customerAccount.playerName,
-        })
-        setCustomerAccounts(customers)
-        setDataLoaded((prev) => ({ ...prev, customers: true }))
-        return
-      }
-
-      // customerAccountが存在しない場合のみ、customersから選択
-      if (customers.length > 0) {
-        const currentUserEmail = sessionStorage.getItem("currentUserEmail")
-        let targetCustomer = customers[0] // デフォルトは最初の顧客
-
-        // メールアドレスが保存されている場合、該当する顧客を検索
-        if (currentUserEmail) {
-          const foundCustomer = customers.find((customer) => customer.email === currentUserEmail)
-          if (foundCustomer) {
-            targetCustomer = foundCustomer
-            console.log("[v0] 👤 セッションに基づく顧客選択:", {
-              email: currentUserEmail,
-              customerId: foundCustomer.id,
-            })
-          }
-        }
-
-        const tempCustomer = {
-          ...targetCustomer,
-          subscriptionStatus: "active" as const,
-        }
-
-        // 現在の顧客と異なる場合のみ更新
-        // customerAccountとsetCustomerAccountを使用
-        setCustomerAccount((prevCustomer) => {
-          if (!prevCustomer || prevCustomer.id !== tempCustomer.id) {
-            console.log("[v0] Customer状態更新:", tempCustomer)
-            return tempCustomer
-          }
-          return prevCustomer
-        })
-
-        setCustomerAccounts(customers)
-      } else {
-        setCustomerAccounts(customers)
-        // customerAccountをnullに設定
-        setCustomerAccount(null)
-        console.log("[v0] Customer状態クリア")
-      }
-      setDataLoaded((prev) => ({ ...prev, customers: true }))
+    // auth-contextで既にcustomerAccountを取得しているため、ここでの取得は不要
+    console.log("[v0] ✅ auth-contextからのcustomerAccountを使用:", {
+      email: customerAccount?.email,
+      playerId: customerAccount?.playerId,
+      playerName: customerAccount?.playerName,
     })
+    setDataLoaded((prev) => ({ ...prev, customers: true }))
 
     const storeId = customerAccount?.storeId
     const unsubscribePlayers = subscribeToPlayers((players) => {
@@ -668,7 +616,6 @@ ${availableExamples.slice(0, 5).join("\n")}
 
     return () => {
       console.log("[v0] 🔄 リスナークリーンアップ実行")
-      unsubscribeCustomers()
       unsubscribePlayers()
       unsubscribeDailyRankings()
       unsubscribeMonthlyPoints()
