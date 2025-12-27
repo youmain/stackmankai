@@ -54,7 +54,7 @@ import { ChatRoomDualMode } from "@/components/chat/chat-room-dual-mode"
 // }
 
 export default function CustomerView() {
-  const { customerAccount, setCustomerAccount, signOut } = useAuth()
+  const { customerAccount, setCustomerAccount, signOut, loading: authLoading } = useAuth()
   const router = useRouter()
 
   const [viewMode, setViewMode] = useState<"main" | "posts" | "my-posts" | "post-detail" | "ai-players" | "chat">("main")
@@ -970,6 +970,24 @@ ${availableExamples.slice(0, 5).join("\n")}
   const handleBackFromPostDetail = () => {
     setSelectedPostId(null)
     setViewMode("posts")
+  }
+
+  // 認証データ読み込み中の表示
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">読み込み中...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // 認証されていない場合はログインページへリダイレクト
+  if (!customerAccount) {
+    router.push("/customer-auth")
+    return null
   }
 
   return (
