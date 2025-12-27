@@ -143,19 +143,27 @@ export default function CustomerAuthPage() {
     setSuccess("")
 
     try {
+      console.log("[Auth] 🔑 ログイン処理開始:", loginForm.email)
+      
       if (!isFirebaseConfigured) {
+        console.error("[Auth] ❌ Firebase設定がありません")
         setError("Firebase設定が必要です。Project Settingsで環境変数を設定してください。")
         setIsLoading(false)
         return
       }
+      
+      console.log("[Auth] 🔥 Firebase設定確認完了")
 
       // Firebase Authでログイン（パスワード認証 + 永続ログイン）
+      console.log("[Auth] 🔑 Firebase Authログイン試行中...")
       const { signIn, getCurrentUser } = await import("@/lib/firebase-auth")
       const userCredential = await signIn(loginForm.email, loginForm.password)
       console.log("[Auth] ✅ Firebase Authログイン成功:", loginForm.email)
 
       // Firestoreから顧客情報を取得
+      console.log("[Auth] 💾 Firestoreから顧客情報を取得中...")
       let customer = await getCustomerByEmail(loginForm.email)
+      console.log("[Auth] 💾 顧客情報取得結果:", customer ? "FOUND" : "NOT FOUND")
       
       // 自動修復: Firebase AuthにはあるがFirestoreにない場合、自動作成
       if (!customer) {
