@@ -160,7 +160,7 @@ export default function CustomerAuthPage() {
       
       // タイムアウト処理を追加（10秒）
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error("ログインがタイムアウトしました。ネットワーク接続を確認してください。")), 10000)
+        setTimeout(() => reject(new Error("ログインがタイムアウトしました。ネットワーク接続を確認してください。")), 30000)
       )
       
       const userCredential = await Promise.race([
