@@ -275,6 +275,34 @@ service cloud.firestore {
     }
     
     // ========================================
+    // Players コレクション（トップレベル）
+    // ========================================
+    
+    match /players/{playerId} {
+      // プレイヤー情報は認証済みユーザーが読み取り可能
+      // 顧客は自分のstoreIdのプレイヤーのみ、スタッフは所属店舗のプレイヤーのみ
+      allow read: if isAuthenticated();
+      
+      // プレイヤーの作成・更新は店舗スタッフのみ可能
+      allow create, update: if isStoreStaff();
+      
+      // プレイヤーの削除は店舗オーナーのみ可能
+      allow delete: if isStoreOwner();
+      
+      // PointHistory サブコレクション
+      match /pointHistory/{historyId} {
+        // ポイント履歴は認証済みユーザーが読み取り可能
+        allow read: if isAuthenticated();
+        
+        // ポイント履歴の作成・更新は店舗スタッフのみ可能
+        allow create, update: if isStoreStaff();
+        
+        // ポイント履歴の削除は店舗オーナーのみ可能
+        allow delete: if isStoreOwner();
+      }
+    }
+    
+    // ========================================
     // Players コレクション（グローバル・旧形式）
     // ========================================
     
