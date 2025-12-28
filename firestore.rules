@@ -288,7 +288,10 @@ service cloud.firestore {
     match /players/{playerId} {
       // プレイヤー情報は認証済みユーザーが読み取り可能
       // 顧客は自分のstoreIdのプレイヤーのみ、スタッフは所属店舗のプレイヤーのみ
-      allow read: if isAuthenticated();
+      allow read: if request.auth != null && (
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid))) ||
+        customerBelongsToStore(resource.data.storeId)
+      );
       
       // プレイヤーの作成・更新は店舗スタッフのみ可能
       allow create, update: if isStoreStaff();
@@ -299,7 +302,7 @@ service cloud.firestore {
       // PointHistory サブコレクション
       match /pointHistory/{historyId} {
         // ポイント履歴は認証済みユーザーが読み取り可能
-        allow read: if isAuthenticated();
+        allow read: if request.auth != null;
         
         // ポイント履歴の作成・更新は店舗スタッフのみ可能
         allow create, update: if isStoreStaff();
