@@ -2,8 +2,6 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  setPersistence,
-  browserLocalPersistence,
   type User,
   type UserCredential,
 } from "firebase/auth"
@@ -23,15 +21,7 @@ export async function createUser(email: string, password: string): Promise<UserC
   }
 
   try {
-    // 永続ログインを有効化（登録後もログイン状態を維持）
-    try {
-      await setPersistence(auth, browserLocalPersistence)
-      log.info("永続ログイン設定成功")
-    } catch (persistError: any) {
-      // setPersistenceが失敗しても登録は続行
-      log.warn(`永続ログイン設定失敗（続行）: ${persistError.message}`)
-    }
-    
+    // setPersistenceを削除: Firebase AuthはデフォルトでlocalStorageを使用
     const userCredential = await createUserWithEmailAndPassword(auth, email, password)
     log.info(`ユーザー作成成功: ${email}`)
     return userCredential
@@ -52,15 +42,7 @@ export async function signIn(email: string, password: string): Promise<UserCrede
   }
 
   try {
-    // 永続ログインを有効化（ネイティブアプリと同じ動作）
-    try {
-      await setPersistence(auth, browserLocalPersistence)
-      log.info("永続ログイン設定成功")
-    } catch (persistError: any) {
-      // setPersistenceが失敗してもログインは続行
-      log.warn(`永続ログイン設定失敗（続行）: ${persistError.message}`)
-    }
-    
+    // setPersistenceを削除: Firebase AuthはデフォルトでlocalStorageを使用
     const userCredential = await signInWithEmailAndPassword(auth, email, password)
     log.info(`サインイン成功: ${email}`)
     return userCredential
