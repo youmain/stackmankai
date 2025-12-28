@@ -47,6 +47,14 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == uid;
     }
     
+    // 顧客が指定された店舗に所属しているかチェック
+    function customerBelongsToStore(storeId) {
+      if (!isAuthenticated()) return false;
+      // customerAccountsコレクションから顧客情報を取得
+      let customerAccounts = firestore.get(/databases/$(database)/documents/customerAccounts/$(request.auth.uid));
+      return customerAccounts != null && customerAccounts.data.storeId == storeId;
+    }
+    
     // ========================================
     // Users コレクション（新しい認証システム）
     // ========================================
@@ -307,8 +315,8 @@ service cloud.firestore {
     // ========================================
     
     match /players/{storeDoc}/players/{playerId} {
-      // 自分の店舗のプレイヤーのみ読み取り可能
-      allow read: if isAuthenticated() && belongsToStore(storeDoc);
+      // 自分の店舗のプレイヤーのみ読み取り可能（スタッフまたは顧客）
+      allow read: if isAuthenticated() && (belongsToStore(storeDoc) || customerBelongsToStore(storeDoc));
       
       // 自分の店舗のプレイヤーのみ作成・更新可能
       allow create, update: if isStoreStaff() && belongsToStore(storeDoc);
