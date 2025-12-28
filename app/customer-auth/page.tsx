@@ -42,7 +42,28 @@ export default function CustomerAuthPage() {
 
   const [showQRScanner, setShowQRScanner] = useState(false)
 
+  // ページ読み込み時にログイン状態をチェック
   useEffect(() => {
+    const checkAuthState = async () => {
+      try {
+        console.log("[Auth] 🔍 ログイン状態チェック開始")
+        const { getCurrentUser } = await import("@/lib/firebase-auth")
+        const user = await getCurrentUser()
+        
+        if (user) {
+          console.log("[Auth] ✅ ログイン済みユーザーを検出:", user.email)
+          // すでにログイン済みの場合、customer-viewにリダイレクト
+          window.location.href = "/customer-view"
+        } else {
+          console.log("[Auth] ℹ️ 未ログイン状態")
+        }
+      } catch (error) {
+        console.error("[Auth] ❌ ログイン状態チェックエラー:", error)
+      }
+    }
+    
+    checkAuthState()
+    
     const hideCompletion = localStorage.getItem("hidePlayerLinkingCompletion")
     if (hideCompletion === "true") {
       setShouldShowCompletion(false)
