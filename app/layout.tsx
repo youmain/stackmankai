@@ -27,6 +27,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja" className={`${inter.className} antialiased`}>
+      <head>
+        {/* Firebase Authサーバーへの接続を事前に確立（ログイン時間短縮） */}
+        <link rel="dns-prefetch" href="https://identitytoolkit.googleapis.com" />
+        <link rel="preconnect" href="https://identitytoolkit.googleapis.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://securetoken.googleapis.com" />
+        <link rel="preconnect" href="https://securetoken.googleapis.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://www.googleapis.com" />
+        <link rel="preconnect" href="https://www.googleapis.com" crossOrigin="anonymous" />
+      </head>
       <body>
         <AuthProvider>{children}</AuthProvider>
         <Toaster />
