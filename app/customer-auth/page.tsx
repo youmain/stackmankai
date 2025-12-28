@@ -47,8 +47,8 @@ export default function CustomerAuthPage() {
     const checkAuthState = async () => {
       try {
         console.log("[Auth] 🔍 ログイン状態チェック開始")
-        const { getCurrentUser } = await import("@/lib/firebase-auth")
-        const user = await getCurrentUser()
+        const { waitForAuthState } = await import("@/lib/firebase-auth")
+        const user = await waitForAuthState()
         
         if (user) {
           console.log("[Auth] ✅ ログイン済みユーザーを検出:", user.email)
