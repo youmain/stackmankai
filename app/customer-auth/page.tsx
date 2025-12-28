@@ -13,6 +13,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Loader2, Mail, Lock, User, ArrowLeft, Gift } from "lucide-react"
 import { isFirebaseConfigured } from "@/lib/firebase"
 import { getCustomerByEmail, linkPlayerToCustomer, createCustomerAccount } from "@/lib/firestore"
+import { signIn, createUser, waitForAuthState } from "@/lib/firebase-auth"
+import { saveAuthCache } from "@/lib/auth-cache"
 
 export default function CustomerAuthPage() {
   const [isLoading, setIsLoading] = useState(false)
@@ -47,7 +49,6 @@ export default function CustomerAuthPage() {
     const checkAuthState = async () => {
       try {
         console.log("[Auth] 🔍 ログイン状態チェック開始")
-        const { waitForAuthState } = await import("@/lib/firebase-auth")
         const user = await waitForAuthState()
         
         if (user) {
@@ -177,7 +178,6 @@ export default function CustomerAuthPage() {
 
       // Firebase Authでログイン（パスワード認証 + 永続ログイン）
       console.log("[Auth] 🔑 Firebase Authログイン試行中...")
-      const { signIn, getCurrentUser } = await import("@/lib/firebase-auth")
       
       // タイムアウト処理を追加（90秒）
       const timeoutPromise = new Promise((_, reject) => 
@@ -192,7 +192,6 @@ export default function CustomerAuthPage() {
       console.log("[Auth] ✅ Firebase Authログイン成功:", loginForm.email)
       
       // 認証キャッシュを保存（次回ログイン時の高速化）
-      const { saveAuthCache } = await import("@/lib/auth-cache")
       saveAuthCache(loginForm.email, userCredential.user.uid)
 
       // Firestoreから顧客情報を取得
