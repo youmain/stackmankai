@@ -43,7 +43,13 @@ function initializeFirebase() {
     db = getFirestore(app)
     auth = getAuth(app)
 
-    log.info("Firebase初期化成功")
+    // デバッグ: 環境変数の読み込み確認
+    log.info(`Firebase初期化成功 - apiKey: ${firebaseConfig.apiKey.substring(0, 8)}..., authDomain: ${firebaseConfig.authDomain}`)
+    console.log("[DEBUG] Firebase config:", {
+      apiKey: firebaseConfig.apiKey.substring(0, 8) + "...",
+      authDomain: firebaseConfig.authDomain,
+      projectId: firebaseConfig.projectId,
+    })
   } catch (error) {
     initializationError = error as Error
     const errorMessage = (error as Error).message

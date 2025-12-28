@@ -36,15 +36,22 @@ export async function createUser(email: string, password: string): Promise<UserC
  * 永続ログインを有効化（ブラウザを閉じてもログイン状態を維持）
  */
 export async function signIn(email: string, password: string): Promise<UserCredential> {
+  const startTime = Date.now()
+  console.log("[DEBUG] signIn started at", new Date().toISOString())
+  
   const auth = getAuthInstance()
   if (!auth) {
     throw new Error("Firebase Authが初期化されていません")
   }
+  console.log(`[DEBUG] getAuthInstance took ${Date.now() - startTime}ms`)
 
   try {
     // setPersistenceを削除: Firebase AuthはデフォルトでlocalStorageを使用
+    const signInStart = Date.now()
+    console.log("[DEBUG] Calling signInWithEmailAndPassword...")
     const userCredential = await signInWithEmailAndPassword(auth, email, password)
-    log.info(`サインイン成功: ${email}`)
+    console.log(`[DEBUG] signInWithEmailAndPassword took ${Date.now() - signInStart}ms`)
+    log.info(`サインイン成功: ${email} (total: ${Date.now() - startTime}ms)`)
     return userCredential
   } catch (error: any) {
     log.error(`サインインエラー: ${error.message}`)
