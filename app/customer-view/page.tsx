@@ -1150,12 +1150,12 @@ ${availableExamples.slice(0, 5).join("\n")}
                     variant="outline"
                     className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 bg-transparent"
                     onClick={() => {
-                      // Clear customer data and redirect to landing page
+                      // Clear customer data and redirect to login page
                       // customerAccountをnullに設定し、signOut関数を呼び出す
                       setCustomerAccount(null)
                       signOut()
                       setIsMenuOpen(false)
-                      window.location.href = "/"
+                      window.location.href = "/customer-auth"
                     }}
                   >
                     <LogOut className="mr-2 h-4 w-4" />
@@ -2359,7 +2359,7 @@ ${availableExamples.slice(0, 5).join("\n")}
                     alert("スタックマンを解約しました。CP関連データが削除されました。")
                     setCustomerAccount(null)
                     signOut()
-                    window.location.href = "/"
+                    window.location.href = "/customer-auth"
                   } catch (error) {
                     console.error("Account cancellation error:", error)
                     alert("解約処理に失敗しました。")

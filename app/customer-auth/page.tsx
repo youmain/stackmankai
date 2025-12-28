@@ -190,6 +190,10 @@ export default function CustomerAuthPage() {
       ]) as any
       
       console.log("[Auth] ✅ Firebase Authログイン成功:", loginForm.email)
+      
+      // 認証キャッシュを保存（次回ログイン時の高速化）
+      const { saveAuthCache } = await import("@/lib/auth-cache")
+      saveAuthCache(loginForm.email, userCredential.user.uid)
 
       // Firestoreから顧客情報を取得
       console.log("[Auth] 💾 Firestoreから顧客情報を取得中...")

@@ -211,6 +211,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { signOut: firebaseSignOut } = await import("@/lib/firebase-auth")
       await firebaseSignOut()
+      
+      // 認証キャッシュをクリア
+      const { clearAuthCache } = await import("@/lib/auth-cache")
+      clearAuthCache()
+      
+      // localStorageの認証情報をすべてクリア
+      localStorage.removeItem("auth_customerAccount")
+      localStorage.removeItem("auth_userType")
+      localStorage.removeItem("currentUser")
+      
       setUser(null)
       setCustomerAccountState(null)
       console.log("[Auth] ✅ ログアウト成功")
