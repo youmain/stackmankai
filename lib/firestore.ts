@@ -55,8 +55,13 @@ export const checkFirebaseConfig = () => {
   return db
 }
 
-export const getPlayersCollection = () => {
+export const getPlayersCollection = (storeId?: string) => {
   const db = checkFirebaseConfig()
+  if (storeId) {
+    // サブコレクション構造: /players/{storeId}/players
+    return collection(db, "players", storeId, "players")
+  }
+  // トップレベルコレクション（後方互換性のため残す）
   return collection(db, "players")
 }
 
@@ -400,12 +405,13 @@ export const subscribeToPlayers = (
     onUpdate(mockPlayers)
     return () => {}
   }
-  const playersCollection = getPlayersCollection()
+  // storeIdを使ってサブコレクションにアクセス
+  const playersCollection = getPlayersCollection(storeId || undefined)
   if (!playersCollection) return () => {}
 
-  // storeIdが指定されている場合はフィルタリング
-  // orderByを削除してインデックス不要にする（クライアント側でソート）
-  const q = storeId 
+  // サブコレクション構造の場合はstoreIdでフィルタリング不要
+  // トップレベルコレクションの場合のみフィルタリング
+  const q = (storeId && !storeId) 
     ? query(playersCollection, where("storeId", "==", storeId))
     : playersCollection
   return onSnapshot(
