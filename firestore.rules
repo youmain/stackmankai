@@ -49,10 +49,9 @@ service cloud.firestore {
     
     // 顧客が指定された店舗に所属しているかチェック
     function customerBelongsToStore(storeId) {
-      if (!isAuthenticated()) return false;
-      // customerAccountsコレクションから顧客情報を取得
-      let customerAccounts = firestore.get(/databases/$(database)/documents/customerAccounts/$(request.auth.uid));
-      return customerAccounts != null && customerAccounts.data.storeId == storeId;
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/customerAccounts/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/customerAccounts/$(request.auth.uid)).data.storeId == storeId;
     }
     
     // ========================================
