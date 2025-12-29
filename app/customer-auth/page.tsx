@@ -11,9 +11,10 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Loader2, Mail, Lock, User, ArrowLeft, Gift } from "lucide-react"
+import { Chrome } from "lucide-react"
 import { isFirebaseConfigured } from "@/lib/firebase"
 import { getCustomerByEmail, linkPlayerToCustomer, createCustomerAccount } from "@/lib/firestore"
-import { signIn, createUser, waitForAuthState } from "@/lib/firebase-auth"
+import { signIn, createUser, waitForAuthState, signInWithGoogle } from "@/lib/firebase-auth"
 import { saveAuthCache } from "@/lib/auth-cache"
 
 export default function CustomerAuthPage() {
@@ -154,6 +155,111 @@ export default function CustomerAuthPage() {
     } catch (error) {
       setError(error instanceof Error ? error.message : "登録に失敗しました")
     } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleGoogleLogin = async () => {
+    setIsLoading(true)
+    setError("")
+    setSuccess("")
+
+    try {
+      console.log("[Auth] 🔑 Googleログイン処理開始")
+      
+      if (!isFirebaseConfigured) {
+        console.error("[Auth] ❌ Firebase設定がありません")
+        setError("Firebase設定が必要です。Project Settingsで環境変数を設定してください。")
+        setIsLoading(false)
+        return
+      }
+      
+      console.log("[Auth] 🔥 Firebase設定確認完了")
+
+      // Firebase AuthでGoogleログイン
+      console.log("[Auth] 🔑 Google認証試行中...")
+      const userCredential = await signInWithGoogle()
+      console.log("[Auth] ✅ Google認証成功:", userCredential.user.email)
+      
+      // 認証キャッシュを保存
+      saveAuthCache(userCredential.user.email!, userCredential.user.uid)
+
+      // Firestoreから顧客情報を取得
+      console.log("[Auth] 💾 Firestoreから顧客情報を取得中...")
+      let customer = await getCustomerByEmail(userCredential.user.email!)
+      
+      // 自動修復: Firebase AuthにはあるがFirestoreにない場合、自動作成
+      if (!customer) {
+        console.warn("[Auth] ⚠️ 顧客情報が見つかりません。自動作成します...")
+        
+        const { createCustomerInFirestore } = await import("@/lib/firestore")
+        const customerId = await createCustomerInFirestore(
+          {
+            storeId: storeInfo?.storeId || null,
+            storeName: storeInfo?.storeName || null,
+            isBetaTester: true,
+            subscriptionStatus: "free_trial",
+          },
+          userCredential.user.email!,
+          userCredential.user.uid
+        )
+        
+        console.log("[Auth] ✅ 顧客情報を自動作成しました:", customerId)
+        customer = await getCustomerByEmail(userCredential.user.email!)
+        
+        if (!customer) {
+          throw new Error("顧客情報の作成に失敗しました")
+        }
+      }
+
+      // 店舗情報の確認
+      const finalStoreId = customer.storeId || storeInfo?.storeId || null
+      const finalStoreName = customer.storeName || storeInfo?.storeName || null
+
+      // 顧客情報を完全な形で保存
+      const fullCustomer = {
+        ...customer,
+        storeId: finalStoreId,
+        storeName: finalStoreName,
+      }
+
+      // localStorageにユーザー情報を保存
+      localStorage.setItem("currentUser", JSON.stringify({
+        id: fullCustomer.id,
+        name: fullCustomer.name || fullCustomer.email,
+        email: fullCustomer.email,
+        type: "customer",
+        storeId: finalStoreId,
+        storeName: finalStoreName,
+      }))
+      console.log("[Auth] 💾 localStorageにユーザー情報保存:", fullCustomer.email)
+
+      // auth-contextに保存
+      localStorage.setItem("auth_customerAccount", JSON.stringify(fullCustomer))
+      localStorage.setItem("auth_userType", "customer")
+
+      setCurrentCustomer(fullCustomer)
+      setSuccess("ログインしました")
+      
+      console.log("[Auth] 🚀 /customer-viewへリダイレクト")
+      setTimeout(() => {
+        window.location.href = "/customer-view"
+      }, 500)
+      
+      return
+    } catch (error: any) {
+      console.error("[Auth] ❌ Googleログインエラー:", error)
+      
+      let errorMessage = "Googleログインに失敗しました"
+      if (error.code === "auth/popup-closed-by-user") {
+        errorMessage = "ログインがキャンセルされました"
+      } else if (error.code === "auth/popup-blocked") {
+        errorMessage = "ポップアップがブロックされました。ブラウザの設定を確認してください。"
+      } else if (error.message) {
+        errorMessage = error.message
+      }
+      
+      setError(errorMessage)
       setIsLoading(false)
     }
   }
@@ -486,6 +592,26 @@ export default function CustomerAuthPage() {
                     ) : (
                       "ログイン"
                     )}
+                  </Button>
+
+                  <div className="relative my-4">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-background px-2 text-muted-foreground">または</span>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full"
+                    onClick={handleGoogleLogin}
+                    disabled={isLoading}
+                  >
+                    <Chrome className="mr-2 h-4 w-4" />
+                    Googleでログイン
                   </Button>
                 </form>
               )}

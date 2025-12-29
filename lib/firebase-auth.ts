@@ -1,6 +1,8 @@
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
   signOut,
   type User,
   type UserCredential,
@@ -86,6 +88,39 @@ export function getCurrentUser(): User | null {
     return null
   }
   return auth.currentUser
+}
+
+/**
+ * Googleアカウントでサインイン
+ * ポップアップウィンドウを使用してGoogle認証を行う
+ */
+export async function signInWithGoogle(): Promise<UserCredential> {
+  const startTime = Date.now()
+  console.log("[DEBUG] signInWithGoogle started at", new Date().toISOString())
+  
+  const auth = getAuthInstance()
+  if (!auth) {
+    throw new Error("Firebase Authが初期化されていません")
+  }
+  console.log(`[DEBUG] getAuthInstance took ${Date.now() - startTime}ms`)
+
+  try {
+    const provider = new GoogleAuthProvider()
+    // Google認証の言語を日本語に設定
+    provider.setCustomParameters({
+      prompt: 'select_account'
+    })
+    
+    const signInStart = Date.now()
+    console.log("[DEBUG] Calling signInWithPopup...")
+    const userCredential = await signInWithPopup(auth, provider)
+    console.log(`[DEBUG] signInWithPopup took ${Date.now() - signInStart}ms`)
+    log.info(`Googleサインイン成功: ${userCredential.user.email} (total: ${Date.now() - startTime}ms)`)
+    return userCredential
+  } catch (error: any) {
+    log.error(`Googleサインインエラー: ${error.message}`)
+    throw error
+  }
 }
 
 /**
