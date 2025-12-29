@@ -154,12 +154,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 setError("顧客アカウントが見つかりません")
               }
             }
-            
-            setLoading(false)
           } catch (err) {
             console.error("[Auth] ❌ 認証エラー:", err)
             handleError(err, "認証")
             setError("認証に失敗しました")
+          } finally {
+            // 必ずローディングを終了
             setLoading(false)
           }
         })
