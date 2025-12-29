@@ -1539,6 +1539,17 @@ export const createCustomerAccount = async (data: Partial<CustomerAccount>, emai
   await waitForAuthState()
   log.info("[createCustomerAccount] 認証状態が反映されました")
   
+  // usersコレクションにもドキュメントを作成（Firestoreルールの高速化のため）
+  const { createOrUpdateUserData } = await import("./firestore")
+  await createOrUpdateUserData({
+    uid: uid,
+    email: email,
+    role: "customer",
+    storeId: data.storeId,
+    storeName: data.storeName,
+  })
+  log.info("[createCustomerAccount] usersドキュメントを作成しました")
+  
   const customersCollection = getCustomerAccountsCollection()
   const docRef = await addDoc(customersCollection, {
     ...data,

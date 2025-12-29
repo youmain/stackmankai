@@ -210,11 +210,9 @@ service cloud.firestore {
     // ========================================
     
     match /customerAccounts/{customerId} {
-      // 顧客情報の個別読み取り：本人または所属店舗のスタッフのみ
-      allow get: if isAuthenticated() && (
-        resource.data.uid == request.auth.uid ||
-        belongsToStore(resource.data.storeId)
-      );
+      // 顧客情報の個別読み取り：本人のみ（高速化のため）
+      // 店舗スタッフはlistルールでアクセス可能
+      allow get: if isAuthenticated() && resource.data.uid == request.auth.uid;
       
       // 顧客情報のリスト取得：認証済みユーザーは自分のデータを検索可能
       // 注意: クエリはクライアント側でuidでフィルタリングする必要がある
