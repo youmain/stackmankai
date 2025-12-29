@@ -114,32 +114,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               })
               setCustomerAccountState(customer)
             } else {
-              // ドキュメントが存在しない場合（後方互換性）
-              console.log("[Auth] ⚠️ UIDでドキュメントが見つからない、emailで検索します")
-              const emailSearchStart = performance.now()
-              
-              const customer = await getCustomerByEmail(firebaseUser.email!)
-              console.log("[Auth] ⏱️ emailで検索完了:", performance.now() - emailSearchStart, "ms")
-              if (customer) {
-                console.log("[Auth] ✅ 顧客アカウント取得（email検索）:", {
-                  playerId: customer.playerId,
-                  playerName: customer.playerName,
-                })
-                
-                setUser({
-                  uid: firebaseUser.uid,
-                  email: firebaseUser.email!,
-                  role: "customer",
-                  storeId: customer.storeId,
-                  storeName: customer.storeName,
-                  playerName: customer.playerName,
-                  playerId: customer.playerId,
-                })
-                setCustomerAccountState(customer)
-              } else {
-                console.error("[Auth] ❌ 顧客アカウントが見つかりません")
-                setError("顧客アカウントが見つかりません")
-              }
+              // ドキュメントが存在しない場合
+              console.error("[Auth] ❌ 顧客アカウントが見つかりません (UID: " + firebaseUser.uid + ")")
+              console.error("[Auth] ドキュメントが存在しないか、まだ作成中の可能性があります。")
+              setError("顧客アカウントが見つかりません。再度ログインしてください。")
             }
           } catch (err) {
             console.error("[Auth] ❌ 認証エラー:", err)

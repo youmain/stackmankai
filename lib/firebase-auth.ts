@@ -165,18 +165,48 @@ export { signIn as signInWithEmailAndPassword }
  * Firebase Authの認証状態変更は非同期で伝播するため、
  * Firestoreへの書き込み前に認証状態が確実に反映されるまで待つ
  */
-export async function waitForAuthState(): Promise<User | null> {
+/**
+ * 認証状態が反映されるまで待機する関数
+ * @param expectedUid 期待するUID（指定した場合、そのUIDのユーザーがログインするまで待機）
+ * @param timeoutMs タイムアウト時間（ミリ秒）
+ * @returns ログイン中のユーザー、またはnull
+ */
+export async function waitForAuthState(expectedUid?: string, timeoutMs: number = 10000): Promise<User | null> {
   const auth = getAuthInstance()
   if (!auth) {
     throw new Error("Firebase Authが初期化されていません")
   }
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      unsubscribe()
+      reject(new Error(`認証状態の待機がタイムアウトしました (${timeoutMs}ms)`))
+    }, timeoutMs)
+
     const { onAuthStateChanged: onAuthStateChangedFn } = require("firebase/auth")
     const unsubscribe = onAuthStateChangedFn(auth, (user: User | null) => {
-      log.info(`[waitForAuthState] 認証状態確認: ${user ? `ログイン中 (${user.email})` : "未ログイン"}`)
-      unsubscribe()
-      resolve(user)
+      // 期待するUIDが指定されている場合
+      if (expectedUid) {
+        if (user && user.uid === expectedUid) {
+          // 期待するUIDのユーザーがログインした
+          clearTimeout(timeout)
+          log.info(`[waitForAuthState] 認証状態確認: ログイン中 (${user.email}, UID: ${user.uid})`)
+          unsubscribe()
+          resolve(user)
+        } else if (!user) {
+          // まだログインしていない場合は待機を続ける
+          log.info(`[waitForAuthState] 認証状態待機中... (期待するUID: ${expectedUid})`)
+        } else {
+          // 異なるUIDのユーザーがログインしている場合は待機を続ける
+          log.warn(`[waitForAuthState] 異なるUIDのユーザーがログイン中 (期待: ${expectedUid}, 実際: ${user.uid})`)
+        }
+      } else {
+        // UIDの指定がない場合は、任意のユーザーがログインしたら完了
+        clearTimeout(timeout)
+        log.info(`[waitForAuthState] 認証状態確認: ${user ? `ログイン中 (${user.email})` : "未ログイン"}`)
+        unsubscribe()
+        resolve(user)
+      }
     })
   })
 }
