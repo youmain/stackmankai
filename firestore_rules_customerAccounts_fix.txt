@@ -1,0 +1,67 @@
+## Firebase Consoleでの修正手順
+
+1. Firebase Console を開く: https://console.firebase.google.com/project/stackmankai/firestore/databases/-default-/security/rules
+2. 左側の「開発とテスト」ボタンをクリック
+3. エディタで以下の行を探す:
+
+```
+match /customerAccounts/{customerId} {
+```
+
+4. そのセクション全体（212-233行目）を以下のコードで置き換える:
+
+---
+
+## 置き換えるコード（コピー&ペースト用）
+
+```javascript
+    match /customerAccounts/{customerId} {
+      // 顧客情報の個別読み取り：本人のみ（高速化のため）
+      // 店舗スタッフはlistルールでアクセス可能
+      allow get: if isAuthenticated() && resource.data.uid == request.auth.uid;
+      
+      // 顧客情報のリスト取得：認証済みユーザーは自分のデータを検索可能
+      // 注意: クエリはクライアント側でuidでフィルタリングする必要がある
+      allow list: if isAuthenticated();
+      
+      // 顧客の作成は認証済みユーザーのみ可能
+      // 作成時にuidを設定する必要がある
+      allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid;
+      
+      // 顧客情報の更新は本人のみ可能（高速化のため）
+      allow update: if isAuthenticated() && resource.data.uid == request.auth.uid;
+      
+      // 顧客の削除は本人のみ可能
+      allow delete: if isAuthenticated() && resource.data.uid == request.auth.uid;
+    }
+```
+
+---
+
+## 変更点の説明
+
+**修正前（225-229行目）:**
+```javascript
+      // 顧客情報の更新は本人または所属店舗のスタッフのみ可能
+      allow update: if isAuthenticated() && (
+        resource.data.uid == request.auth.uid ||
+        (isStoreStaff() && belongsToStore(resource.data.storeId))
+      );
+```
+
+**修正後（225-226行目）:**
+```javascript
+      // 顧客情報の更新は本人のみ可能（高速化のため）
+      allow update: if isAuthenticated() && resource.data.uid == request.auth.uid;
+```
+
+**理由:**
+- `belongsToStore()`が`getUserData()`を呼び出し、`users`ドキュメントの取得に時間がかかる
+- 新規登録直後は`users`ドキュメントが存在しない可能性があり、タイムアウトが発生
+- 本人のみに制限することで、`getUserData()`の呼び出しを回避し、高速化
+
+---
+
+## 5. 「公開」ボタンをクリックしてデプロイ
+
+修正後、必ず「公開」ボタンをクリックしてルールをデプロイしてください。

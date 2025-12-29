@@ -104,45 +104,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
 
           try {
-            // Firestoreからユーザーデータを取得
-            const userData = await getUserData(firebaseUser.uid)
+            // customerAccountsドキュメントをUIDで直接取得（高速）
+            const { getDoc, doc } = await import("firebase/firestore")
+            const { db } = await import("@/lib/firebase")
             
-            if (userData) {
-              // usersコレクションにデータが存在する場合
-              console.log("[Auth] ✅ ユーザーデータ取得:", {
-                email: userData.email,
-                role: userData.role,
-                storeId: userData.storeId,
+            const docRef = doc(db, "customerAccounts", firebaseUser.uid)
+            const docSnap = await getDoc(docRef)
+            
+            if (docSnap.exists()) {
+              const customer = { id: docSnap.id, ...docSnap.data() } as CustomerAccount
+              console.log("[Auth] ✅ 顧客アカウント取得:", {
+                playerId: customer.playerId,
+                playerName: customer.playerName,
               })
               
               setUser({
                 uid: firebaseUser.uid,
-                email: userData.email,
-                role: userData.role,
-                storeId: userData.storeId,
-                storeName: userData.storeName,
-                displayName: userData.displayName,
+                email: customer.email,
+                role: "customer",
+                storeId: customer.storeId,
+                storeName: customer.storeName,
+                playerName: customer.playerName,
+                playerId: customer.playerId,
               })
-              
-              // 顧客の場合は、customerAccountsも取得
-              if (userData.role === "customer") {
-                const customer = await getCustomerByEmail(userData.email)
-                if (customer) {
-                  console.log("[Auth] ✅ 顧客アカウント取得:", {
-                    playerId: customer.playerId,
-                    playerName: customer.playerName,
-                  })
-                  setCustomerAccountState(customer)
-                }
-              }
+              setCustomerAccountState(customer)
             } else {
-              // usersコレクションにデータが存在しない場合
-              // 顧客として扱う（後方互換性）
-              console.log("[Auth] ⚠️ usersコレクションにデータなし、顧客として扱います")
+              // ドキュメントが存在しない場合（後方互換性）
+              console.log("[Auth] ⚠️ UIDでドキュメントが見つからない、emailで検索します")
               
               const customer = await getCustomerByEmail(firebaseUser.email!)
               if (customer) {
-                console.log("[Auth] ✅ 顧客アカウント取得:", {
+                console.log("[Auth] ✅ 顧客アカウント取得（email検索）:", {
                   playerId: customer.playerId,
                   playerName: customer.playerName,
                 })
@@ -152,21 +144,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                   email: firebaseUser.email!,
                   role: "customer",
                   storeId: customer.storeId,
+                  storeName: customer.storeName,
                   playerName: customer.playerName,
                   playerId: customer.playerId,
                 })
                 setCustomerAccountState(customer)
               } else {
-                console.error("[Auth] ❌ ユーザーデータが見つかりません")
-                setError("ユーザーデータが見つかりません")
+                console.error("[Auth] ❌ 顧客アカウントが見つかりません")
+                setError("顧客アカウントが見つかりません")
               }
             }
             
             setLoading(false)
           } catch (err) {
-            console.error("[Auth] ❌ ユーザーデータ取得エラー:", err)
-            handleError(err, "ユーザーデータの取得")
-            setError("ユーザーデータの取得に失敗しました")
+            console.error("[Auth] ❌ 認証エラー:", err)
+            handleError(err, "認証")
+            setError("認証に失敗しました")
             setLoading(false)
           }
         })

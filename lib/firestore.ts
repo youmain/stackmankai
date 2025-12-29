@@ -1534,41 +1534,19 @@ export const createCustomerAccount = async (data: Partial<CustomerAccount>, emai
   const userCredential = await createUser(email, password)
   const uid = userCredential.user.uid
   
-  // 認証状態が確実に反映されるまで待機
-  log.info("[createCustomerAccount] 認証状態の反映を待機中...")
-  await waitForAuthState()
-  log.info("[createCustomerAccount] 認証状態が反映されました")
-  
-  // usersコレクションにもドキュメントを作成（Firestoreルールの高速化のため）
-  const { createOrUpdateUserData, getUserData } = await import("./firestore")
-  await createOrUpdateUserData({
+  // customerAccountsドキュメントを作成（UIDをドキュメントIDとして使用）
+  log.info("[createCustomerAccount] customerAccountsドキュメントを作成中...")
+  const docRef = doc(db, "customerAccounts", uid)
+  await setDoc(docRef, {
+    ...data,
     uid: uid,
     email: email,
     role: "customer",
-    storeId: data.storeId,
-    storeName: data.storeName,
-  })
-  log.info("[createCustomerAccount] usersドキュメントを作成しました")
-  
-  // usersドキュメントが確実に読み取れるまで待機（最大5秒）
-  log.info("[createCustomerAccount] usersドキュメントの反映を待機中...")
-  for (let i = 0; i < 10; i++) {
-    const userData = await getUserData(uid)
-    if (userData) {
-      log.info("[createCustomerAccount] usersドキュメントの反映を確認しました")
-      break
-    }
-    await new Promise(resolve => setTimeout(resolve, 500))
-  }
-  
-  const customersCollection = getCustomerAccountsCollection()
-  const docRef = await addDoc(customersCollection, {
-    ...data,
-    uid: uid, // Firebase AuthのUIDを追加
-    email: email,
     createdAt: serverTimestamp()
   })
-  return docRef.id
+  log.info("[createCustomerAccount] customerAccountsドキュメントを作成しました")
+  
+  return uid
 }
 
 /**
