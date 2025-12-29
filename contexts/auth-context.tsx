@@ -105,17 +105,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
           try {
             // customerAccountsドキュメントをUIDで直接取得（高速）
+            console.log("[Auth] ⏱️ getDoc開始:", new Date().toISOString())
+            const startTime = performance.now()
+            
             const { getDoc, doc } = await import("firebase/firestore")
             const { db } = await import("@/lib/firebase")
             
             const docRef = doc(db, "customerAccounts", firebaseUser.uid)
+            console.log("[Auth] ⏱️ docRef作成完了:", performance.now() - startTime, "ms")
+            
             const docSnap = await getDoc(docRef)
+            console.log("[Auth] ⏱️ getDoc完了:", performance.now() - startTime, "ms")
             
             if (docSnap.exists()) {
               const customer = { id: docSnap.id, ...docSnap.data() } as CustomerAccount
               console.log("[Auth] ✅ 顧客アカウント取得:", {
                 playerId: customer.playerId,
                 playerName: customer.playerName,
+                totalTime: performance.now() - startTime + "ms",
               })
               
               setUser({
@@ -131,8 +138,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             } else {
               // ドキュメントが存在しない場合（後方互換性）
               console.log("[Auth] ⚠️ UIDでドキュメントが見つからない、emailで検索します")
+              const emailSearchStart = performance.now()
               
               const customer = await getCustomerByEmail(firebaseUser.email!)
+              console.log("[Auth] ⏱️ emailで検索完了:", performance.now() - emailSearchStart, "ms")
               if (customer) {
                 console.log("[Auth] ✅ 顧客アカウント取得（email検索）:", {
                   playerId: customer.playerId,

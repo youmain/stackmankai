@@ -1527,14 +1527,22 @@ export const getCustomerByEmail = async (email: string): Promise<CustomerAccount
 }
 
 export const createCustomerAccount = async (data: Partial<CustomerAccount>, email: string, password: string): Promise<string> => {
+  console.log("[createCustomerAccount] ⏱️ 開始:", new Date().toISOString())
+  const overallStart = performance.now()
+  
   if (!isFirebaseConfigured()) return `mock_customer_${Date.now()}`
   
   // Firebase Authenticationでユーザーを作成
+  console.log("[createCustomerAccount] ⏱️ Firebase Authユーザー作成開始")
+  const authStart = performance.now()
   const { createUser, waitForAuthState } = await import("./firebase-auth")
   const userCredential = await createUser(email, password)
   const uid = userCredential.user.uid
+  console.log("[createCustomerAccount] ⏱️ Firebase Auth完了:", performance.now() - authStart, "ms")
   
   // customerAccountsドキュメントを作成（UIDをドキュメントIDとして使用）
+  console.log("[createCustomerAccount] ⏱️ customerAccountsドキュメント作成開始")
+  const docStart = performance.now()
   log.info("[createCustomerAccount] customerAccountsドキュメントを作成中...")
   const docRef = doc(db, "customerAccounts", uid)
   await setDoc(docRef, {
@@ -1553,8 +1561,10 @@ export const createCustomerAccount = async (data: Partial<CustomerAccount>, emai
     subscriptionStatus: data.subscriptionStatus || "free_trial",
     isBetaTester: data.isBetaTester !== undefined ? data.isBetaTester : true,
   })
+  console.log("[createCustomerAccount] ⏱️ customerAccountsドキュメント作成完了:", performance.now() - docStart, "ms")
   log.info("[createCustomerAccount] customerAccountsドキュメントを作成しました")
   
+  console.log("[createCustomerAccount] ✅ 完了 - 総時間:", performance.now() - overallStart, "ms")
   return uid
 }
 
