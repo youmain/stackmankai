@@ -222,11 +222,8 @@ service cloud.firestore {
       // 作成時にuidを設定する必要がある
       allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid;
       
-      // 顧客情報の更新は本人または所属店舗のスタッフのみ可能
-      allow update: if isAuthenticated() && (
-        resource.data.uid == request.auth.uid ||
-        (isStoreStaff() && belongsToStore(resource.data.storeId))
-      );
+      // 顧客情報の更新は本人のみ可能（高速化のため）
+      allow update: if isAuthenticated() && resource.data.uid == request.auth.uid;
       
       // 顧客の削除は本人のみ可能
       allow delete: if isAuthenticated() && resource.data.uid == request.auth.uid;
