@@ -14,7 +14,7 @@ import { Loader2, Mail, Lock, User, ArrowLeft, Gift } from "lucide-react"
 import { Chrome } from "lucide-react"
 import { isFirebaseConfigured } from "@/lib/firebase"
 import { getCustomerByEmail, linkPlayerToCustomer, createCustomerAccount } from "@/lib/firestore"
-import { signIn, createUser, waitForAuthState, signInWithGoogle } from "@/lib/firebase-auth"
+import { signIn, createUser, waitForAuthState, signInWithGoogle, getGoogleRedirectResult } from "@/lib/firebase-auth"
 import { saveAuthCache } from "@/lib/auth-cache"
 
 export default function CustomerAuthPage() {
@@ -50,6 +50,77 @@ export default function CustomerAuthPage() {
     const checkAuthState = async () => {
       try {
         console.log("[Auth] 🔍 ログイン状態チェック開始")
+        
+        // Googleリダイレクト結果をチェック
+        console.log("[Auth] 🔍 Googleリダイレクト結果をチェック中...")
+        const redirectResult = await getGoogleRedirectResult()
+        
+        if (redirectResult) {
+          console.log("[Auth] ✅ Googleログイン成功（リダイレクト後）:", redirectResult.user.email)
+          
+          // 認証キャッシュを保存
+          saveAuthCache(redirectResult.user.email!, redirectResult.user.uid)
+          
+          // Firestoreから顧客情報を取得
+          console.log("[Auth] 💾 Firestoreから顧客情報を取得中...")
+          let customer = await getCustomerByEmail(redirectResult.user.email!)
+          
+          // 自動修復: Firebase AuthにはあるがFirestoreにない場合、自動作成
+          if (!customer) {
+            console.warn("[Auth] ⚠️ 顧客情報が見つかりません。自動作成します...")
+            
+            const { createCustomerInFirestore } = await import("@/lib/firestore")
+            const customerId = await createCustomerInFirestore(
+              {
+                storeId: storeInfo?.storeId || null,
+                storeName: storeInfo?.storeName || null,
+                isBetaTester: true,
+                subscriptionStatus: "free_trial",
+              },
+              redirectResult.user.email!,
+              redirectResult.user.uid
+            )
+            
+            console.log("[Auth] ✅ 顧客情報を自動作成しました:", customerId)
+            customer = await getCustomerByEmail(redirectResult.user.email!)
+            
+            if (!customer) {
+              throw new Error("顧客情報の作成に失敗しました")
+            }
+          }
+          
+          // 店舗情報の確認
+          const finalStoreId = customer.storeId || storeInfo?.storeId || null
+          const finalStoreName = customer.storeName || storeInfo?.storeName || null
+          
+          // 顧客情報を完全な形で保存
+          const fullCustomer = {
+            ...customer,
+            storeId: finalStoreId,
+            storeName: finalStoreName,
+          }
+          
+          // localStorageにユーザー情報を保存
+          localStorage.setItem("currentUser", JSON.stringify({
+            id: fullCustomer.id,
+            name: fullCustomer.name || fullCustomer.email,
+            email: fullCustomer.email,
+            type: "customer",
+            storeId: finalStoreId,
+            storeName: finalStoreName,
+          }))
+          console.log("[Auth] 💾 localStorageにユーザー情報保存:", fullCustomer.email)
+          
+          // auth-contextに保存
+          localStorage.setItem("auth_customerAccount", JSON.stringify(fullCustomer))
+          localStorage.setItem("auth_userType", "customer")
+          
+          console.log("[Auth] 🚀 /customer-viewへリダイレクト")
+          window.location.href = "/customer-view"
+          return
+        }
+        
+        // 通常のログイン状態チェック
         const user = await waitForAuthState()
         
         if (user) {
@@ -176,86 +247,15 @@ export default function CustomerAuthPage() {
       
       console.log("[Auth] 🔥 Firebase設定確認完了")
 
-      // Firebase AuthでGoogleログイン
-      console.log("[Auth] 🔑 Google認証試行中...")
-      const userCredential = await signInWithGoogle()
-      console.log("[Auth] ✅ Google認証成功:", userCredential.user.email)
-      
-      // 認証キャッシュを保存
-      saveAuthCache(userCredential.user.email!, userCredential.user.uid)
-
-      // Firestoreから顧客情報を取得
-      console.log("[Auth] 💾 Firestoreから顧客情報を取得中...")
-      let customer = await getCustomerByEmail(userCredential.user.email!)
-      
-      // 自動修復: Firebase AuthにはあるがFirestoreにない場合、自動作成
-      if (!customer) {
-        console.warn("[Auth] ⚠️ 顧客情報が見つかりません。自動作成します...")
-        
-        const { createCustomerInFirestore } = await import("@/lib/firestore")
-        const customerId = await createCustomerInFirestore(
-          {
-            storeId: storeInfo?.storeId || null,
-            storeName: storeInfo?.storeName || null,
-            isBetaTester: true,
-            subscriptionStatus: "free_trial",
-          },
-          userCredential.user.email!,
-          userCredential.user.uid
-        )
-        
-        console.log("[Auth] ✅ 顧客情報を自動作成しました:", customerId)
-        customer = await getCustomerByEmail(userCredential.user.email!)
-        
-        if (!customer) {
-          throw new Error("顧客情報の作成に失敗しました")
-        }
-      }
-
-      // 店舗情報の確認
-      const finalStoreId = customer.storeId || storeInfo?.storeId || null
-      const finalStoreName = customer.storeName || storeInfo?.storeName || null
-
-      // 顧客情報を完全な形で保存
-      const fullCustomer = {
-        ...customer,
-        storeId: finalStoreId,
-        storeName: finalStoreName,
-      }
-
-      // localStorageにユーザー情報を保存
-      localStorage.setItem("currentUser", JSON.stringify({
-        id: fullCustomer.id,
-        name: fullCustomer.name || fullCustomer.email,
-        email: fullCustomer.email,
-        type: "customer",
-        storeId: finalStoreId,
-        storeName: finalStoreName,
-      }))
-      console.log("[Auth] 💾 localStorageにユーザー情報保存:", fullCustomer.email)
-
-      // auth-contextに保存
-      localStorage.setItem("auth_customerAccount", JSON.stringify(fullCustomer))
-      localStorage.setItem("auth_userType", "customer")
-
-      setCurrentCustomer(fullCustomer)
-      setSuccess("ログインしました")
-      
-      console.log("[Auth] 🚀 /customer-viewへリダイレクト")
-      setTimeout(() => {
-        window.location.href = "/customer-view"
-      }, 500)
-      
-      return
+      // Firebase AuthでGoogleログイン（リダイレクト方式）
+      console.log("[Auth] 🔑 Google認証試行中（リダイレクト方式）...")
+      await signInWithGoogle()
+      // リダイレクトが開始されるため、この後のコードは実行されない
     } catch (error: any) {
       console.error("[Auth] ❌ Googleログインエラー:", error)
       
       let errorMessage = "Googleログインに失敗しました"
-      if (error.code === "auth/popup-closed-by-user") {
-        errorMessage = "ログインがキャンセルされました"
-      } else if (error.code === "auth/popup-blocked") {
-        errorMessage = "ポップアップがブロックされました。ブラウザの設定を確認してください。"
-      } else if (error.message) {
+      if (error.message) {
         errorMessage = error.message
       }
       

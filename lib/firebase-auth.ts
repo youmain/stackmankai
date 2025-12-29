@@ -1,7 +1,8 @@
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   GoogleAuthProvider,
   signOut,
   type User,
@@ -91,10 +92,10 @@ export function getCurrentUser(): User | null {
 }
 
 /**
- * Googleアカウントでサインイン
- * ポップアップウィンドウを使用してGoogle認証を行う
+ * Googleアカウントでサインイン（リダイレクト方式）
+ * ページ全体をGoogleログインページにリダイレクトする
  */
-export async function signInWithGoogle(): Promise<UserCredential> {
+export async function signInWithGoogle(): Promise<void> {
   const startTime = Date.now()
   console.log("[DEBUG] signInWithGoogle started at", new Date().toISOString())
   
@@ -111,14 +112,34 @@ export async function signInWithGoogle(): Promise<UserCredential> {
       prompt: 'select_account'
     })
     
-    const signInStart = Date.now()
-    console.log("[DEBUG] Calling signInWithPopup...")
-    const userCredential = await signInWithPopup(auth, provider)
-    console.log(`[DEBUG] signInWithPopup took ${Date.now() - signInStart}ms`)
-    log.info(`Googleサインイン成功: ${userCredential.user.email} (total: ${Date.now() - startTime}ms)`)
-    return userCredential
+    console.log("[DEBUG] Calling signInWithRedirect...")
+    await signInWithRedirect(auth, provider)
+    // リダイレクトが開始されるため、この後のコードは実行されない
   } catch (error: any) {
     log.error(`Googleサインインエラー: ${error.message}`)
+    throw error
+  }
+}
+
+/**
+ * Googleログインのリダイレクト結果を取得
+ * ページ読み込み時に呼び出して、リダイレクト後の認証情報を取得する
+ */
+export async function getGoogleRedirectResult(): Promise<UserCredential | null> {
+  const auth = getAuthInstance()
+  if (!auth) {
+    throw new Error("Firebase Authが初期化されていません")
+  }
+
+  try {
+    console.log("[DEBUG] Checking redirect result...")
+    const result = await getRedirectResult(auth)
+    if (result) {
+      log.info(`Googleサインイン成功（リダイレクト後）: ${result.user.email}`)
+    }
+    return result
+  } catch (error: any) {
+    log.error(`Googleリダイレクト結果取得エラー: ${error.message}`)
     throw error
   }
 }
