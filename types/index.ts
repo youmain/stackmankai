@@ -295,17 +295,20 @@ export interface StoreRankingSettings {
 export interface CustomerAccount {
   id: string
   email: string
+  uid?: string // Firebase Auth UID
+  role?: string // ユーザーロール
   playerId?: string // 紐づけされたプレイヤーID
   playerName?: string // 紐づけされたプレイヤー名
-  storeId: string // 所属店舗ID（必須：1アカウント=1店舗）
-  storeName: string // 所属店舗名（必須）
-  stripeCustomerId: string // Stripe顧客ID
-  subscriptionStatus: "active" | "inactive" | "canceled" | "past_due" | "trialing"
+  storeId?: string | null // 所属店舗ID（オプショナル：後で設定可能）
+  storeName?: string | null // 所属店舗名（オプショナル：後で設定可能）
+  stripeCustomerId?: string // Stripe顧客ID（オプショナル：有料化時に設定）
+  subscriptionStatus?: "active" | "inactive" | "canceled" | "past_due" | "trialing" | "free_trial"
   subscriptionId?: string // StripeサブスクリプションID
   currentPeriodStart?: Date
   currentPeriodEnd?: Date
-  createdAt: Date
-  updatedAt: Date
+  isBetaTester?: boolean // ベータテスターフラグ
+  createdAt?: Date | any // serverTimestamp()を許容
+  updatedAt?: Date | any // serverTimestamp()を許容
 }
 
 export interface SubscriptionPlan {

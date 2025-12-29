@@ -1542,7 +1542,16 @@ export const createCustomerAccount = async (data: Partial<CustomerAccount>, emai
     uid: uid,
     email: email,
     role: "customer",
-    createdAt: serverTimestamp()
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+    // デフォルト値を設定（dataに含まれていない場合）
+    playerName: data.playerName || null,
+    playerId: data.playerId || null,
+    storeId: data.storeId || null,
+    storeName: data.storeName || null,
+    stripeCustomerId: data.stripeCustomerId || null,
+    subscriptionStatus: data.subscriptionStatus || "free_trial",
+    isBetaTester: data.isBetaTester !== undefined ? data.isBetaTester : true,
   })
   log.info("[createCustomerAccount] customerAccountsドキュメントを作成しました")
   

@@ -1,0 +1,428 @@
+以下の内容をFirebase Consoleにコピー&ペーストしてください：
+
+https://console.firebase.google.com/project/stackmankai/firestore/databases/-default-/security/rules
+
+---
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ========================================
+    // ヘルパー関数
+    // ========================================
+    
+    // ユーザーが認証されているかチェック
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // ユーザー情報を取得
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    // ユーザーが店舗オーナーかチェック
+    function isStoreOwner() {
+      return isAuthenticated() && getUserData().role == 'store_owner';
+    }
+    
+    // ユーザーが従業員かチェック
+    function isEmployee() {
+      return isAuthenticated() && getUserData().role == 'employee';
+    }
+    
+    // ユーザーが顧客かチェック
+    function isCustomer() {
+      return isAuthenticated() && getUserData().role == 'customer';
+    }
+    
+    // ユーザーが店舗オーナーまたは従業員かチェック
+    function isStoreStaff() {
+      return isStoreOwner() || isEmployee();
+    }
+    
+    // ユーザーが指定された店舗に所属しているかチェック
+    function belongsToStore(storeId) {
+      return isAuthenticated() && getUserData().storeId == storeId;
+    }
+    
+    // ユーザーがドキュメントの所有者かチェック
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+    
+    // 顧客が指定された店舗に所属しているかチェック
+    function customerBelongsToStore(storeId) {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/customerAccounts/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/customerAccounts/$(request.auth.uid)).data.storeId == storeId;
+    }
+    
+    // ========================================
+    // Users コレクション（新しい認証システム）
+    // ========================================
+    
+    match /users/{userId} {
+      // 自分のユーザー情報のみ読み取り可能
+      // 注意: ヘルパー関数を使わず、直接チェックして循環参照を回避
+      allow read: if request.auth != null && request.auth.uid == userId;
+      
+      // ユーザー作成は本人のみ可能（登録時）
+      allow create: if request.auth != null && request.auth.uid == userId;
+      
+      // ユーザー情報の更新は本人のみ可能
+      allow update: if request.auth != null && request.auth.uid == userId;
+      
+      // ユーザーの削除は本人のみ可能
+      allow delete: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // ========================================
+    // Stores コレクション
+    // ========================================
+    
+    match /stores/{storeId} {
+      // 店舗情報は所属する店舗スタッフのみ読み取り可能
+      // ただし、店舗登録時は認証前なので作成のみ許可
+      allow read: if isAuthenticated() && belongsToStore(storeId);
+      
+      // 新規店舗登録は認証済みユーザーのみ可能
+      allow create: if isAuthenticated();
+      
+      // 店舗情報の更新は店舗オーナーのみ可能
+      allow update: if isStoreOwner() && belongsToStore(storeId);
+      
+      // 店舗の削除は禁止
+      allow delete: if false;
+      
+      // ========================================
+      // Stores サブコレクション
+      // ========================================
+      
+      // Players サブコレクション（店舗ごとのプレイヤー）
+      match /players/{playerId} {
+        allow read: if isAuthenticated() && belongsToStore(storeId);
+        allow create, update: if isStoreStaff() && belongsToStore(storeId);
+        allow delete: if isStoreOwner() && belongsToStore(storeId);
+      }
+      
+      // Games サブコレクション（店舗ごとのゲーム）
+      match /games/{gameId} {
+        allow read: if isAuthenticated() && belongsToStore(storeId);
+        allow create, update: if isStoreStaff() && belongsToStore(storeId);
+        allow delete: if isStoreOwner() && belongsToStore(storeId);
+      }
+      
+      // Receipts サブコレクション（店舗ごとのレシート）
+      match /receipts/{receiptId} {
+        allow read: if isAuthenticated() && belongsToStore(storeId);
+        allow create, update: if isStoreStaff() && belongsToStore(storeId);
+        allow delete: if isStoreOwner() && belongsToStore(storeId);
+      }
+      
+      // RakeHistory サブコレクション（店舗ごとのレーキ履歴）
+      match /rakeHistory/{rakeId} {
+        allow read: if isAuthenticated() && belongsToStore(storeId);
+        allow create, update: if isStoreStaff() && belongsToStore(storeId);
+        allow delete: if isStoreOwner() && belongsToStore(storeId);
+      }
+      
+      // DailySales サブコレクション（店舗ごとの日次売上）
+      match /dailySales/{saleId} {
+        allow read: if isAuthenticated() && belongsToStore(storeId);
+        allow create, update: if isStoreStaff() && belongsToStore(storeId);
+        allow delete: if isStoreOwner() && belongsToStore(storeId);
+      }
+      
+      // DailyRankings サブコレクション（店舗ごとの日次ランキング）
+      match /dailyRankings/{rankingId} {
+        allow read: if isAuthenticated() && belongsToStore(storeId);
+        allow create, update: if isStoreStaff() && belongsToStore(storeId);
+        allow delete: if isStoreOwner() && belongsToStore(storeId);
+      }
+      
+      // MonthlyRankings サブコレクション（店舗ごとの月次ランキング）
+      match /monthlyRankings/{rankingId} {
+        allow read: if isAuthenticated() && belongsToStore(storeId);
+        allow create, update: if isStoreStaff() && belongsToStore(storeId);
+        allow delete: if isStoreOwner() && belongsToStore(storeId);
+      }
+      
+      // StackManHands サブコレクション（店舗ごとのStack Man Hand）
+      match /stackManHands/{handId} {
+        allow read: if isAuthenticated() && belongsToStore(storeId);
+        allow create, update: if isStoreStaff() && belongsToStore(storeId);
+        allow delete: if isStoreOwner() && belongsToStore(storeId);
+      }
+      
+      // RakeCollections サブコレクション（店舗ごとのレーキ回収）
+      match /rakeCollections/{collectionId} {
+        allow read: if isAuthenticated() && belongsToStore(storeId);
+        allow create, update: if isStoreOwner() && belongsToStore(storeId);
+        allow delete: if false;
+      }
+      
+      // StackResets サブコレクション（店舗ごとのスタックリセット）
+      match /stackResets/{resetId} {
+        allow read: if isAuthenticated() && belongsToStore(storeId);
+        allow create, update: if isStoreOwner() && belongsToStore(storeId);
+        allow delete: if false;
+      }
+    }
+    
+    // ========================================
+    // InviteCodes コレクション（招待コード）
+    // ========================================
+    
+    match /inviteCodes/{inviteCodeId} {
+      // 招待コードは所属店舗のスタッフのみ読み取り可能
+      allow read: if isAuthenticated() && belongsToStore(resource.data.storeId);
+      
+      // 招待コードの作成は店舗オーナーのみ可能
+      allow create: if isStoreOwner() && belongsToStore(request.resource.data.storeId);
+      
+      // 招待コードの更新は店舗オーナーのみ可能
+      allow update: if isStoreOwner() && belongsToStore(resource.data.storeId);
+      
+      // 招待コードの削除は店舗オーナーのみ可能
+      allow delete: if isStoreOwner() && belongsToStore(resource.data.storeId);
+    }
+    
+    // ========================================
+    // Employees コレクション（従業員）
+    // ========================================
+    
+    match /employees/{employeeId} {
+      // 従業員情報は所属店舗のスタッフのみ読み取り可能
+      allow read: if isAuthenticated() && belongsToStore(resource.data.storeId);
+      
+      // 従業員の作成は認証済みユーザーのみ可能
+      allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid;
+      
+      // 従業員情報の更新は本人または店舗オーナーのみ可能
+      allow update: if isAuthenticated() && (
+        resource.data.uid == request.auth.uid ||
+        (isStoreOwner() && belongsToStore(resource.data.storeId))
+      );
+      
+      // 従業員の削除は店舗オーナーのみ可能
+      allow delete: if isStoreOwner() && belongsToStore(resource.data.storeId);
+    }
+    
+    // ========================================
+    // CustomerAccounts コレクション
+    // ========================================
+    
+    match /customerAccounts/{uid} {
+      // 顧客情報の個別読み取り：本人のみ（UIDで直接アクセス、高速）
+      // ドキュメントIDとUIDが一致する必要がある
+      allow get: if isAuthenticated() && request.auth.uid == uid;
+      
+      // 顧客情報のリスト取得：認証済みユーザーは自分のデータを検索可能
+      // 注意: クエリはクライアント側でuidでフィルタリングする必要がある
+      allow list: if isAuthenticated();
+      
+      // 顧客の作成：認証済みユーザーが自分のUIDで作成する場合のみ
+      // ドキュメントIDとUIDが一致する必要がある
+      allow create: if isAuthenticated() && request.auth.uid == uid && request.resource.data.uid == uid;
+      
+      // 顧客情報の更新：本人のみ可能
+      allow update: if isAuthenticated() && request.auth.uid == uid;
+      
+      // 顧客の削除：本人のみ可能
+      allow delete: if isAuthenticated() && request.auth.uid == uid;
+    }
+    
+    // ========================================
+    // Customers コレクション（旧）
+    // ========================================
+    
+    match /customers/{customerId} {
+      // 顧客情報は本人または所属店舗のスタッフのみ読み取り可能
+      allow read: if isAuthenticated() && (
+        resource.data.uid == request.auth.uid ||
+        belongsToStore(resource.data.storeId)
+      );
+      
+      // 顧客の作成は認証済みユーザーのみ可能
+      allow create: if isAuthenticated();
+      
+      // 顧客情報の更新は本人または所属店舗のスタッフのみ可能
+      allow update: if isAuthenticated() && (
+        resource.data.uid == request.auth.uid ||
+        (isStoreStaff() && belongsToStore(resource.data.storeId))
+      );
+      
+      // 顧客の削除は本人のみ可能
+      allow delete: if isAuthenticated() && resource.data.uid == request.auth.uid;
+    }
+    
+    // ========================================
+    // Posts コレクション
+    // ========================================
+    
+    match /posts/{postId} {
+      // 投稿は所属店舗が同じユーザーのみ読み取れる
+      allow read: if isAuthenticated() && belongsToStore(resource.data.storeId);
+      
+      // 投稿の作成は店舗スタッフのみ可能
+      allow create: if isStoreStaff() && 
+        request.resource.data.authorId == request.auth.uid &&
+        belongsToStore(request.resource.data.storeId);
+      
+      // 投稿の更新は作成者のみ可能
+      allow update: if isAuthenticated() && resource.data.authorId == request.auth.uid;
+      
+      // 投稿の削除は作成者または店舗オーナーのみ可能
+      allow delete: if isAuthenticated() && (
+        resource.data.authorId == request.auth.uid ||
+        (isStoreOwner() && belongsToStore(resource.data.storeId))
+      );
+    }
+    
+    // ========================================
+    // Players コレクション（トップレベル）
+    // ========================================
+    
+    match /players/{playerId} {
+      // プレイヤー情報は認証済みユーザーが読み取り可能
+      // 顧客は自分のstoreIdのプレイヤーのみ、スタッフは所属店舗のプレイヤーのみ
+      allow read: if request.auth != null && (
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid))) ||
+        customerBelongsToStore(resource.data.storeId)
+      );
+      
+      // プレイヤーの作成・更新は店舗スタッフのみ可能
+      allow create, update: if isStoreStaff();
+      
+      // プレイヤーの削除は店舗オーナーのみ可能
+      allow delete: if isStoreOwner();
+      
+      // PointHistory サブコレクション
+      match /pointHistory/{historyId} {
+        // ポイント履歴は認証済みユーザーが読み取り可能
+        allow read: if request.auth != null;
+        
+        // ポイント履歴の作成・更新は店舗スタッフのみ可能
+        allow create, update: if isStoreStaff();
+        
+        // ポイント履歴の削除は店舗オーナーのみ可能
+        allow delete: if isStoreOwner();
+      }
+    }
+    
+    // ========================================
+    // Players コレクション（グローバル・旧形式）
+    // ========================================
+    
+    match /players/{storeDoc}/players/{playerId} {
+      // 自分の店舗のプレイヤーのみ読み取り可能（スタッフまたは顧客）
+      allow read: if isAuthenticated() && (belongsToStore(storeDoc) || customerBelongsToStore(storeDoc));
+      
+      // 自分の店舗のプレイヤーのみ作成・更新可能
+      allow create, update: if isStoreStaff() && belongsToStore(storeDoc);
+      
+      // 自分の店舗のプレイヤーのみ削除可能（オーナーのみ）
+      allow delete: if isStoreOwner() && belongsToStore(storeDoc);
+    }
+    
+    // ========================================
+    // Games コレクション（グローバル・旧形式）
+    // ========================================
+    
+    match /games/{storeDoc}/games/{gameId} {
+      // 自分の店舗のゲームのみ読み取り可能
+      allow read: if isAuthenticated() && belongsToStore(storeDoc);
+      
+      // 自分の店舗のゲームのみ作成・更新可能
+      allow create, update: if isStoreStaff() && belongsToStore(storeDoc);
+      
+      // 自分の店舗のゲームのみ削除可能（オーナーのみ）
+      allow delete: if isStoreOwner() && belongsToStore(storeDoc);
+    }
+    
+    // ========================================
+    // Rankings コレクション
+    // ========================================
+    
+    match /rankings/{rankingId} {
+      // ランキング情報は所属店舗が同じユーザーのみ読み取れる
+      allow read: if isAuthenticated() && belongsToStore(resource.data.storeId);
+      
+      // ランキング情報の作成は店舗スタッフのみ可能
+      allow create: if isStoreStaff() && belongsToStore(request.resource.data.storeId);
+      
+      // ランキング情報の更新は店舗スタッフのみ可能
+      allow update: if isStoreStaff() && belongsToStore(resource.data.storeId);
+      
+      // ランキング情報の削除は店舗オーナーのみ可能
+      allow delete: if isStoreOwner() && belongsToStore(resource.data.storeId);
+    }
+    
+    // ========================================
+    // PokerGames コレクション
+    // ========================================
+    
+    match /pokerGames/{storeDoc}/games/{gameId} {
+      // ポーカーゲーム情報は所属店舗のユーザーのみ読み取れる
+      allow read: if isAuthenticated() && belongsToStore(storeDoc);
+      
+      // ポーカーゲーム情報の作成は店舗スタッフのみ可能
+      allow create: if isStoreStaff() && belongsToStore(storeDoc);
+      
+      // ポーカーゲーム情報の更新は店舗スタッフのみ可能
+      allow update: if isStoreStaff() && belongsToStore(storeDoc);
+      
+      // ポーカーゲーム情報の削除は店舗オーナーのみ可能
+      allow delete: if isStoreOwner() && belongsToStore(storeDoc);
+    }
+    
+    // ========================================
+    // ChatRooms コレクション（チャットルーム）
+    // ========================================
+    
+    match /chatRooms/{roomId} {
+      // チャットルーム情報は認証済みユーザーのみ読み取り可能
+      allow read: if isAuthenticated();
+      
+      // チャットルームの作成・更新は店舗スタッフのみ可能
+      allow create, update: if isStoreStaff();
+      
+      // Messages サブコレクション（チャットメッセージ）
+      match /messages/{messageId} {
+        // メッセージは認証済みユーザー全員が読み取り可能
+        allow read: if isAuthenticated();
+        
+        // メッセージの作成は認証済みユーザー全員が可能
+        allow create: if isAuthenticated();
+        
+        // メッセージの更新・削除は本人または店舗スタッフのみ可能
+        allow update, delete: if isAuthenticated() && (
+          resource.data.userId == request.auth.uid ||
+          isStoreStaff()
+        );
+      }
+      
+      // ActiveUsers サブコレクション（アクティブユーザー）
+      match /activeUsers/{userId} {
+        // アクティブユーザー情報は認証済みユーザー全員が読み取り可能
+        allow read: if isAuthenticated();
+        
+        // アクティブユーザー情報の作成・更新・削除は本人のみ可能
+        allow create, update, delete: if isAuthenticated() && userId == request.auth.uid;
+      }
+    }
+    
+    // ========================================
+    // デフォルトルール（セキュア）
+    // ========================================
+    
+    // デフォルトルール: すべてのアクセスを拒否
+    // 明示的に許可されたコレクションのみアクセス可能
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
