@@ -103,7 +103,7 @@ export default function CustomerAuthPage() {
           // localStorageにユーザー情報を保存
           localStorage.setItem("currentUser", JSON.stringify({
             id: fullCustomer.id,
-            name: fullCustomer.name || fullCustomer.email,
+            name: fullCustomer.playerName || fullCustomer.email,
             email: fullCustomer.email,
             type: "customer",
             storeId: finalStoreId,
@@ -346,7 +346,7 @@ export default function CustomerAuthPage() {
       // localStorageにユーザー情報を保存（投稿作成用）
       localStorage.setItem("currentUser", JSON.stringify({
         id: fullCustomer.id,
-        name: fullCustomer.name || fullCustomer.email,
+        name: fullCustomer.playerName || fullCustomer.email,
         email: fullCustomer.email,
         type: "customer",
         storeId: finalStoreId,

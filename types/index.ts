@@ -307,6 +307,7 @@ export interface CustomerAccount {
   currentPeriodStart?: Date
   currentPeriodEnd?: Date
   isBetaTester?: boolean // ベータテスターフラグ
+  linkedAt?: Date // プレイヤーと紐づけされた日時
   createdAt?: Date | any // serverTimestamp()を許容
   updatedAt?: Date | any // serverTimestamp()を許容
 }

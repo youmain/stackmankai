@@ -483,6 +483,13 @@ ${availableExamples.slice(0, 5).join("\n")}
     setLinkingError("")
 
     try {
+      if (!customerAccount) {
+        console.error("[linkPlayer] customerAccountがnullです")
+        setLinkingError("アカウント情報が見つかりません")
+        setIsLinking(false)
+        return
+      }
+      
       const playerIdToSave = selectedPlayer.uniqueId || selectedPlayer.id
 
       await updateCustomerAccount(customerAccount.id, {
@@ -854,6 +861,11 @@ ${availableExamples.slice(0, 5).join("\n")}
 
   // New function to handle player ID change
   const handlePlayerIdChange = () => {
+    if (!customerAccount) {
+      console.error("[handlePlayerIdChange] customerAccountがnullです")
+      return
+    }
+    
     setOriginalPlayerData({
       playerId: customerAccount.playerId,
       playerName: customerAccount.playerName,
