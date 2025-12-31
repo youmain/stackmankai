@@ -73,7 +73,20 @@ export async function signOutUser(): Promise<void> {
 
   try {
     await signOut(auth)
-    log.info("サインアウト成功")
+    
+    // ブラウザのストレージをクリア
+    localStorage.clear()
+    sessionStorage.clear()
+    
+    // IndexedDBをクリア（Firebase Authのセッション情報が保存されている）
+    const dbNames = await indexedDB.databases()
+    for (const db of dbNames) {
+      if (db.name) {
+        indexedDB.deleteDatabase(db.name)
+      }
+    }
+    
+    log.info("サインアウト成功（ストレージクリア完了）")
   } catch (error: any) {
     log.error(`サインアウトエラー: ${error.message}`)
     throw error
