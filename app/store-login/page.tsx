@@ -33,6 +33,7 @@ export default function StoreLoginPage() {
       console.log(`[StoreLogin] waitForAuthState完了: ${endWait - startWait}ms`)
       
       // Firestoreからユーザーデータを取得
+      const startFirestore = Date.now()
       const userData = await getUserData(user.uid)
       const endFirestore = Date.now()
       console.log(`[StoreLogin] Firestoreデータ取得完了: ${endFirestore - startFirestore}ms`)
