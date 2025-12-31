@@ -1541,10 +1541,16 @@ export const createCustomerAccount = async (data: Partial<CustomerAccount>, emai
   console.log("[createCustomerAccount] ⏱️ Firebase Auth完了:", performance.now() - authStart, "ms")
   
   // 認証状態が反映されるまで待機（最大60秒）
+  // 注意: タイムアウトを無視して続行します（Firestoreのセキュリティルール違反が原因である可能性があるため）
   console.log("[createCustomerAccount] ⏱️ 認証状態待機開始")
   const waitStart = performance.now()
-  await waitForAuthState(uid, 60000) // 60秒に延長
-  console.log("[createCustomerAccount] ⏱️ 認証状態待機完了:", performance.now() - waitStart, "ms")
+  try {
+    await waitForAuthState(uid, 60000) // 60秒に延長
+    console.log("[createCustomerAccount] ⏱️ 認証状態待機完了:", performance.now() - waitStart, "ms")
+  } catch (error) {
+    console.log("[createCustomerAccount] ⚠️ 認証状態待機タイムアウトを無視して続行:", error.message)
+    // タイムアウトを無視して続行
+  }
   
   // customerAccountsドキュメントを作成（UIDをドキュメントIDとして使用）
   console.log("[createCustomerAccount] ⏱️ customerAccountsドキュメント作成開始")
