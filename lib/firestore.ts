@@ -1540,10 +1540,10 @@ export const createCustomerAccount = async (data: Partial<CustomerAccount>, emai
   const uid = userCredential.user.uid
   console.log("[createCustomerAccount] ⏱️ Firebase Auth完了:", performance.now() - authStart, "ms")
   
-  // 認証状態が反映されるまで待機
+  // 認証状態が反映されるまで待機（最大60秒）
   console.log("[createCustomerAccount] ⏱️ 認証状態待機開始")
   const waitStart = performance.now()
-  await waitForAuthState(uid)
+  await waitForAuthState(uid, 60000) // 60秒に延長
   console.log("[createCustomerAccount] ⏱️ 認証状態待機完了:", performance.now() - waitStart, "ms")
   
   // customerAccountsドキュメントを作成（UIDをドキュメントIDとして使用）
