@@ -171,11 +171,8 @@ export default function CustomerAuthPage() {
         return
       }
 
-      const existingCustomer = await getCustomerByEmail(registerForm.email)
-      if (existingCustomer) {
-        throw new Error("このメールアドレスは既に登録されています")
-      }
-
+      // 注意: Firebase Authが自動的に重複メールアドレスを防ぐため、
+      // getCustomerByEmailクエリは不要（セキュリティルール違反の原因となるため削除）
       // Firestoreに顧客アカウントを作成（Firebase Auth統合）
       // 店舗情報は後で追加されるため、登録時はnullでもOK
       const customerId = await createCustomerAccount(
