@@ -121,7 +121,8 @@ export default function CustomerAuthPage() {
         }
         
         // 通常のログイン状態チェック
-        const user = await waitForAuthState()
+        // タイムアウト時間を1秒に短縮（IndexedDBのセッション情報が検出されない場合は、ログイン/登録フォームを表示）
+        const user = await waitForAuthState(undefined, 1000).catch(() => null)
         
         if (user) {
           console.log("[Auth] ✅ ログイン済みユーザーを検出:", user.email)
