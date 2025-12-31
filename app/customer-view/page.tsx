@@ -1161,13 +1161,13 @@ ${availableExamples.slice(0, 5).join("\n")}
                   <Button
                     variant="outline"
                     className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 bg-transparent"
-                    onClick={() => {
+                    onClick={async () => {
                       // Clear customer data and redirect to login page
                       // customerAccountをnullに設定し、signOut関数を呼び出す
                       setCustomerAccount(null)
-                      signOut()
+                      await signOut()
                       setIsMenuOpen(false)
-                      window.location.href = "/customer-auth"
+                      // signOut内でリダイレクトが行われるため、ここでは追加のリダイレクトは不要
                     }}
                   >
                     <LogOut className="mr-2 h-4 w-4" />
@@ -2368,10 +2368,10 @@ ${availableExamples.slice(0, 5).join("\n")}
                   setIsCancelling(true)
                   try {
                     await cancelPlayerAccount(linkedPlayer.id)
-                    alert("スタックマンを解約しました。CP関連データが削除されました。")
+                    alert("\u30b9\u30bf\u30c3\u30af\u30de\u30f3\u3092\u89e3\u7d04\u3057\u307e\u3057\u305f\u3002CP\u95a2\u9023\u30c7\u30fc\u30bf\u304c\u524a\u9664\u3055\u308c\u307e\u3057\u305f\u3002")
                     setCustomerAccount(null)
-                    signOut()
-                    window.location.href = "/customer-auth"
+                    await signOut()
+                    // signOut\u5185\u3067\u30ea\u30c0\u30a4\u30ec\u30af\u30c8\u304c\u884c\u308f\u308c\u308b\u305f\u3081\u3001\u3053\u3053\u3067\u306f\u8ffd\u52a0\u306e\u30ea\u30c0\u30a4\u30ec\u30af\u30c8\u306f\u4e0d\u8981
                   } catch (error) {
                     console.error("Account cancellation error:", error)
                     alert("解約処理に失敗しました。")
