@@ -224,9 +224,8 @@ service cloud.firestore {
       //       一時的に認証チェックを省略（本番環境では修正必须）
       allow create: if true;
       
-      // 顧客情報の更新：本人のみ可能
-      allow update: if isAuthenticated() && request.auth.uid == uid;
-      
+      // 顧客情報の読み取り：本人のみ可能
+      allow get, list: if request.auth != null && request.auth.uid == uid;  
       // 顧客の削除：本人のみ可能
       allow delete: if isAuthenticated() && request.auth.uid == uid;
     }
