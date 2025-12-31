@@ -1556,6 +1556,10 @@ export const createCustomerAccount = async (data: Partial<CustomerAccount>, emai
   console.log("[createCustomerAccount] ⏱️ customerAccountsドキュメント作成開始")
   const docStart = performance.now()
   log.info("[createCustomerAccount] customerAccountsドキュメントを作成中...")
+  const db = getDb()
+  if (!db) {
+    throw new Error("Firestoreが初期化されていません")
+  }
   const docRef = doc(db, "customerAccounts", uid)
   await setDoc(docRef, {
     ...data,
