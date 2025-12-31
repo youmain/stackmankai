@@ -285,10 +285,8 @@ service cloud.firestore {
     match /players/{playerId} {
       // プレイヤー情報は認証済みユーザーが読み取り可能
       // 顧客は自分のstoreIdのプレイヤーのみ、スタッフは所属店舗のプレイヤーのみ
-      allow read: if request.auth != null && (
-        (exists(/databases/$(database)/documents/users/$(request.auth.uid))) ||
-        customerBelongsToStore(resource.data.storeId)
-      );
+      // 紐づけのために、認証済みユーザーはプレイヤー情報を読み取れるようにする
+      allow read: if request.auth != null;
       
       // プレイヤーの作成・更新は店舗スタッフのみ可能
       allow create, update: if isStoreStaff();
