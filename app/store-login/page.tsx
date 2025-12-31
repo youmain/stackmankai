@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { signInWithEmailAndPassword } from "@/lib/firebase-auth"
+import { signInWithEmailAndPassword, waitForAuthState } from "@/lib/firebase-auth"
 import { getUserData, createOrUpdateUserData } from "@/lib/firestore"
 import type { UserData } from "@/lib/firestore"
 
@@ -19,14 +19,23 @@ export default function StoreLoginPage() {
     setLoading(true)
 
     try {
+      const startAuth = Date.now()
       // Firebase Authでログイン
       const userCredential = await signInWithEmailAndPassword(email, password)
       const user = userCredential.user
       
       console.log("[StoreLogin] Firebase Authログイン成功:", user.email)
       
+      // 認証状態の伝播を待機 (最大5秒)
+      const startWait = Date.now()
+      await waitForAuthState(user.uid, 5000)
+      const endWait = Date.now()
+      console.log(`[StoreLogin] waitForAuthState完了: ${endWait - startWait}ms`)
+      
       // Firestoreからユーザーデータを取得
       const userData = await getUserData(user.uid)
+      const endFirestore = Date.now()
+      console.log(`[StoreLogin] Firestoreデータ取得完了: ${endFirestore - startFirestore}ms`)
       
       if (!userData) {
         setError("ユーザーデータが見つかりません。管理者にお問い合わせください。")

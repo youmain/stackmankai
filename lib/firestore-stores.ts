@@ -6,32 +6,19 @@ import {
   where,
   serverTimestamp,
   Timestamp,
+  runTransaction,
+  doc,
 } from "firebase/firestore"
 import { db } from "./firebase"
-import { createUser, signIn } from "./firebase-auth"
+import { createUser, signIn, waitForAuthState } from "./firebase-auth"
 import type { Store, StoreRegistrationData } from "@/types/store"
 
 /**
- * 3桁の店舗コードを生成（重複チェック付き）
+ * 6桁のランダムな店舗コードを生成
  */
-export async function generateStoreCode(): Promise<string> {
-  const storesRef = collection(db, "stores")
-  
-  // 最大10回試行
-  for (let i = 0; i < 10; i++) {
-    // 100-999のランダムな3桁の数字を生成
-    const code = Math.floor(100 + Math.random() * 900).toString()
-    
-    // 既存コードをチェック
-    const q = query(storesRef, where("storeCode", "==", code))
-    const querySnapshot = await getDocs(q)
-    
-    if (querySnapshot.empty) {
-      return code
-    }
-  }
-  
-  throw new Error("店舗コードの生成に失敗しました。しばらくしてから再度お試しください。")
+function generateRandomCode(): string {
+  // 100000-999999のランダムな6桁の数字を生成
+  return Math.floor(100000 + Math.random() * 900000).toString()
 }
 
 /**
@@ -44,57 +31,91 @@ export async function registerStore(
     // Firebase Authenticationでユーザーを作成
     const userCredential = await createUser(data.ownerEmail, data.ownerPassword)
     const uid = userCredential.user.uid
+
+    // Auth状態がFirestoreに伝播するのを待機 (最大5秒)
+    await waitForAuthState(uid, 5000)
     
-    // 3桁の店舗コードを生成
-    const storeCode = await generateStoreCode()
-    
-    // パスワードのハッシュ化（本番環境ではbcryptなどを使用すべき）
-    // 現在は簡易的に実装
-    const hashedStorePassword = btoa(data.storePassword) // Base64エンコード
+    // パスワードのハッシュ化
+    const hashedStorePassword = btoa(data.storePassword)
     const hashedOwnerPassword = btoa(data.ownerPassword)
     
     const storesRef = collection(db, "stores")
-    const docRef = await addDoc(storesRef, {
-      uid: uid, // Firebase AuthのUIDを追加
-      name: data.name,
-      storeCode: storeCode,
-      storePassword: hashedStorePassword,
-      email: data.email,
-      phone: data.phone || "",
-      address: data.address || "",
-      description: data.description || "",
-      logoUrl: "",
-      websiteUrl: "",
-      ownerEmail: data.ownerEmail,
-      ownerPassword: hashedOwnerPassword,
-      status: "active",
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-      // Stack Man Hand default settings
-      stackManHandSettings: {
-        enabled: true,
-        purchasePrice: 1000,
-        rewardAmount: 5000,
-        businessHours: {
-          open: "12:00",
-          close: "23:59"
+    
+    let storeId: string = ""
+    let storeCode: string = ""
+    
+    // トランザクション内で店舗コードの重複チェックと登録をアトミックに実行
+    await runTransaction(db, async (transaction) => {
+      let codeFound = false
+      let code = ""
+      
+      // 最大10回試行
+      for (let i = 0; i < 10; i++) {
+        code = generateRandomCode()
+        
+        // storeCodeが一致するドキュメントをトランザクション内で取得
+        const q = query(storesRef, where("storeCode", "==", code))
+        const querySnapshot = await transaction.get(q)
+        
+        if (querySnapshot.empty) {
+          codeFound = true
+          break
         }
-      },
+      }
+      
+      if (!codeFound) {
+        throw new Error("店舗コードの生成に失敗しました。しばらくしてから再度お試しください。")
+      }
+      
+      storeCode = code
+      
+      // 新しいドキュメント参照を作成
+      const newStoreRef = doc(storesRef)
+      storeId = newStoreRef.id
+      
+      // トランザクション内でドキュメントを書き込み
+      transaction.set(newStoreRef, {
+        uid: uid, // Firebase AuthのUIDを追加
+        name: data.name,
+        storeCode: storeCode,
+        storePassword: hashedStorePassword,
+        email: data.email,
+        phone: data.phone || "",
+        address: data.address || "",
+        description: data.description || "",
+        logoUrl: "",
+        websiteUrl: "",
+        ownerEmail: data.ownerEmail,
+        ownerPassword: hashedOwnerPassword,
+        status: "active",
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        // Stack Man Hand default settings
+        stackManHandSettings: {
+          enabled: true,
+          purchasePrice: 1000,
+          rewardAmount: 5000,
+          businessHours: {
+            open: "12:00",
+            close: "23:59"
+          }
+        },
+      })
     })
     
-    // usersコレクションにユーザーデータを保存
+    // usersコレクションにユーザーデータを保存 (トランザクション外)
     const { createOrUpdateUserData } = await import("./firestore")
     await createOrUpdateUserData({
       uid: uid,
       email: data.ownerEmail,
       role: "store_owner",
-      storeId: docRef.id,
+      storeId: storeId,
       storeName: data.name,
       displayName: data.name,
     })
     
     return {
-      storeId: docRef.id,
+      storeId: storeId,
       storeCode: storeCode,
       uid: uid,
     }
@@ -103,6 +124,11 @@ export async function registerStore(
     throw error
   }
 }
+
+/**
+ * 店舗コードとパスワードでログイン
+ */
+// ... (loginStore, loginStoreOwner は変更なし)
 
 /**
  * 店舗コードとパスワードでログイン

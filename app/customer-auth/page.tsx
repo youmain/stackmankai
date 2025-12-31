@@ -300,9 +300,18 @@ export default function CustomerAuthPage() {
       // 認証キャッシュを保存（次回ログイン時の高速化）
       saveAuthCache(loginForm.email, userCredential.user.uid)
 
+      // 認証状態の伝播を待機 (最大5秒)
+      const startWait = Date.now()
+      await waitForAuthState(userCredential.user.uid, 5000)
+      const endWait = Date.now()
+      console.log(`[Auth] waitForAuthState完了: ${endWait - startWait}ms`)
+
       // Firestoreから顧客情報を取得
       console.log("[Auth] 💾 Firestoreから顧客情報を取得中...")
+      const startFirestore = Date.now()
       let customer = await getCustomerByEmail(loginForm.email)
+      const endFirestore = Date.now()
+      console.log(`[Auth] Firestoreデータ取得完了: ${endFirestore - startFirestore}ms`)
       console.log("[Auth] 💾 顧客情報取得結果:", customer ? "FOUND" : "NOT FOUND")
       
       // 自動修復: Firebase AuthにはあるがFirestoreにない場合、自動作成
