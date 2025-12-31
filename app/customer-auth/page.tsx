@@ -120,17 +120,9 @@ export default function CustomerAuthPage() {
           return
         }
         
-        // 通常のログイン状態チェック
-        // タイムアウト時間を1秒に短縮（IndexedDBのセッション情報が検出されない場合は、ログイン/登録フォームを表示）
-        const user = await waitForAuthState(undefined, 1000).catch(() => null)
-        
-        if (user) {
-          console.log("[Auth] ✅ ログイン済みユーザーを検出:", user.email)
-          // すでにログイン済みの場合、customer-viewにリダイレクト
-          window.location.href = "/customer-view"
-        } else {
-          console.log("[Auth] ℹ️ 未ログイン状態")
-        }
+        // 注意: リダイレクト処理を無効化し、ログイン/登録フォームを常に表示
+        // ログイン成功時のみ、/customer-viewにリダイレクトする
+        console.log("[Auth] ℹ️ ログイン/登録フォームを表示")
       } catch (error) {
         console.error("[Auth] ❌ ログイン状態チェックエラー:", error)
       }
