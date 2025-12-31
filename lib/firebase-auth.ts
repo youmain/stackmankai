@@ -79,11 +79,34 @@ export async function signOutUser(): Promise<void> {
     sessionStorage.clear()
     
     // IndexedDBをクリア（Firebase Authのセッション情報が保存されている）
-    const dbNames = await indexedDB.databases()
-    for (const db of dbNames) {
-      if (db.name) {
-        indexedDB.deleteDatabase(db.name)
+    try {
+      // Firebase Authが使用するIndexedDBデータベースを削除
+      const firebaseDbNames = [
+        'firebaseLocalStorageDb',
+        'firebase-app-check-database',
+        'firebase-nonce-database',
+        'firebase-heartbeat-database'
+      ]
+      
+      for (const dbName of firebaseDbNames) {
+        try {
+          indexedDB.deleteDatabase(dbName)
+        } catch (e) {
+          // 各DBの削除に失敗しても続行
+        }
       }
+      
+      // すべてのIndexedDBを削除（フォールバック）
+      if (typeof (indexedDB as any).databases === 'function') {
+        const dbNames = await (indexedDB as any).databases()
+        for (const db of dbNames) {
+          if (db.name) {
+            indexedDB.deleteDatabase(db.name)
+          }
+        }
+      }
+    } catch (storageError) {
+      log.warn(`IndexedDBクリア中にエラー: ${storageError}`)
     }
     
     log.info("サインアウト成功（ストレージクリア完了）")
