@@ -128,7 +128,8 @@ export default function CustomerAuthPage() {
       }
     }
     
-    checkAuthState()
+    // 注意: checkAuthState()を無効化し、ログイン/登録フォームを常に表示
+    // checkAuthState()
     
     const hideCompletion = localStorage.getItem("hidePlayerLinkingCompletion")
     if (hideCompletion === "true") {
