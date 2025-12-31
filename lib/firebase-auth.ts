@@ -171,7 +171,7 @@ export { signIn as signInWithEmailAndPassword }
  * @param timeoutMs タイムアウト時間（ミリ秒）
  * @returns ログイン中のユーザー、またはnull
  */
-export async function waitForAuthState(expectedUid?: string, timeoutMs: number = 5000): Promise<User | null> {
+export async function waitForAuthState(expectedUid?: string, timeoutMs: number = 30000): Promise<User | null> {
   const auth = getAuthInstance()
   if (!auth) {
     throw new Error("Firebase Authが初期化されていません")

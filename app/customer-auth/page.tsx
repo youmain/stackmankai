@@ -525,9 +525,18 @@ export default function CustomerAuthPage() {
                 </p>
               </div>
             </AlertDescription>
-          </Alert>
-
-          {error && (
+	          </Alert>
+	
+	          <Alert className="mb-4 border-yellow-200 bg-yellow-50">
+	            <AlertDescription className="text-yellow-800 space-y-2">
+	              <div className="font-semibold mb-1">⚠️ 登録・初回ログイン時のご注意</div>
+	              <p className="text-sm">
+	                Firebaseの認証情報が反映されるまでに時間がかかるため、登録完了後および初回ログイン時に**最大1分程度**の遅延が発生する場合があります。画面が切り替わるまでそのままお待ちください。
+	              </p>
+	            </AlertDescription>
+	          </Alert>
+	
+	          {error && (
             <Alert className="mb-4 border-red-200 bg-red-50">
               <AlertDescription className="text-red-600">{error}</AlertDescription>
             </Alert>
