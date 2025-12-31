@@ -1601,31 +1601,43 @@ export const updateCustomerAccount = async (customerId: string, data: Partial<Cu
 export const linkPlayerToCustomer = async (customerId: string, playerUniqueId: string, playerName: string, storeId?: string): Promise<void> => {
   if (!isFirebaseConfigured()) return
   
-  // Find player by uniqueId
-  const playersCollection = getPlayersCollection()
-  let q = query(playersCollection, where("uniqueId", "==", playerUniqueId))
+  const db = checkFirebaseConfig()
   
-  // If storeId is provided, add it to the query for more precise matching
-  if (storeId) {
-    q = query(playersCollection, where("uniqueId", "==", playerUniqueId), where("storeId", "==", storeId))
-  }
+  // Search strategy: try uniqueId first, then name, then pokerName
+  let playerDoc: any = null
+  let searchAttempts = [
+    { field: "uniqueId", value: playerUniqueId, label: "プレイヤーID" },
+    { field: "name", value: playerUniqueId, label: "プレイヤー名" },
+    { field: "pokerName", value: playerUniqueId, label: "ポーカー名" },
+  ]
   
-  const querySnapshot = await getDocs(q)
-  
-  if (querySnapshot.empty) {
-    throw new Error(`プレイヤーID ${playerUniqueId} が見つかりません。店舗スタッフに正しいプレイヤーIDをご確認ください。`)
-  }
-  
-  // Check if multiple players found (should not happen with uniqueId)
-  if (querySnapshot.docs.length > 1) {
-    log.warn("複数のプレイヤーが見つかりました", { playerUniqueId, count: querySnapshot.docs.length })
-    // If storeId was not provided, throw error asking for it
-    if (!storeId) {
-      throw new Error(`複数のプレイヤーが見つかりました。店舗コードを指定してください。`)
+  for (const attempt of searchAttempts) {
+    // Try both top-level collection and sub-collection
+    let playersCollection = getPlayersCollection()
+    let q = query(playersCollection, where(attempt.field, "==", attempt.value))
+    
+    // If storeId is provided, also search in the sub-collection
+    if (storeId) {
+      playersCollection = getPlayersCollection(storeId)
+      q = query(playersCollection, where(attempt.field, "==", attempt.value))
     }
+    
+    const querySnapshot = await getDocs(q)
+    
+    if (!querySnapshot.empty) {
+      playerDoc = querySnapshot.docs[0]
+      log.info(`プレイヤー検索成功 (${attempt.label})`, { field: attempt.field, value: attempt.value })
+      break
+    }
+    
+    log.debug(`プレイヤー検索失敗 (${attempt.label})`, { field: attempt.field, value: attempt.value })
   }
   
-  const playerDoc = querySnapshot.docs[0]
+  if (!playerDoc) {
+    log.error("プレイヤーが見つかりません", { playerUniqueId, storeId })
+    throw new Error(`プレイヤーID "${playerUniqueId}" が見つかりません。店舗スタッフに正しいプレイヤーIDをご確認ください。`)
+  }
+  
   const playerDocId = playerDoc.id
   const playerData = playerDoc.data() as Player
   
