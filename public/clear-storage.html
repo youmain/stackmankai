@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ストレージクリア</title>
+</head>
+<body>
+    <h1>ローカルストレージをクリア中...</h1>
+    <script>
+        // ローカルストレージとセッションストレージをクリア
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        // Cookieをクリア
+        document.cookie.split(";").forEach(function(c) {
+            document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
+        
+        // 2秒後に顧客認証ページにリダイレクト
+        setTimeout(function() {
+            window.location.href = "/customer-auth";
+        }, 2000);
+    </script>
+</body>
+</html>

@@ -300,9 +300,9 @@ export default function CustomerAuthPage() {
       // 認証キャッシュを保存（次回ログイン時の高速化）
       saveAuthCache(loginForm.email, userCredential.user.uid)
 
-      // 認証状態の伝播を待機 (最大5秒)
+      // 認証状態の伝播を待機 (最大30秒)
       const startWait = Date.now()
-      await waitForAuthState(userCredential.user.uid, 5000)
+      await waitForAuthState(userCredential.user.uid, 30000)
       const endWait = Date.now()
       console.log(`[Auth] waitForAuthState完了: ${endWait - startWait}ms`)
 

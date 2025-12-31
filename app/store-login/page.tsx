@@ -26,9 +26,9 @@ export default function StoreLoginPage() {
       
       console.log("[StoreLogin] Firebase Authログイン成功:", user.email)
       
-      // 認証状態の伝播を待機 (最大5秒)
+      // 認証状態の伝播を待機 (最大30秒)
       const startWait = Date.now()
-      await waitForAuthState(user.uid, 5000)
+      await waitForAuthState(user.uid, 30000)
       const endWait = Date.now()
       console.log(`[StoreLogin] waitForAuthState完了: ${endWait - startWait}ms`)
       
