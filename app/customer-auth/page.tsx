@@ -175,7 +175,7 @@ export default function CustomerAuthPage() {
       // getCustomerByEmailクエリは不要（セキュリティルール違反の原因となるため削除）
       // Firestoreに顧客アカウントを作成（Firebase Auth統合）
       // 店舗情報は後で追加されるため、登録時はnullでもOK
-      const customerId = await createCustomerAccount(
+      await createCustomerAccount(
         {
           storeId: storeInfo?.storeId || null,
           storeName: storeInfo?.storeName || null,
@@ -186,34 +186,9 @@ export default function CustomerAuthPage() {
         registerForm.password
       )
 
-      const testCustomer = {
-        id: customerId,
-        email: registerForm.email,
-        isBetaTester: true,
-        registeredAt: new Date().toISOString(),
-        subscriptionStatus: "free_trial",
-        storeId: storeInfo?.storeId || null,
-        storeName: storeInfo?.storeName || null,
-      }
-
-      // localStorageにユーザー情報を保存（投稿作成用）
-      localStorage.setItem("currentUser", JSON.stringify({
-        id: testCustomer.id,
-        name: testCustomer.email,
-        email: testCustomer.email,
-        type: "customer",
-        storeId: storeInfo?.storeId || null,
-        storeName: storeInfo?.storeName || null,
-      }))
-      console.log("[Auth] 💾 localStorageにユーザー情報保存:", testCustomer.email)
-
-      // auth-contextに保存（sessionStorage/localStorageにも保存される）
-      localStorage.setItem("auth_customerAccount", JSON.stringify(testCustomer))
-      localStorage.setItem("auth_userType", "customer")
-
-      setCurrentCustomer(testCustomer)
-      setSuccess("無料登録が完了しました！プレイヤーIDを紐づけてください。")
-      setRegisterForm({ email: "", password: "", confirmPassword: "" })
+      // 登録成功後、すぐにリダイレクト（認証状態の反映はリダイレクト先で監視）
+      setSuccess("登録処理を開始しました。認証状態を確認中です...")
+      window.location.href = "/customer-view"
     } catch (error) {
       setError(error instanceof Error ? error.message : "登録に失敗しました")
     } finally {

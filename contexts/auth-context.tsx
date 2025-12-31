@@ -92,33 +92,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const docRef = doc(db, "customerAccounts", firebaseUser.uid)
             console.log("[Auth] ⏱️ docRef作成完了:", performance.now() - startTime, "ms")
             
-            const docSnap = await getDoc(docRef)
+            let docSnap = await getDoc(docRef)
             console.log("[Auth] ⏱️ getDoc完了:", performance.now() - startTime, "ms")
-            
-            if (docSnap.exists()) {
-              const customer = { id: docSnap.id, ...docSnap.data() } as CustomerAccount
-              console.log("[Auth] ✅ 顧客アカウント取得:", {
-                playerId: customer.playerId,
-                playerName: customer.playerName,
-                totalTime: performance.now() - startTime + "ms",
-              })
-              
-              setUser({
-                uid: firebaseUser.uid,
-                email: customer.email,
-                role: "customer",
-                storeId: customer.storeId,
-                storeName: customer.storeName,
-                playerName: customer.playerName,
-                playerId: customer.playerId,
-              })
-              setCustomerAccountState(customer)
-            } else {
-              // ドキュメントが存在しない場合
-              console.error("[Auth] ❌ 顧客アカウントが見つかりません (UID: " + firebaseUser.uid + ")")
-              console.error("[Auth] ドキュメントが存在しないか、まだ作成中の可能性があります。")
-              setError("顧客アカウントが見つかりません。再度ログインしてください。")
+
+            // 顧客アカウントがまだ作成されていない場合、ポーリングで待機
+            if (!docSnap.exists()) {
+              console.warn("[Auth] ⚠️ 顧客アカウントが見つかりません。ポーリングを開始します...")
+              const maxRetries = 10
+              const retryIntervalMs = 500
+              let retries = 0
+
+              while (!docSnap.exists() && retries < maxRetries) {
+                retries++
+                console.log(`[Auth] 🔄 リトライ ${retries}/${maxRetries} (${retryIntervalMs}ms待機)`)
+                await new Promise(resolve => setTimeout(resolve, retryIntervalMs))
+                docSnap = await getDoc(docRef)
+              }
+
+              if (docSnap.exists()) {
+                console.log(`[Auth] ✅ 顧客アカウントをリトライで取得成功 (リトライ回数: ${retries})`)
+              } else {
+                // リトライ後もドキュメントが存在しない場合
+                console.error("[Auth] ❌ 顧客アカウントが見つかりません (UID: " + firebaseUser.uid + ")")
+                console.error("[Auth] ドキュメントが存在しないか、作成に失敗した可能性があります。")
+                setError("顧客アカウントが見つかりません。再度ログインしてください。")
+                setLoading(false)
+                return
+              }
             }
+            
+            // ドキュメントが存在する場合（初回またはリトライ後）
+            const customer = { id: docSnap.id, ...docSnap.data() } as CustomerAccount
+            console.log("[Auth] ✅ 顧客アカウント取得:", {
+              playerId: customer.playerId,
+              playerName: customer.playerName,
+              totalTime: performance.now() - startTime + "ms",
+            })
+            
+            setUser({
+              uid: firebaseUser.uid,
+              email: customer.email,
+              role: "customer",
+              storeId: customer.storeId,
+              storeName: customer.storeName,
+              playerName: customer.playerName,
+              playerId: customer.playerId,
+            })
+            setCustomerAccountState(customer)
           } catch (err) {
             console.error("[Auth] ❌ 認証エラー:", err)
             handleError(err, "認証")
