@@ -58,8 +58,8 @@ export const checkFirebaseConfig = () => {
 export const getPlayersCollection = (storeId?: string) => {
   const db = checkFirebaseConfig()
   if (storeId) {
-    // サブコレクション構造: /players/{storeId}/players
-    return collection(db, "players", storeId, "players")
+    // サブコレクション構造: /stores/{storeId}/players
+    return collection(db, "stores", storeId, "players")
   }
   // トップレベルコレクション（後方互換性のため残す）
   return collection(db, "players")
