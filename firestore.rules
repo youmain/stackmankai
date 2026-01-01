@@ -220,17 +220,16 @@ service cloud.firestore {
       allow get: if isAuthenticated() && request.auth.uid == uid;
       
       // 顧客情報のリスト取得：認証済みユーザーは自分のデータを検索可能
-      // 注意: クエリはクライアント側でuidでフィルタリングする必要がある
-      // 注意: 新規登録時に認証前のクエリが必要なため、一時的に認証チェックを削除
-      allow list: if true;
+      allow list: if isAuthenticated() && request.auth.uid == uid;
       
       // 顧客の作成：認証済みユーザーが自分のUIDで作成する場合のみ
       // 注意: 新規登録直後は認証トークンの反映に時間がかかる場合があるため、
-      //       一時的に認証チェックを省略（本番環境では修正必须）
+      //       一時的に認証チェックを省略（本番環境では修正必須）
       allow create: if true;
       
-      // 顧客情報の読み取り：本人のみ可能
-      allow get, list: if request.auth != null && request.auth.uid == uid;  
+      // 顧客の更新：本人のみ可能
+      allow update: if isAuthenticated() && request.auth.uid == uid;
+      
       // 顧客の削除：本人のみ可能
       allow delete: if isAuthenticated() && request.auth.uid == uid;
     }
