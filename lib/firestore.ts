@@ -1607,8 +1607,8 @@ export const linkPlayerToCustomer = async (customerId: string, playerUniqueId: s
   let playerDoc: any = null
   let searchAttempts = [
     { field: "uniqueId", value: playerUniqueId, label: "プレイヤーID" },
-    { field: "name", value: playerUniqueId, label: "プレイヤー名" },
-    { field: "pokerName", value: playerUniqueId, label: "ポーカー名" },
+    { field: "name", value: playerName, label: "プレイヤー名" },
+    { field: "pokerName", value: playerName, label: "ポーカー名" },
   ]
   
   for (const attempt of searchAttempts) {
