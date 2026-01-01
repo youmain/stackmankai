@@ -406,9 +406,8 @@ export const subscribeToPlayers = (
   const playersCollection = getPlayersCollection(storeId || undefined)
   if (!playersCollection) return () => {}
 
-  // サブコレクション構造の場合はstoreIdでフィルタリング不要
-  // トップレベルコレクションの場合のみフィルタリング
-  const q = (storeId && !storeId) 
+  // トップレベルコレクションの場合、storeIdが指定されていればフィルタリング
+  const q = storeId
     ? query(playersCollection, where("storeId", "==", storeId))
     : playersCollection
   return onSnapshot(
