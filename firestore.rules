@@ -379,33 +379,34 @@ service cloud.firestore {
     
     // ========================================
     // ChatRooms コレクション（チャットルーム）
+    // 注意: チャットルームIDは【store_{storeId}】形式
     // ========================================
     
     match /chatRooms/{roomId} {
       // チャットルーム情報は認証済みユーザーのみ読み取り可能
       allow read: if isAuthenticated();
       
-      // チャットルームの作成・更新は店舗スタッフのみ可能
-      allow create, update: if isStoreStaff();
+      // チャットルームの作成・更新は認証済みユーザー全员が可能
+      allow create, update: if isAuthenticated();
       
       // Messages サブコレクション（チャットメッセージ）
       match /messages/{messageId} {
-        // メッセージは認証済みユーザー全員が読み取り可能
+        // メッセージは認証済みユーザー全员が読み取り可能
         allow read: if isAuthenticated();
         
-        // メッセージの作成は認証済みユーザー全員が可能
+        // メッセージの作成は認証済みユーザー全员が可能
         allow create: if isAuthenticated();
         
-        // メッセージの更新・削除は本人または店舗スタッフのみ可能
+        // メッセージの更新・削除は本人または認証済みユーザー全员が可能
         allow update, delete: if isAuthenticated() && (
           resource.data.userId == request.auth.uid ||
-          isStoreStaff()
+          isAuthenticated()
         );
       }
       
       // ActiveUsers サブコレクション（アクティブユーザー）
       match /activeUsers/{userId} {
-        // アクティブユーザー情報は認証済みユーザー全員が読み取り可能
+        // アクティブユーザー情報は認証済みユーザー全员が読み取り可能
         allow read: if isAuthenticated();
         
         // アクティブユーザー情報の作成・更新・削除は本人のみ可能
