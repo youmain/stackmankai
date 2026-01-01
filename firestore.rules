@@ -12,9 +12,14 @@ service cloud.firestore {
       return request.auth != null;
     }
     
-    // ユーザー情報を取得
+    // ユーザー情報を取得（店舗スタッフ用）
     function getUserData() {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    // 顧客アカウント情報を取得
+    function getCustomerData() {
+      return get(/databases/$(database)/documents/customerAccounts/$(request.auth.uid)).data;
     }
     
     // ユーザーが店舗オーナーかチェック
@@ -29,7 +34,7 @@ service cloud.firestore {
     
     // ユーザーが顧客かチェック
     function isCustomer() {
-      return isAuthenticated() && getUserData().role == 'customer';
+      return isAuthenticated() && exists(/databases/$(database)/documents/customerAccounts/$(request.auth.uid));
     }
     
     // ユーザーが店舗オーナーまたは従業員かチェック
@@ -51,7 +56,7 @@ service cloud.firestore {
     function customerBelongsToStore(storeId) {
       return isAuthenticated() && 
         exists(/databases/$(database)/documents/customerAccounts/$(request.auth.uid)) &&
-        get(/databases/$(database)/documents/customerAccounts/$(request.auth.uid)).data.storeId == storeId;
+        getCustomerData().storeId == storeId;
     }
     
     // ========================================

@@ -26,9 +26,9 @@ export default function StoreLoginPage() {
       
       console.log("[StoreLogin] Firebase Authログイン成功:", user.email)
       
-      // 認証状態の伝播を待機 (最大60秒に延長)
+      // 認証状態の伝播を待機 (最大120秒に延長)
       const startWait = Date.now()
-      await waitForAuthState(user.uid, 60000)
+      await waitForAuthState(user.uid, 120000)
       const endWait = Date.now()
       console.log(`[StoreLogin] waitForAuthState完了: ${endWait - startWait}ms`)
       
@@ -59,9 +59,10 @@ export default function StoreLoginPage() {
       
       // ダッシュボードへリダイレクト
       console.log("[StoreLogin] /admin へリダイレクト中...")
+      // auth-contextがユーザーデータを完全に取得するまで待機（最大3秒）
       setTimeout(() => {
         router.push("/admin")
-      }, 500)
+      }, 2000)
     } catch (err: any) {
       console.error("[StoreLogin] ログインエラー:", err)
       if (err.code === "auth/wrong-password" || err.code === "auth/invalid-credential") {
