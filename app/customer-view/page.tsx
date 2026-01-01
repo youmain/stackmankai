@@ -513,7 +513,7 @@ ${availableExamples.slice(0, 5).join("\n")}
       console.log("[v0] 👥 プレイヤー同期受信:", players.length, "人")
       setPlayers(players)
       setDataLoaded((prev) => ({ ...prev, players: true }))
-    }, undefined, undefined) // storeIdを渡さずトップレベルコレクションを使用
+    }, undefined, storeId) // storeIdを渡してフィルタリング
 
     const unsubscribeDailyRankings = subscribeToDailyRankings((rankings) => {
       console.log("[v0] 📊 日別ランキング同期受信:", rankings.length, "件")
