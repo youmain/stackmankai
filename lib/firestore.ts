@@ -57,11 +57,8 @@ export const checkFirebaseConfig = () => {
 
 export const getPlayersCollection = (storeId?: string) => {
   const db = checkFirebaseConfig()
-  if (storeId) {
-    // サブコレクション構造: /stores/{storeId}/players
-    return collection(db, "stores", storeId, "players")
-  }
-  // トップレベルコレクション（後方互換性のため残す）
+  // プレイヤーデータは常にトップレベルの /players コレクションに保存されている
+  // storeIdでの絞り込みはクエリ条件で実施する
   return collection(db, "players")
 }
 
@@ -1612,16 +1609,16 @@ export const linkPlayerToCustomer = async (customerId: string, playerUniqueId: s
   ]
   
   for (const attempt of searchAttempts) {
-    // Try both top-level collection and sub-collection
+    // Search in the top-level players collection
     let playersCollection = getPlayersCollection()
-    let q = query(playersCollection, where(attempt.field, "==", attempt.value))
+    let conditions = [where(attempt.field, "==", attempt.value)]
     
-    // If storeId is provided, also search in the sub-collection
+    // If storeId is provided, add it as an additional filter
     if (storeId) {
-      playersCollection = getPlayersCollection(storeId)
-      q = query(playersCollection, where(attempt.field, "==", attempt.value))
+      conditions.push(where("storeId", "==", storeId))
     }
     
+    const q = query(playersCollection, ...conditions)
     const querySnapshot = await getDocs(q)
     
     if (!querySnapshot.empty) {
