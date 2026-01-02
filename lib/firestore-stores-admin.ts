@@ -82,6 +82,16 @@ export async function registerStoreAdmin(
       updatedAt: new Date().toISOString(),
     })
 
+    // usersコレクションにもユーザーデータを作成（ログイン用）
+    await db.collection("users").doc(uid).set({
+      email: data.ownerEmail,
+      role: "store_owner",
+      storeId: storeId,
+      phoneVerified: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    })
+
     console.log(`[registerStoreAdmin] 店舗登録成功: ${storeId}, コード: ${storeCode}`)
 
     return {
