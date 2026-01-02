@@ -44,28 +44,15 @@ export async function registerStore(
     let storeId: string = ""
     let storeCode: string = ""
     
-    // トランザクション外で店舗コードの重複チェックを実施
+    // 店舗コードの重複チェック（最大10回試行）
     let codeFound = false
     let code = ""
     
-    // 最大10回試行
     for (let i = 0; i < 10; i++) {
       code = generateRandomCode()
       
       try {
-        // storeCodeが一致するドキュメントを確認
-        const whereClause = where("storeCode", "==", code)
-        if (!whereClause) {
-          console.warn("where句の作成に失敗しました")
-          continue
-        }
-        
-        const q = query(storesRef, whereClause)
-        if (!q) {
-          console.warn("queryの作成に失敗しました")
-          continue
-        }
-        
+        const q = query(storesRef, where("storeCode", "==", code))
         const querySnapshot = await getDocs(q)
         
         if (querySnapshot.empty) {
@@ -73,7 +60,6 @@ export async function registerStore(
           break
         }
       } catch (e) {
-        // クエリエラーの場合は再試行
         console.warn("店舗コード重複チェックエラー:", e)
         continue
       }
@@ -87,14 +73,13 @@ export async function registerStore(
     
     // トランザクション内で登録をアトミックに実行
     await runTransaction(db, async (transaction) => {
-      
       // 新しいドキュメント参照を作成
       const newStoreRef = doc(storesRef)
       storeId = newStoreRef.id
       
       // トランザクション内でドキュメントを書き込み
       transaction.set(newStoreRef, {
-        uid: uid, // Firebase AuthのUIDを追加
+        uid: uid,
         name: data.name,
         storeCode: storeCode,
         storePassword: hashedStorePassword,
@@ -109,7 +94,6 @@ export async function registerStore(
         status: "active",
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
-        // Stack Man Hand default settings
         stackManHandSettings: {
           enabled: true,
           purchasePrice: 1000,
@@ -143,11 +127,6 @@ export async function registerStore(
     throw error
   }
 }
-
-/**
- * 店舗コードとパスワードでログイン
- */
-// ... (loginStore, loginStoreOwner は変更なし)
 
 /**
  * 店舗コードとパスワードでログイン
