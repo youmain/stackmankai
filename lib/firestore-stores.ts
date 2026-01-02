@@ -52,13 +52,19 @@ export async function registerStore(
     for (let i = 0; i < 10; i++) {
       code = generateRandomCode()
       
-      // storeCodeが一致するドキュメントを確認
-      const q = query(storesRef, where("storeCode", "==", code))
-      const querySnapshot = await getDocs(q)
-      
-      if (querySnapshot.empty) {
-        codeFound = true
-        break
+      try {
+        // storeCodeが一致するドキュメントを確認
+        const q = query(storesRef, where("storeCode", "==", code))
+        const querySnapshot = await getDocs(q)
+        
+        if (querySnapshot.empty) {
+          codeFound = true
+          break
+        }
+      } catch (e) {
+        // クエリエラーの場合は再試行
+        console.warn("店舗コード重複チェックエラー:", e)
+        continue
       }
     }
     
