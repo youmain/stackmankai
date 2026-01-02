@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { registerStore } from "@/lib/firestore-stores"
+import { registerStoreAdmin } from "@/lib/firestore-stores-admin"
 import type { StoreRegistrationData } from "@/types/store"
 
 export async function POST(request: NextRequest) {
@@ -28,8 +28,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 店舗登録を実行
-    const result = await registerStore(data)
+    // 店舗登録を実行（Firebase Admin SDK版）
+    const result = await registerStoreAdmin(data)
 
     return NextResponse.json({
       success: true,
