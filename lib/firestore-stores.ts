@@ -44,30 +44,32 @@ export async function registerStore(
     let storeId: string = ""
     let storeCode: string = ""
     
-    // トランザクション内で店舗コードの重複チェックと登録をアトミックに実行
+    // トランザクション外で店舗コードの重複チェックを実施
+    let codeFound = false
+    let code = ""
+    
+    // 最大10回試行
+    for (let i = 0; i < 10; i++) {
+      code = generateRandomCode()
+      
+      // storeCodeが一致するドキュメントを確認
+      const q = query(storesRef, where("storeCode", "==", code))
+      const querySnapshot = await getDocs(q)
+      
+      if (querySnapshot.empty) {
+        codeFound = true
+        break
+      }
+    }
+    
+    if (!codeFound) {
+      throw new Error("店舗コードの生成に失敗しました。しばらくしてから再度お試しください。")
+    }
+    
+    storeCode = code
+    
+    // トランザクション内で登録をアトミックに実行
     await runTransaction(db, async (transaction) => {
-      let codeFound = false
-      let code = ""
-      
-      // 最大10回試行
-      for (let i = 0; i < 10; i++) {
-        code = generateRandomCode()
-        
-        // storeCodeが一致するドキュメントをトランザクション内で取得
-        const q = query(storesRef, where("storeCode", "==", code))
-        const querySnapshot = await getDocs(q)
-        
-        if (querySnapshot.empty) {
-          codeFound = true
-          break
-        }
-      }
-      
-      if (!codeFound) {
-        throw new Error("店舗コードの生成に失敗しました。しばらくしてから再度お試しください。")
-      }
-      
-      storeCode = code
       
       // 新しいドキュメント参照を作成
       const newStoreRef = doc(storesRef)
