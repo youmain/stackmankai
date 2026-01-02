@@ -37,6 +37,16 @@ service cloud.firestore {
       return isAuthenticated() && exists(/databases/$(database)/documents/customerAccounts/$(request.auth.uid));
     }
     
+    // ユーザーが電話番号確認済みかチェック（店舗スタッフ用）
+    function isPhoneVerified() {
+      return isAuthenticated() && getUserData().phoneVerified == true;
+    }
+    
+    // ユーザーが電話番号確認済みかチェック（顧客用）
+    function isCustomerPhoneVerified() {
+      return isAuthenticated() && getCustomerData().phoneVerified == true;
+    }
+    
     // ユーザーが店舗オーナーまたは従業員かチェック
     function isStoreStaff() {
       return isStoreOwner() || isEmployee();
@@ -88,7 +98,8 @@ service cloud.firestore {
       allow read: if isAuthenticated() && belongsToStore(storeId);
       
       // 新規店舗登録は認証済みユーザーのみ可能
-      allow create: if isAuthenticated();
+      // ただし、電話番号確認済みユーザーのみ作成可能
+      allow create: if isAuthenticated() && isPhoneVerified();
       
       // 店舗情報の更新は店舗オーナーのみ可能
       allow update: if isStoreOwner() && belongsToStore(storeId);

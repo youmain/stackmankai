@@ -2280,3 +2280,43 @@ export async function createOrUpdateUserData(userData: UserData): Promise<void> 
     throw error
   }
 }
+
+/**
+ * ユーザープロフィールを更新（電話番号確認等）
+ */
+export async function updateUserProfile(uid: string, data: Record<string, any>): Promise<void> {
+  try {
+    const db = checkFirebaseConfig()
+    const userRef = doc(db, "users", uid)
+    
+    await updateDoc(userRef, {
+      ...data,
+      updatedAt: serverTimestamp(),
+    })
+    
+    console.log("[Firestore] ユーザープロフィールを更新しました:", uid)
+  } catch (error) {
+    console.error("[Firestore] updateUserProfile エラー:", error)
+    throw error
+  }
+}
+
+/**
+ * 顧客アカウントプロフィールを更新（電話番号確認等）
+ */
+export async function updateCustomerProfile(uid: string, data: Record<string, any>): Promise<void> {
+  try {
+    const db = checkFirebaseConfig()
+    const customerRef = doc(db, "customerAccounts", uid)
+    
+    await updateDoc(customerRef, {
+      ...data,
+      updatedAt: serverTimestamp(),
+    })
+    
+    console.log("[Firestore] 顧客プロフィールを更新しました:", uid)
+  } catch (error) {
+    console.error("[Firestore] updateCustomerProfile エラー:", error)
+    throw error
+  }
+}
