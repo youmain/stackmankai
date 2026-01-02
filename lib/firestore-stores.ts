@@ -54,7 +54,18 @@ export async function registerStore(
       
       try {
         // storeCodeが一致するドキュメントを確認
-        const q = query(storesRef, where("storeCode", "==", code))
+        const whereClause = where("storeCode", "==", code)
+        if (!whereClause) {
+          console.warn("where句の作成に失敗しました")
+          continue
+        }
+        
+        const q = query(storesRef, whereClause)
+        if (!q) {
+          console.warn("queryの作成に失敗しました")
+          continue
+        }
+        
         const querySnapshot = await getDocs(q)
         
         if (querySnapshot.empty) {
