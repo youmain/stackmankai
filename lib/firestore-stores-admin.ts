@@ -87,6 +87,8 @@ export async function registerStoreAdmin(
       email: data.ownerEmail,
       role: "store_owner",
       storeId: storeId,
+      storeName: data.name,
+      displayName: data.name,
       phoneVerified: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
