@@ -55,7 +55,7 @@ export async function registerStore(
         
         // storeCodeが一致するドキュメントをトランザクション内で取得
         const q = query(storesRef, where("storeCode", "==", code))
-        const querySnapshot = await transaction.get(q)
+        const querySnapshot = await getDocs(q)
         
         if (querySnapshot.empty) {
           codeFound = true
