@@ -4,8 +4,6 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import type { StoreRegistrationData } from "@/types/store"
 
-type RegistrationStep = "form" | "success"
-
 export default function StoreRegisterPage() {
   const router = useRouter()
   const [formData, setFormData] = useState<StoreRegistrationData>({
@@ -23,8 +21,6 @@ export default function StoreRegisterPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [generatedCode, setGeneratedCode] = useState("")
-  const [step, setStep] = useState<RegistrationStep>("form")
-  const [userId, setUserId] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -75,11 +71,12 @@ export default function StoreRegisterPage() {
       }
 
       setGeneratedCode(data.storeCode)
-      setUserId(data.uid || "")
       setLoading(false) // ローディング状態を解除
 
-      // 成功画面へ
-      setStep("success")
+      // 成功メッセージを表示後、ダッシュボードへリダイレクト
+      setTimeout(() => {
+        router.push("/admin")
+      }, 3000)
     } catch (err: any) {
       console.error("店舗登録エラー:", err)
       let errorMessage = "店舗登録に失敗しました。"
@@ -99,9 +96,7 @@ export default function StoreRegisterPage() {
     }
   }
 
-
-
-  if (step === "success" && generatedCode) {
+  if (generatedCode) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
@@ -138,7 +133,7 @@ export default function StoreRegisterPage() {
           </div>
 
           <p className="text-sm text-gray-500 mb-4">
-            3秒後に自動的にダッシュボードに移動します...
+            5秒後に自動的にダッシュボードに移動します...
           </p>
 
           <button
@@ -156,11 +151,16 @@ export default function StoreRegisterPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">店舗登録</h1>
-          <p className="text-gray-600">基本情報を入力してください</p>
-        </div>
+	          <h1 className="text-3xl font-bold text-gray-800 mb-2">店舗登録</h1>
+	          <p className="text-gray-600">ポーカー店舗管理システムへようこそ</p>
+	        </div>
 	
-
+	        <div className="mb-6 bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg">
+	          <p className="font-semibold mb-1">⚠️ 登録・初回ログイン時のご注意</p>
+	          <p className="text-sm">
+	            Firebaseの認証情報が反映されるまでに時間がかかるため、登録完了後および初回ログイン時に**最大1分程度**の遅延が発生する場合があります。画面が切り替わるまでそのままお待ちください。
+	          </p>
+	        </div>
 	
 	        {error && (
           <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
@@ -362,14 +362,6 @@ export default function StoreRegisterPage() {
             </button>
           </p>
         </div>
-      </div>
-    )
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full">
-        <p className="text-center text-gray-600">ローディング中...</p>
       </div>
     </div>
   )
