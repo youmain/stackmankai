@@ -39,8 +39,6 @@ export async function registerStore(
     const hashedStorePassword = btoa(data.storePassword)
     const hashedOwnerPassword = btoa(data.ownerPassword)
     
-    const storesRef = collection(db, "stores")
-    
     let storeId: string = ""
     let storeCode: string = ""
     
@@ -52,7 +50,7 @@ export async function registerStore(
       code = generateRandomCode()
       
       try {
-        const q = query(storesRef, where("storeCode", "==", code))
+        const q = query(collection(db, "stores"), where("storeCode", "==", code))
         const querySnapshot = await getDocs(q)
         
         if (querySnapshot.empty) {
@@ -74,7 +72,7 @@ export async function registerStore(
     // トランザクション内で登録をアトミックに実行
     await runTransaction(db, async (transaction) => {
       // 新しいドキュメント参照を作成
-      const newStoreRef = doc(storesRef)
+      const newStoreRef = doc(collection(db, "stores"))
       storeId = newStoreRef.id
       
       // トランザクション内でドキュメントを書き込み
