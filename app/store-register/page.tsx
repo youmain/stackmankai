@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { registerStore } from "@/lib/firestore-stores"
 import type { StoreRegistrationData } from "@/types/store"
 
 type RegistrationStep = "form" | "success"
@@ -60,9 +59,23 @@ export default function StoreRegisterPage() {
     setLoading(true)
 
     try {
-      const result = await registerStore(formData)
-      setGeneratedCode(result.storeCode)
-      setUserId(result.uid || "")
+      // API Routeを呼び出し
+      const response = await fetch("/api/store/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "店舗登録に失敗しました")
+      }
+
+      setGeneratedCode(data.storeCode)
+      setUserId(data.uid || "")
       setLoading(false) // ローディング状態を解除
 
       // 成功画面へ
