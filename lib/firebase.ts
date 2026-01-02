@@ -22,10 +22,6 @@ let initializationAttempted = false
 let initializationError: Error | null = null
 
 function initializeFirebase() {
-  if (typeof window === "undefined") {
-    return
-  }
-
   if (initializationAttempted) {
     return
   }
@@ -41,7 +37,11 @@ function initializeFirebase() {
     }
 
     db = getFirestore(app)
-    auth = getAuth(app)
+    
+    // Authはクライアント側でのみ初期化
+    if (typeof window !== "undefined") {
+      auth = getAuth(app)
+    }
 
     // デバッグ: 環境変数の読み込み確認
     log.info(`Firebase初期化成功 - apiKey: ${firebaseConfig.apiKey.substring(0, 8)}..., authDomain: ${firebaseConfig.authDomain}`)
@@ -70,12 +70,10 @@ function initializeFirebase() {
   }
 }
 
-if (typeof window !== "undefined") {
-  initializeFirebase()
-}
+// サーバー側とクライアント側の両方で初期化
+initializeFirebase()
 
 export const isFirebaseConfigured = () => {
-  if (typeof window === "undefined") return false
   if (!initializationAttempted) {
     initializeFirebase()
   }
@@ -89,7 +87,6 @@ export const getInitializationError = () => initializationError
 export const isDemoMode = false
 
 export function getDb(): Firestore | null {
-  if (typeof window === "undefined") return null
   if (!initializationAttempted) {
     initializeFirebase()
   }
