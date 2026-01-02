@@ -3,10 +3,9 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { registerStore } from "@/lib/firestore-stores"
-import { PhoneVerificationForm } from "@/components/phone-verification-form"
 import type { StoreRegistrationData } from "@/types/store"
 
-type RegistrationStep = "form" | "phone" | "success"
+type RegistrationStep = "form" | "success"
 
 export default function StoreRegisterPage() {
   const router = useRouter()
@@ -66,8 +65,8 @@ export default function StoreRegisterPage() {
       setUserId(result.uid || "")
       setLoading(false) // ローディング状態を解除
 
-      // 電話番号確認ステップへ
-      setStep("phone")
+      // 成功画面へ
+      setStep("success")
     } catch (err: any) {
       console.error("店舗登録エラー:", err)
       let errorMessage = "店舗登録に失敗しました。"
@@ -87,33 +86,7 @@ export default function StoreRegisterPage() {
     }
   }
 
-  const handlePhoneVerificationComplete = (phoneNumber: string) => {
-    console.log("[StoreRegister] 電話番号確認完了:", phoneNumber)
-    setStep("success")
 
-    // 3秒後にダッシュボードへリダイレクト
-    setTimeout(() => {
-      router.push("/admin")
-    }, 3000)
-  }
-
-  if (step === "phone" && userId) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">店舗登録</h1>
-            <p className="text-gray-600">ステップ 2/2：電話番号確認</p>
-          </div>
-
-          <PhoneVerificationForm
-            userId={userId}
-            onVerificationComplete={handlePhoneVerificationComplete}
-          />
-        </div>
-      </div>
-    )
-  }
 
   if (step === "success" && generatedCode) {
     return (
@@ -152,7 +125,7 @@ export default function StoreRegisterPage() {
           </div>
 
           <p className="text-sm text-gray-500 mb-4">
-            5秒後に自動的にダッシュボードに移動します...
+            3秒後に自動的にダッシュボードに移動します...
           </p>
 
           <button
@@ -171,15 +144,10 @@ export default function StoreRegisterPage() {
       <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">店舗登録</h1>
-          <p className="text-gray-600">ステップ 1/2：基本情報</p>
+          <p className="text-gray-600">基本情報を入力してください</p>
         </div>
 	
-	        <div className="mb-6 bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg">
-          <p className="font-semibold mb-1">📱 電話番号確認について</p>
-          <p className="text-sm">
-            登録後、電話番号確認が必要です。SMSで確認コードが送信されます。
-          </p>
-        </div>
+
 	
 	        {error && (
           <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
