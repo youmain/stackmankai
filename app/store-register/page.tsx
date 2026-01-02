@@ -63,7 +63,7 @@ export default function StoreRegisterPage() {
     try {
       const result = await registerStore(formData)
       setGeneratedCode(result.storeCode)
-      setUserId(result.userId || "")
+      setUserId(result.uid || "")
       setLoading(false) // ローディング状態を解除
 
       // 電話番号確認ステップへ
