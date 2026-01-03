@@ -3,8 +3,10 @@ import { registerStoreAdmin } from "@/lib/firestore-stores-admin"
 import type { StoreRegistrationData } from "@/types/store"
 
 export async function POST(request: NextRequest) {
+  console.log("[API] Store registration API called")
   try {
     const data: StoreRegistrationData = await request.json()
+    console.log("[API] Request data:", { ...data, ownerPassword: "***", storePassword: "***" })
     
     // バリデーション
     if (!data.name || !data.email || !data.ownerEmail || !data.ownerPassword || !data.storePassword) {
@@ -29,7 +31,9 @@ export async function POST(request: NextRequest) {
     }
 
     // 店舗登録を実行（Firebase Admin SDK版）
+    console.log("[API] Calling registerStoreAdmin...")
     const result = await registerStoreAdmin(data)
+    console.log("[API] Registration successful:", result)
 
     return NextResponse.json({
       success: true,
@@ -38,7 +42,8 @@ export async function POST(request: NextRequest) {
       uid: result.uid,
     })
   } catch (error: any) {
-    console.error("店舗登録APIエラー:", error)
+    console.error("[API] 店舗登録APIエラー:", error)
+    console.error("[API] Error details:", { code: error.code, message: error.message, stack: error.stack })
     
     let errorMessage = "店舗登録に失敗しました。"
     

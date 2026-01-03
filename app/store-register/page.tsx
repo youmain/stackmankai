@@ -53,9 +53,12 @@ export default function StoreRegisterPage() {
     }
 
     setLoading(true)
+    console.log("[Client] Starting store registration...")
+    console.log("[Client] Form data:", { ...formData, ownerPassword: "***", storePassword: "***" })
 
     try {
       // API Routeを呼び出し
+      console.log("[Client] Calling API: /api/store/register")
       const response = await fetch("/api/store/register", {
         method: "POST",
         headers: {
@@ -65,6 +68,7 @@ export default function StoreRegisterPage() {
       })
 
       const data = await response.json()
+      console.log("[Client] API response:", { ok: response.ok, status: response.status, data })
 
       if (!response.ok) {
         throw new Error(data.error || "店舗登録に失敗しました")
@@ -78,7 +82,8 @@ export default function StoreRegisterPage() {
         router.push("/admin")
       }, 3000)
     } catch (err: any) {
-      console.error("店舗登録エラー:", err)
+      console.error("[Client] 店舗登録エラー:", err)
+      console.error("[Client] Error details:", { code: err.code, message: err.message })
       let errorMessage = "店舗登録に失敗しました。"
       
       if (err.code === 'auth/email-already-in-use') {
