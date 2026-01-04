@@ -82,18 +82,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
 
           try {
-            // customerAccountsドキュメントをUIDで直接取得（高速）
-            console.log("[Auth] ⏱️ getDoc開始:", new Date().toISOString())
             const startTime = performance.now()
-            
             const { getDoc, doc } = await import("firebase/firestore")
             const { db } = await import("@/lib/firebase")
             
-            const docRef = doc(db, "customerAccounts", firebaseUser.uid)
-            console.log("[Auth] ⏱️ docRef作成完了:", performance.now() - startTime, "ms")
+            // まずusersコレクションを確認（店舗オーナー/従業員）
+            console.log("[Auth] ⏱️ usersコレクション確認開始:", new Date().toISOString())
+            const userDocRef = doc(db, "users", firebaseUser.uid)
+            const userDocSnap = await getDoc(userDocRef)
+            console.log("[Auth] ⏱️ usersコレクション確認完了:", performance.now() - startTime, "ms")
             
+            if (userDocSnap.exists()) {
+              // 店舗オーナーまたは従業員
+              const userData = userDocSnap.data()
+              console.log("[Auth] ✅ ユーザーデータ取得:", {
+                role: userData.role,
+                storeId: userData.storeId,
+                storeName: userData.storeName,
+                totalTime: performance.now() - startTime + "ms",
+              })
+              
+              setUser({
+                uid: firebaseUser.uid,
+                email: userData.email || firebaseUser.email || "",
+                role: userData.role || "store_owner",
+                storeId: userData.storeId,
+                storeName: userData.storeName,
+                displayName: userData.displayName,
+              })
+              setLoading(false)
+              return
+            }
+            
+            // usersコレクションに見つからない場合、customerAccountsを確認
+            console.log("[Auth] ⏱️ customerAccountsコレクション確認開始")
+            const docRef = doc(db, "customerAccounts", firebaseUser.uid)
             let docSnap = await getDoc(docRef)
-            console.log("[Auth] ⏱️ getDoc完了:", performance.now() - startTime, "ms")
+            console.log("[Auth] ⏱️ customerAccountsコレクション確認完了:", performance.now() - startTime, "ms")
 
             // 顧客アカウントがまだ作成されていない場合、ポーリングで待機
             if (!docSnap.exists()) {
