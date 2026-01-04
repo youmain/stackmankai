@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { LogIn } from 'lucide-react';
 
-export default function EmployeeLoginPage() {
+function EmployeeLoginForm() {
   const [inviteCode, setInviteCode] = useState('');
   const [employeeName, setEmployeeName] = useState('');
   const [loading, setLoading] = useState(false);
@@ -53,61 +53,65 @@ export default function EmployeeLoginPage() {
       localStorage.setItem('employeeSessionId', data.sessionId);
       localStorage.setItem('employeeId', data.employeeId);
       localStorage.setItem('employeeName', data.employeeName);
-      localStorage.setItem('storeId', data.storeId);
+      localStorage.setItem('employeeStoreId', data.storeId);
       localStorage.setItem('employeeRole', data.role);
       
       // ダッシュボードにリダイレクト
       router.push('/employee-dashboard');
       
     } catch (err: any) {
-      setError(err.message);
-    } finally {
+      setError(err.message || 'ログインに失敗しました');
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
-        {/* ヘッダー */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
-            <LogIn className="text-blue-600" size={32} />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+        <div className="flex justify-center mb-6">
+          <div className="bg-blue-100 p-4 rounded-full">
+            <LogIn className="w-8 h-8 text-blue-600" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">従業員ログイン</h1>
-          <p className="text-gray-600">招待コードでログイン</p>
         </div>
         
+        <h1 className="text-3xl font-bold text-center mb-2">従業員ログイン</h1>
+        <p className="text-gray-600 text-center mb-8">招待コードでログイン</p>
+        
         {message === 'logged_out' && (
-          <div className="mb-4 p-3 bg-yellow-100 text-yellow-800 rounded-lg text-sm">
-            ログアウトされました。再度ログインしてください。
+          <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <p className="text-yellow-800 text-sm">ログアウトされました。再度ログインしてください。</p>
           </div>
         )}
         
-        <form onSubmit={handleLogin} className="space-y-4">
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-800 text-sm">{error}</p>
+          </div>
+        )}
+        
+        <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label htmlFor="inviteCode" className="block text-sm font-medium text-gray-700 mb-2">
               招待コード <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
+              id="inviteCode"
               value={inviteCode}
               onChange={(e) => setInviteCode(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="招待コードを入力"
               required
             />
-            <p className="text-xs text-gray-500 mt-1">
-              オーナーまたはリーダーから受け取った招待コードを入力してください
-            </p>
           </div>
           
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label htmlFor="employeeName" className="block text-sm font-medium text-gray-700 mb-2">
               お名前 <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
+              id="employeeName"
               value={employeeName}
               onChange={(e) => setEmployeeName(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -116,36 +120,39 @@ export default function EmployeeLoginPage() {
             />
           </div>
           
-          {error && (
-            <div className="p-3 bg-red-100 text-red-800 rounded-lg text-sm">
-              {error}
-            </div>
-          )}
-          
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-lg font-semibold hover:from-blue-600 hover:to-blue-700 transition-all shadow-md hover:shadow-lg disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed"
+            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             {loading ? 'ログイン中...' : 'ログイン'}
           </button>
         </form>
-
-        {/* フッター */}
+        
         <div className="mt-6 text-center">
-          <div className="text-sm text-gray-600">
-            <p>
-              オーナーの方は{' '}
-              <button
-                onClick={() => router.push('/store-login')}
-                className="text-purple-600 hover:text-purple-700 font-semibold"
-              >
-                店舗ログイン
-              </button>
-            </p>
-          </div>
+          <p className="text-sm text-gray-600">
+            オーナーの方は
+            <a href="/store-login" className="text-blue-600 hover:text-blue-700 font-medium ml-1">
+              店舗ログイン
+            </a>
+          </p>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function EmployeeLoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">読み込み中...</p>
+        </div>
+      </div>
+    }>
+      <EmployeeLoginForm />
+    </Suspense>
   );
 }
