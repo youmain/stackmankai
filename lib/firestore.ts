@@ -2248,8 +2248,8 @@ export async function getUserData(uid: string): Promise<UserData | null> {
       storeId: data.storeId,
       storeName: data.storeName,
       displayName: data.displayName,
-      createdAt: data.createdAt?.toDate(),
-      updatedAt: data.updatedAt?.toDate(),
+      createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : (typeof data.createdAt === 'string' ? new Date(data.createdAt) : new Date()),
+      updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate() : (typeof data.updatedAt === 'string' ? new Date(data.updatedAt) : new Date()),
     }
   } catch (error) {
     console.error("[Firestore] getUserData エラー:", error)

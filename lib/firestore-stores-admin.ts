@@ -29,7 +29,6 @@ export async function registerStoreAdmin(
     const uid = userRecord.uid
 
     // パスワードのハッシュ化
-    const hashedStorePassword = Buffer.from(data.storePassword).toString("base64")
     const hashedOwnerPassword = Buffer.from(data.ownerPassword).toString("base64")
 
     let storeCode = ""
@@ -76,7 +75,6 @@ export async function registerStoreAdmin(
       description: data.description || "",
       ownerEmail: data.ownerEmail,
       ownerPassword: hashedOwnerPassword,
-      storePassword: hashedStorePassword,
       storeCode: storeCode,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

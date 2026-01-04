@@ -6,10 +6,10 @@ export async function POST(request: NextRequest) {
   console.log("[API] Store registration API called")
   try {
     const data: StoreRegistrationData = await request.json()
-    console.log("[API] Request data:", { ...data, ownerPassword: "***", storePassword: "***" })
+    console.log("[API] Request data:", { ...data, ownerPassword: "***" })
     
     // バリデーション
-    if (!data.name || !data.email || !data.ownerEmail || !data.ownerPassword || !data.storePassword) {
+    if (!data.name || !data.email || !data.ownerEmail || !data.ownerPassword) {
       return NextResponse.json(
         { error: "必須項目を入力してください" },
         { status: 400 }
@@ -19,13 +19,6 @@ export async function POST(request: NextRequest) {
     if (data.ownerPassword.length < 6) {
       return NextResponse.json(
         { error: "オーナーパスワードは6文字以上で設定してください" },
-        { status: 400 }
-      )
-    }
-
-    if (data.storePassword.length < 4) {
-      return NextResponse.json(
-        { error: "店舗パスワードは4文字以上で設定してください" },
         { status: 400 }
       )
     }
