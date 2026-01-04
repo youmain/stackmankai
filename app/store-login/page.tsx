@@ -44,9 +44,9 @@ export default function StoreLoginPage() {
         return
       }
       
-      // 店舗オーナーまたは従業員のみログイン可能
-      if (userData.role !== "store_owner" && userData.role !== "employee") {
-        setError("店舗オーナーまたは従業員としてログインしてください。")
+      // 店舗オーナーのみログイン可能
+      if (userData.role !== "store_owner") {
+        setError("店舗オーナーとしてログインしてください。従業員の方は従業員ログインをご利用ください。")
         setLoading(false)
         return
       }
@@ -141,7 +141,13 @@ export default function StoreLoginPage() {
           </p>
         </div>
 
-        <div className="mt-4 text-center">
+        <div className="mt-4 text-center space-y-2">
+          <p className="text-sm text-gray-600">
+            従業員の方は
+            <a href="/employee-login" className="text-purple-600 hover:text-purple-700 font-medium">
+              従業員ログイン
+            </a>
+          </p>
           <p className="text-sm text-gray-600">
             顧客の方は
             <a href="/customer-auth" className="text-blue-600 hover:text-blue-700 font-medium">
