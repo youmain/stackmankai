@@ -142,7 +142,7 @@ export default function StoreDashboardPage() {
             {storeInfo.isStoreOwner && (
               <>
                 <button
-                  onClick={() => router.push("/store-invites")}
+                  onClick={() => router.push("/employee-management")}
                   className="flex items-center justify-between p-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition-all shadow-md hover:shadow-lg"
                 >
                   <div className="text-left">

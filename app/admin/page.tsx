@@ -124,7 +124,7 @@ export default function AdminPage() {
                   </Button>
                 </Link>
                 {isStoreOwner && (
-                  <Link href="/store-invites" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Link href="/employee-management" onClick={() => setIsMobileMenuOpen(false)}>
                     <Button variant="ghost" className="w-full justify-start text-base py-3">
                       <UserCog className="h-5 w-5 mr-3" />
                       従業員管理
@@ -230,7 +230,7 @@ export default function AdminPage() {
 
             {/* 従業員管理 - オーナーのみ */}
             {isStoreOwner && (
-              <Link href="/store-invites" className="block">
+              <Link href="/employee-management" className="block">
                 <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow h-full">
                   <div className="flex items-center mb-4">
                     <UserCog className="h-8 w-8 text-orange-600 mr-3" />
