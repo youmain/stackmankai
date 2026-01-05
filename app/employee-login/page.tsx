@@ -7,6 +7,7 @@ import { LogIn } from 'lucide-react';
 function EmployeeLoginForm() {
   const [inviteCode, setInviteCode] = useState('');
   const [employeeName, setEmployeeName] = useState('');
+  const [verifying, setVerifying] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
@@ -14,12 +15,43 @@ function EmployeeLoginForm() {
   const message = searchParams.get('message');
   const codeParam = searchParams.get('code');
 
-  // URLパラメータから招待コードを取得（QRコードスキャン時）
+  // URLパラメータから招待コードを取得して検証
   useEffect(() => {
     if (codeParam) {
       setInviteCode(codeParam);
+      verifyInviteCode(codeParam);
     }
   }, [codeParam]);
+  
+  // 招待コードを検証して従業員名を取得
+  const verifyInviteCode = async (code: string) => {
+    if (!code.trim()) return;
+    
+    setVerifying(true);
+    setError('');
+    
+    try {
+      const response = await fetch('/api/employee/verify-invite', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ inviteCode: code }),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok && data.employeeName) {
+        setEmployeeName(data.employeeName);
+      } else {
+        setError(data.error || '招待コードの検証に失敗しました');
+      }
+    } catch (err) {
+      setError('招待コードの検証に失敗しました');
+    } finally {
+      setVerifying(false);
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +70,6 @@ function EmployeeLoginForm() {
         },
         body: JSON.stringify({
           inviteCode,
-          employeeName,
           deviceInfo,
         }),
       });
@@ -94,35 +125,41 @@ function EmployeeLoginForm() {
             <label htmlFor="inviteCode" className="block text-sm font-medium text-gray-700 mb-2">
               招待コード <span className="text-red-500">*</span>
             </label>
-            <input
-              type="text"
-              id="inviteCode"
-              value={inviteCode}
-              onChange={(e) => setInviteCode(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="招待コードを入力"
-              required
-            />
+            <div className="flex space-x-2">
+              <input
+                type="text"
+                id="inviteCode"
+                value={inviteCode}
+                onChange={(e) => setInviteCode(e.target.value)}
+                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="招待コードを入力"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => verifyInviteCode(inviteCode)}
+                disabled={verifying || !inviteCode.trim()}
+                className="px-4 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 disabled:opacity-50 transition-colors"
+              >
+                {verifying ? '検証中...' : '検証'}
+              </button>
+            </div>
           </div>
           
-          <div>
-            <label htmlFor="employeeName" className="block text-sm font-medium text-gray-700 mb-2">
-              お名前 <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              id="employeeName"
-              value={employeeName}
-              onChange={(e) => setEmployeeName(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="山田太郎"
-              required
-            />
-          </div>
+          {employeeName && (
+            <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-sm text-gray-700">
+                こんにちは、<span className="font-bold text-green-700">{employeeName}</span>さん
+              </p>
+              <p className="text-xs text-gray-600 mt-1">
+                下のボタンをクリックしてログインしてください
+              </p>
+            </div>
+          )}
           
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !employeeName}
             className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             {loading ? 'ログイン中...' : 'ログイン'}

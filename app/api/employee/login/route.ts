@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export async function POST(req: NextRequest) {
   try {
-    const { inviteCode, employeeName, deviceInfo } = await req.json();
+    const { inviteCode, deviceInfo } = await req.json();
     
     // 招待コードを検証
     const inviteDoc = await adminDb.collection('inviteCodes').doc(inviteCode).get();
@@ -25,6 +25,13 @@ export async function POST(req: NextRequest) {
     // 有効期限チェック
     if (inviteData?.expiresAt && inviteData.expiresAt.toDate() < new Date()) {
       return NextResponse.json({ error: '招待コードの有効期限が切れています' }, { status: 400 });
+    }
+    
+    // 招待コードから従業員名を取得
+    const employeeName = inviteData?.employeeName;
+    
+    if (!employeeName) {
+      return NextResponse.json({ error: '招待コードに従業員名が設定されていません' }, { status: 400 });
     }
     
     // 従業員情報を作成

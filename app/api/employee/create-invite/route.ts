@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 export async function POST(req: NextRequest) {
   try {
     // リクエストボディを取得
-    const { storeId, role, expiresInDays } = await req.json();
+    const { storeId, role, expiresInDays, employeeName } = await req.json();
     
     // Authorizationヘッダーからトークンを取得
     const token = req.headers.get('Authorization')?.split('Bearer ')[1];
@@ -38,6 +38,7 @@ export async function POST(req: NextRequest) {
     await adminDb.collection('inviteCodes').doc(inviteCode).set({
       storeId,
       role,
+      employeeName,
       createdBy: userId,
       createdAt: new Date(),
       expiresAt,
@@ -47,6 +48,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ 
       success: true, 
       inviteCode,
+      employeeName,
       expiresAt 
     });
     

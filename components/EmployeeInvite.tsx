@@ -11,6 +11,7 @@ interface EmployeeInviteProps {
 
 export default function EmployeeInvite({ storeId }: EmployeeInviteProps) {
   const [role, setRole] = useState<'leader' | 'employee'>('employee');
+  const [employeeName, setEmployeeName] = useState('');
   const [inviteCode, setInviteCode] = useState('');
   const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [loading, setLoading] = useState(false);
@@ -36,6 +37,7 @@ export default function EmployeeInvite({ storeId }: EmployeeInviteProps) {
         body: JSON.stringify({
           storeId,
           role,
+          employeeName,
           expiresInDays: 7, // 7日間有効
         }),
       });
@@ -87,6 +89,23 @@ export default function EmployeeInvite({ storeId }: EmployeeInviteProps) {
       {!showQR ? (
         <div className="space-y-4">
           <div>
+            <label className="block text-sm font-semibold mb-2">
+              従業員名 <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={employeeName}
+              onChange={(e) => setEmployeeName(e.target.value)}
+              className="w-full border rounded-lg px-3 py-2"
+              placeholder="山田太郎"
+              required
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              招待する従業員の名前を入力してください
+            </p>
+          </div>
+
+          <div>
             <label className="block text-sm font-semibold mb-2">権限</label>
             <select
               value={role}
@@ -103,7 +122,7 @@ export default function EmployeeInvite({ storeId }: EmployeeInviteProps) {
 
           <button
             onClick={generateInviteCode}
-            disabled={loading}
+            disabled={loading || !employeeName.trim()}
             className="w-full bg-blue-600 text-white rounded-lg px-4 py-3 font-semibold hover:bg-blue-700 disabled:opacity-50 transition-all"
           >
             {loading ? '生成中...' : '招待コードを生成'}
@@ -182,6 +201,7 @@ export default function EmployeeInvite({ storeId }: EmployeeInviteProps) {
               setShowQR(false);
               setInviteCode('');
               setQrCodeUrl('');
+              setEmployeeName('');
             }}
             className="w-full bg-gray-200 text-gray-700 rounded-lg px-4 py-2 hover:bg-gray-300 transition-all"
           >
