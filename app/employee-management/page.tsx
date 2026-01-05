@@ -2,44 +2,27 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { auth } from '@/lib/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
+import { useAuth } from '@/contexts/auth-context';
 import EmployeeInvite from '@/components/EmployeeInvite';
 import EmployeeList from '@/components/EmployeeList';
 import { ArrowLeft, Users } from 'lucide-react';
 
 export default function EmployeeManagementPage() {
   const router = useRouter();
-  const [storeId, setStoreId] = useState('');
-  const [currentUserId, setCurrentUserId] = useState('');
-  const [isOwner, setIsOwner] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const { user, storeId, isStoreOwner, loading } = useAuth();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        router.push('/store-login');
-        return;
-      }
+    if (!loading && !user) {
+      router.push('/store-login');
+      return;
+    }
 
-      // localStorageから店舗情報を取得
-      const storedStoreId = localStorage.getItem('storeId');
-      const storedIsOwner = localStorage.getItem('isStoreOwner') === 'true';
-      
-      if (!storedStoreId) {
-        alert('店舗情報が見つかりません');
-        router.push('/store-login');
-        return;
-      }
-
-      setStoreId(storedStoreId);
-      setCurrentUserId(user.uid);
-      setIsOwner(storedIsOwner);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, [router]);
+    if (!loading && !storeId) {
+      alert('店舗情報が見つかりません');
+      router.push('/store-login');
+      return;
+    }
+  }, [user, storeId, loading, router]);
 
   if (loading) {
     return (
@@ -50,6 +33,10 @@ export default function EmployeeManagementPage() {
         </div>
       </div>
     );
+  }
+
+  if (!user || !storeId) {
+    return null;
   }
 
   return (
@@ -82,8 +69,8 @@ export default function EmployeeManagementPage() {
         {/* 従業員一覧 */}
         <EmployeeList 
           storeId={storeId} 
-          currentUserId={currentUserId}
-          isOwner={isOwner}
+          currentUserId={user.uid}
+          isOwner={isStoreOwner}
         />
       </div>
     </div>
