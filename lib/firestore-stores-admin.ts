@@ -68,6 +68,7 @@ export async function registerStoreAdmin(
 
     await storeRef.set({
       uid: uid,
+      ownerId: uid,  // 招待コード生成APIの権限チェック用
       name: data.name,
       email: data.email,
       phone: data.phone || "",
