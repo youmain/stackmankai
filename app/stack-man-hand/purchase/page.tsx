@@ -289,8 +289,8 @@ export default function StackManHandPurchasePage() {
               <p className="text-2xl font-bold text-blue-600">{settings?.purchasePrice?.toLocaleString() ?? '---'}💰</p>
             </div>
             <div>
-              <p className="text-sm text-gray-600">基礎報酬</p>
-              <p className="text-2xl font-bold text-green-600">{settings?.rewardAmount?.toLocaleString() ?? '---'}💰</p>
+              <p className="text-sm text-gray-600">報酬ベース額</p>
+              <p className="text-2xl font-bold text-green-600">{settings?.rewardBaseAmount?.toLocaleString() ?? '---'}💰</p>
             </div>
             <div className="col-span-2">
               <p className="text-sm text-gray-600">営業時間</p>

@@ -15,7 +15,7 @@ export interface PokerOperationHours {
 export interface StackManHandSettings {
   enabled: boolean
   purchasePrice: number
-  rewardAmount: number
+  rewardBaseAmount: number
 
 }
 

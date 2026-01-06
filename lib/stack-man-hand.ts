@@ -204,7 +204,7 @@ export const purchaseStackManHand = async (
     const multiplier = Math.floor(Math.random() * 11) + 10
     
     // Calculate rewards
-    const baseReward = settings.rewardAmount
+    const baseReward = settings.rewardBaseAmount
     const finalReward = baseReward * multiplier
     
   // Calculate valid until (end of today)

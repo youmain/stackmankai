@@ -20,7 +20,7 @@ export default function StoreSettingsPage() {
   // Stack Man Hand Settings
   const [stackManHandEnabled, setStackManHandEnabled] = useState(false)
   const [purchasePrice, setPurchasePrice] = useState(1000)
-  const [rewardAmount, setRewardAmount] = useState(1000)
+  const [rewardBaseAmount, setRewardBaseAmount] = useState(1000)
 
   // Chat Poker Operation Hours
   const [pokerOpenTime, setPokerOpenTime] = useState("19:00")
@@ -44,7 +44,7 @@ export default function StoreSettingsPage() {
           if (storeData.stackManHandSettings) {
             setStackManHandEnabled(storeData.stackManHandSettings.enabled)
             setPurchasePrice(storeData.stackManHandSettings.purchasePrice)
-            setRewardAmount(storeData.stackManHandSettings.rewardAmount)
+            setRewardBaseAmount(storeData.stackManHandSettings.rewardBaseAmount)
           }
 
           if (storeData.pokerOperationHours) {
@@ -94,7 +94,7 @@ export default function StoreSettingsPage() {
         stackManHandSettings: {
           enabled: stackManHandEnabled,
           purchasePrice: Number(purchasePrice),
-          rewardAmount: Number(rewardAmount),
+          rewardBaseAmount: Number(rewardBaseAmount),
         },
         pokerOperationHours: {
           open: pokerOpenTime,
@@ -167,12 +167,12 @@ export default function StoreSettingsPage() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        報酬額（店舗チップ）
+                        報酬ベース額（店舗チップ）
                       </label>
                       <input
                         type="number"
-                        value={rewardAmount}
-                        onChange={(e) => setRewardAmount(Number(e.target.value))}
+                        value={rewardBaseAmount}
+                        onChange={(e) => setRewardBaseAmount(Number(e.target.value))}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md"
                         min="0"
                       />
