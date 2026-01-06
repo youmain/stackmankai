@@ -32,7 +32,7 @@ export default function StoreSettingsPage() {
 
   useEffect(() => {
     const loadStoreSettings = async () => {
-      if (!storeId || !isStoreOwner) {
+      if (!loading && (!storeId || !isStoreOwner)) {
         router.push("/store-dashboard")
         return
       }
