@@ -10,7 +10,9 @@ import type { Store } from "@/types/store"
 import type { StackManHandSettings, RakeSettings, StackResetSettings, PokerOperationHours } from "@/types/stack-man-hand"
 
 export default function StoreSettingsPage() {
-  const { user, storeId, storeName, userName, isStoreOwner, loading } = useAuth()
+  const { user, storeId: authStoreId, storeName: authStoreName, userName, isStoreOwner, loading } = useAuth()
+  const storeId = authStoreId || "king-high-store-id" // デバッグ用固定ID
+  const storeName = authStoreName || "キングハイ"
   const router = useRouter()
   const [saving, setSaving] = useState(false)
   // Stack Man Hand Settings
