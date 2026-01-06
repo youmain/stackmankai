@@ -1,5 +1,10 @@
-
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
 import type { PokerOperationHours } from "@/types/stack-man-hand"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
 
 /**
  * Check if the current time is within the specified operation hours.

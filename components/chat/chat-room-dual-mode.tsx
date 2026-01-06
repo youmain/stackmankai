@@ -454,7 +454,9 @@ export function ChatRoomDualMode() {
       console.error("Error starting game:", err)
       setError(err instanceof Error ? err.message : "ゲームを開始できませんでした")
     }
-  }eTimeout = async () => {
+  }
+  
+  const handleTimeout = async () => {
     if (!customerAccount || !pokerGameId || !pokerGame) return
     
     const currentPlayer = pokerGame.players[pokerGame.currentPlayerIndex]
