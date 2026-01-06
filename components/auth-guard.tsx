@@ -6,7 +6,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 interface AuthGuardProps {
   children: React.ReactNode
@@ -15,15 +15,20 @@ interface AuthGuardProps {
 export function AuthGuard({ children }: AuthGuardProps) {
   const { user, loading } = useAuth()
   const router = useRouter()
+  const [isAuthorized, setIsAuthorized] = useState(false)
 
   useEffect(() => {
-    if (!loading && (!user || (user.role !== "store_owner" && user.role !== "employee"))) {
-      // 認証がない場合はログインページへ飛ばす
-      router.push("/store-login")
+    if (!loading) {
+      if (!user || (user.role !== "store_owner" && user.role !== "employee")) {
+        // 認証がない場合はログインページへ飛ばす
+        router.push("/store-login")
+      } else {
+        setIsAuthorized(true)
+      }
     }
   }, [loading, user, router])
 
-  if (loading) {
+  if (loading || !isAuthorized) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -55,16 +60,6 @@ export function AuthGuard({ children }: AuthGuardProps) {
               </div>
             </AlertDescription>
           </Alert>
-        </div>
-      </div>
-    )
-  }
-
-  if (!user || (user.role !== "store_owner" && user.role !== "employee")) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-muted-foreground">ログインページへ移動しています...</p>
         </div>
       </div>
     )
