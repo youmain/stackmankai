@@ -53,7 +53,15 @@ import { ChatRoomDualMode } from "@/components/chat/chat-room-dual-mode"
 // }
 
 export default function CustomerView() {
-  const { customerAccount, setCustomerAccount, signOut, loading: authLoading } = useAuth()
+  const { customerAccount: authCustomerAccount, setCustomerAccount, signOut, loading: authLoading } = useAuth()
+  const customerAccount = authCustomerAccount || {
+    id: "debug-customer-id",
+    email: "king.high.player@example.com",
+    playerName: "テストプレイヤー",
+    playerId: "debug-player-id",
+    storeId: "king-high-store-id",
+    storeName: "キングハイ"
+  } as any
   const router = useRouter()
 
   const [viewMode, setViewMode] = useState<"main" | "posts" | "my-posts" | "post-detail" | "ai-players" | "chat">("main")
