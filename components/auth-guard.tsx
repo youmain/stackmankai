@@ -12,7 +12,7 @@ interface AuthGuardProps {
 }
 
 export function AuthGuard({ children }: AuthGuardProps) {
-  const { userName, userType, loading } = useAuth()
+  const { userName, userType, isStoreOwner, isEmployee, loading } = useAuth()
 
   if (loading) {
     return (
@@ -51,7 +51,8 @@ export function AuthGuard({ children }: AuthGuardProps) {
     )
   }
 
-  if (!userName || userType !== "admin") {
+  // 店舗オーナーまたは従業員であればアクセス許可
+  if (!userName || (!isStoreOwner && !isEmployee)) {
     return <LoginForm />
   }
 
