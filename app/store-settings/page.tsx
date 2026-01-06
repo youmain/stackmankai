@@ -32,10 +32,7 @@ export default function StoreSettingsPage() {
 
   useEffect(() => {
     const loadStoreSettings = async () => {
-      if (!loading && (!storeId || !isStoreOwner)) {
-        router.push("/store-dashboard")
-        return
-      }
+      
 
       try {
         const db = getDb()
