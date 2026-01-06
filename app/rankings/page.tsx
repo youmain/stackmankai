@@ -6,17 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Trophy, Users, Calendar, Target, Zap, BarChart3, Percent, Star, RotateCcw, AlertCircle, RefreshCw } from 'lucide-react'
+import { Trophy, Users, Zap, RefreshCw, Star, TrendingUp, Target } from 'lucide-react'
 import {
   subscribeToPlayers,
   subscribeToRakeHistory,
   subscribeToStoreRankingSettings,
   subscribeToDailyRankings,
   subscribeToMonthlyPoints,
-  resetAllRankings,
   updateProvisionalRankingForToday,
-  subscribeToGames,
   subscribeToMonthlyRankings,
 } from "@/lib/firestore"
 import type { Player, RakeHistory, StoreRankingSettings, DailyRanking, MonthlyPoints } from "@/types"
@@ -27,7 +24,7 @@ import {
   getMaxWinRankings,
   getWinStreakRankings,
 } from "@/lib/utils/ranking-calculator"
-import { formatMonth, getRankIcon, formatChips, formatDate } from "@/lib/utils/formatters"
+import { getRankIcon, formatChips } from "@/lib/utils/formatters"
 import { AuthGuard } from "@/components/auth-guard"
 
 export default function RankingsPage() {
@@ -39,27 +36,17 @@ export default function RankingsPage() {
 }
 
 function RankingsContent() {
-  const { userName, storeId, isStoreOwner } = useAuth()
+  const { storeId, isStoreOwner } = useAuth()
   const [players, setPlayers] = useState<Player[]>([])
   const [rakeHistory, setRakeHistory] = useState<RakeHistory[]>([])
   const [storeSettings, setStoreRankingSettings] = useState<StoreRankingSettings | null>(null)
   const [dailyRankings, setDailyRankings] = useState<DailyRanking[]>([])
   const [monthlyPoints, setMonthlyPoints] = useState<MonthlyPoints[]>([])
   const [monthlyRankings, setMonthlyRankings] = useState<any[]>([])
-  const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null)
-  const [isChartModalOpen, setIsChartModalOpen] = useState(false)
-  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false)
-  const [isResetting, setIsResetting] = useState(false)
   const [isRecalculating, setIsRecalculating] = useState(false)
-  const [isReloading, setIsReloading] = useState(false)
-  const [isCheckingUnprocessed, setIsCheckingUnprocessed] = useState(false)
-  const [unprocessedGames, setUnprocessedGames] = useState<any[]>([])
-  const [showUnprocessedDialog, setShowUnprocessedDialog] = useState(false)
 
   useEffect(() => {
     if (!storeId) return
-
-    console.log("[v0] Rankings Page - Starting data subscriptions with storeId:", storeId)
 
     const currentDate = new Date()
     const currentYear = currentDate.getFullYear()
@@ -99,13 +86,29 @@ function RankingsContent() {
     }
   }, [storeId])
 
-  const handleReloadRanking = async () => {
+  const allTimeRankings = useMemo(() => {
+    return calculateRankings(rakeHistory, players)
+  }, [rakeHistory, players])
+
+  const winRateRankings = useMemo(() => {
+    return getWinRateRankings(allTimeRankings)
+  }, [allTimeRankings])
+
+  const maxWinRankings = useMemo(() => {
+    return getMaxWinRankings(allTimeRankings)
+  }, [allTimeRankings])
+
+  const winStreakRankings = useMemo(() => {
+    return getWinStreakRankings(allTimeRankings)
+  }, [allTimeRankings])
+
+  const handleReloadRanking = () => {
     window.location.reload()
   }
 
   const handleRecalculateRanking = useCallback(async () => {
     try {
-      if (!userName || !storeId) return
+      if (!storeId) return
       setIsRecalculating(true)
       await updateProvisionalRankingForToday(storeId)
     } catch (error) {
@@ -113,7 +116,7 @@ function RankingsContent() {
     } finally {
       setIsRecalculating(false)
     }
-  }, [userName, storeId])
+  }, [storeId])
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -134,36 +137,133 @@ function RankingsContent() {
               <RefreshCw className="h-4 w-4 mr-2" />
               再読み込み
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleRecalculateRanking}
-              disabled={isRecalculating}
-              className="text-blue-600 border-blue-200 hover:bg-blue-50"
-            >
-              <Zap className={`h-4 w-4 mr-2 ${isRecalculating ? "animate-spin" : ""}`} />
-              暫定計算
-            </Button>
+            {isStoreOwner && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRecalculateRanking}
+                disabled={isRecalculating}
+                className="text-blue-600 border-blue-200 hover:bg-blue-50"
+              >
+                <Zap className={`h-4 w-4 mr-2 ${isRecalculating ? "animate-spin" : ""}`} />
+                暫定計算
+              </Button>
+            )}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-8">
-          <Card>
-            <CardHeader>
-              <CardTitle>プレイヤーランキング</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-10">
-                <Trophy className="h-12 w-12 text-yellow-400 mx-auto mb-4" />
-                <p>ランキングデータを表示中...</p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  店舗ID: {storeId}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <Tabs defaultValue="profit" className="space-y-6">
+          <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full max-w-2xl">
+            <TabsTrigger value="profit">収支</TabsTrigger>
+            <TabsTrigger value="winrate">勝率</TabsTrigger>
+            <TabsTrigger value="maxwin">最大勝利</TabsTrigger>
+            <TabsTrigger value="streak">連勝</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="profit">
+            <RankingTable 
+              title="通算収支ランキング" 
+              data={allTimeRankings} 
+              icon={<TrendingUp className="h-5 w-5 text-blue-500" />}
+              valueKey="totalProfit"
+              valueFormatter={(v) => formatChips(v, true)}
+            />
+          </TabsContent>
+
+          <TabsContent value="winrate">
+            <RankingTable 
+              title="勝率ランキング (3戦以上)" 
+              data={winRateRankings} 
+              icon={<Target className="h-5 w-5 text-green-500" />}
+              valueKey="winRate"
+              valueFormatter={(v) => `${v.toFixed(1)}%`}
+            />
+          </TabsContent>
+
+          <TabsContent value="maxwin">
+            <RankingTable 
+              title="最大勝利額ランキング" 
+              data={maxWinRankings} 
+              icon={<Star className="h-5 w-5 text-yellow-500" />}
+              valueKey="maxWin"
+              valueFormatter={(v) => formatChips(v)}
+            />
+          </TabsContent>
+
+          <TabsContent value="streak">
+            <RankingTable 
+              title="最多連勝ランキング" 
+              data={winStreakRankings} 
+              icon={<Zap className="h-5 w-5 text-orange-500" />}
+              valueKey="maxWinStreak"
+              valueFormatter={(v) => `${v}連勝`}
+            />
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
+  )
+}
+
+interface RankingTableProps {
+  title: string
+  data: any[]
+  icon: React.ReactNode
+  valueKey: string
+  valueFormatter: (value: any) => string
+}
+
+function RankingTable({ title, data, icon, valueKey, valueFormatter }: RankingTableProps) {
+  if (data.length === 0) {
+    return (
+      <Card>
+        <CardContent className="py-10 text-center text-muted-foreground">
+          データがありません
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center space-x-2">
+        {icon}
+        <CardTitle>{title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="text-left text-sm text-muted-foreground border-b">
+                <th className="pb-2 font-medium w-16">順位</th>
+                <th className="pb-2 font-medium">プレイヤー</th>
+                <th className="pb-2 font-medium text-right">スコア</th>
+                <th className="pb-2 font-medium text-right">ゲーム数</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y">
+              {data.slice(0, 20).map((player, index) => (
+                <tr key={player.playerId} className="hover:bg-gray-50 transition-colors">
+                  <td className="py-3 font-bold text-lg">
+                    {getRankIcon(index)}
+                  </td>
+                  <td className="py-3">
+                    <div className="font-medium">{player.playerName}</div>
+                  </td>
+                  <td className="py-3 text-right font-bold">
+                    <Badge variant={player[valueKey] > 0 ? "default" : "outline"} className={player[valueKey] > 0 ? "bg-blue-100 text-blue-700 hover:bg-blue-100" : ""}>
+                      {valueFormatter(player[valueKey])}
+                    </Badge>
+                  </td>
+                  <td className="py-3 text-right text-muted-foreground">
+                    {player.totalGames}戦
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </CardContent>
+    </Card>
   )
 }
