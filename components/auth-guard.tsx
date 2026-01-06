@@ -51,10 +51,9 @@ export function AuthGuard({ children }: AuthGuardProps) {
     )
   }
 
-  // デバッグ用に一時的にアクセスを許可
-  // if (!userName || (!isStoreOwner && !isEmployee)) {
-  //   return <LoginForm />
-  // }
+  if (!userName || (!isStoreOwner && !isEmployee)) {
+    return <LoginForm />
+  }
 
   return <>{children}</>
 }

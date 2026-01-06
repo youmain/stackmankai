@@ -43,8 +43,8 @@ export function ChatRoomDualMode() {
   const [pokerGameId, setPokerGameId] = useState<string | null>(null)
   const [showTurnNotification, setShowTurnNotification] = useState(false)
   const [toastMessages, setToastMessages] = useState<ChatMessage[]>([])
-  const [pokerAvailable, setPokerAvailable] = useState(false)
-  const [operationHours, setOperationHours] = useState<PokerOperationHours | null>({ open: "10:00", close: "16:00" })
+  const [pokerAvailable, setPokerAvailable] = useState(true)
+  const [operationHours, setOperationHours] = useState<PokerOperationHours | null>(null)
   
   // toastMessagesの変化をログ出力
   useEffect(() => {
@@ -252,6 +252,7 @@ export function ChatRoomDualMode() {
           setError(`ポーカーは現在利用できません。稼働時間: ${operationHours?.open} - ${operationHours?.close}`)
           return
         }
+        setError("") // 利用可能な場合はエラーをクリア
 
         let gameId = savedGameId
         if (!gameId) {

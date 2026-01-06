@@ -10,28 +10,21 @@ import type { Store } from "@/types/store"
 import type { StackManHandSettings, RakeSettings, StackResetSettings, PokerOperationHours } from "@/types/stack-man-hand"
 
 export default function StoreSettingsPage() {
-  const { user, storeId: authStoreId, storeName: authStoreName, userName, isStoreOwner, loading } = useAuth()
-  const storeId = authStoreId || "king-high-store-id" // デバッグ用固定ID
-  const storeName = authStoreName || "キングハイ"
+  const { storeId: authStoreId, storeName: authStoreName, isStoreOwner, loading } = useAuth()
+  const storeId = authStoreId
+  const storeName = authStoreName
   const router = useRouter()
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
   // Stack Man Hand Settings
   const [stackManHandEnabled, setStackManHandEnabled] = useState(false)
   const [purchasePrice, setPurchasePrice] = useState(1000)
   const [rewardAmount, setRewardAmount] = useState(1000)
+
   // Chat Poker Operation Hours
-  const [pokerOpenTime, setPokerOpenTime] = useState("10:00")
-  const [pokerCloseTime, setPokerCloseTime] = useState("22:00")
-  
-  // Rake Settings
-  const [rakeEnabled, setRakeEnabled] = useState(false)
-  const [rakePercentage, setRakePercentage] = useState(30)
-  const [rakeCollectionTime, setRakeCollectionTime] = useState("03:00")
-  
-  // Stack Reset Settings
-  const [stackResetEnabled, setStackResetEnabled] = useState(false)
-  const [stackResetTime, setStackResetTime] = useState("04:00")
-  const [minimumStack, setMinimumStack] = useState(10000)
+  const [pokerOpenTime, setPokerOpenTime] = useState("19:00")
+  const [pokerCloseTime, setPokerCloseTime] = useState("24:00")
 
   useEffect(() => {
     const loadStoreSettings = async () => {
@@ -45,54 +38,50 @@ export default function StoreSettingsPage() {
         if (storeDoc.exists()) {
           const storeData = storeDoc.data() as Store & {
             stackManHandSettings?: StackManHandSettings
-            rakeSettings?: RakeSettings
-            stackResetSettings?: StackResetSettings
             pokerOperationHours?: PokerOperationHours
           }
 
-          // Load Stack Man Hand settings
           if (storeData.stackManHandSettings) {
             setStackManHandEnabled(storeData.stackManHandSettings.enabled)
             setPurchasePrice(storeData.stackManHandSettings.purchasePrice)
             setRewardAmount(storeData.stackManHandSettings.rewardAmount)
           }
 
-          // Load Chat Poker Operation Hours
-          // 検証用に強制的に時間外に設定
-          setPokerOpenTime("10:00")
-          setPokerCloseTime("16:00")
-
-          // Load Rake settings
-          if (storeData.rakeSettings) {
-            setRakeEnabled(storeData.rakeSettings.enabled)
-            setRakePercentage(storeData.rakeSettings.rakePercentage)
-            setRakeCollectionTime(storeData.rakeSettings.collectionTime)
-          }
-
-          // Load Stack Reset settings
-          if (storeData.stackResetSettings) {
-            setStackResetEnabled(storeData.stackResetSettings.enabled)
-            setStackResetTime(storeData.stackResetSettings.resetTime)
-            setMinimumStack(storeData.stackResetSettings.minimumStack)
+          if (storeData.pokerOperationHours) {
+            setPokerOpenTime(storeData.pokerOperationHours.open)
+            setPokerCloseTime(storeData.pokerOperationHours.close)
           }
         }
       } catch (error) {
         console.error("Error loading store settings:", error)
-        alert("設定の読み込みに失敗しました")
       }
     }
 
     if (!loading && storeId) {
       loadStoreSettings()
-      // 自動保存（検証用）
-      setTimeout(() => {
-        handleSave()
-      }, 2000)
     }
   }, [loading, storeId])
 
+  const calculateDuration = (open: string, close: string) => {
+    const [openH, openM] = open.split(":").map(Number)
+    const [closeH, closeM] = close.split(":").map(Number)
+    
+    let durationMin = (closeH * 60 + closeM) - (openH * 60 + openM)
+    if (durationMin < 0) {
+      durationMin += 24 * 60 // 日を跨ぐ場合
+    }
+    return durationMin / 60
+  }
+
   const handleSave = async () => {
     if (!storeId) return
+    setError(null)
+
+    const duration = calculateDuration(pokerOpenTime, pokerCloseTime)
+    if (duration > 5) {
+      setError("稼働時間は最大5時間まで設定可能です。")
+      return
+    }
 
     setSaving(true)
     try {
@@ -110,16 +99,6 @@ export default function StoreSettingsPage() {
         pokerOperationHours: {
           open: pokerOpenTime,
           close: pokerCloseTime,
-        },
-        rakeSettings: {
-          enabled: rakeEnabled,
-          rakePercentage: Number(rakePercentage),
-          collectionTime: rakeCollectionTime,
-        },
-        stackResetSettings: {
-          enabled: stackResetEnabled,
-          resetTime: stackResetTime,
-          minimumStack: Number(minimumStack),
         },
         updatedAt: new Date(),
       })
@@ -148,6 +127,12 @@ export default function StoreSettingsPage() {
 
           <h1 className="text-3xl font-bold text-gray-900 mb-2">店舗設定</h1>
           <p className="text-gray-600 mb-8">{storeName}</p>
+
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+              {error}
+            </div>
+          )}
 
           <div className="space-y-8">
             {/* Stack Man Hand Settings */}
@@ -193,11 +178,6 @@ export default function StoreSettingsPage() {
                       />
                     </div>
                   </div>
-
-                  <div className="bg-blue-50 border border-blue-200 rounded-md p-4 text-sm text-blue-800">
-                    <p className="font-medium mb-1">Stack Man Hand とは？</p>
-                    <p>プレイヤーがアプリチップでランダムなポーカーハンドを購入し、店舗で使用できるシステムです。購入したハンドが勝利すれば、店舗チップを獲得できます。</p>
-                  </div>
                 </div>
               )}
             </div>
@@ -230,102 +210,13 @@ export default function StoreSettingsPage() {
                 </div>
               </div>
               <div className="bg-indigo-50 border border-indigo-200 rounded-md p-4 text-sm text-indigo-800 mt-4">
-                <p className="font-medium mb-1">設定の目的</p>
-                <p>チャットポーカーが利用可能な時間帯を設定します。時間外はゲームの作成や参加ができなくなります。店舗でのリアルなポーカー体験を促進するために利用してください。</p>
+                <p className="font-medium mb-1">稼働ルール</p>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>稼働時間は**最大5時間**まで設定可能です。</li>
+                  <li>稼働終了後、**1時間は購入専用タイム**となり、SMHの購入のみ可能です。</li>
+                  <li>購入専用タイム終了後、スタックは自動的にリセット（1万回復 or 20%レーキ）されます。</li>
+                </ul>
               </div>
-            </div>
-
-            {/* Rake Settings */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-gray-900">レーキ設定</h2>
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={rakeEnabled}
-                    onChange={(e) => setRakeEnabled(e.target.checked)}
-                    className="w-5 h-5 text-blue-600 rounded"
-                  />
-                  <span className="ml-2 text-gray-700">有効化</span>
-                </label>
-              </div>
-
-              {rakeEnabled && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        レーキ率（%）
-                      </label>
-                      <input
-                        type="number"
-                        value={rakePercentage}
-                        onChange={(e) => setRakePercentage(Number(e.target.value))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                        min="0"
-                        max="100"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        回収時刻
-                      </label>
-                      <input
-                        type="time"
-                        value={rakeCollectionTime}
-                        onChange={(e) => setRakeCollectionTime(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Stack Reset Settings */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-gray-900">スタックリセット設定</h2>
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={stackResetEnabled}
-                    onChange={(e) => setStackResetEnabled(e.target.checked)}
-                    className="w-5 h-5 text-blue-600 rounded"
-                  />
-                  <span className="ml-2 text-gray-700">有効化</span>
-                </label>
-              </div>
-
-              {stackResetEnabled && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        リセット時刻
-                      </label>
-                      <input
-                        type="time"
-                        value={stackResetTime}
-                        onChange={(e) => setStackResetTime(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        最小スタック
-                      </label>
-                      <input
-                        type="number"
-                        value={minimumStack}
-                        onChange={(e) => setMinimumStack(Number(e.target.value))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                        min="0"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
 
             <div className="flex justify-end pt-4">

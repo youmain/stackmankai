@@ -6,6 +6,7 @@ import { doc, getDoc, collection, query, where, getDocs } from "firebase/firesto
 import { getDb } from "@/lib/firebase"
 import { useAuth } from "@/contexts/auth-context"
 import { getStackManHandSettings, purchaseStackManHand, getTodayStackManHands, calculateRemainingPurchases } from "@/lib/stack-man-hand"
+import { isWithinOperationHours, isWithinPurchaseWindow } from "@/lib/utils"
 import type { StackManHandSettings, StackManHand } from "@/types/stack-man-hand"
 import { PlayingCard } from "@/components/poker-table/playing-card"
 
@@ -46,6 +47,23 @@ export default function StackManHandPurchasePage() {
           return
         }
         setSettings(storeSettings)
+
+        // Check operation hours and purchase window
+        const db = getDb()!
+        const storeDocSnap = await getDoc(doc(db, "stores", customerAccount.storeId))
+        if (storeDocSnap.exists()) {
+          const storeData = storeDocSnap.data()
+          if (storeData.pokerOperationHours) {
+            const isOperating = isWithinOperationHours(storeData.pokerOperationHours)
+            const isPurchasing = isWithinPurchaseWindow(storeData.pokerOperationHours)
+            
+            if (!isOperating && !isPurchasing) {
+              alert(`現在は購入時間外です。\n購入可能時間: ${storeData.pokerOperationHours.open} - ${storeData.pokerOperationHours.close} (終了後1時間まで)`)
+              router.push("/customer-view")
+              return
+            }
+          }
+        }
 
         // Get current stack from Firestore
         console.log("[Purchase] Searching for player:", {

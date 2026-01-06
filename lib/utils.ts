@@ -40,3 +40,29 @@ export const isWithinOperationHours = (hours: PokerOperationHours): boolean => {
     return currentTimeInMinutes >= openTimeInMinutes || currentTimeInMinutes < closeTimeInMinutes
   }
 }
+
+/**
+ * Check if the current time is within the purchase-only window (1 hour after close).
+ */
+export const isWithinPurchaseWindow = (hours: PokerOperationHours): boolean => {
+  if (!hours || !hours.open || !hours.close) return false
+
+  const now = new Date()
+  const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes()
+  
+  const timeToMinutes = (time: string): number => {
+    const [hour, minute] = time.split(':').map(Number)
+    return hour * 60 + minute
+  }
+
+  const closeTimeInMinutes = timeToMinutes(hours.close)
+  const purchaseEndTimeInMinutes = (closeTimeInMinutes + 60) % (24 * 60)
+
+  if (closeTimeInMinutes < purchaseEndTimeInMinutes) {
+    // Normal case (e.g., 24:00 - 01:00)
+    return currentTimeInMinutes >= closeTimeInMinutes && currentTimeInMinutes < purchaseEndTimeInMinutes
+  } else {
+    // Crosses midnight (e.g., 23:30 - 00:30)
+    return currentTimeInMinutes >= closeTimeInMinutes || currentTimeInMinutes < purchaseEndTimeInMinutes
+  }
+}
