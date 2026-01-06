@@ -132,12 +132,20 @@ export default function AdminPage() {
                   </Link>
                 )}
                 {isStoreOwner && (
-                  <Link href="/store-ranking-settings" onClick={() => setIsMobileMenuOpen(false)}>
-                    <Button variant="ghost" className="w-full justify-start text-base py-3">
-                      <Settings className="h-5 w-5 mr-3" />
-                      店舗設定
-                    </Button>
-                  </Link>
+                  <>
+                    <Link href="/store-ranking-settings" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button variant="ghost" className="w-full justify-start text-base py-3">
+                        <Settings className="h-5 w-5 mr-3" />
+                        ランキング設定
+                      </Button>
+                    </Link>
+                    <Link href="/store-settings" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button variant="ghost" className="w-full justify-start text-base py-3">
+                        <Settings className="h-5 w-5 mr-3" />
+                        店舗詳細設定
+                      </Button>
+                    </Link>
+                  </>
                 )}
               </div>
 
@@ -244,17 +252,33 @@ export default function AdminPage() {
               </Link>
             )}
 
-            {/* 店舗設定 - オーナーのみ */}
+            {/* ランキング設定 - オーナーのみ */}
             {isStoreOwner && (
               <Link href="/store-ranking-settings" className="block">
                 <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow h-full">
                   <div className="flex items-center mb-4">
                     <Settings className="h-8 w-8 text-gray-600 mr-3" />
-                    <h3 className="text-xl font-semibold">店舗設定</h3>
+                    <h3 className="text-xl font-semibold">ランキング設定</h3>
                   </div>
                   <p className="text-muted-foreground mb-4">ランキング設定とプライズ管理</p>
                   <div className="w-full bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition-colors text-center">
-                    店舗設定へ
+                    ランキング設定へ
+                  </div>
+                </div>
+              </Link>
+            )}
+
+            {/* 店舗詳細設定 - オーナーのみ */}
+            {isStoreOwner && (
+              <Link href="/store-settings" className="block">
+                <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow h-full">
+                  <div className="flex items-center mb-4">
+                    <Settings className="h-8 w-8 text-blue-600 mr-3" />
+                    <h3 className="text-xl font-semibold">店舗詳細設定</h3>
+                  </div>
+                  <p className="text-muted-foreground mb-4">営業時間・Stack Man Hand・レーキ設定</p>
+                  <div className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors text-center">
+                    店舗詳細設定へ
                   </div>
                 </div>
               </Link>
