@@ -43,8 +43,8 @@ export function ChatRoomDualMode() {
   const [pokerGameId, setPokerGameId] = useState<string | null>(null)
   const [showTurnNotification, setShowTurnNotification] = useState(false)
   const [toastMessages, setToastMessages] = useState<ChatMessage[]>([])
-  const [pokerAvailable, setPokerAvailable] = useState(true)
-  const [operationHours, setOperationHours] = useState<PokerOperationHours | null>(null)
+  const [pokerAvailable, setPokerAvailable] = useState(false)
+  const [operationHours, setOperationHours] = useState<PokerOperationHours | null>({ open: "10:00", close: "16:00" })
   
   // toastMessagesの変化をログ出力
   useEffect(() => {
