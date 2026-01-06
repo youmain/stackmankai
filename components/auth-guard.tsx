@@ -1,74 +1,84 @@
 "use client"
 
 import type React from "react"
-import { useAuth } from "@/contexts/auth-context"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { useRouter, usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
+import { useRouter, usePathname } from "next/navigation"
+import { useAuth } from "@/contexts/auth-context"
 
 interface AuthGuardProps {
   children: React.ReactNode
+  allowedRoles?: ("store_owner" | "employee" | "customer")[]
 }
 
-export function AuthGuard({ children }: AuthGuardProps) {
-  const { user, loading } = useAuth()
+export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
+  const { user, loading, isStoreOwner, isEmployee, isCustomer } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
   const [isAuthorized, setIsAuthorized] = useState(false)
 
   useEffect(() => {
-    // 読み込み中は判定しない
+    // 認証情報の読み込み完了を待つ
     if (loading) return
 
-    if (!user || (user.role !== "store_owner" && user.role !== "employee")) {
-      // 認証がない場合はログインページへ飛ばす
+    // ログインしていない場合
+    if (!user) {
+      console.log("[AuthGuard] 未ログイン: ログインページへリダイレクト", pathname)
       // すでにログインページにいる場合は何もしない
-      if (pathname !== "/store-login") {
-        console.log("[AuthGuard] 未認証のためリダイレクト:", pathname)
-        router.push("/store-login")
+      if (pathname === "/store-login" || pathname === "/customer-auth") {
+        return
+      }
+      
+      // 現在のパスに応じて適切なログインページへ
+      if (pathname.startsWith("/admin") || pathname.startsWith("/players") || 
+          pathname.startsWith("/receipts") || pathname.startsWith("/daily-sales") ||
+          pathname.startsWith("/store-settings") || pathname.startsWith("/employee-management") ||
+          pathname.startsWith("/rankings") || pathname.startsWith("/store-ranking-settings")) {
+        router.replace("/store-login")
+      } else {
+        router.replace("/customer-auth")
+      }
+      return
+    }
+
+    // ロールチェック
+    if (allowedRoles && allowedRoles.length > 0) {
+      const userRole = user.role
+      if (!allowedRoles.includes(userRole)) {
+        console.log("[AuthGuard] 権限不足:", userRole, "許可:", allowedRoles)
+        // 権限がない場合はトップまたは適切なダッシュボードへ
+        if (isCustomer) {
+          router.replace("/customer-view")
+        } else if (isStoreOwner || isEmployee) {
+          router.replace("/admin")
+        } else {
+          router.replace("/")
+        }
+        return
       }
     } else {
-      // 認証成功
-      setIsAuthorized(true)
+      // デフォルトでは店舗オーナーまたは従業員のみ許可（既存の挙動を維持）
+      if (user.role !== "store_owner" && user.role !== "employee") {
+        console.log("[AuthGuard] デフォルト権限不足:", user.role)
+        if (isCustomer) {
+          router.replace("/customer-view")
+        } else {
+          router.replace("/")
+        }
+        return
+      }
     }
-  }, [loading, user, router, pathname])
 
-  // 読み込み中、または認証が確定していない場合はローディングを表示
+    // すべてのチェックをパス
+    setIsAuthorized(true)
+  }, [user, loading, allowedRoles, router, pathname, isStoreOwner, isEmployee, isCustomer])
+
+  // 読み込み中または未承認の場合は何も表示しない（またはローディングスピナー）
   if (loading || !isAuthorized) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-500 font-medium">認証を確認中...</p>
-        </div>
-      </div>
-    )
-  }
-
-  // 顧客アカウントで管理画面にアクセスしようとした場合
-  if (user && user.role === "customer") {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
-        <div className="max-w-md w-full">
-          <Alert className="border-red-200 bg-red-50">
-            <AlertCircle className="h-4 w-4 text-red-600" />
-            <AlertDescription className="text-red-800">
-              <div className="space-y-3">
-                <p className="font-bold">アクセス権限がありません</p>
-                <p className="text-sm">このページは店舗管理者専用です。お客さん専用ページに戻ってください。</p>
-                <Button
-                  onClick={() => {
-                    window.location.href = "/customer-view"
-                  }}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                  お客さん専用ページに戻る
-                </Button>
-              </div>
-            </AlertDescription>
-          </Alert>
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+          <p className="text-gray-600 font-medium">認証を確認中...</p>
         </div>
       </div>
     )
