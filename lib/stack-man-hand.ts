@@ -207,27 +207,28 @@ export const purchaseStackManHand = async (
     const baseReward = settings.rewardAmount
     const finalReward = baseReward * multiplier
     
-    // Calculate valid until (end of today)
-    const validUntil = new Date()
-    validUntil.setHours(23, 59, 59, 999)
-    
-    // Create Stack Man Hand
-    const handsRef = collection(db, "stores", storeId, "stackManHands")
-    const handData: Omit<StackManHand, "id"> = {
-      userId,
-      userName,
-      storeId,
-      cards,
-      handRank,
-      rank,
-      purchasePrice: settings.purchasePrice,
-      multiplier,
-      baseReward,
-      finalReward,
-      purchasedAt: Timestamp.now(),
-      validUntil: Timestamp.fromDate(validUntil),
-      status: "active",
-    }
+  // Calculate valid until (end of today)
+  const validUntil = new Date()
+  validUntil.setHours(23, 59, 59, 999)
+  
+  // Create Stack Man Hand
+  const handsRef = collection(db, "stores", storeId, "stackManHands")
+  const handData: Omit<StackManHand, "id"> = {
+    userId,
+    userName,
+    storeId,
+    cards,
+    handRank,
+    rank,
+    purchasePrice: settings.purchasePrice,
+    multiplier,
+    baseReward,
+    finalReward,
+    purchasedAt: Timestamp.now(),
+    validUntil: Timestamp.fromDate(validUntil),
+    // ステータス管理は不要になったため、activeで固定
+    status: "active", 
+  }
     
     const handDocRef = await addDoc(handsRef, handData)
     
@@ -312,6 +313,7 @@ export const getActiveStackManHands = async (
 
 /**
  * Get player's Stack Man Hands purchased today
+ * Now returns hands purchased within the last 3 days.
  */
 export const getTodayStackManHands = async (
   storeId: string,
@@ -320,17 +322,16 @@ export const getTodayStackManHands = async (
   const db = getDb()
   if (!db) throw new Error("Firestore is not initialized")
   
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const tomorrow = new Date(today)
-  tomorrow.setDate(tomorrow.getDate() + 1)
+  // 3日前の0時0分0秒を取得
+  const threeDaysAgo = new Date()
+  threeDaysAgo.setDate(threeDaysAgo.getDate() - 3)
+  threeDaysAgo.setHours(0, 0, 0, 0)
   
   const handsRef = collection(db, "stores", storeId, "stackManHands")
   const handsQuery = query(
     handsRef,
     where("userId", "==", userId),
-    where("purchasedAt", ">=", Timestamp.fromDate(today)),
-    where("purchasedAt", "<", Timestamp.fromDate(tomorrow))
+    where("purchasedAt", ">=", Timestamp.fromDate(threeDaysAgo))
   )
   
   const snapshot = await getDocs(handsQuery)
@@ -338,6 +339,41 @@ export const getTodayStackManHands = async (
     id: doc.id,
     ...doc.data(),
   })) as StackManHand[]
+}
+
+/**
+ * Clean up Stack Man Hands older than 3 days (4th day deletion)
+ */
+export const cleanupStackManHands = async (storeId: string): Promise<number> => {
+  const db = getDb()
+  if (!db) throw new Error("Firestore is not initialized")
+  
+  // 4日前の0時0分0秒を取得
+  const fourDaysAgo = new Date()
+  fourDaysAgo.setDate(fourDaysAgo.getDate() - 4)
+  fourDaysAgo.setHours(0, 0, 0, 0)
+  
+  const handsRef = collection(db, "stores", storeId, "stackManHands")
+  const handsQuery = query(
+    handsRef,
+    where("purchasedAt", "<", Timestamp.fromDate(fourDaysAgo))
+  )
+  
+  const snapshot = await getDocs(handsQuery)
+  const batch = db.batch()
+  let deletedCount = 0
+  
+  snapshot.docs.forEach((doc) => {
+    batch.delete(doc.ref)
+    deletedCount++
+  })
+  
+  if (deletedCount > 0) {
+    await batch.commit()
+    console.log(`[Cleanup] Deleted ${deletedCount} old Stack Man Hands for store ${storeId}`)
+  }
+  
+  return deletedCount
 }
 
 /**

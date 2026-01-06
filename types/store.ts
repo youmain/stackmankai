@@ -1,4 +1,5 @@
 import type { Timestamp } from "firebase/firestore"
+import type { PokerOperationHours } from "./stack-man-hand"
 
 export interface Store {
   id: string
@@ -23,6 +24,9 @@ export interface Store {
   // タイムスタンプ
   createdAt: Timestamp
   updatedAt: Timestamp
+  
+  // チャットポーカー稼働時間設定
+  pokerOperationHours?: PokerOperationHours
 }
 
 export interface StoreRegistrationData {

@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/auth-context"
 import { doc, getDoc, updateDoc } from "firebase/firestore"
 import { getDb } from "@/lib/firebase"
 import type { Store } from "@/types/store"
-import type { StackManHandSettings, RakeSettings, StackResetSettings } from "@/types/stack-man-hand"
+import type { StackManHandSettings, RakeSettings, StackResetSettings, PokerOperationHours } from "@/types/stack-man-hand"
 
 export default function StoreSettingsPage() {
   const { user, storeId, storeName, userName, isStoreOwner, loading } = useAuth()
@@ -16,8 +16,9 @@ export default function StoreSettingsPage() {
   const [stackManHandEnabled, setStackManHandEnabled] = useState(false)
   const [purchasePrice, setPurchasePrice] = useState(1000)
   const [rewardAmount, setRewardAmount] = useState(1000)
-  const [businessHoursOpen, setBusinessHoursOpen] = useState("10:00")
-  const [businessHoursClose, setBusinessHoursClose] = useState("22:00")
+  // Chat Poker Operation Hours
+  const [pokerOpenTime, setPokerOpenTime] = useState("10:00")
+  const [pokerCloseTime, setPokerCloseTime] = useState("22:00")
   
   // Rake Settings
   const [rakeEnabled, setRakeEnabled] = useState(false)
@@ -46,6 +47,7 @@ export default function StoreSettingsPage() {
             stackManHandSettings?: StackManHandSettings
             rakeSettings?: RakeSettings
             stackResetSettings?: StackResetSettings
+            pokerOperationHours?: PokerOperationHours
           }
 
           // Load Stack Man Hand settings
@@ -53,8 +55,12 @@ export default function StoreSettingsPage() {
             setStackManHandEnabled(storeData.stackManHandSettings.enabled)
             setPurchasePrice(storeData.stackManHandSettings.purchasePrice)
             setRewardAmount(storeData.stackManHandSettings.rewardAmount)
-            setBusinessHoursOpen(storeData.stackManHandSettings.businessHours.open)
-            setBusinessHoursClose(storeData.stackManHandSettings.businessHours.close)
+          }
+
+          // Load Chat Poker Operation Hours
+          if (storeData.pokerOperationHours) {
+            setPokerOpenTime(storeData.pokerOperationHours.open)
+            setPokerCloseTime(storeData.pokerOperationHours.close)
           }
 
           // Load Rake settings
@@ -95,10 +101,10 @@ export default function StoreSettingsPage() {
           enabled: stackManHandEnabled,
           purchasePrice: Number(purchasePrice),
           rewardAmount: Number(rewardAmount),
-          businessHours: {
-            open: businessHoursOpen,
-            close: businessHoursClose,
-          },
+        },
+        pokerOperationHours: {
+          open: pokerOpenTime,
+          close: pokerCloseTime,
         },
         rakeSettings: {
           enabled: rakeEnabled,
@@ -167,8 +173,7 @@ export default function StoreSettingsPage() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       購入価格（アプリチップ）
-                    </label>
-                    <input
+		                <input
                       type="number"
                       value={purchasePrice}
                       onChange={(e) => setPurchasePrice(Number(e.target.value))}
@@ -190,37 +195,63 @@ export default function StoreSettingsPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      営業開始時刻
-                    </label>
-                    <input
-                      type="time"
-                      value={businessHoursOpen}
-                      onChange={(e) => setBusinessHoursOpen(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      営業終了時刻
-                    </label>
-                    <input
-                      type="time"
-                      value={businessHoursClose}
-                      onChange={(e) => setBusinessHoursClose(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                    />
-                  </div>
-                </div>
+
 
                 <div className="bg-blue-50 border border-blue-200 rounded-md p-4 text-sm text-blue-800">
                   <p className="font-medium mb-1">Stack Man Hand とは？</p>
                   <p>プレイヤーがアプリチップでランダムなポーカーハンドを購入し、店舗で使用できるシステムです。購入したハンドが勝利すれば、店舗チップを獲得できます。</p>
                 </div>
               </div>
-            )}
+	            )}
+	          </div>
+
+	          {/* Chat Poker Operation Hours */}
+		          <div className="bg-white rounded-lg shadow p-6">
+		            <h2 className="text-xl font-bold text-gray-900 mb-4">チャットポーカー稼働時間設定</h2>
+		            <div className="grid grid-cols-2 gap-4">
+		              <div>
+		                <label className="block text-sm font-medium text-gray-700 mb-1">
+		                  稼働開始時刻
+		                </label>
+		                <input
+		                  type="time"
+		                  value={pokerOpenTime}
+		                  onChange={(e) => setPokerOpenTime(e.target.value)}
+		                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+		                />
+		              </div>
+		              <div>
+		                <label className="block text-sm font-medium text-gray-700 mb-1">
+		                  稼働終了時刻
+		                </label>
+		                <input
+		                  type="time"
+		                  value={pokerCloseTime}
+		                  onChange={(e) => setPokerCloseTime(e.target.value)}
+		                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+		                />
+		              </div>
+		            </div>
+		            <div className="bg-indigo-50 border border-indigo-200 rounded-md p-4 text-sm text-indigo-800 mt-4">
+		              <p className="font-medium mb-1">設定の目的</p>
+		              <p>チャットポーカーが利用可能な時間帯を設定します。時間外はゲームの作成や参加ができなくなります。店舗でのリアルなポーカー体験を促進するために利用してください。</p>
+		            </div>
+		          </div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  稼働終了時刻
+                </label>
+                <input
+                  type="time"
+                  value={pokerCloseTime}
+                  onChange={(e) => setPokerCloseTime(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                />
+              </div>
+            </div>
+            <div className="bg-indigo-50 border border-indigo-200 rounded-md p-4 text-sm text-indigo-800 mt-4">
+              <p className="font-medium mb-1">設定の目的</p>
+              <p>チャットポーカーが利用可能な時間帯を設定します。時間外はゲームの作成や参加ができなくなります。店舗でのリアルなポーカー体験を促進するために利用してください。</p>
+            </div>
           </div>
 
           {/* Rake Settings */}

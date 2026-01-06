@@ -112,7 +112,11 @@ export default function StackManHandPurchasePage() {
         setCurrentStack(stack)
         setPlayerName(playerData.name || customerAccount.playerName || "")
 
-        // Load today's hands
+        // Run cleanup before loading hands
+        const { cleanupStackManHands } = await import('@/lib/stack-man-hand')
+        await cleanupStackManHands(customerAccount.storeId)
+
+        // Load today's hands (now includes last 3 days)
         const hands = await getTodayStackManHands(customerAccount.storeId, customerAccount.playerId)
         setTodayHands(hands)
 
@@ -250,10 +254,13 @@ export default function StackManHandPurchasePage() {
           </div>
         </div>
 
-        {/* Description */}
-        <div className="text-center mb-8">
-          <p className="text-gray-600">ランダムなポーカーハンドを購入して、店舗で報酬を獲得しよう！</p>
-        </div>
+	        {/* Description */}
+	        <div className="text-center mb-8">
+	          <p className="text-gray-600">ランダムなポーカーハンドを購入して、店舗で報酬を獲得しよう！</p>
+	          <p className="text-sm text-red-500 font-semibold mt-2">
+	            ※購入したハンドは当日の営業終了まで有効です。履歴は3日間保存され、4日目に自動削除されます。
+	          </p>
+	        </div>
 
         {/* Settings Info */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
@@ -359,44 +366,53 @@ export default function StackManHandPurchasePage() {
                     shadow: "shadow"
                   }
                 }
-                const config = rankConfig[hand.rank]
-                
-                return (
-                  <div
-                    key={hand.id}
-                    onClick={() => router.push(`/stack-man-hand/display/${hand.id}`)}
-                    className={`border-2 ${config.border} ${config.bg} rounded-xl p-4 cursor-pointer hover:scale-[1.02] transition-all ${config.shadow}`}
-                  >
-                    <div className="flex items-center justify-between mb-3">
-                      <div className={`${config.badge} text-white px-3 py-1 rounded-lg text-sm font-bold flex items-center gap-1`}>
-                        <span>{config.emoji}</span>
-                        <span>{hand.rank} RANK</span>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-2xl font-bold text-purple-600">{hand.multiplier}x</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="flex gap-2">
-                          {hand.cards.map((card, idx) => (
-                            <PlayingCard
-                              key={idx}
-                              card={{ suit: card.suit, rank: card.rank }}
-                              size="md"
-                            />
-                          ))}
-                        </div>
-                        <p className="text-base font-semibold text-gray-800">{hand.handRank}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-lg font-bold text-orange-600">{hand.finalReward.toLocaleString()}💰</p>
-                      </div>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
+	                const config = rankConfig[hand.rank]
+	                
+	                // validUntilをDateオブジェクトに変換
+	                const validUntilDate = hand.validUntil.toDate()
+	                const validUntilString = validUntilDate.toLocaleDateString('ja-JP', {
+	                  year: 'numeric',
+	                  month: '2-digit',
+	                  day: '2-digit',
+	                }).replace(/\//g, '/')
+	                
+	                return (
+	                  <div
+	                    key={hand.id}
+	                    onClick={() => router.push(`/stack-man-hand/display/${hand.id}`)}
+	                    className={`border-2 ${config.border} ${config.bg} rounded-xl p-4 cursor-pointer hover:scale-[1.02] transition-all ${config.shadow}`}
+	                  >
+	                    <div className="flex items-center justify-between mb-3">
+	                      <div className={`${config.badge} text-white px-3 py-1 rounded-lg text-sm font-bold flex items-center gap-1`}>
+	                        <span>{config.emoji}</span>
+	                        <span>{hand.rank} RANK</span>
+	                      </div>
+	                      <div className="text-right">
+		                        <p className="text-xs text-gray-500 mb-1">有効期限: {validUntilString}</p>
+	                        <p className="text-2xl font-bold text-purple-600">{hand.multiplier}x</p>
+	                      </div>
+	                    </div>
+	                    <div className="flex items-center justify-between">
+	                      <div className="flex items-center gap-3">
+	                        <div className="flex gap-2">
+	                          {hand.cards.map((card, idx) => (
+	                            <PlayingCard
+	                              key={idx}
+	                              card={{ suit: card.suit, rank: card.rank }}
+	                              size="md"
+	                            />
+	                          ))}
+	                        </div>
+	                        <p className="text-base font-semibold text-gray-800">{hand.handRank}</p>
+	                      </div>
+	                      <div className="text-right">
+	                        <p className="text-lg font-bold text-orange-600">{hand.finalReward.toLocaleString()}💰</p>
+	                      </div>
+	                    </div>
+	                  </div>
+	                )
+	              })}
+	            </div>
           </div>
         )}
 

@@ -7,7 +7,11 @@ import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Send, AlertCircle } from "lucide-react"
+import { doc, getDoc } from "firebase/firestore"
+import { getDb } from "@/lib/firebase"
 import { subscribeToChatMessages, sendChatMessage, subscribeToActiveUsers, setUserPresence, removeUserPresence } from "@/lib/firestore"
+import { isWithinOperationHours } from "@/lib/utils"
+import type { PokerOperationHours } from "@/types/stack-man-hand"
 import { createPokerGame, joinPokerGame, leavePokerGame, performAction, startNewHand, subscribeToPokerGame } from "@/lib/poker-game"
 import { handlePlayerTimeout, getRemainingTime } from "@/lib/poker-timeout"
 import { deletePokerGame } from "@/lib/poker-game-reset"
@@ -39,6 +43,8 @@ export function ChatRoomDualMode() {
   const [pokerGameId, setPokerGameId] = useState<string | null>(null)
   const [showTurnNotification, setShowTurnNotification] = useState(false)
   const [toastMessages, setToastMessages] = useState<ChatMessage[]>([])
+  const [pokerAvailable, setPokerAvailable] = useState(true)
+  const [operationHours, setOperationHours] = useState<PokerOperationHours | null>(null)
   
   // toastMessagesの変化をログ出力
   useEffect(() => {
@@ -200,6 +206,39 @@ export function ChatRoomDualMode() {
     }
   }, [customerAccount])
 
+  // 稼働時間設定の読み込み
+  useEffect(() => {
+    if (!customerAccount?.storeId) return
+
+    const fetchOperationHours = async () => {
+      const db = getDb()
+      if (!db) return
+
+      const storeRef = doc(db, "stores", customerAccount.storeId)
+      const storeSnap = await getDoc(storeRef)
+
+      if (storeSnap.exists()) {
+        const storeData = storeSnap.data()
+        if (storeData.pokerOperationHours) {
+          const hours = storeData.pokerOperationHours as PokerOperationHours
+          setOperationHours(hours)
+          setPokerAvailable(isWithinOperationHours(hours))
+        }
+      }
+    }
+
+    fetchOperationHours()
+
+    // 1分ごとに稼働状況をチェック
+    const interval = setInterval(() => {
+      if (operationHours) {
+        setPokerAvailable(isWithinOperationHours(operationHours))
+      }
+    }, 60000)
+
+    return () => clearInterval(interval)
+  }, [customerAccount?.storeId, operationHours])
+
   // ポーカーゲームの初期化と購読
   useEffect(() => {
     if (!customerAccount?.storeId) return
@@ -209,6 +248,11 @@ export function ChatRoomDualMode() {
 
     const initGame = async () => {
       try {
+        if (!pokerAvailable) {
+          setError(`ポーカーは現在利用できません。稼働時間: ${operationHours?.open} - ${operationHours?.close}`)
+          return
+        }
+
         let gameId = savedGameId
         if (!gameId) {
           gameId = await createPokerGame(customerAccount.storeId, 50, 100)
@@ -362,6 +406,11 @@ export function ChatRoomDualMode() {
   const handleJoinSeat = async (seatIndex: number) => {
     if (!customerAccount || !pokerGameId) return
 
+    if (!pokerAvailable) {
+      alert(`ポーカーは現在利用できません。稼働時間: ${operationHours?.open} - ${operationHours?.close}`)
+      return
+    }
+
     try {
       const displayName = customerAccount.playerName || customerAccount.email.split("@")[0]
       await joinPokerGame(
@@ -394,15 +443,18 @@ export function ChatRoomDualMode() {
   const handleStartGame = async () => {
     if (!customerAccount || !pokerGameId) return
 
+    if (!pokerAvailable) {
+      alert(`ポーカーは現在利用できません。稼働時間: ${operationHours?.open} - ${operationHours?.close}`)
+      return
+    }
+
     try {
       await startNewHand(customerAccount.storeId, pokerGameId)
     } catch (err) {
       console.error("Error starting game:", err)
       setError(err instanceof Error ? err.message : "ゲームを開始できませんでした")
     }
-  }
-
-  const handleTimeout = async () => {
+  }eTimeout = async () => {
     if (!customerAccount || !pokerGameId || !pokerGame) return
     
     const currentPlayer = pokerGame.players[pokerGame.currentPlayerIndex]
@@ -522,6 +574,14 @@ export function ChatRoomDualMode() {
 
       {/* メインコンテンツ */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden bg-gray-900">
+        {!pokerAvailable && (
+          <Alert variant="destructive" className="m-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              ポーカーは現在ご利用いただけません。稼働時間: {operationHours?.open} - {operationHours?.close}
+            </AlertDescription>
+          </Alert>
+        )}
         {/* ポーカーモード */}
         {viewMode === 'poker' && pokerGame && (
           <>
@@ -530,9 +590,10 @@ export function ChatRoomDualMode() {
                 game={pokerGame}
                 currentUserId={customerAccount.id}
                 onAction={handlePokerAction}
-                onJoinSeat={handleJoinSeat}
                 onLeaveSeat={handleLeaveSeat}
-                onStartGame={handleStartGame}
+                onJoinSeat={pokerAvailable ? handleJoinSeat : () => alert(`ポーカーは現在利用できません。稼働時間: ${operationHours?.open} - ${operationHours?.close}`)}
+                onStartGame={pokerAvailable ? handleStartGame : () => alert(`ポーカーは現在利用できません。稼働時間: ${operationHours?.open} - ${operationHours?.close}`)}
+                onDeleteGame={handleDeleteGame}
                 onResetGame={handleResetGame}
                 onTimeout={handleTimeout}
                 onReadyNextHand={handleReadyNextHand}

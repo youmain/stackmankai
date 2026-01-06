@@ -4,14 +4,19 @@ import type { Card } from "./poker"
 /**
  * Stack Man Hand Settings (Store configuration)
  */
+export interface PokerOperationHours {
+  open: string  // "HH:MM" format
+  close: string // "HH:MM" format
+}
+
+/**
+ * Stack Man Hand Settings (Store configuration)
+ */
 export interface StackManHandSettings {
   enabled: boolean
   purchasePrice: number
   rewardAmount: number
-  businessHours: {
-    open: string  // "HH:MM" format
-    close: string // "HH:MM" format
-  }
+
 }
 
 /**
@@ -102,6 +107,7 @@ export interface PlayerReset {
  * Extended Store type with new settings
  */
 export interface StoreWithStackManHand {
+  pokerOperationHours?: PokerOperationHours
   stackManHandSettings?: StackManHandSettings
   rakeSettings?: RakeSettings
   stackResetSettings?: StackResetSettings
