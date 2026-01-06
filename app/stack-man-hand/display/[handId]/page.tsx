@@ -259,7 +259,11 @@ export default function StackManHandDisplayPage() {
             <div className="bg-gray-50 rounded-xl p-4">
               <div className="text-gray-600 mb-1">購入日時</div>
               <div className="font-semibold text-gray-900">
-                {hand.purchasedAt.toDate().toLocaleString("ja-JP")}
+                {hand.purchasedAt.toDate().toLocaleDateString("ja-JP", {
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit'
+                })}
               </div>
             </div>
             <div className="bg-gray-50 rounded-xl p-4">
