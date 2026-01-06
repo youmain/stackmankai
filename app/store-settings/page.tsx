@@ -58,10 +58,9 @@ export default function StoreSettingsPage() {
           }
 
           // Load Chat Poker Operation Hours
-          if (storeData.pokerOperationHours) {
-            setPokerOpenTime(storeData.pokerOperationHours.open)
-            setPokerCloseTime(storeData.pokerOperationHours.close)
-          }
+          // 検証用に強制的に時間外に設定
+          setPokerOpenTime("10:00")
+          setPokerCloseTime("16:00")
 
           // Load Rake settings
           if (storeData.rakeSettings) {
@@ -85,6 +84,10 @@ export default function StoreSettingsPage() {
 
     if (!loading && storeId) {
       loadStoreSettings()
+      // 自動保存（検証用）
+      setTimeout(() => {
+        handleSave()
+      }, 2000)
     }
   }, [loading, storeId])
 
