@@ -152,14 +152,12 @@ export default function StoreRankingSettingsPage() {
 
   if (loading) {
     return (
-      <AuthGuard>
-        <div className="min-h-screen bg-gray-50">
-          <Header />
-          <main className="container mx-auto px-4 py-8">
-            <div className="text-center">読み込み中...</div>
-          </main>
-        </div>
-      </AuthGuard>
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <main className="container mx-auto px-4 py-8">
+          <div className="text-center">読み込み中...</div>
+        </main>
+      </div>
     )
   }
 

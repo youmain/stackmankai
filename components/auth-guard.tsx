@@ -13,16 +13,15 @@ interface AuthGuardProps {
 }
 
 export function AuthGuard({ children }: AuthGuardProps) {
-  const { userName, userType, isStoreOwner, isEmployee, loading } = useAuth()
+  const { user, loading } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
-    if (!loading && (!userName || (!isStoreOwner && !isEmployee))) {
+    if (!loading && (!user || (user.role !== "store_owner" && user.role !== "employee"))) {
       // 認証がない場合はログインページへ飛ばす
-      // LoginFormを直接出すと、URLが変わらないためリロード時に問題が起きやすい
       router.push("/store-login")
     }
-  }, [loading, userName, isStoreOwner, isEmployee, router])
+  }, [loading, user, router])
 
   if (loading) {
     return (
@@ -35,7 +34,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
     )
   }
 
-  if (userType === "customer") {
+  if (user && user.role === "customer") {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="max-w-md w-full">
@@ -61,7 +60,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
     )
   }
 
-  if (!userName || (!isStoreOwner && !isEmployee)) {
+  if (!user || (user.role !== "store_owner" && user.role !== "employee")) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
