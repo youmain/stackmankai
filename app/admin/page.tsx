@@ -16,20 +16,6 @@ export default function AdminPage() {
   const { user, storeId, storeName, userName, isStoreOwner, loading, signOut } = useAuth()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-  useEffect(() => {
-    if (!loading && !user) {
-      // ログインしていない場合はログインページへ
-      router.push("/store-login")
-      return
-    }
-    
-    if (!loading && user && user.role === "customer") {
-      // 顧客は管理画面にアクセスできない
-      router.push("/customer-view")
-      return
-    }
-  }, [loading, user, router])
-
   const handleSignOut = async () => {
     try {
       await signOut()
@@ -39,19 +25,9 @@ export default function AdminPage() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">読み込み中...</p>
-        </div>
-      </div>
-    )
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50">
+    <AuthGuard>
+      <div className="min-h-screen bg-gray-50">
         {/* 管理画面専用ヘッダー（新規投稿ボタンなし） */}
         <header className="border-b bg-white shadow-sm">
           <div className="container mx-auto px-4 py-3">
@@ -302,5 +278,6 @@ export default function AdminPage() {
           </div>
         </main>
       </div>
+    </AuthGuard>
   )
 }

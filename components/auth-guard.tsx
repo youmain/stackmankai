@@ -2,10 +2,11 @@
 
 import type React from "react"
 import { useAuth } from "@/contexts/auth-context"
-import { LoginForm } from "@/components/login-form"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 
 interface AuthGuardProps {
   children: React.ReactNode
@@ -13,6 +14,15 @@ interface AuthGuardProps {
 
 export function AuthGuard({ children }: AuthGuardProps) {
   const { userName, userType, isStoreOwner, isEmployee, loading } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!loading && (!userName || (!isStoreOwner && !isEmployee))) {
+      // 認証がない場合はログインページへ飛ばす
+      // LoginFormを直接出すと、URLが変わらないためリロード時に問題が起きやすい
+      router.push("/store-login")
+    }
+  }, [loading, userName, isStoreOwner, isEmployee, router])
 
   if (loading) {
     return (
@@ -52,7 +62,13 @@ export function AuthGuard({ children }: AuthGuardProps) {
   }
 
   if (!userName || (!isStoreOwner && !isEmployee)) {
-    return <LoginForm />
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-muted-foreground">ログインページへ移動しています...</p>
+        </div>
+      </div>
+    )
   }
 
   return <>{children}</>

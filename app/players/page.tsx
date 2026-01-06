@@ -44,7 +44,7 @@ import { performanceMonitor } from "@/lib/performance-monitor"
 export default function PlayersPage() {
   console.log("[v0] 📱 PlayersPageコンポーネント実行開始")
 
-  const { userName } = useAuth()
+  const { userName, storeId } = useAuth()
 
   console.log("[v0] 🔐 認証状態確認:", { userName, hasUserName: !!userName })
 
@@ -155,36 +155,15 @@ export default function PlayersPage() {
     let unsubscribeRakeHistory: (() => void) | null = null
 
     try {
-      // localStorageからstoreIdを取得
-            console.log("[v0] プレイヤーリスナー開始", { 
-        storeId, 
-        storeIdType: typeof storeId,
-        storeIdLength: storeId?.length,
-        allLocalStorage: {
-          storeId: localStorage.getItem("storeId"),
-          storeName: localStorage.getItem("storeName"),
-          storeCode: localStorage.getItem("storeCode"),
-        }
-      })
+      if (!storeId) {
+        console.log("[v0] ⚠️ storeIdが未設定のためリスナー開始を待機")
+        return
+      }
+
+      console.log("[v0] プレイヤーリスナー開始", { storeId })
       
       unsubscribePlayers = subscribeToPlayers(
         (newPlayers) => {
-          console.log("[v0] プレイヤーデータ受信:", {
-            count: newPlayers.length,
-            storeId,
-            players: newPlayers.map((p) => ({
-              id: p.id,
-              name: p.name,
-              balance: p.systemBalance,
-              isPlaying: p.isPlaying,
-              currentGameId: p.currentGameId,
-              isSpecial: p.isSpecial,
-              isDeduction: p.isDeduction,
-              furigana: p.furigana,
-              pokerName: p.pokerName,
-              uniqueId: p.uniqueId,
-            })),
-          })
           setPlayers(newPlayers)
           setFirebaseError(null)
         },
@@ -192,7 +171,7 @@ export default function PlayersPage() {
           console.error("[v0] プレイヤーリスナーエラー:", error)
           setFirebaseError("プレイヤーデータの読み込みに失敗しました。")
         },
-        storeId, // storeIdを渡す
+        storeId,
       )
 
       console.log("[v0] 購入金額履歴リスナー開始")
@@ -250,7 +229,7 @@ export default function PlayersPage() {
       }
       console.log("[v0] 全リスナー停止完了")
     }
-  }, [])
+  }, [storeId])
 
   console.log("[v0] 🎯 プレイヤー管理画面レンダリング確認 - 現在時刻:", new Date().toISOString())
 

@@ -35,69 +35,23 @@ export default function DailySalesPage() {
   const [showPasswordModal, setShowPasswordModal] = useState(false)
 
   useEffect(() => {
+    if (!storeId) return
     console.log("[v0] 📊 日別売上ページ初期化開始")
-
-    // localStorageからstoreIdを取得
-        console.log("[v0] 🏪 店舗ID:", storeId)
+    console.log("[v0] 🏪 店舗ID:", storeId)
 
     const unsubscribeReceipts = subscribeToReceipts(
       (data) => {
         console.log("[v0] 📋 伝票データ同期受信:", data.length, "件")
         setReceipts(data)
       },
+      storeId
     )
 
     const unsubscribeRake = subscribeToRakeHistory(
       (data) => {
-        console.log("[v0] 💰 レーキ履歴同期受信:", data.length, "件")
-
-        console.log("[v0] 💰 レーキ履歴生データ全件:", data)
-        console.log(
-          "[v0] 💰 レーキ履歴各項目詳細:",
-          data.map((rake, index) => ({
-            index,
-            id: rake.id,
-            playerId: "unknown",
-            playerName: "Unknown",
-            rake: rake.rake,
-            rakeType: typeof rake.rake,
-            buyIn: rake.buyIn,
-            additionalStack: rake.additionalStack,
-            finalStack: rake.finalStack,
-            createdAt: rake.createdAt,
-            createdAtType: typeof rake.createdAt,
-            date: new Date(rake.createdAt).toISOString().split("T")[0],
-            calculation: `(${rake.buyIn} + ${rake.additionalStack}) - ${rake.finalStack} = ${rake.rake}`,
-          })),
-        )
-
-        if (data.length === 0) {
-          console.log("[v0] ⚠️ レーキ履歴が0件です")
-          console.log("[v0] 🔍 Firestoreコレクション確認が必要です")
-        } else {
-          console.log("[v0] ✅ レーキ履歴データ正常受信")
-          console.log(
-            "[v0] 💰 マイナスレーキ確認:",
-            data
-              .filter((r) => r.amount < 0)
-              .map((r) => ({
-                playerName: "Unknown",
-                rake: r.amount,
-              })),
-          )
-          console.log(
-            "[v0] 💰 プラスレーキ確認:",
-            data
-              .filter((r) => r.amount > 0)
-              .map((r) => ({
-                playerName: "Unknown",
-                rake: r.amount,
-              })),
-          )
-        }
-
         setRakeHistory(data)
       },
+      storeId
     )
 
     const unsubscribeDailySales = subscribeToDailySales(
@@ -105,14 +59,13 @@ export default function DailySalesPage() {
       (data) => {
         console.log("[v0] 📈 日別売上データ同期受信:", data.length, "件")
         setDailySales(data)
-        setLoading(false)
       },
     )
 
     const unsubscribeDailyRankings = subscribeToDailyRankings((dailyData) => {
       console.log("[v0] 📊 日別ランキング同期受信:", dailyData.length, "件")
       setDailyRankings(dailyData)
-    })
+    }, storeId)
 
     return () => {
       unsubscribeReceipts()
@@ -120,7 +73,7 @@ export default function DailySalesPage() {
       unsubscribeDailySales()
       unsubscribeDailyRankings()
     }
-  }, [])
+  }, [storeId])
 
   const today = new Date().toISOString().split("T")[0]
 

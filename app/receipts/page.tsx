@@ -18,7 +18,7 @@ import { useAuth } from "@/contexts/auth-context"
 import { handleError, handleValidationError } from "@/lib/error-handler"
 
 export default function ReceiptsPage() {
-  const { userName } = useAuth()
+  const { userName, storeId } = useAuth()
   const [receipts, setReceipts] = useState<ReceiptType[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [showOrderAddModal, setShowOrderAddModal] = useState(false)
@@ -32,10 +32,12 @@ export default function ReceiptsPage() {
   const [isCompleting, setIsCompleting] = useState(false)
 
   useEffect(() => {
+    if (!storeId) return
+
     let unsubscribeReceipts: (() => void) | null = null
 
     try {
-            unsubscribeReceipts = subscribeToReceipts(
+      unsubscribeReceipts = subscribeToReceipts(
         (newReceipts) => {
           setReceipts(newReceipts)
         },
@@ -50,7 +52,7 @@ export default function ReceiptsPage() {
         unsubscribeReceipts()
       }
     }
-  }, [])
+  }, [storeId])
 
   const handleDeleteReceipt = async (receipt: ReceiptType) => {
     setReceiptToDelete(receipt)

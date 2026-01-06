@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/auth-context';
 import EmployeeInvite from '@/components/EmployeeInvite';
 import EmployeeList from '@/components/EmployeeList';
 import { ArrowLeft, Users } from 'lucide-react';
+import { AuthGuard } from '@/components/auth-guard';
 
 export default function EmployeeManagementPage() {
   const router = useRouter();
@@ -40,7 +41,8 @@ export default function EmployeeManagementPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <AuthGuard>
+      <div className="min-h-screen bg-gray-100">
       {/* ヘッダー */}
       <div className="bg-white shadow-md">
         <div className="max-w-7xl mx-auto px-4 py-4">
@@ -74,5 +76,6 @@ export default function EmployeeManagementPage() {
         />
       </div>
     </div>
+    </AuthGuard>
   );
 }
