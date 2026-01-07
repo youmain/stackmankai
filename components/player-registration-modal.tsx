@@ -14,6 +14,7 @@ import { handleFirebaseError, handleSuccess, handleValidationError } from "@/lib
 interface PlayerRegistrationModalProps {
   open: boolean
   onClose: () => void
+  storeId: string
 }
 
 const isHiraganaOrKatakana = (text: string): boolean => {
@@ -22,7 +23,7 @@ const isHiraganaOrKatakana = (text: string): boolean => {
   return hiraganaRegex.test(text) || katakanaRegex.test(text)
 }
 
-export function PlayerRegistrationModal({ open, onClose }: PlayerRegistrationModalProps) {
+export function PlayerRegistrationModal({ open, onClose, storeId }: PlayerRegistrationModalProps) {
   const [name, setName] = useState("")
   const [pokerName, setPokerName] = useState("")
   const [furigana, setFurigana] = useState("")
@@ -64,7 +65,8 @@ export function PlayerRegistrationModal({ open, onClose }: PlayerRegistrationMod
 
     setLoading(true)
     try {
-      const storeId = localStorage.getItem("storeId") || ""
+      // const storeId = localStorage.getItem("storeId") || "" // storeIdはpropsから渡されるため不要
+
       const storeName = localStorage.getItem("storeName") || ""
       const playerData: any = {
         name: name.trim(),

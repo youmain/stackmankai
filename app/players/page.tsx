@@ -785,7 +785,7 @@ export default function PlayersPage() {
           )}
         </main>
 
-        <PlayerRegistrationModal open={showRegistrationModal} onClose={() => setShowRegistrationModal(false)} />
+        <PlayerRegistrationModal open={showRegistrationModal} onClose={() => setShowRegistrationModal(false)} storeId={storeId} />
 
         <PlayerEditModal
           open={showPlayerEditModal}
