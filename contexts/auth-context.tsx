@@ -135,7 +135,84 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
             
             // ドキュメントが存在し、storeIdとplayerIdも設定されている場合
-            const customer = { id: customerDocSnap.id, ...customerDocSnap.data() } as CustomerAccount;
+            let customer = { id: customerDocSnap.id, ...customerDocSnap.data() } as CustomerAccount;
+
+            // --- プレイヤーIDの特定と自動修復ロジック (AuthContext内) ---
+            // customerAccount.playerId が実際のプレイヤーのドキュメントIDと一致しない可能性を考慮
+            // 1. まず、customerAccount.playerId が指す店舗分離構造のプレイヤーを直接確認
+            let actualPlayerId = customer.playerId;
+            let playerFoundInStoreIsolated = false;
+            if (customer.storeId && customer.playerId) {
+              const playerStoreIsolatedDocRef = doc(db, "players", `store_${customer.storeId}`, "players", customer.playerId);
+              const playerStoreIsolatedDocSnap = await getDoc(playerStoreIsolatedDocRef);
+              if (playerStoreIsolatedDocSnap.exists()) {
+                playerFoundInStoreIsolated = true;
+                console.log("[Auth] ✅ Player found in store-isolated structure using customer.playerId.");
+              }
+            }
+
+            // 2. 店舗分離構造に見つからない場合、古いフラット構造から探す
+            if (!playerFoundInStoreIsolated && firebaseUser.uid) {
+              console.log("[Auth] 🔄 Player not found in store-isolated structure. Checking old flat structure...");
+              const oldPlayerDocRef = doc(db, "players", firebaseUser.uid); // UIDをプレイヤーIDとして試行
+              const oldPlayerDocSnap = await getDoc(oldPlayerDocRef);
+
+              if (oldPlayerDocSnap.exists()) {
+                console.log("[Auth] ✅ Player found in old flat structure using UID. Initiating auto-repair...");
+                const oldData = oldPlayerDocSnap.data();
+
+                // 新しい店舗分離構造のパスを構築
+                const newPlayerDocRef = doc(
+                  db,
+                  "players",
+                  `store_${customer.storeId}`,
+                  "players",
+                  firebaseUser.uid // UIDを新しいplayerIdとして使用
+                );
+
+                const batch = writeBatch(db);
+                batch.set(newPlayerDocRef, { ...oldData, storeId: customer.storeId, updatedAt: new Date() }, { merge: true });
+                await batch.commit();
+                console.log("[Auth] ✅ Player data auto-repaired to new store-isolated structure.");
+                actualPlayerId = firebaseUser.uid; // 自動修復されたIDをセット
+                playerFoundInStoreIsolated = true;
+              } else {
+                // メールアドレスで探す（playerIdがメールアドレスの場合を考慮）
+                const oldPlayerByEmailQuery = query(collection(db, "players"), where("email", "==", firebaseUser.email));
+                const oldPlayerByEmailSnap = await getDocs(oldPlayerByEmailQuery);
+                if (!oldPlayerByEmailSnap.empty) {
+                  const playerDoc = oldPlayerByEmailSnap.docs[0];
+                  console.log("[Auth] ✅ Player found in old flat structure using email. Initiating auto-repair...");
+                  const oldData = playerDoc.data();
+
+                  const newPlayerDocRef = doc(
+                    db,
+                    "players",
+                    `store_${customer.storeId}`,
+                    "players",
+                    playerDoc.id // 既存のドキュメントIDを新しいplayerIdとして使用
+                  );
+
+                  const batch = writeBatch(db);
+                  batch.set(newPlayerDocRef, { ...oldData, storeId: customer.storeId, updatedAt: new Date() }, { merge: true });
+                  await batch.commit();
+                  console.log("[Auth] ✅ Player data auto-repaired to new store-isolated structure.");
+                  actualPlayerId = playerDoc.id; // 自動修復されたIDをセット
+                  playerFoundInStoreIsolated = true;
+                }
+              }
+            }
+
+            // 3. 最終的なplayerIdをcustomerAccountに設定
+            if (actualPlayerId && playerFoundInStoreIsolated) {
+              customer = { ...customer, playerId: actualPlayerId };
+              console.log("[Auth] ✅ Final customer.playerId set to:", actualPlayerId);
+            } else {
+              console.warn("[Auth] ⚠️ Could not determine actual playerId for store-isolated structure. Using existing customer.playerId or null.");
+              // ここでエラーを出すか、不完全な状態で続行するかは要検討
+              // 今回は既存のcustomer.playerIdをそのまま使用し、購入ページ側でエラーを出す
+            }
+            // --- プレイヤーIDの特定と自動修復ロジックの終了 ---
             setUser({
               uid: firebaseUser.uid,
               email: customer.email,
