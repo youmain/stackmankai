@@ -74,6 +74,22 @@ export default function StackManHandPurchasePage() {
         let playerDoc = null
         let playerData = null
 
+        // --- プレイヤーデータ検索ロジックの開始 ---
+        // customerAccount.playerId は実際には uniqueId である可能性を考慮し、uniqueIdで検索する
+        const findPlayerByUniqueId = async (storeId: string, uniqueId: string) => {
+          const db = getDb()!;
+          const playersCollectionRef = collection(db, "players", `store_${storeId}`, "players");
+          const q = query(playersCollectionRef, where("uniqueId", "==", uniqueId));
+          const querySnapshot = await getDocs(q);
+
+          if (!querySnapshot.empty) {
+            const docSnap = querySnapshot.docs[0];
+            console.log("[Purchase] ✅ Player found by uniqueId in store-isolated structure.");
+            return { doc: docSnap, data: docSnap.data() };
+          }
+          return null;
+        };
+
         // --- 自動修復ロジックの開始 ---
         // 古いパスにデータがあるか確認し、新しいパスにコピーする
         const repairPlayerData = async () => {
@@ -115,25 +131,17 @@ export default function StackManHandPurchasePage() {
         // --- 自動修復ロジックの終了 ---
         
         try {
-          console.log("[Purchase] Getting player from store-isolated structure...")
-          const playerDocRef = doc(
-            getDb()!, 
-            "players", 
-            `store_${customerAccount.storeId}`, 
-            "players", 
-            customerAccount.playerId
-          )
-          const playerDocSnap = await getDoc(playerDocRef)
+          console.log("[Purchase] Getting player from store-isolated structure by uniqueId...");
+          const foundPlayer = await findPlayerByUniqueId(customerAccount.storeId, customerAccount.playerId);
           
-          if (playerDocSnap.exists()) {
-            console.log("[Purchase] Player found in store-isolated structure")
-            playerDoc = playerDocSnap
-            playerData = playerDocSnap.data()
+          if (foundPlayer) {
+            playerDoc = foundPlayer.doc;
+            playerData = foundPlayer.data;
           } else {
-            console.log("[Purchase] Player not found in store-isolated structure")
+            console.log("[Purchase] Player not found by uniqueId in store-isolated structure.");
           }
         } catch (error) {
-          console.error("[Purchase] Error getting player:", error)
+          console.error("[Purchase] Error getting player by uniqueId:", error);
         }
         
         // If still not found, show error
