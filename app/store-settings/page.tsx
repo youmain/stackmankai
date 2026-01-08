@@ -4,6 +4,8 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/auth-context"
 import { AuthGuard } from "@/components/auth-guard"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 import { doc, getDoc, updateDoc } from "firebase/firestore"
 import { getDb } from "@/lib/firebase"
 import type { Store } from "@/types/store"
@@ -15,7 +17,7 @@ export default function StoreSettingsPage() {
   const storeName = authStoreName
   const router = useRouter()
   const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [pageError, setPageError] = useState<string | null>(null)
 
   // Stack Man Hand Settings
   const [stackManHandEnabled, setStackManHandEnabled] = useState(false)
@@ -75,11 +77,11 @@ export default function StoreSettingsPage() {
 
   const handleSave = async () => {
     if (!storeId) return
-    setError(null)
+    setPageError(null)
 
     const duration = calculateDuration(pokerOpenTime, pokerCloseTime)
     if (duration > 5) {
-      setError("稼働時間は最大5時間まで設定可能です。")
+      setPageError("稼働時間は最大5時間まで設定可能です。")
       return
     }
 
@@ -103,10 +105,11 @@ export default function StoreSettingsPage() {
         updatedAt: new Date(),
       })
 
-      alert("設定を保存しました")
+      // alert("設定を保存しました") // アラートは不要、成功メッセージは別途検討
     } catch (error) {
       console.error("Error saving settings:", error)
-      alert("設定の保存に失敗しました")
+      const errorMessage = error instanceof Error ? error.message : String(error);
+        setPageError(`設定の保存に失敗しました。エラー: ${errorMessage}`);
     } finally {
       setSaving(false)
     }
@@ -128,10 +131,12 @@ export default function StoreSettingsPage() {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">店舗設定</h1>
           <p className="text-gray-600 mb-8">{storeName}</p>
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
-              {error}
-            </div>
+          {pageError && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>エラー</AlertTitle>
+              <AlertDescription>{pageError}</AlertDescription>
+            </Alert>
           )}
 
           <div className="space-y-8">

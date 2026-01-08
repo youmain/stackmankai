@@ -2,19 +2,22 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore"
+import { doc, getDoc, collection, query, where, getDocs, setDoc, writeBatch } from "firebase/firestore"
 import { getDb } from "@/lib/firebase"
 import { useAuth } from "@/contexts/auth-context"
 import { getStackManHandSettings, purchaseStackManHand, getTodayStackManHands, calculateRemainingPurchases } from "@/lib/stack-man-hand"
 import { isWithinOperationHours, isWithinPurchaseWindow } from "@/lib/utils"
 import type { StackManHandSettings, StackManHand } from "@/types/stack-man-hand"
 import { PlayingCard } from "@/components/poker-table/playing-card"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 export default function StackManHandPurchasePage() {
   const router = useRouter()
-  const { customerAccount, loading: authLoading } = useAuth()
+  const { user, customerAccount, loading: authLoading, error: authError } = useAuth();
   const [loading, setLoading] = useState(true)
   const [purchasing, setPurchasing] = useState(false)
+  const [pageError, setPageError] = useState<string | null>(null)
   const [settings, setSettings] = useState<StackManHandSettings | null>(null)
   const [todayHands, setTodayHands] = useState<StackManHand[]>([])
   const [currentStack, setCurrentStack] = useState(0)
@@ -32,11 +35,6 @@ export default function StackManHandPurchasePage() {
         return // Still loading
       }
 
-      // Check authentication (but don't redirect)
-      if (!customerAccount?.storeId || !customerAccount?.playerId) {
-        setLoading(false)
-        return
-      }
 
       try {
         // Load settings
@@ -58,8 +56,8 @@ export default function StackManHandPurchasePage() {
             const isPurchasing = isWithinPurchaseWindow(storeData.pokerOperationHours)
             
             if (!isOperating && !isPurchasing) {
-              alert(`現在は購入時間外です。\n購入可能時間: ${storeData.pokerOperationHours.open} - ${storeData.pokerOperationHours.close} (終了後1時間まで)`)
-              router.push("/customer-view")
+              setPageError(`現在は購入時間外です。購入可能時間: ${storeData.pokerOperationHours.open} - ${storeData.pokerOperationHours.close} (終了後1時間まで)`);
+              // router.push("/customer-view") // エラー表示のためリダイレクトを一時停止
               return
             }
           }
@@ -75,6 +73,46 @@ export default function StackManHandPurchasePage() {
         // 店舗分離構造に対応: players/store_{storeId}/players/{playerId}
         let playerDoc = null
         let playerData = null
+
+        // --- 自動修復ロジックの開始 ---
+        // 古いパスにデータがあるか確認し、新しいパスにコピーする
+        const repairPlayerData = async () => {
+          const db = getDb()!;
+          const oldPlayerDocRef = doc(db, "players", customerAccount.playerId);
+          const oldPlayerDocSnap = await getDoc(oldPlayerDocRef);
+
+          if (oldPlayerDocSnap.exists()) {
+            console.log("[Purchase] Player found in old flat structure. Initiating repair...");
+            const oldData = oldPlayerDocSnap.data();
+
+            const newPlayerDocRef = doc(
+              db,
+              "players",
+              `store_${customerAccount.storeId}`,
+              "players",
+              customerAccount.playerId
+            );
+
+            const batch = writeBatch(db);
+            batch.set(newPlayerDocRef, { ...oldData, storeId: customerAccount.storeId, updatedAt: new Date() }, { merge: true });
+            // 古いデータは削除しない（既存機能との互換性のため）
+            // batch.delete(oldPlayerDocRef);
+
+            await batch.commit();
+            console.log("[Purchase] Player data repaired and copied to new store-isolated structure.");
+            return true;
+          }
+          return false;
+        };
+
+        // 自動修復を試みる
+        const repaired = await repairPlayerData();
+        if (repaired) {
+          console.log("[Purchase] Player data repair successful.");
+        } else {
+          console.log("[Purchase] No player data repair needed or old data not found.");
+        }
+        // --- 自動修復ロジックの終了 ---
         
         try {
           console.log("[Purchase] Getting player from store-isolated structure...")
@@ -104,8 +142,8 @@ export default function StackManHandPurchasePage() {
             playerId: customerAccount.playerId,
             storeId: customerAccount.storeId
           })
-          alert(`プレイヤー情報が見つかりません。\nプレイヤーID: ${customerAccount.playerId}`)
-          router.push("/customer-view")
+          setPageError(`プレイヤー情報が見つかりません。プレイヤーID: ${customerAccount.playerId}`);
+          // router.push("/customer-view") // エラー表示のためリダイレクトを一時停止
           return
         }
         
@@ -154,14 +192,14 @@ export default function StackManHandPurchasePage() {
       } catch (error) {
         console.error("Error loading data:", error)
         const errorMessage = error instanceof Error ? error.message : String(error)
-        alert(`データの読み込みに失敗しました\n\nエラー: ${errorMessage}`)
+        setPageError(`データの読み込みに失敗しました。エラー: ${errorMessage}`);
       } finally {
         setLoading(false)
       }
     }
 
     loadData()
-  }, [customerAccount, authLoading, router])
+  }, [user, customerAccount, authLoading, router])
 
   const handlePurchase = async () => {
     if (!settings || !customerAccount?.storeId || !customerAccount?.playerId) return
@@ -184,52 +222,78 @@ export default function StackManHandPurchasePage() {
         window.location.reload()
       } else {
         // Show error message from the purchase function
-        alert(result.message)
+        setPageError(`購入に失敗しました。${result.message}`);
         setPurchasing(false)
       }
     } catch (error) {
       console.error("Error purchasing Stack Man Hand:", error)
       const errorMessage = error instanceof Error ? error.message : String(error)
-      alert(`購入に失敗しました\n\n${errorMessage}`)
+      setPageError(`購入に失敗しました。${errorMessage}`);
       setPurchasing(false)
     }
   }
 
-  if (loading) {
+  // 認証情報のロード中、またはプレイヤー情報が不完全な場合はローディング表示
+  if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">読み込み中...</p>
-        </div>
+      <div className="flex justify-center items-center min-h-screen">
+        <p>認証情報を読み込み中...</p>
       </div>
-    )
+    );
   }
 
-  if (!customerAccount) {
+  // 認証エラーがある場合
+  if (authError) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600 mb-4">ログインが必要です</p>
-          <button
-            onClick={() => router.push("/customer-auth")}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            ログインページへ
-          </button>
-        </div>
+      <div className="flex justify-center items-center min-h-screen">
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{authError}</AlertDescription>
+        </Alert>
       </div>
-    )
+    );
+  }
+
+  // プレイヤーアカウントではない場合、またはstoreId/playerIdが取得できない場合
+  // ここでstoreIdとplayerIdが確実に存在することをチェック
+  if (!user || user.role !== "customer" || !user.storeId || !customerAccount?.playerId) {
+    // エラーメッセージを表示するか、ログインページにリダイレクト
+    // 例: router.push("/customer-auth");
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            プレイヤー情報が見つかりません。再度ログインし、プレイヤーIDが紐付けられているかご確認ください。
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
   }
 
   if (!settings) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-600">Stack Man Hand機能が無効です</p>
-        </div>
+      <div className="flex justify-center items-center min-h-screen">
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>エラー</AlertTitle>
+          <AlertDescription>Stack Man Hand機能が無効です。</AlertDescription>
+        </Alert>
       </div>
-    )
+    );
+  }
+
+  // ページ固有のエラーメッセージを表示
+  if (pageError) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>エラー</AlertTitle>
+          <AlertDescription>{pageError}</AlertDescription>
+        </Alert>
+      </div>
+    );
   }
 
   return (

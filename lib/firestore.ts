@@ -446,16 +446,44 @@ export const subscribeToPlayers = (
   )
 }
 
-export const addPlayer = async (playerData: Partial<Player>): Promise<string> => {
-  if (!isFirebaseConfigured()) return `mock_player_${Date.now()}`
-  const playersCollection = getPlayersCollection()
-  const docRef = await addDoc(playersCollection, {
-    ...playerData,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-  })
-  return docRef.id
-}
+export const addPlayer = async (playerData: Omit<Player, "id" | "createdAt" | "updatedAt">) => {
+  try {
+    // 1. フラットなplayersコレクションにプレイヤーを追加（既存の動作）
+    const playersCollectionRef = collection(db, "players");
+    const newPlayerDocRef = await addDoc(playersCollectionRef, {
+      ...playerData,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+
+    // 2. 新しいドキュメントのIDをuniqueIdとして設定（もし設定されていなければ）
+    //    これは、プレイヤーIDがFirestoreのドキュメントIDと異なる場合に必要
+    //    もしuniqueIdが既にplayerDataに含まれている場合はこのステップは不要
+    if (!playerData.uniqueId) {
+      await setDoc(newPlayerDocRef, { uniqueId: newPlayerDocRef.id }, { merge: true });
+      playerData.uniqueId = newPlayerDocRef.id; // playerDataも更新
+    }
+
+    // 3. 店舗分離構造のパスにもプレイヤーデータをコピー
+    //    players / store_{storeId} / players / {uniqueId} の形式で保存
+    if (playerData.storeId && playerData.uniqueId) {
+      const storePlayersCollectionRef = collection(db, `players/store_${playerData.storeId}/players`);
+      await setDoc(doc(storePlayersCollectionRef, playerData.uniqueId), {
+        ...playerData,
+        id: newPlayerDocRef.id, // 元のFirestore IDも保存
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+      console.log(`[Firestore] Player data also saved to store-separated path: players/store_${playerData.storeId}/players/${playerData.uniqueId}`);
+    }
+
+    console.log("[Firestore] Player added successfully with ID:", newPlayerDocRef.id);
+    return newPlayerDocRef.id;
+  } catch (error) {
+    console.error("[Firestore] Error adding player:", error);
+    throw error;
+  }
+};
 
 export const updatePlayer = async (playerId: string, data: Partial<Player>): Promise<void> => {
   if (!isFirebaseConfigured()) return

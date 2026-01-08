@@ -30,8 +30,10 @@ interface AuthContextType {
   userType: "admin" | "customer" | null
   customerAccount: CustomerAccount | null
   // 新しいプロパティ
-  storeId: string | null
-  storeName: string | null
+  // storeIdとstoreNameはcustomerAccountから派生させるか、
+  // customerAccountがnullでない場合にのみアクセスするように変更
+  // storeId: string | null; // 直接提供せず、customerAccount?.storeId でアクセスを推奨
+  // storeName: string | null; // 同上
   isStoreOwner: boolean
   isEmployee: boolean
   isCustomer: boolean
@@ -54,54 +56,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let unsubscribe: (() => void) | undefined
     
     const initializeAuth = async () => {
+      setLoading(true); // ロード開始時に必ずtrueに設定
+      setError(null);
+
       try {
-        // localStorageからの復元は削除（セキュリティリスクのため）
-        // Firebase Authの状態のみを信頼する
-        
         if (!isFirebaseConfigured()) {
-          console.warn("[Auth] ⚠️ v0プレビュー環境ではFirebaseが利用できません。")
-          console.warn("[Auth] Vercelにデプロイすると正常に動作します。")
-          setLoading(false)
-          return
+          console.warn("[Auth] ⚠️ v0プレビュー環境ではFirebaseが利用できません。");
+          console.warn("[Auth] Vercelにデプロイすると正常に動作します。");
+          setLoading(false);
+          return;
         }
 
-        // Firebase Authの認証状態を監視
-        const { onAuthStateChanged } = await import("@/lib/firebase-auth")
-        const { getUserData, getCustomerByEmail } = await import("@/lib/firestore")
+        const { onAuthStateChanged } = await import("@/lib/firebase-auth");
+        const { getUserData, getCustomerByEmail } = await import("@/lib/firestore");
         
         unsubscribe = onAuthStateChanged(async (firebaseUser) => {
-          console.log("[Auth] Firebase Auth状態変更:", firebaseUser ? firebaseUser.email : "未ログイン")
+          console.log("[Auth] Firebase Auth状態変更:", firebaseUser ? firebaseUser.email : "未ログイン");
           
           if (!firebaseUser) {
-            // ログアウト状態
-            console.log("[Auth] ログアウト状態")
-            setUser(null)
-            setCustomerAccountState(null)
-            setLoading(false)
-            return
+            console.log("[Auth] ログアウト状態");
+            setUser(null);
+            setCustomerAccountState(null);
+            setLoading(false);
+            return;
           }
 
           try {
-            const startTime = performance.now()
-            const { getDoc, doc } = await import("firebase/firestore")
-            const { db } = await import("@/lib/firebase")
+            const startTime = performance.now();
+            const { getDoc, doc } = await import("firebase/firestore");
+            const { db } = await import("@/lib/firebase");
             
             // まずusersコレクションを確認（店舗オーナー/従業員）
-            console.log("[Auth] ⏱️ usersコレクション確認開始:", new Date().toISOString())
-            const userDocRef = doc(db, "users", firebaseUser.uid)
-            const userDocSnap = await getDoc(userDocRef)
-            console.log("[Auth] ⏱️ usersコレクション確認完了:", performance.now() - startTime, "ms")
+            const userDocRef = doc(db, "users", firebaseUser.uid);
+            const userDocSnap = await getDoc(userDocRef);
             
             if (userDocSnap.exists()) {
-              // 店舗オーナーまたは従業員
-              const userData = userDocSnap.data()
-              console.log("[Auth] ✅ ユーザーデータ取得:", {
-                role: userData.role,
-                storeId: userData.storeId,
-                storeName: userData.storeName,
-                totalTime: performance.now() - startTime + "ms",
-              })
-              
+              const userData = userDocSnap.data();
               setUser({
                 uid: firebaseUser.uid,
                 email: userData.email || firebaseUser.email || "",
@@ -109,51 +99,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 storeId: userData.storeId,
                 storeName: userData.storeName,
                 displayName: userData.displayName,
-              })
-              setLoading(false)
-              return
+              });
+              setCustomerAccountState(null); // 店舗オーナーはcustomerAccountを持たない
+              setLoading(false);
+              return;
             }
             
             // usersコレクションに見つからない場合、customerAccountsを確認
-            console.log("[Auth] ⏱️ customerAccountsコレクション確認開始")
-            const docRef = doc(db, "customerAccounts", firebaseUser.uid)
-            let docSnap = await getDoc(docRef)
-            console.log("[Auth] ⏱️ customerAccountsコレクション確認完了:", performance.now() - startTime, "ms")
+            const customerDocRef = doc(db, "customerAccounts", firebaseUser.uid);
+            let customerDocSnap = await getDoc(customerDocRef);
 
             // 顧客アカウントがまだ作成されていない場合、ポーリングで待機
-            if (!docSnap.exists()) {
-              console.warn("[Auth] ⚠️ 顧客アカウントが見つかりません。ポーリングを開始します...")
-              const maxRetries = 10
-              const retryIntervalMs = 500
-              let retries = 0
+            // ここでstoreIdとplayerIdが設定されるまで待機するロジックを強化
+            if (!customerDocSnap.exists() || !customerDocSnap.data()?.storeId || !customerDocSnap.data()?.playerId) {
+              console.warn("[Auth] ⚠️ 顧客アカウントまたはstoreId/playerIdが見つかりません。ポーリングを開始します...");
+              const maxRetries = 20; // リトライ回数を増やす
+              const retryIntervalMs = 500; // リトライ間隔
+              let retries = 0;
 
-              while (!docSnap.exists() && retries < maxRetries) {
-                retries++
-                console.log(`[Auth] 🔄 リトライ ${retries}/${maxRetries} (${retryIntervalMs}ms待機)`)
-                await new Promise(resolve => setTimeout(resolve, retryIntervalMs))
-                docSnap = await getDoc(docRef)
+              while ((!customerDocSnap.exists() || !customerDocSnap.data()?.storeId || !customerDocSnap.data()?.playerId) && retries < maxRetries) {
+                retries++;
+                console.log(`[Auth] 🔄 リトライ ${retries}/${maxRetries} (${retryIntervalMs}ms待機)`);
+                await new Promise(resolve => setTimeout(resolve, retryIntervalMs));
+                customerDocSnap = await getDoc(customerDocRef);
               }
 
-              if (docSnap.exists()) {
-                console.log(`[Auth] ✅ 顧客アカウントをリトライで取得成功 (リトライ回数: ${retries})`)
+              if (customerDocSnap.exists() && customerDocSnap.data()?.storeId && customerDocSnap.data()?.playerId) {
+                console.log(`[Auth] ✅ 顧客アカウントとstoreId/playerIdをリトライで取得成功 (リトライ回数: ${retries})`);
               } else {
-                // リトライ後もドキュメントが存在しない場合
-                console.error("[Auth] ❌ 顧客アカウントが見つかりません (UID: " + firebaseUser.uid + ")")
-                console.error("[Auth] ドキュメントが存在しないか、作成に失敗した可能性があります。")
-                setError("顧客アカウントが見つかりません。再度ログインしてください。")
-                setLoading(false)
-                return
+                console.error("[Auth] ❌ 顧客アカウントまたはstoreId/playerIdが見つかりません (UID: " + firebaseUser.uid + ")");
+                setError("顧客アカウント情報が不完全です。再度ログインしてください。");
+                setLoading(false);
+                return;
               }
             }
             
-            // ドキュメントが存在する場合（初回またはリトライ後）
-            const customer = { id: docSnap.id, ...docSnap.data() } as CustomerAccount
-            console.log("[Auth] ✅ 顧客アカウント取得:", {
-              playerId: customer.playerId,
-              playerName: customer.playerName,
-              totalTime: performance.now() - startTime + "ms",
-            })
-            
+            // ドキュメントが存在し、storeIdとplayerIdも設定されている場合
+            const customer = { id: customerDocSnap.id, ...customerDocSnap.data() } as CustomerAccount;
             setUser({
               uid: firebaseUser.uid,
               email: customer.email,
@@ -162,22 +144,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               storeName: customer.storeName,
               playerName: customer.playerName,
               playerId: customer.playerId,
-            })
-            setCustomerAccountState(customer)
+            });
+            setCustomerAccountState(customer);
+
           } catch (err) {
-            console.error("[Auth] ❌ 認証エラー:", err)
-            handleError(err, "認証")
-            setError("認証に失敗しました")
+            console.error("[Auth] ❌ 認証エラー:", err);
+            handleError(err, "認証");
+            setError("認証に失敗しました");
           } finally {
-            // 必ずローディングを終了
-            setLoading(false)
+            setLoading(false);
           }
-        })
+        });
       } catch (err) {
-        console.error("[Auth] ❌ 認証初期化エラー:", err)
-        handleError(err, "認証の初期化")
-        setError("認証の初期化に失敗しました")
-        setLoading(false)
+        console.error("[Auth] ❌ 認証初期化エラー:", err);
+        handleError(err, "認証の初期化");
+        setError("認証の初期化に失敗しました");
+        setLoading(false);
       }
     }
 
@@ -246,8 +228,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const userName = user?.displayName || user?.playerName || null
   const userId = user?.uid || null
   const userType = user?.role === "customer" ? "customer" : user?.role === "store_owner" ? "admin" : null
-  const storeId = user?.storeId || null
-  const storeName = user?.storeName || null
+
   const isStoreOwner = user?.role === "store_owner"
   const isEmployee = user?.role === "employee"
   const isCustomer = user?.role === "customer"
@@ -260,8 +241,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         userId,
         userType,
         customerAccount,
-        storeId,
-        storeName,
+
         isStoreOwner,
         isEmployee,
         isCustomer,
