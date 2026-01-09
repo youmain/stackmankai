@@ -187,6 +187,14 @@ export default function StackManHandPurchasePage() {
 
         // スタポカバランスがない場合はsystemBalanceを使用（既存プレイヤー対応）
         const stack = playerData.stapokaBalance ?? playerData.systemBalance ?? 0
+
+        // Convert Timestamp objects to ISO strings to prevent TypeError: r.indexOf is not a function
+        const processedPlayerData = {
+          ...playerData,
+          lastStackReset: playerData.lastStackReset?.toDate().toISOString() || null,
+          createdAt: playerData.createdAt?.toDate().toISOString() || null,
+          updatedAt: playerData.updatedAt?.toDate().toISOString() || null,
+        }
         setCurrentStack(stack)
         setPlayerName(playerData.name || customerAccount.playerName || "")
 
@@ -196,7 +204,12 @@ export default function StackManHandPurchasePage() {
 
         // Load today's hands (now includes last 3 days)
         const hands = await getTodayStackManHands(customerAccount.storeId, String(customerAccount.playerId))
-        setTodayHands(hands)
+        const processedHands = hands.map(hand => ({
+          ...hand,
+          purchasedAt: hand.purchasedAt?.toDate().toISOString() || null,
+          validUntil: hand.validUntil?.toDate().toISOString() || null,
+        }))
+        setTodayHands(processedHands)
 
         // Calculate remaining purchases
         const purchaseInfo = await calculateRemainingPurchases(customerAccount.storeId, String(customerAccount.playerId), stack)
