@@ -168,7 +168,10 @@ export const purchaseStackManHand = async (
       return { success: false, message: "プレイヤーが見つかりません" }
     }
     
-    console.log("[Purchase] Player data loaded:", {
+    console.log("[Purchase] Player data loaded (raw):")
+    console.dir(playerData, { depth: null })
+    console.log("[Purchase] Player data loaded (parsed):")
+    console.log({
       id: playerDoc.id,
       name: playerData.name,
       storeId: playerData.storeId,
