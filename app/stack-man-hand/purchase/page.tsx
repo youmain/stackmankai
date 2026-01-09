@@ -209,6 +209,7 @@ export default function StackManHandPurchasePage() {
           purchasedAt: hand.purchasedAt?.toDate().toISOString() || null,
           validUntil: hand.validUntil?.toDate().toISOString() || null,
         }))
+        console.log("[Purchase] Processed hands data:", processedHands)
         setTodayHands(processedHands)
 
         // Calculate remaining purchases
@@ -221,6 +222,7 @@ export default function StackManHandPurchasePage() {
         const storeDoc = await getDoc(doc(getDb()!, "stores", customerAccount.storeId))
         if (storeDoc.exists()) {
           const storeData = storeDoc.data()
+          console.log("[Purchase] Store data loaded:", storeData)
           setMinimumStack(storeData.stackResetSettings?.minimumStack || 10000)
           setStoreName(storeData.storeName || storeData.name || "")
         }
