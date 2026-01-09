@@ -47,16 +47,7 @@ export default function StackManHandPurchasePage() {
         const storeDocSnap = await getDoc(doc(db, "stores", customerAccount.storeId))
         if (storeDocSnap.exists()) {
           const rawStoreData = storeDocSnap.data()
-          const storeData = {
-            ...rawStoreData,
-            createdAt: rawStoreData.createdAt?.toDate().toISOString() || null,
-            updatedAt: rawStoreData.updatedAt?.toDate().toISOString() || null,
-          }
-          const storeData = {
-            ...rawStoreData,
-            createdAt: rawStoreData.createdAt?.toDate().toISOString() || null,
-            updatedAt: rawStoreData.updatedAt?.toDate().toISOString() || null,
-          }
+
           console.log("[Purchase] Store data loaded (initial check):", storeData)
           setStoreName(storeData.storeName || storeData.name || "")
           setMinimumStack(storeData.stackResetSettings?.minimumStack || 10000)
