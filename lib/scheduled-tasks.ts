@@ -8,6 +8,7 @@ import { getDb, isFirebaseConfigured } from "./firebase"
 
 // Helper to ensure db is available
 const checkDb = () => {
+  if (!isFirebaseConfigured()) throw new Error("Firebase is not configured")
   const db = getDb()
   if (!db) throw new Error("Firestore is not initialized")
   return db
