@@ -47,12 +47,22 @@ export default function StackManHandPurchasePage() {
         const storeDocSnap = await getDoc(doc(db, "stores", customerAccount.storeId))
         if (storeDocSnap.exists()) {
           const rawStoreData = storeDocSnap.data()
-
+          // Convert Timestamp objects in storeData to ISO strings
+          const storeData = {
+            ...rawStoreData,
+            createdAt: rawStoreData.createdAt?.toDate().toISOString() || null,
+            updatedAt: rawStoreData.updatedAt?.toDate().toISOString() || null,
+          }
           console.log("[Purchase] Store data loaded (initial check):", storeData)
+
+          console.log("[Purchase] Setting storeName:", storeData.storeName || storeData.name || "")
           setStoreName(storeData.storeName || storeData.name || "")
+          console.log("[Purchase] Setting minimumStack:", storeData.stackResetSettings?.minimumStack || 10000)
           setMinimumStack(storeData.stackResetSettings?.minimumStack || 10000)
 
           if (storeData.pokerOperationHours && typeof storeData.pokerOperationHours === 'object') {
+            console.log("[Purchase] pokerOperationHours.open type:", typeof storeData.pokerOperationHours.open, "value:", storeData.pokerOperationHours.open);
+            console.log("[Purchase] pokerOperationHours.close type:", typeof storeData.pokerOperationHours.close, "value:", storeData.pokerOperationHours.close);
             const isOperating = isWithinOperationHours(storeData.pokerOperationHours)
             const isPurchasing = isWithinPurchaseWindow(storeData.pokerOperationHours)
             if (!isOperating && !isPurchasing) {
@@ -75,7 +85,9 @@ export default function StackManHandPurchasePage() {
 
         const playerData = playerDocSnap.data();
         const stack = playerData.stapokaBalance ?? playerData.systemBalance ?? 0
+        console.log("[Purchase] Setting currentStack:", stack)
         setCurrentStack(stack)
+        console.log("[Purchase] Setting playerName:", playerData.name || customerAccount.playerName || "")
         setPlayerName(playerData.name || customerAccount.playerName || "")
 
         const { cleanupStackManHands } = await import("@/lib/stack-man-hand")
@@ -87,11 +99,15 @@ export default function StackManHandPurchasePage() {
           purchasedAt: hand.purchasedAt?.toDate().toISOString() || null,
           validUntil: hand.validUntil?.toDate().toISOString() || null,
         }))
+        console.log("[Purchase] Setting todayHands:", processedHands)
         setTodayHands(processedHands)
 
         const purchaseInfo = await calculateRemainingPurchases(customerAccount.storeId, String(customerAccount.playerId), stack)
+        console.log("[Purchase] Setting maxPurchases:", purchaseInfo.maxPurchases)
         setMaxPurchases(purchaseInfo.maxPurchases)
+        console.log("[Purchase] Setting purchasedToday:", purchaseInfo.purchasesToday)
         setPurchasedToday(purchaseInfo.purchasesToday)
+        console.log("[Purchase] Setting remainingPurchases:", purchaseInfo.remaining)
         setRemainingPurchases(purchaseInfo.remaining)
 
       } catch (error) {
