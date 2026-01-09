@@ -30,13 +30,23 @@ export const isWithinOperationHours = (hours: PokerOperationHours): boolean => {
     return true
   }
 
+  // Type validation
+  if (typeof hours.open !== 'string' || typeof hours.close !== 'string') {
+    console.warn('[isWithinOperationHours] Invalid hours format:', hours)
+    return true // Default to 24/7 if data is invalid
+  }
+
   const jstTime = getCurrentTimeInJST()
   const currentHour = jstTime.hours
   const currentMinute = jstTime.minutes
   
   // Convert "HH:MM" to minutes from midnight
   const timeToMinutes = (time: string): number => {
-    const [hour, minute] = time.split(':').map(Number)
+    if (typeof time !== 'string') return 0
+    const parts = time.split(':')
+    if (parts.length !== 2) return 0
+    const [hour, minute] = parts.map(Number)
+    if (isNaN(hour) || isNaN(minute)) return 0
     return hour * 60 + minute
   }
 
@@ -60,11 +70,21 @@ export const isWithinOperationHours = (hours: PokerOperationHours): boolean => {
 export const isWithinPurchaseWindow = (hours: PokerOperationHours): boolean => {
   if (!hours || !hours.open || !hours.close) return false
 
+  // Type validation
+  if (typeof hours.open !== 'string' || typeof hours.close !== 'string') {
+    console.warn('[isWithinPurchaseWindow] Invalid hours format:', hours)
+    return false
+  }
+
   const jstTime = getCurrentTimeInJST()
   const currentTimeInMinutes = jstTime.hours * 60 + jstTime.minutes
   
   const timeToMinutes = (time: string): number => {
-    const [hour, minute] = time.split(':').map(Number)
+    if (typeof time !== 'string') return 0
+    const parts = time.split(':')
+    if (parts.length !== 2) return 0
+    const [hour, minute] = parts.map(Number)
+    if (isNaN(hour) || isNaN(minute)) return 0
     return hour * 60 + minute
   }
 
