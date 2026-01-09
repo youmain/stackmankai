@@ -71,6 +71,7 @@ export default function StackManHandPurchasePage() {
               }
             } catch (error) {
               console.error('[Purchase] Error checking operation hours:', error)
+              console.error('[Purchase] Error details:', error instanceof Error ? error.message : String(error))
               // 営業時間チェックに失敗した場合は続行（24時間営業と見なす）
             }
           }
