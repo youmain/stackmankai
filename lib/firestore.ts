@@ -2037,7 +2037,8 @@ export const resetAllPlayersMembershipData = async (): Promise<void> => {
 
 const getChatMessagesCollection = (storeId: string) => {
   if (!storeId) throw new Error("Store ID not found")
-  return collection(checkFirebaseConfig(), `chatRooms/store_${storeId}/messages`)
+  const db = checkFirebaseConfig()
+  return collection(db, "chatRooms", `store_${storeId}`, "messages")
 }
 
 export const sendChatMessage = async (
