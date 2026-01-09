@@ -195,11 +195,11 @@ export default function StackManHandPurchasePage() {
         await cleanupStackManHands(customerAccount.storeId)
 
         // Load today's hands (now includes last 3 days)
-        const hands = await getTodayStackManHands(customerAccount.storeId, customerAccount.playerId)
+        const hands = await getTodayStackManHands(customerAccount.storeId, String(customerAccount.playerId))
         setTodayHands(hands)
 
         // Calculate remaining purchases
-        const purchaseInfo = await calculateRemainingPurchases(customerAccount.storeId, customerAccount.playerId, stack)
+        const purchaseInfo = await calculateRemainingPurchases(customerAccount.storeId, String(customerAccount.playerId), stack)
         setMaxPurchases(purchaseInfo.maxPurchases)
         setPurchasedToday(purchaseInfo.purchasedToday)
         setRemainingPurchases(purchaseInfo.remaining)
