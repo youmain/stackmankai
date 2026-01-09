@@ -83,7 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
           try {
             const startTime = performance.now();
-            const { getDoc, doc } = await import("firebase/firestore");
+            const { getDoc, doc, collection, query, where, getDocs, writeBatch } = await import("firebase/firestore");
             const { db } = await import("@/lib/firebase");
             
             // まずusersコレクションを確認（店舗オーナー/従業員）
