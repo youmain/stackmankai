@@ -5,6 +5,13 @@
 
 import { collection, doc, getDoc, getDocs, updateDoc, addDoc, query, where, Timestamp, serverTimestamp, runTransaction } from "firebase/firestore"
 import { getDb, isFirebaseConfigured } from "./firebase"
+
+// Helper to ensure db is available
+const checkDb = () => {
+  const db = getDb()
+  if (!db) throw new Error("Firestore is not initialized")
+  return db
+}
 import type { RakeCollection, RakeSettings, StackReset, StackResetSettings } from "@/types/stack-man-hand"
 
 /**
@@ -64,7 +71,7 @@ export const collectRake = async (storeId: string): Promise<{ success: boolean; 
     const tomorrow = new Date(today)
     tomorrow.setDate(tomorrow.getDate() + 1)
     
-    const collectionsRef = collection(getDb()!, "stores", storeId, "rakeCollections")
+    const collectionsRef = collection(checkDb(), "stores", storeId, "rakeCollections")
     const todayCollectionQuery = query(
       collectionsRef,
       where("collectedAt", ">=", Timestamp.fromDate(today)),
@@ -78,7 +85,7 @@ export const collectRake = async (storeId: string): Promise<{ success: boolean; 
     }
     
     // Get all players
-    const playersRef = collection(getDb()!, "players", `store_${storeId}`, "players")
+    const playersRef = collection(checkDb(), "players", `store_${storeId}`, "players")
     const playersSnapshot = await getDocs(playersRef)
     
     if (playersSnapshot.empty) {
@@ -190,7 +197,7 @@ export const resetStacks = async (storeId: string): Promise<{ success: boolean; 
     const tomorrow = new Date(today)
     tomorrow.setDate(tomorrow.getDate() + 1)
     
-    const resetsRef = collection(getDb()!, "stores", storeId, "stackResets")
+    const resetsRef = collection(checkDb(), "stores", storeId, "stackResets")
     const todayResetQuery = query(
       resetsRef,
       where("resetAt", ">=", Timestamp.fromDate(today)),
@@ -204,7 +211,7 @@ export const resetStacks = async (storeId: string): Promise<{ success: boolean; 
     }
     
     // Get all players
-    const playersRef = collection(getDb()!, "players", `store_${storeId}`, "players")
+    const playersRef = collection(checkDb(), "players", `store_${storeId}`, "players")
     const playersSnapshot = await getDocs(playersRef)
     
     if (playersSnapshot.empty) {
