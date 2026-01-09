@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { doc, getDoc, collection, query, where, getDocs, setDoc, writeBatch } from "firebase/firestore"
+import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore"
 import { getDb } from "@/lib/firebase"
 import { useAuth } from "@/contexts/auth-context"
 import { getStackManHandSettings, purchaseStackManHand, getTodayStackManHands, calculateRemainingPurchases } from "@/lib/stack-man-hand"
@@ -42,7 +42,6 @@ export default function StackManHandPurchasePage() {
       try {
         console.log("[Purchase] Loading data for customerAccount:", customerAccount)
         
-        // playerIdの取得を修正: customerAccount.playerId が uniqueId か Doc ID かに関わらず対応
         const storeId = customerAccount.storeId
         const playerId = customerAccount.playerId
         
@@ -89,11 +88,9 @@ export default function StackManHandPurchasePage() {
         }
 
         // プレイヤー情報の取得
-        // 1. まず playerId をドキュメントIDとして試行
         let playerDocRef = doc(db, "players", `store_${storeId}`, "players", playerId);
         let playerDocSnap = await getDoc(playerDocRef);
         
-        // 2. 見つからない場合、uniqueId として検索
         if (!playerDocSnap.exists()) {
           console.log("[Purchase] Player not found by Doc ID, searching by uniqueId:", playerId)
           const playersCollectionRef = collection(db, "players", `store_${storeId}`, "players");
@@ -151,13 +148,9 @@ export default function StackManHandPurchasePage() {
     setPageError(null)
 
     try {
-      // purchaseStackManHand に渡す ID も実際のドキュメントIDにする必要がある
-      // ここでは loadData で特定した ID を使いたいが、ステートに保存していないので再取得するか、
-      // customerAccount.playerId をそのまま使って関数側で解決させる
       const result = await purchaseStackManHand(customerAccount.storeId, customerAccount.playerId, customerAccount.playerName || playerName)
       if (result.success) {
         alert(`Stack Man Handを${settings.purchasePrice}💰で購入しました！`)
-        // データを再読み込み
         window.location.reload()
       } else {
         setPageError(result.message)
