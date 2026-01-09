@@ -102,6 +102,6 @@ export function getAuthInstance(): Auth | null {
 }
 
 // 常に初期化されたインスタンスをエクスポート
-export const dbInstance = db
-export const authInstance = auth
+export const dbInstance = getDb()
+export const authInstance = getAuthInstance()
 export { db, auth, app }
