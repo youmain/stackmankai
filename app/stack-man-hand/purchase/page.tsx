@@ -46,13 +46,12 @@ export default function StackManHandPurchasePage() {
         const db = getDb()!
         const storeDocSnap = await getDoc(doc(db, "stores", customerAccount.storeId))
         if (storeDocSnap.exists()) {
-          const rawStoreData = storeDocSnap.data()
-          // Convert Timestamp objects in storeData to ISO strings
+          const rawStoreData = storeDocSnap.data();
           const storeData = {
             ...rawStoreData,
-            createdAt: rawStoreData.createdAt?.toDate().toISOString() || null,
-            updatedAt: rawStoreData.updatedAt?.toDate().toISOString() || null,
-          }
+            createdAt: rawStoreData.createdAt && typeof rawStoreData.createdAt === 'object' && '_seconds' in rawStoreData.createdAt ? new Date(rawStoreData.createdAt._seconds * 1000).toISOString() : rawStoreData.createdAt,
+            updatedAt: rawStoreData.updatedAt && typeof rawStoreData.updatedAt === 'object' && '_seconds' in rawStoreData.updatedAt ? new Date(rawStoreData.updatedAt._seconds * 1000).toISOString() : rawStoreData.updatedAt,
+          };
           console.log("[Purchase] Store data loaded (initial check):", storeData)
 
           console.log("[Purchase] Setting storeName:", storeData.storeName || storeData.name || "")
@@ -63,8 +62,12 @@ export default function StackManHandPurchasePage() {
           if (storeData.pokerOperationHours && typeof storeData.pokerOperationHours === 'object') {
             console.log("[Purchase] pokerOperationHours.open type:", typeof storeData.pokerOperationHours.open, "value:", storeData.pokerOperationHours.open);
             console.log("[Purchase] pokerOperationHours.close type:", typeof storeData.pokerOperationHours.close, "value:", storeData.pokerOperationHours.close);
-            const isOperating = isWithinOperationHours(storeData.pokerOperationHours)
-            const isPurchasing = isWithinPurchaseWindow(storeData.pokerOperationHours)
+            const processedPokerOperationHours = {
+              open: String(storeData.pokerOperationHours.open),
+              close: String(storeData.pokerOperationHours.close),
+            };
+            const isOperating = isWithinOperationHours(processedPokerOperationHours);
+            const isPurchasing = isWithinPurchaseWindow(processedPokerOperationHours);
             if (!isOperating && !isPurchasing) {
               const { open, close } = storeData.pokerOperationHours
               setPageError(`現在は購入時間外です。購入可能時間: ${open || '不明'} - ${close || '不明'} (終了後1時間まで)`);
