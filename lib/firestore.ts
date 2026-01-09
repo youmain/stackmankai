@@ -449,7 +449,8 @@ export const subscribeToPlayers = (
 export const addPlayer = async (playerData: Omit<Player, "id" | "createdAt" | "updatedAt">) => {
   try {
     // 1. フラットなplayersコレクションにプレイヤーを追加（既存の動作）
-    const playersCollectionRef = collection(db, "players");
+    const dbInstance = checkFirebaseConfig()
+    const playersCollectionRef = collection(dbInstance, "players");
     const newPlayerDocRef = await addDoc(playersCollectionRef, {
       ...playerData,
       createdAt: serverTimestamp(),
@@ -467,7 +468,7 @@ export const addPlayer = async (playerData: Omit<Player, "id" | "createdAt" | "u
     // 3. 店舗分離構造のパスにもプレイヤーデータをコピー
     //    players / store_{storeId} / players / {uniqueId} の形式で保存
     if (playerData.storeId && playerData.uniqueId) {
-      const storePlayersCollectionRef = collection(db, `players/store_${playerData.storeId}/players`);
+      const storePlayersCollectionRef = collection(dbInstance, `players/store_${playerData.storeId}/players`);
       await setDoc(doc(storePlayersCollectionRef, playerData.uniqueId), {
         ...playerData,
         id: newPlayerDocRef.id, // 元のFirestore IDも保存
@@ -720,7 +721,7 @@ export const addPlayerToGame = async (
   
   // 購入がある場合は購入履歴に記録
   if (actualPurchase > 0) {
-    const purchaseHistoryRef = collection(getDb()!, "purchaseHistory")
+    const purchaseHistoryRef = collection(checkFirebaseConfig(), "purchaseHistory")
     await addDoc(purchaseHistoryRef, {
       playerId,
       playerName,
@@ -835,7 +836,7 @@ export const updateGameParticipantStack = async (
     
     // 購入がある場合は購入履歴に記録
     if (purchaseAmount > 0) {
-      const purchaseHistoryRef = collection(getDb()!, "purchaseHistory")
+      const purchaseHistoryRef = collection(checkFirebaseConfig(), "purchaseHistory")
       await addDoc(purchaseHistoryRef, {
         playerId,
         playerName,
@@ -1572,10 +1573,7 @@ export const createCustomerAccount = async (data: Partial<CustomerAccount>, emai
   console.log("[createCustomerAccount] ⏱️ customerAccountsドキュメント作成開始")
   const docStart = performance.now()
   log.info("[createCustomerAccount] customerAccountsドキュメントを作成中...")
-  const db = getDb()
-  if (!db) {
-    throw new Error("Firestoreが初期化されていません")
-  }
+  const db = checkFirebaseConfig()
   const docRef = doc(db, "customerAccounts", uid)
   await setDoc(docRef, {
     ...data,
@@ -1796,7 +1794,7 @@ export const subscribeToPlayerPurchaseHistory = (
   }
   
   // 購入履歴をpurchaseHistoryコレクションから取得
-  const purchaseHistoryCollection = collection(getDb()!, "purchaseHistory")
+  const purchaseHistoryCollection = collection(checkFirebaseConfig(), "purchaseHistory")
   
   let q
   if (storeId) {
@@ -1852,8 +1850,7 @@ export const createPlayer = addPlayer
 // --- Store Functions ---
 
 export const getStoresCollection = () => {
-  const db = getDb()
-  if (!db) throw new Error("Firebase is not configured")
+  const db = checkFirebaseConfig()
   return collection(db, "stores")
 }
 
@@ -1882,7 +1879,7 @@ export const updatePlayerStore = async (playerId: string, storeId: string, store
     log.warn("Firebase is not configured, skipping updatePlayerStore")
     return
   }
-  const playerDoc = doc(getDb()!, "players", playerId)
+  const playerDoc = doc(checkFirebaseConfig(), "players", playerId)
   await updateDoc(playerDoc, {
     storeId,
     storeName,
@@ -2132,8 +2129,7 @@ export const subscribeToChatMessages = (
  * Get presence collection reference for a store
  */
 const getPresenceCollection = (storeId: string) => {
-  const db = getDb()
-  if (!db) throw new Error("Firestore is not initialized")
+  const db = checkFirebaseConfig()
   return collection(db, "chatRooms", `store_${storeId}`, "presence")
 }
 
