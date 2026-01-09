@@ -83,7 +83,10 @@ export default function StackManHandPurchasePage() {
           return
         }
 
-        const playerData = playerDocSnap.data();
+        let playerData = playerDocSnap.data();
+        if (playerData.lastStackReset && typeof playerData.lastStackReset === 'object' && '_seconds' in playerData.lastStackReset) {
+          playerData.lastStackReset = new Date(playerData.lastStackReset._seconds * 1000).toISOString();
+        }
         const stack = playerData.stapokaBalance ?? playerData.systemBalance ?? 0
         console.log("[Purchase] Setting currentStack:", stack)
         setCurrentStack(stack)
