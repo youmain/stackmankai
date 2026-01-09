@@ -25,7 +25,7 @@ export default function EmployeeList({ storeId, currentUserId, isOwner }: Employ
   useEffect(() => {
     // 従業員一覧をリアルタイムで取得
     const q = query(
-      collection(db, 'employees'),
+      collection(getDb()!, 'employees'),
       where('storeId', '==', storeId)
     );
     

@@ -78,7 +78,7 @@ export default function StackManHandPurchasePage() {
         // customerAccount.playerId は実際には uniqueId である可能性を考慮し、uniqueIdで検索する
         const findPlayerByUniqueId = async (storeId: string, uniqueId: string) => {
           const db = getDb()!;
-          const playersCollectionRef = collection(db, "players", `store_${storeId}`, "players");
+          const playersCollectionRef = collection(getDb()!, "players", `store_${storeId}`, "players");
           const q = query(playersCollectionRef, where("uniqueId", "==", uniqueId));
           const querySnapshot = await getDocs(q);
 

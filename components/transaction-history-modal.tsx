@@ -21,7 +21,7 @@ export function TransactionHistoryModal({ open, onClose, player }: TransactionHi
   useEffect(() => {
     if (!open || !player.id || !db) return
 
-    const q = query(collection(db, "transactions"), where("playerId", "==", player.id))
+    const q = query(collection(getDb()!, "transactions"), where("playerId", "==", player.id))
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const transactionList: Transaction[] = []

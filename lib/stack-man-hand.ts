@@ -212,7 +212,7 @@ export const purchaseStackManHand = async (
   validUntil.setHours(23, 59, 59, 999)
   
   // Create Stack Man Hand
-  const handsRef = collection(db, "stores", storeId, "stackManHands")
+  const handsRef = collection(getDb()!, "stores", storeId, "stackManHands")
   const handData: Omit<StackManHand, "id"> = {
     userId,
     userName,
@@ -297,7 +297,7 @@ export const getActiveStackManHands = async (
   const db = getDb()
   if (!db) throw new Error("Firestore is not initialized")
   
-  const handsRef = collection(db, "stores", storeId, "stackManHands")
+  const handsRef = collection(getDb()!, "stores", storeId, "stackManHands")
   const handsQuery = query(
     handsRef,
     where("userId", "==", userId),
@@ -327,7 +327,7 @@ export const getTodayStackManHands = async (
   threeDaysAgo.setDate(threeDaysAgo.getDate() - 3)
   threeDaysAgo.setHours(0, 0, 0, 0)
   
-  const handsRef = collection(db, "stores", storeId, "stackManHands")
+  const handsRef = collection(getDb()!, "stores", storeId, "stackManHands")
   const handsQuery = query(
     handsRef,
     where("userId", "==", userId),
@@ -353,7 +353,7 @@ export const cleanupStackManHands = async (storeId: string): Promise<number> => 
   fourDaysAgo.setDate(fourDaysAgo.getDate() - 4)
   fourDaysAgo.setHours(0, 0, 0, 0)
   
-  const handsRef = collection(db, "stores", storeId, "stackManHands")
+  const handsRef = collection(getDb()!, "stores", storeId, "stackManHands")
   const handsQuery = query(
     handsRef,
     where("purchasedAt", "<", Timestamp.fromDate(fourDaysAgo))
@@ -467,7 +467,7 @@ export const useStackManHand = async (
     
     // If win, add store chips to player
     if (result === "win") {
-      const playersRef = collection(db, "players", `store_${storeId}`, "players")
+      const playersRef = collection(getDb()!, "players", `store_${storeId}`, "players")
       const playerQuery = query(playersRef, where("uniqueId", "==", handData.userId))
       const playerSnapshot = await getDocs(playerQuery)
       
@@ -497,7 +497,7 @@ export const expireOldStackManHands = async (storeId: string): Promise<number> =
   const db = getDb()
   if (!db) throw new Error("Firestore is not initialized")
   
-  const handsRef = collection(db, "stores", storeId, "stackManHands")
+  const handsRef = collection(getDb()!, "stores", storeId, "stackManHands")
   const now = Timestamp.now()
   
   const expiredQuery = query(
