@@ -25,16 +25,6 @@ const getCurrentTimeInJST = (): { hours: number; minutes: number } => {
  * @returns true if current time is between open and close time (inclusive of open, exclusive of close), false otherwise.
  */
 export const isWithinOperationHours = (hours: PokerOperationHours): boolean => {
-  if (!hours || !hours.open || !hours.close) {
-    // If hours are not set, assume 24/7 operation
-    return true
-  }
-
-  // Type validation
-  if (typeof hours.open !== 'string' || typeof hours.close !== 'string') {
-    console.warn('[isWithinOperationHours] Invalid hours format:', hours)
-    return true // Default to 24/7 if data is invalid
-  }
 
   const jstTime = getCurrentTimeInJST()
   const currentHour = jstTime.hours
@@ -68,13 +58,6 @@ export const isWithinOperationHours = (hours: PokerOperationHours): boolean => {
  * Check if the current time is within the purchase-only window (1 hour after close).
  */
 export const isWithinPurchaseWindow = (hours: PokerOperationHours): boolean => {
-  if (!hours || !hours.open || !hours.close) return false
-
-  // Type validation
-  if (typeof hours.open !== 'string' || typeof hours.close !== 'string') {
-    console.warn('[isWithinPurchaseWindow] Invalid hours format:', hours)
-    return false
-  }
 
   const jstTime = getCurrentTimeInJST()
   const currentTimeInMinutes = jstTime.hours * 60 + jstTime.minutes

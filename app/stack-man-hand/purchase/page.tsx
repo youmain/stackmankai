@@ -38,52 +38,44 @@ export default function StackManHandPurchasePage() {
 
       try {
         // Load settings
-        try {
-          console.log('[Purchase] Loading settings for store:', customerAccount.storeId)
-          const storeSettings = await getStackManHandSettings(customerAccount.storeId)
-          console.log('[Purchase] Settings loaded:', storeSettings)
-          if (!storeSettings || !storeSettings.enabled) {
-            alert("Stack Man Hand機能が無効です")
-            router.push("/customer-view")
-            return
-          }
-          setSettings(storeSettings)
-        } catch (settingsError) {
-          console.error('[Purchase] Error loading settings:', settingsError)
-          throw new Error(`設定の読み込みに失敗しました: ${settingsError instanceof Error ? settingsError.message : String(settingsError)}`)
+        const storeSettings = await getStackManHandSettings(customerAccount.storeId)
+        if (!storeSettings || !storeSettings.enabled) {
+          alert("Stack Man Hand機能が無効です")
+          router.push("/customer-view")
+          return
         }
+        setSettings(storeSettings)
 
         // Check operation hours and purchase window
-        // Note: Temporarily disabled to debug indexOf error
-        // const db = getDb()!
-        // const storeDocSnap = await getDoc(doc(db, "stores", customerAccount.storeId))
-        // if (storeDocSnap.exists()) {
-        //   const storeData = storeDocSnap.data()
-        //   console.log('[Purchase] Store data loaded:', storeData)
-        //   console.log('[Purchase] pokerOperationHours:', storeData?.pokerOperationHours)
-        //   if (storeData?.pokerOperationHours && typeof storeData.pokerOperationHours === 'object') {
-        //     try {
-        //       console.log('[Purchase] Checking operation hours...')
-        //       const isOperating = isWithinOperationHours(storeData.pokerOperationHours)
-        //       console.log('[Purchase] isOperating:', isOperating)
-        //       const isPurchasing = isWithinPurchaseWindow(storeData.pokerOperationHours)
-        //       console.log('[Purchase] isPurchasing:', isPurchasing)
-        //       
-        //       if (!isOperating && !isPurchasing) {
-        //         const operationHours = storeData.pokerOperationHours
-        //         const openTime = typeof operationHours.open === 'string' ? operationHours.open : '不明'
-        //         const closeTime = typeof operationHours.close === 'string' ? operationHours.close : '不明'
-        //         setPageError(`現在は購入時間外です。購入可能時間: ${openTime} - ${closeTime} (終了後1時間まで)`);
-        //         // router.push("/customer-view") // エラー表示のためリダイレクトを一時停止
-        //         return
-        //       }
-        //     } catch (error) {
-        //       console.error('[Purchase] Error checking operation hours:', error)
-        //       console.error('[Purchase] Error details:', error instanceof Error ? error.message : String(error))
-        //       // 営業時間チェックに失敗した場合は続行（24時間営業と見なす）
-        //     }
-        //   }
-        // }
+        const db = getDb()!
+        const storeDocSnap = await getDoc(doc(db, "stores", customerAccount.storeId))
+        if (storeDocSnap.exists()) {
+          const storeData = storeDocSnap.data()
+          console.log("[Purchase] Store data loaded:", storeData)
+          console.log("[Purchase] pokerOperationHours:", storeData?.pokerOperationHours)
+          if (storeData?.pokerOperationHours && typeof storeData.pokerOperationHours === 'object') {
+            try {
+              console.log("[Purchase] Checking operation hours...")
+              const isOperating = isWithinOperationHours(storeData.pokerOperationHours)
+              console.log("[Purchase] isOperating:", isOperating)
+              const isPurchasing = isWithinPurchaseWindow(storeData.pokerOperationHours)
+              console.log("[Purchase] isPurchasing:", isPurchasing)
+              
+              if (!isOperating && !isPurchasing) {
+                const operationHours = storeData.pokerOperationHours
+                const openTime = typeof operationHours.open === 'string' ? operationHours.open : '不明'
+                const closeTime = typeof operationHours.close === 'string' ? operationHours.close : '不明'
+                setPageError(`現在は購入時間外です。購入可能時間: ${openTime} - ${closeTime} (終了後1時間まで)`);
+                // router.push("/customer-view") // エラー表示のためリダイレクトを一時停止
+                return
+              }
+            } catch (error) {
+              console.error("[Purchase] Error checking operation hours:", error)
+              console.error("[Purchase] Error details:", error instanceof Error ? error.message : String(error))
+              // 営業時間チェックに失敗した場合は続行（24時間営業と見なす）
+            }
+          }
+        }
 
         // Get current stack from Firestore
         console.log("[Purchase] Searching for player:", {
@@ -203,30 +195,14 @@ export default function StackManHandPurchasePage() {
         await cleanupStackManHands(customerAccount.storeId)
 
         // Load today's hands (now includes last 3 days)
-        try {
-          console.log('[Purchase] Loading today hands...')
-          const hands = await getTodayStackManHands(customerAccount.storeId, customerAccount.playerId)
-          console.log('[Purchase] Today hands loaded:', hands.length)
-          setTodayHands(hands)
-        } catch (error) {
-          console.error('[Purchase] Error loading today hands:', error)
-          console.error('[Purchase] Error details:', error instanceof Error ? error.message : String(error))
-          throw error
-        }
+        const hands = await getTodayStackManHands(customerAccount.storeId, customerAccount.playerId)
+        setTodayHands(hands)
 
         // Calculate remaining purchases
-        try {
-          console.log('[Purchase] Calculating remaining purchases...')
-          const purchaseInfo = await calculateRemainingPurchases(customerAccount.storeId, customerAccount.playerId, stack)
-          console.log('[Purchase] Purchase info:', purchaseInfo)
-          setMaxPurchases(purchaseInfo.maxPurchases)
-          setPurchasedToday(purchaseInfo.purchasedToday)
-          setRemainingPurchases(purchaseInfo.remaining)
-        } catch (error) {
-          console.error('[Purchase] Error calculating remaining purchases:', error)
-          console.error('[Purchase] Error details:', error instanceof Error ? error.message : String(error))
-          throw error
-        }
+        const purchaseInfo = await calculateRemainingPurchases(customerAccount.storeId, customerAccount.playerId, stack)
+        setMaxPurchases(purchaseInfo.maxPurchases)
+        setPurchasedToday(purchaseInfo.purchasedToday)
+        setRemainingPurchases(purchaseInfo.remaining)
         
         // Get minimum stack from store
         const storeDoc = await getDoc(doc(getDb()!, "stores", customerAccount.storeId))
