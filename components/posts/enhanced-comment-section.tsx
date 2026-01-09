@@ -13,7 +13,7 @@ import { useMembership } from "@/hooks/use-membership"
 import { useAuth } from "@/contexts/auth-context"
 import { Reply, Star, Award, CheckCircle, ThumbsUp, ThumbsDown, Trash2, Lock } from "lucide-react"
 import { collection, query, where, onSnapshot, deleteDoc, doc } from "firebase/firestore"
-import { db } from "@/lib/firebase"
+import { getDb } from "@/lib/firebase"
 
 interface Comment {
   id: string
@@ -233,6 +233,7 @@ export function EnhancedCommentSection({
     console.log("[v0] 🔍 EnhancedCommentSection - マウント開始")
     console.log("[v0] 📝 投稿ID:", postId)
     console.log("[v0] 👤 会員ステータス:", membershipStatus.isMember)
+    const db = getDb()
     console.log("[v0] 📚 Firestoreインスタンス:", !!db)
 
     if (!db) {
