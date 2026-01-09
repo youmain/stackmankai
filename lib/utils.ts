@@ -7,6 +7,19 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
+ * Get current time in Japan Standard Time (JST)
+ */
+const getCurrentTimeInJST = (): { hours: number; minutes: number } => {
+  const now = new Date()
+  // Convert to JST (UTC+9)
+  const jstTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }))
+  return {
+    hours: jstTime.getHours(),
+    minutes: jstTime.getMinutes()
+  }
+}
+
+/**
  * Check if the current time is within the specified operation hours.
  * @param hours - The operation hours object { open: "HH:MM", close: "HH:MM" }
  * @returns true if current time is between open and close time (inclusive of open, exclusive of close), false otherwise.
@@ -17,9 +30,9 @@ export const isWithinOperationHours = (hours: PokerOperationHours): boolean => {
     return true
   }
 
-  const now = new Date()
-  const currentHour = now.getHours()
-  const currentMinute = now.getMinutes()
+  const jstTime = getCurrentTimeInJST()
+  const currentHour = jstTime.hours
+  const currentMinute = jstTime.minutes
   
   // Convert "HH:MM" to minutes from midnight
   const timeToMinutes = (time: string): number => {
@@ -47,8 +60,8 @@ export const isWithinOperationHours = (hours: PokerOperationHours): boolean => {
 export const isWithinPurchaseWindow = (hours: PokerOperationHours): boolean => {
   if (!hours || !hours.open || !hours.close) return false
 
-  const now = new Date()
-  const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes()
+  const jstTime = getCurrentTimeInJST()
+  const currentTimeInMinutes = jstTime.hours * 60 + jstTime.minutes
   
   const timeToMinutes = (time: string): number => {
     const [hour, minute] = time.split(':').map(Number)
