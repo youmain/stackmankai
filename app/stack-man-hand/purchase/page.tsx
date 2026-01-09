@@ -232,8 +232,11 @@ export default function StackManHandPurchasePage() {
         console.error("Error loading data:", error)
         console.error("Error stack:", error instanceof Error ? error.stack : 'No stack trace')
         console.error("Error type:", typeof error)
+        console.error("Error constructor:", error?.constructor?.name)
         const errorMessage = error instanceof Error ? error.message : String(error)
-        setPageError(`データの読み込みに失敗しました。エラー: ${errorMessage}`);
+        const errorDetails = error instanceof Error ? error.stack : JSON.stringify(error)
+        console.error("Error details:", errorDetails)
+        setPageError(`データの読み込みに失敗しました。エラー: ${errorMessage}\n詳細: ${errorDetails}`);
       } finally {
         setLoading(false)
       }
