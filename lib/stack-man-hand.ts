@@ -363,7 +363,8 @@ export const cleanupStackManHands = async (storeId: string): Promise<number> => 
   )
   
   const snapshot = await getDocs(handsQuery)
-  const batch = db.batch()
+  const { writeBatch } = await import("firebase/firestore")
+  const batch = writeBatch(db)
   let deletedCount = 0
   
   snapshot.docs.forEach((doc) => {
