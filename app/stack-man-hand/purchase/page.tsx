@@ -196,14 +196,30 @@ export default function StackManHandPurchasePage() {
         await cleanupStackManHands(customerAccount.storeId)
 
         // Load today's hands (now includes last 3 days)
-        const hands = await getTodayStackManHands(customerAccount.storeId, customerAccount.playerId)
-        setTodayHands(hands)
+        try {
+          console.log('[Purchase] Loading today hands...')
+          const hands = await getTodayStackManHands(customerAccount.storeId, customerAccount.playerId)
+          console.log('[Purchase] Today hands loaded:', hands.length)
+          setTodayHands(hands)
+        } catch (error) {
+          console.error('[Purchase] Error loading today hands:', error)
+          console.error('[Purchase] Error details:', error instanceof Error ? error.message : String(error))
+          throw error
+        }
 
         // Calculate remaining purchases
-        const purchaseInfo = await calculateRemainingPurchases(customerAccount.storeId, customerAccount.playerId, stack)
-        setMaxPurchases(purchaseInfo.maxPurchases)
-        setPurchasedToday(purchaseInfo.purchasedToday)
-        setRemainingPurchases(purchaseInfo.remaining)
+        try {
+          console.log('[Purchase] Calculating remaining purchases...')
+          const purchaseInfo = await calculateRemainingPurchases(customerAccount.storeId, customerAccount.playerId, stack)
+          console.log('[Purchase] Purchase info:', purchaseInfo)
+          setMaxPurchases(purchaseInfo.maxPurchases)
+          setPurchasedToday(purchaseInfo.purchasedToday)
+          setRemainingPurchases(purchaseInfo.remaining)
+        } catch (error) {
+          console.error('[Purchase] Error calculating remaining purchases:', error)
+          console.error('[Purchase] Error details:', error instanceof Error ? error.message : String(error))
+          throw error
+        }
         
         // Get minimum stack from store
         const storeDoc = await getDoc(doc(getDb()!, "stores", customerAccount.storeId))
