@@ -47,35 +47,36 @@ export default function StackManHandPurchasePage() {
         setSettings(storeSettings)
 
         // Check operation hours and purchase window
-        const db = getDb()!
-        const storeDocSnap = await getDoc(doc(db, "stores", customerAccount.storeId))
-        if (storeDocSnap.exists()) {
-          const storeData = storeDocSnap.data()
-          console.log('[Purchase] Store data loaded:', storeData)
-          console.log('[Purchase] pokerOperationHours:', storeData?.pokerOperationHours)
-          if (storeData?.pokerOperationHours && typeof storeData.pokerOperationHours === 'object') {
-            try {
-              console.log('[Purchase] Checking operation hours...')
-              const isOperating = isWithinOperationHours(storeData.pokerOperationHours)
-              console.log('[Purchase] isOperating:', isOperating)
-              const isPurchasing = isWithinPurchaseWindow(storeData.pokerOperationHours)
-              console.log('[Purchase] isPurchasing:', isPurchasing)
-              
-              if (!isOperating && !isPurchasing) {
-                const operationHours = storeData.pokerOperationHours
-                const openTime = typeof operationHours.open === 'string' ? operationHours.open : '不明'
-                const closeTime = typeof operationHours.close === 'string' ? operationHours.close : '不明'
-                setPageError(`現在は購入時間外です。購入可能時間: ${openTime} - ${closeTime} (終了後1時間まで)`);
-                // router.push("/customer-view") // エラー表示のためリダイレクトを一時停止
-                return
-              }
-            } catch (error) {
-              console.error('[Purchase] Error checking operation hours:', error)
-              console.error('[Purchase] Error details:', error instanceof Error ? error.message : String(error))
-              // 営業時間チェックに失敗した場合は続行（24時間営業と見なす）
-            }
-          }
-        }
+        // Note: Temporarily disabled to debug indexOf error
+        // const db = getDb()!
+        // const storeDocSnap = await getDoc(doc(db, "stores", customerAccount.storeId))
+        // if (storeDocSnap.exists()) {
+        //   const storeData = storeDocSnap.data()
+        //   console.log('[Purchase] Store data loaded:', storeData)
+        //   console.log('[Purchase] pokerOperationHours:', storeData?.pokerOperationHours)
+        //   if (storeData?.pokerOperationHours && typeof storeData.pokerOperationHours === 'object') {
+        //     try {
+        //       console.log('[Purchase] Checking operation hours...')
+        //       const isOperating = isWithinOperationHours(storeData.pokerOperationHours)
+        //       console.log('[Purchase] isOperating:', isOperating)
+        //       const isPurchasing = isWithinPurchaseWindow(storeData.pokerOperationHours)
+        //       console.log('[Purchase] isPurchasing:', isPurchasing)
+        //       
+        //       if (!isOperating && !isPurchasing) {
+        //         const operationHours = storeData.pokerOperationHours
+        //         const openTime = typeof operationHours.open === 'string' ? operationHours.open : '不明'
+        //         const closeTime = typeof operationHours.close === 'string' ? operationHours.close : '不明'
+        //         setPageError(`現在は購入時間外です。購入可能時間: ${openTime} - ${closeTime} (終了後1時間まで)`);
+        //         // router.push("/customer-view") // エラー表示のためリダイレクトを一時停止
+        //         return
+        //       }
+        //     } catch (error) {
+        //       console.error('[Purchase] Error checking operation hours:', error)
+        //       console.error('[Purchase] Error details:', error instanceof Error ? error.message : String(error))
+        //       // 営業時間チェックに失敗した場合は続行（24時間営業と見なす）
+        //     }
+        //   }
+        // }
 
         // Get current stack from Firestore
         console.log("[Purchase] Searching for player:", {
