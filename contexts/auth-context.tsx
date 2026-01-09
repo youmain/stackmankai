@@ -87,6 +87,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const { getDb } = await import("@/lib/firebase");
             const db = getDb();
             if (!db) throw new Error("Firestore is not initialized");
+            const s = { batch: (db: any) => writeBatch(db) }; // 互換性のためのダミーオブジェクト
             
             // まずusersコレクションを確認（店舗オーナー/従業員）
             const userDocRef = doc(db, "users", firebaseUser.uid);
