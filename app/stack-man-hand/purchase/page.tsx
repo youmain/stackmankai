@@ -38,13 +38,20 @@ export default function StackManHandPurchasePage() {
 
       try {
         // Load settings
-        const storeSettings = await getStackManHandSettings(customerAccount.storeId)
-        if (!storeSettings || !storeSettings.enabled) {
-          alert("Stack Man Hand機能が無効です")
-          router.push("/customer-view")
-          return
+        try {
+          console.log('[Purchase] Loading settings for store:', customerAccount.storeId)
+          const storeSettings = await getStackManHandSettings(customerAccount.storeId)
+          console.log('[Purchase] Settings loaded:', storeSettings)
+          if (!storeSettings || !storeSettings.enabled) {
+            alert("Stack Man Hand機能が無効です")
+            router.push("/customer-view")
+            return
+          }
+          setSettings(storeSettings)
+        } catch (settingsError) {
+          console.error('[Purchase] Error loading settings:', settingsError)
+          throw new Error(`設定の読み込みに失敗しました: ${settingsError instanceof Error ? settingsError.message : String(settingsError)}`)
         }
-        setSettings(storeSettings)
 
         // Check operation hours and purchase window
         // Note: Temporarily disabled to debug indexOf error
