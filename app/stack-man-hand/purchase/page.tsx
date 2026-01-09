@@ -51,14 +51,22 @@ export default function StackManHandPurchasePage() {
         const storeDocSnap = await getDoc(doc(db, "stores", customerAccount.storeId))
         if (storeDocSnap.exists()) {
           const storeData = storeDocSnap.data()
-          if (storeData.pokerOperationHours) {
-            const isOperating = isWithinOperationHours(storeData.pokerOperationHours)
-            const isPurchasing = isWithinPurchaseWindow(storeData.pokerOperationHours)
-            
-            if (!isOperating && !isPurchasing) {
-              setPageError(`現在は購入時間外です。購入可能時間: ${storeData.pokerOperationHours.open} - ${storeData.pokerOperationHours.close} (終了後1時間まで)`);
-              // router.push("/customer-view") // エラー表示のためリダイレクトを一時停止
-              return
+          if (storeData?.pokerOperationHours && typeof storeData.pokerOperationHours === 'object') {
+            try {
+              const isOperating = isWithinOperationHours(storeData.pokerOperationHours)
+              const isPurchasing = isWithinPurchaseWindow(storeData.pokerOperationHours)
+              
+              if (!isOperating && !isPurchasing) {
+                const operationHours = storeData.pokerOperationHours
+                const openTime = typeof operationHours.open === 'string' ? operationHours.open : '不明'
+                const closeTime = typeof operationHours.close === 'string' ? operationHours.close : '不明'
+                setPageError(`現在は購入時間外です。購入可能時間: ${openTime} - ${closeTime} (終了後1時間まで)`);
+                // router.push("/customer-view") // エラー表示のためリダイレクトを一時停止
+                return
+              }
+            } catch (error) {
+              console.error('[Purchase] Error checking operation hours:', error)
+              // 営業時間チェックに失敗した場合は続行（24時間営業と見なす）
             }
           }
         }
