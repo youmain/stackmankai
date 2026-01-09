@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminAuth, getAdminDb } from '@/lib/firebase-admin';
-
-const adminAuth = getAdminAuth();
-const adminDb = getAdminDb();
 import { v4 as uuidv4 } from 'uuid';
 
 export async function POST(req: NextRequest) {
   try {
+    // Firebase を初期化（遅延初期化）
+    const adminAuth = getAdminAuth();
+    const adminDb = getAdminDb();
+    
+    if (!adminAuth || !adminDb) {
+      return NextResponse.json({ error: 'Firebase が初期化されていません' }, { status: 500 });
+    }
+    
     // リクエストボディを取得
     const { storeId, role, expiresInDays, employeeName } = await req.json();
     
@@ -60,6 +65,12 @@ export async function POST(req: NextRequest) {
 
 // オーナーまたはリーダーかチェックする関数
 async function checkInvitePermission(userId: string, storeId: string): Promise<boolean> {
+  // Firebase を初期化（遅延初期化）
+  const adminDb = getAdminDb();
+  if (!adminDb) {
+    throw new Error('Firebase が初期化されていません');
+  }
+  
   // 店舗情報を取得
   const storeDoc = await adminDb.collection('stores').doc(storeId).get();
   if (!storeDoc.exists) {

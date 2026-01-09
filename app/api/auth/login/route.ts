@@ -1,38 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
-import { initializeApp, cert, getApps, App } from "firebase-admin/app"
 import { getAuth } from "firebase-admin/auth"
-
-// Firebase Admin SDKの初期化
-let adminApp: App | null = null
-
-function getAdminApp() {
-  if (adminApp) {
-    return adminApp
-  }
-
-  const existingApps = getApps()
-  if (existingApps.length > 0) {
-    adminApp = existingApps[0]
-    return adminApp
-  }
-
-  // 環境変数からサービスアカウントキーを取得
-  const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_KEY
-  if (!serviceAccount) {
-    throw new Error("FIREBASE_SERVICE_ACCOUNT_KEY environment variable is not set")
-  }
-
-  try {
-    const serviceAccountJson = JSON.parse(serviceAccount)
-    adminApp = initializeApp({
-      credential: cert(serviceAccountJson),
-    })
-    return adminApp
-  } catch (error) {
-    console.error("Failed to initialize Firebase Admin SDK:", error)
-    throw new Error("Failed to initialize Firebase Admin SDK")
-  }
-}
+import initializeAdminFirebase from "@/lib/firebase-admin"
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now()
@@ -48,7 +16,10 @@ export async function POST(request: NextRequest) {
     console.log(`[API] Authenticating user: ${email}`)
 
     // Firebase Admin SDKを使用してユーザーを検証
-    const adminApp = getAdminApp()
+    const adminApp = initializeAdminFirebase()
+    if (!adminApp) {
+      return NextResponse.json({ error: "Firebase Admin SDK is not initialized" }, { status: 500 })
+    }
     const auth = getAuth(adminApp)
 
     // メールアドレスからユーザーを取得

@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminDb } from '@/lib/firebase-admin';
 
-const adminDb = getAdminDb();
-
 export async function POST(req: NextRequest) {
   try {
+    // Firebase を初期化（遅延初期化）
+    const adminDb = getAdminDb();
+    if (!adminDb) {
+      return NextResponse.json({ error: 'Firebase が初期化されていません' }, { status: 500 });
+    }
+    
     const { inviteCode } = await req.json();
     
     if (!inviteCode) {

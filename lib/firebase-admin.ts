@@ -20,6 +20,12 @@ function initializeAdminFirebase() {
     return adminApp
   }
 
+  // 環境変数が設定されていない場合は初期化をスキップ
+  if (!process.env.FIREBASE_PRIVATE_KEY) {
+    console.warn("[Firebase Admin] 環境変数が設定されていません。初期化をスキップします。")
+    return null
+  }
+
   try {
     const existingApps = admin.apps
     if (existingApps.length > 0) {
