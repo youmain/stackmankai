@@ -101,4 +101,4 @@ export function getAuthInstance(): Auth | null {
   return auth
 }
 
-export { db, auth }
+export { db, auth, app }
