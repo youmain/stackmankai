@@ -51,10 +51,15 @@ export default function StackManHandPurchasePage() {
         const storeDocSnap = await getDoc(doc(db, "stores", customerAccount.storeId))
         if (storeDocSnap.exists()) {
           const storeData = storeDocSnap.data()
+          console.log('[Purchase] Store data loaded:', storeData)
+          console.log('[Purchase] pokerOperationHours:', storeData?.pokerOperationHours)
           if (storeData?.pokerOperationHours && typeof storeData.pokerOperationHours === 'object') {
             try {
+              console.log('[Purchase] Checking operation hours...')
               const isOperating = isWithinOperationHours(storeData.pokerOperationHours)
+              console.log('[Purchase] isOperating:', isOperating)
               const isPurchasing = isWithinPurchaseWindow(storeData.pokerOperationHours)
+              console.log('[Purchase] isPurchasing:', isPurchasing)
               
               if (!isOperating && !isPurchasing) {
                 const operationHours = storeData.pokerOperationHours
@@ -207,6 +212,8 @@ export default function StackManHandPurchasePage() {
         }
       } catch (error) {
         console.error("Error loading data:", error)
+        console.error("Error stack:", error instanceof Error ? error.stack : 'No stack trace')
+        console.error("Error type:", typeof error)
         const errorMessage = error instanceof Error ? error.message : String(error)
         setPageError(`データの読み込みに失敗しました。エラー: ${errorMessage}`);
       } finally {
