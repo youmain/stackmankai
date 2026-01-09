@@ -30,12 +30,28 @@ export default function StackManHandPurchasePage() {
 
   useEffect(() => {
     const loadData = async () => {
-      if (authLoading || !customerAccount) {
+      if (authLoading) {
+        return
+      }
+
+      if (!customerAccount) {
+        console.log("[Purchase] No customerAccount found")
         return
       }
 
       try {
-        const storeSettings = await getStackManHandSettings(customerAccount.storeId)
+        console.log("[Purchase] Loading data for customerAccount:", customerAccount)
+        
+        // playerIdの取得を修正: customerAccount.playerId が uniqueId か Doc ID かに関わらず対応
+        const storeId = customerAccount.storeId
+        const playerId = customerAccount.playerId
+        
+        if (!storeId || !playerId) {
+          setPageError("店舗IDまたはプレイヤーIDが見つかりません。")
+          return
+        }
+
+        const storeSettings = await getStackManHandSettings(storeId)
         if (!storeSettings || !storeSettings.enabled) {
           alert("Stack Man Hand機能が無効です")
           router.push("/customer-view")
@@ -44,7 +60,7 @@ export default function StackManHandPurchasePage() {
         setSettings(storeSettings)
 
         const db = getDb()!
-        const storeDocSnap = await getDoc(doc(db, "stores", customerAccount.storeId))
+        const storeDocSnap = await getDoc(doc(db, "stores", storeId))
         if (storeDocSnap.exists()) {
           const rawStoreData = storeDocSnap.data();
           const storeData = {
@@ -52,16 +68,12 @@ export default function StackManHandPurchasePage() {
             createdAt: rawStoreData.createdAt && typeof rawStoreData.createdAt === 'object' && '_seconds' in rawStoreData.createdAt ? new Date(rawStoreData.createdAt._seconds * 1000).toISOString() : rawStoreData.createdAt,
             updatedAt: rawStoreData.updatedAt && typeof rawStoreData.updatedAt === 'object' && '_seconds' in rawStoreData.updatedAt ? new Date(rawStoreData.updatedAt._seconds * 1000).toISOString() : rawStoreData.updatedAt,
           };
-          console.log("[Purchase] Store data loaded (initial check):", storeData)
+          console.log("[Purchase] Store data loaded:", storeData)
 
-          console.log("[Purchase] Setting storeName:", storeData.storeName || storeData.name || "")
           setStoreName(storeData.storeName || storeData.name || "")
-          console.log("[Purchase] Setting minimumStack:", storeData.stackResetSettings?.minimumStack || 10000)
           setMinimumStack(storeData.stackResetSettings?.minimumStack || 10000)
 
           if (storeData.pokerOperationHours && typeof storeData.pokerOperationHours === 'object') {
-            console.log("[Purchase] pokerOperationHours.open type:", typeof storeData.pokerOperationHours.open, "value:", storeData.pokerOperationHours.open);
-            console.log("[Purchase] pokerOperationHours.close type:", typeof storeData.pokerOperationHours.close, "value:", storeData.pokerOperationHours.close);
             const processedPokerOperationHours = {
               open: String(storeData.pokerOperationHours.open),
               close: String(storeData.pokerOperationHours.close),
@@ -76,44 +88,49 @@ export default function StackManHandPurchasePage() {
           }
         }
 
-        const playersCollectionRef = collection(db, "players", `store_${customerAccount.storeId}`, "players");
-        const q = query(playersCollectionRef, where("uniqueId", "==", Number(customerAccount.playerId)));
-        const querySnapshot = await getDocs(q);
+        // プレイヤー情報の取得
+        // 1. まず playerId をドキュメントIDとして試行
+        let playerDocRef = doc(db, "players", `store_${storeId}`, "players", playerId);
+        let playerDocSnap = await getDoc(playerDocRef);
+        
+        // 2. 見つからない場合、uniqueId として検索
+        if (!playerDocSnap.exists()) {
+          console.log("[Purchase] Player not found by Doc ID, searching by uniqueId:", playerId)
+          const playersCollectionRef = collection(db, "players", `store_${storeId}`, "players");
+          const q = query(playersCollectionRef, where("uniqueId", "==", isNaN(Number(playerId)) ? playerId : Number(playerId)));
+          const querySnapshot = await getDocs(q);
+          if (!querySnapshot.empty) {
+            playerDocSnap = querySnapshot.docs[0];
+          }
+        }
 
-        let playerDocSnap = querySnapshot.docs[0];
-        if (!playerDocSnap) {
-          setPageError(`プレイヤー情報が見つかりません。プレイヤーID: ${customerAccount.playerId}`);
+        if (!playerDocSnap.exists()) {
+          setPageError(`プレイヤー情報が見つかりません。プレイヤーID: ${playerId}`);
           return
         }
 
-        let playerData = playerDocSnap.data();
-        if (playerData.lastStackReset && typeof playerData.lastStackReset === 'object' && '_seconds' in playerData.lastStackReset) {
-          playerData.lastStackReset = new Date(playerData.lastStackReset._seconds * 1000).toISOString();
-        }
+        const playerData = playerDocSnap.data();
+        const actualPlayerDocId = playerDocSnap.id;
+        console.log("[Purchase] Player data loaded:", playerData, "Actual Doc ID:", actualPlayerDocId)
+
         const stack = playerData.stapokaBalance ?? playerData.systemBalance ?? 0
-        console.log("[Purchase] Setting currentStack:", stack)
         setCurrentStack(stack)
-        console.log("[Purchase] Setting playerName:", playerData.name || customerAccount.playerName || "")
         setPlayerName(playerData.name || customerAccount.playerName || "")
 
         const { cleanupStackManHands } = await import("@/lib/stack-man-hand")
-        await cleanupStackManHands(customerAccount.storeId)
+        await cleanupStackManHands(storeId)
 
-        const hands = await getTodayStackManHands(customerAccount.storeId, String(customerAccount.playerId))
+        const hands = await getTodayStackManHands(storeId, actualPlayerDocId)
         const processedHands = hands.map(hand => ({
           ...hand,
-          purchasedAt: hand.purchasedAt?.toDate().toISOString() || null,
-          validUntil: hand.validUntil?.toDate().toISOString() || null,
+          purchasedAt: (hand.purchasedAt as any)?.toDate?.()?.toISOString() || (hand.purchasedAt as any),
+          validUntil: (hand.validUntil as any)?.toDate?.()?.toISOString() || (hand.validUntil as any),
         }))
-        console.log("[Purchase] Setting todayHands:", processedHands)
         setTodayHands(processedHands)
 
-        const purchaseInfo = await calculateRemainingPurchases(customerAccount.storeId, String(customerAccount.playerId), stack)
-        console.log("[Purchase] Setting maxPurchases:", purchaseInfo.maxPurchases)
+        const purchaseInfo = await calculateRemainingPurchases(storeId, actualPlayerDocId, stack)
         setMaxPurchases(purchaseInfo.maxPurchases)
-        console.log("[Purchase] Setting purchasedToday:", purchaseInfo.purchasesToday)
         setPurchasedToday(purchaseInfo.purchasesToday)
-        console.log("[Purchase] Setting remainingPurchases:", purchaseInfo.remaining)
         setRemainingPurchases(purchaseInfo.remaining)
 
       } catch (error) {
@@ -134,12 +151,14 @@ export default function StackManHandPurchasePage() {
     setPageError(null)
 
     try {
-      const result = await purchaseStackManHand(customerAccount.storeId, String(customerAccount.playerId), settings.purchasePrice)
+      // purchaseStackManHand に渡す ID も実際のドキュメントIDにする必要がある
+      // ここでは loadData で特定した ID を使いたいが、ステートに保存していないので再取得するか、
+      // customerAccount.playerId をそのまま使って関数側で解決させる
+      const result = await purchaseStackManHand(customerAccount.storeId, customerAccount.playerId, customerAccount.playerName || playerName)
       if (result.success) {
-        alert(`Stack Man Handを${settings.purchasePrice}💰で購入しました！残り${result.newStack}💰`)
-        setCurrentStack(result.newStack)
-        setPurchasedToday(prev => prev + 1)
-        setRemainingPurchases(prev => prev - 1)
+        alert(`Stack Man Handを${settings.purchasePrice}💰で購入しました！`)
+        // データを再読み込み
+        window.location.reload()
       } else {
         setPageError(result.message)
       }
@@ -171,48 +190,91 @@ export default function StackManHandPurchasePage() {
           <AlertTitle>エラー</AlertTitle>
           <AlertDescription>{pageError}</AlertDescription>
         </Alert>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="mt-4 bg-gray-500 text-white px-4 py-2 rounded"
+        >
+          再試行
+        </button>
       </div>
     )
   }
 
-  const isPurchaseButtonDisabled = purchasing || remainingPurchases <= 0 || currentStack < (settings?.purchasePrice || 0)
+  const isPurchaseButtonDisabled = purchasing || remainingPurchases <= 0 || (currentStack - minimumStack) < (settings?.purchasePrice || 0)
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Stack Man Hand 購入</h1>
-      <p className="mb-2">店舗: {storeName}</p>
-      <p className="mb-2">プレイヤー: {playerName}</p>
-      <p className="mb-2">現在のスタック: {currentStack}💰</p>
-      <p className="mb-2">購入可能回数: {remainingPurchases}回 (本日${purchasedToday}回購入済み)</p>
-      <p className="mb-4">購入価格: ${settings?.purchasePrice}💰</p>
+      <div className="bg-white shadow rounded-lg p-6 mb-6">
+        <p className="mb-2"><strong>店舗:</strong> {storeName}</p>
+        <p className="mb-2"><strong>プレイヤー:</strong> {playerName}</p>
+        <p className="mb-2"><strong>現在のスタック:</strong> {currentStack.toLocaleString()}💰</p>
+        <p className="mb-2"><strong>最低保証額:</strong> {minimumStack.toLocaleString()}💰</p>
+        <p className="mb-2"><strong>購入可能回数:</strong> {remainingPurchases}回 / 最大{maxPurchases}回 (本日{purchasedToday}回購入済み)</p>
+        <p className="mb-4"><strong>購入価格:</strong> {settings?.purchasePrice.toLocaleString()}💰</p>
 
-      <button
-        onClick={handlePurchase}
-        disabled={isPurchaseButtonDisabled}
-        className={`bg-blue-500 text-white px-4 py-2 rounded ${isPurchaseButtonDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-      >
-        Stack Man Handを購入
-      </button>
+        <button
+          onClick={handlePurchase}
+          disabled={isPurchaseButtonDisabled}
+          className={`w-full py-3 rounded-lg font-bold text-white transition-colors ${
+            isPurchaseButtonDisabled 
+              ? 'bg-gray-400 cursor-not-allowed' 
+              : 'bg-blue-600 hover:bg-blue-700'
+          }`}
+        >
+          {purchasing ? '処理中...' : 'Stack Man Handを購入'}
+        </button>
+        
+        {currentStack - minimumStack < (settings?.purchasePrice || 0) && (
+          <p className="text-red-500 text-sm mt-2">
+            ※最低保証額を差し引いた残高が不足しているため購入できません。
+          </p>
+        )}
+      </div>
 
       <h2 className="text-xl font-bold mt-8 mb-4">本日のStack Man Hand履歴</h2>
       {todayHands.length === 0 ? (
-        <p>本日の購入履歴はありません。</p>
+        <p className="text-gray-500">本日の購入履歴はありません。</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {todayHands.map((hand) => (
-            <div key={hand.id} className="border p-4 rounded shadow">
-              <p>購入日時: {hand.purchasedAt ? new Date(hand.purchasedAt).toLocaleString() : '不明'}</p>
-              <p>有効期限: {hand.validUntil ? new Date(hand.validUntil).toLocaleString() : '不明'}</p>
-              <p>カード:</p>
-              <div className="flex space-x-2">
+            <div key={hand.id} className="bg-white border p-4 rounded-lg shadow-sm">
+              <div className="flex justify-between items-start mb-2">
+                <span className={`px-2 py-1 rounded text-xs font-bold ${
+                  hand.rank === 'S' ? 'bg-yellow-100 text-yellow-800' :
+                  hand.rank === 'A' ? 'bg-red-100 text-red-800' :
+                  hand.rank === 'B' ? 'bg-blue-100 text-blue-800' :
+                  'bg-gray-100 text-gray-800'
+                }`}>
+                  ランク {hand.rank}
+                </span>
+                <span className="text-xs text-gray-500">
+                  {hand.purchasedAt ? new Date(hand.purchasedAt).toLocaleTimeString() : '不明'}
+                </span>
+              </div>
+              <p className="text-sm mb-2">役: {hand.handRank}</p>
+              <div className="flex space-x-2 mb-3">
                 {hand.cards.map((card, index) => (
                   <PlayingCard key={index} suit={card.suit} rank={card.rank} />
                 ))}
+              </div>
+              <div className="border-t pt-2 mt-2 text-sm">
+                <p>倍率: x{hand.multiplier}</p>
+                <p className="font-bold text-blue-600">獲得報酬: {hand.finalReward.toLocaleString()}💰</p>
               </div>
             </div>
           ))}
         </div>
       )}
+      
+      <div className="mt-8">
+        <button 
+          onClick={() => router.push('/customer-view')}
+          className="text-blue-600 hover:underline"
+        >
+          ← 戻る
+        </button>
+      </div>
     </div>
   )
 }
