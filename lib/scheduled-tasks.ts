@@ -4,7 +4,7 @@
  */
 
 import { collection, doc, getDoc, getDocs, updateDoc, addDoc, query, where, Timestamp, serverTimestamp, runTransaction } from "firebase/firestore"
-import { getDb } from "./firebase"
+import { getDb, isFirebaseConfigured } from "./firebase"
 import type { RakeCollection, RakeSettings, StackReset, StackResetSettings } from "@/types/stack-man-hand"
 
 /**
@@ -40,6 +40,7 @@ const getTargetHour = (timeString: string): number => {
  * Collect rake from all players
  */
 export const collectRake = async (storeId: string): Promise<{ success: boolean; message: string; amount?: number }> => {
+  if (!isFirebaseConfigured()) return { success: false, message: "Firebase is not configured" }
   const db = getDb()
   if (!db) throw new Error("Firestore is not initialized")
   
@@ -165,6 +166,7 @@ export const collectRake = async (storeId: string): Promise<{ success: boolean; 
  * Reset stacks for all players
  */
 export const resetStacks = async (storeId: string): Promise<{ success: boolean; message: string; resetCount?: number }> => {
+  if (!isFirebaseConfigured()) return { success: false, message: "Firebase is not configured" }
   const db = getDb()
   if (!db) throw new Error("Firestore is not initialized")
   
@@ -296,7 +298,7 @@ export const resetStacks = async (storeId: string): Promise<{ success: boolean; 
  * Should be called on app initialization
  */
 export const checkAndRunScheduledTasks = async (storeId: string): Promise<void> => {
-  if (!storeId) return
+  if (!storeId || !isFirebaseConfigured()) return
   
   try {
     const db = getDb()
