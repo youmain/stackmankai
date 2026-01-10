@@ -221,7 +221,7 @@ export const purchaseStackManHand = async (
     userName,
     storeId,
     cards,
-    handRank,
+    handRank: "",
     rank,
     purchasePrice: settings.purchasePrice,
     multiplier,
