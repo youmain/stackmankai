@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore"
-import { getDb } from "@/lib/firebase"
+import { getDb } from "@/lib/firebase" } from "@/lib/firebase"
 import { useAuth } from "@/contexts/auth-context"
 import { getStackManHandSettings, purchaseStackManHand, getTodayStackManHands, calculateRemainingPurchases } from "@/lib/stack-man-hand"
 import { isWithinOperationHours, isWithinPurchaseWindow } from "@/lib/utils"

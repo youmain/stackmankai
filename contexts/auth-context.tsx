@@ -41,6 +41,7 @@ interface AuthContextType {
   error: string | null
   setUserName: (name: string) => void
   setCustomerAccount: (account: CustomerAccount) => void
+  refreshCustomerAccount: () => Promise<void>
   signOut: () => void
 }
 
@@ -51,6 +52,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [customerAccount, setCustomerAccountState] = useState<CustomerAccount | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  const refreshCustomerAccount = async () => {
+    if (!user || !user.uid) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const { getDoc, doc } = await import("firebase/firestore");
+      const { getDb } = await import("@/lib/firebase");
+      const db = getDb();
+      if (!db) throw new Error("Firestore is not initialized");
+
+      const customerDocRef = doc(db, "customerAccounts", user.uid);
+      const customerDocSnap = await getDoc(customerDocRef);
+
+      if (customerDocSnap.exists()) {
+        const customer = { id: customerDocSnap.id, ...customerDocSnap.data() } as CustomerAccount;
+        setCustomerAccountState(customer);
+        setUser(prevUser => prevUser ? { ...prevUser, storeId: customer.storeId, playerName: customer.playerName, playerId: customer.playerId } : null);
+      } else {
+        console.warn("[Auth] ⚠️ refreshCustomerAccount: Customer account not found for UID:", user.uid);
+        setCustomerAccountState(null);
+      }
+    } catch (err) {
+      console.error("[Auth] ❌ refreshCustomerAccount error:", err);
+      setError("アカウント情報の更新に失敗しました。");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     let unsubscribe: (() => void) | undefined
@@ -332,6 +362,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUserName,
         setCustomerAccount,
         signOut,
+        refreshCustomerAccount,
       }}
     >
       {children}

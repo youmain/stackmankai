@@ -53,13 +53,20 @@ import { ChatRoomDualMode } from "@/components/chat/chat-room-dual-mode"
 // }
 
 export default function CustomerView() {
-  const { customerAccount, setCustomerAccount, signOut, loading: authLoading } = useAuth()
+  const { customerAccount, setCustomerAccount, signOut, loading: authLoading, refreshCustomerAccount } = useAuth()
   const router = useRouter()
 
   const [viewMode, setViewMode] = useState<"main" | "posts" | "my-posts" | "post-detail" | "ai-players" | "chat">("main")
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null)
 
   // forceResetパラメータでゲームをリセット（一時的な機能）
+  useEffect(() => {
+    // ページが表示されたときにアカウント情報を再取得
+    if (!authLoading && customerAccount) {
+      refreshCustomerAccount();
+    }
+  }, [authLoading, customerAccount, refreshCustomerAccount]);
+
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     if (urlParams.get("forceReset") === "true" && customerAccount?.storeId) {
