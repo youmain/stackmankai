@@ -10,7 +10,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Separator } from "@/components/ui/separator"
 import { useAuth } from "@/contexts/auth-context"
-import { Trophy, Medal, Award, TrendingUp, Target, Zap, BarChart3, Percent, Star, Menu, AlertCircle, AlertTriangle, RefreshCw, LogOut, User, FileText, History, Bot, Gift, MessageCircle, RotateCw } from 'lucide-react'
+import { Trophy, Medal, Award, TrendingUp, Target, Zap, BarChart3, Percent, Star, Menu, AlertCircle, AlertTriangle, RefreshCw, LogOut, User, FileText, History, Bot, Gift, MessageCircle } from 'lucide-react'
 import {
   subscribeToPlayers,
   subscribeToDailyRankings,
@@ -1157,19 +1157,14 @@ ${availableExamples.slice(0, 5).join("\n")}
                     onClick={() => router.push('/stack-man-hand/purchase')}
                   >
                     <p className="text-sm text-gray-600">スタポカ貯スタック</p>
-                    <div className="flex items-center space-x-2">
+                    <div
+                      className="flex items-center space-x-2 cursor-pointer"
+                      onClick={refreshCustomerAccount}
+                    >
                       <p className="text-lg font-semibold text-green-600">
                          {(customerAccount?.stapokaBalance ?? linkedPlayer?.stapokaBalance ?? linkedPlayer?.systemBalance ?? 0).toLocaleString()}💰
                       </p>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={refreshCustomerAccount}
-                        disabled={authLoading}
-                        className="text-gray-500 hover:text-green-600"
-                      >
-                        <RefreshCw className="h-4 w-4" style={{ display: 'block', visibility: 'visible' }} />
-                      </Button>
+                      {authLoading && <RefreshCw className="h-4 w-4 animate-spin text-gray-500" />}
                     </div>
                     {console.log("Debug: authLoading", authLoading, "customerAccount", customerAccount)}
                     <p className="text-xs text-green-500 mt-1">クリックでStack Man Hand購入</p>
