@@ -59,22 +59,32 @@ export function PlayingCard({ card, faceDown = false, size = "md", className }: 
   const suit = card.suit as keyof typeof suitSymbols;
   const rank = card.rank;
 
+  const color = (suit === 'hearts' || suit === 'diamonds') ? '#ef4444' : '#1f2937';
+
   return (
     <div
       className={cn(
-        "bg-white border border-gray-300 rounded-lg shadow-sm flex flex-col justify-between p-1 relative z-10",
+        "border border-gray-300 rounded-lg shadow-sm flex flex-col justify-between p-1 relative z-10",
         cardSizes[size],
         className,
       )}
-      style={{ backgroundColor: 'white', minWidth: 'fit-content' }}
+      style={{ 
+        backgroundColor: 'white', 
+        color: color,
+        minWidth: '48px',
+        minHeight: '64px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between'
+      }}
     >
-      <div className={cn("font-bold leading-none", suitColors[suit] || "text-gray-800")}>
-        <div className="text-left text-[0.7rem]">{rank}</div>
-        <div className="text-left text-[0.7rem]">{suitSymbols[suit] || suit}</div>
+      <div style={{ fontWeight: 'bold', lineHeight: '1', textAlign: 'left' }}>
+        <div style={{ fontSize: '0.9rem' }}>{rank}</div>
+        <div style={{ fontSize: '0.9rem' }}>{suitSymbols[suit] || suit}</div>
       </div>
-      <div className={cn("font-bold leading-none rotate-180 self-end", suitColors[suit] || "text-gray-800")}>
-        <div className="text-left text-[0.7rem]">{rank}</div>
-        <div className="text-left text-[0.7rem]">{suitSymbols[suit] || suit}</div>
+      <div style={{ fontWeight: 'bold', lineHeight: '1', textAlign: 'left', transform: 'rotate(180deg)', alignSelf: 'flex-end' }}>
+        <div style={{ fontSize: '0.9rem' }}>{rank}</div>
+        <div style={{ fontSize: '0.9rem' }}>{suitSymbols[suit] || suit}</div>
       </div>
     </div>
   )
