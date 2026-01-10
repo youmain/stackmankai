@@ -246,6 +246,7 @@ export default function StackManHandPurchasePage() {
                 </span>
               </div>
 
+
               <div className="flex space-x-2 mb-3">
                 {hand.cards.map((card, index) => (
                   <PlayingCard key={index} card={card as any} faceDown={false} />
