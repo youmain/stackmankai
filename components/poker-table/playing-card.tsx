@@ -62,10 +62,11 @@ export function PlayingCard({ card, faceDown = false, size = "md", className }: 
   return (
     <div
       className={cn(
-        "bg-white border border-gray-300 rounded-lg shadow-sm flex flex-col justify-between p-1",
+        "bg-white border border-gray-300 rounded-lg shadow-sm flex flex-col justify-between p-1 relative z-10",
         cardSizes[size],
         className,
       )}
+      style={{ backgroundColor: 'white', minWidth: 'fit-content' }}
     >
       <div className={cn("font-bold leading-none", suitColors[suit] || "text-gray-800")}>
         <div className="text-left text-[0.7rem]">{rank}</div>
