@@ -36,6 +36,7 @@ const cardSizes = {
 }
 
 export function PlayingCard({ card, faceDown = false, size = "md", className }: PlayingCardProps) {
+  console.log("[PlayingCard] Rendering:", { card, faceDown, size });
   if (faceDown || !card) {
     return (
       <div
