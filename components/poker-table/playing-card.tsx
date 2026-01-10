@@ -36,8 +36,10 @@ const cardSizes = {
 }
 
 export function PlayingCard({ card, faceDown = false, size = "md", className }: PlayingCardProps) {
-  console.log("[PlayingCard] Rendering:", { card, faceDown, size });
-  if (faceDown || !card) {
+  // デバッグ用: 常に表を表示するように一時的に変更
+  const shouldShowFaceDown = faceDown || !card;
+
+  if (shouldShowFaceDown) {
     return (
       <div
         className={cn(
@@ -53,6 +55,10 @@ export function PlayingCard({ card, faceDown = false, size = "md", className }: 
     )
   }
 
+  // card.suit や card.rank が存在することを確認
+  const suit = card.suit as keyof typeof suitSymbols;
+  const rank = card.rank;
+
   return (
     <div
       className={cn(
@@ -61,13 +67,13 @@ export function PlayingCard({ card, faceDown = false, size = "md", className }: 
         className,
       )}
     >
-      <div className={cn("font-bold leading-none", suitColors[card.suit])}>
-        <div className="text-left">{card.rank}</div>
-        <div className="text-left">{suitSymbols[card.suit]}</div>
+      <div className={cn("font-bold leading-none", suitColors[suit] || "text-gray-800")}>
+        <div className="text-left text-[0.7rem]">{rank}</div>
+        <div className="text-left text-[0.7rem]">{suitSymbols[suit] || suit}</div>
       </div>
-      <div className={cn("font-bold leading-none rotate-180 self-end", suitColors[card.suit])}>
-        <div className="text-left">{card.rank}</div>
-        <div className="text-left">{suitSymbols[card.suit]}</div>
+      <div className={cn("font-bold leading-none rotate-180 self-end", suitColors[suit] || "text-gray-800")}>
+        <div className="text-left text-[0.7rem]">{rank}</div>
+        <div className="text-left text-[0.7rem]">{suitSymbols[suit] || suit}</div>
       </div>
     </div>
   )
