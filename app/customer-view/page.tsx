@@ -1171,6 +1171,7 @@ ${availableExamples.slice(0, 5).join("\n")}
                         <RefreshCw className="h-4 w-4" />
                       </Button>
                     </div>
+                    {console.log("Debug: authLoading", authLoading, "customerAccount", customerAccount)}
                     <p className="text-xs text-green-500 mt-1">クリックでStack Man Hand購入</p>
                   </div>
                   <div>
