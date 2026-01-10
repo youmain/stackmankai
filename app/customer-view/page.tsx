@@ -1168,7 +1168,7 @@ ${availableExamples.slice(0, 5).join("\n")}
                         disabled={authLoading}
                         className="text-gray-500 hover:text-green-600"
                       >
-                        <RefreshCw className="h-4 w-4" />
+                        <RefreshCw className="h-4 w-4" style={{ display: 'block', visibility: 'visible' }} />
                       </Button>
                     </div>
                     {console.log("Debug: authLoading", authLoading, "customerAccount", customerAccount)}
