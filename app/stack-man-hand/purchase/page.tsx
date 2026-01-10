@@ -248,7 +248,7 @@ export default function StackManHandPurchasePage() {
               <p className="text-sm mb-2">役: {hand.handRank}</p>
               <div className="flex space-x-2 mb-3">
                 {hand.cards.map((card, index) => (
-                  <PlayingCard key={index} suit={card.suit} rank={card.rank} />
+                  <PlayingCard key={index} card={card} />
                 ))}
               </div>
               <div className="border-t pt-2 mt-2 text-sm">
