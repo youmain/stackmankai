@@ -233,16 +233,9 @@ export default function StackManHandPurchasePage() {
           {todayHands.map((hand) => (
             <div key={hand.id} className="bg-white border p-4 rounded-lg shadow-sm">
               <div className="flex justify-between items-start mb-2">
-                <span className={`px-2 py-1 rounded text-xs font-bold ${
-                  hand.rank === 'S' ? 'bg-yellow-100 text-yellow-800' :
-                  hand.rank === 'A' ? 'bg-red-100 text-red-800' :
-                  hand.rank === 'B' ? 'bg-blue-100 text-blue-800' :
-                  'bg-gray-100 text-gray-800'
-                }`}>
-                  ランク {hand.rank}
-                </span>
+
                 <span className="text-xs text-gray-500">
-                  {hand.purchasedAt ? new Date(hand.purchasedAt).toLocaleTimeString() : '不明'}
+                  {hand.purchasedAt ? new Date(hand.purchasedAt).toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' }) + ' ' + new Date(hand.purchasedAt).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '不明'}
                 </span>
               </div>
 
