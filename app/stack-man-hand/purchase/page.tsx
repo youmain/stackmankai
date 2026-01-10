@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { doc, getDoc, collection, query, where, getDocs, writeBatch } from "firebase/firestore"
+import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore"
 import { getDb } from "@/lib/firebase"
 import { useAuth } from "@/contexts/auth-context"
 import { getStackManHandSettings, purchaseStackManHand, getTodayStackManHands, calculateRemainingPurchases } from "@/lib/stack-man-hand"
@@ -151,7 +151,17 @@ export default function StackManHandPurchasePage() {
       const result = await purchaseStackManHand(customerAccount.storeId, customerAccount.playerId, customerAccount.playerName || playerName)
       if (result.success) {
         alert(`Stack Man Handを${settings.purchasePrice}💰で購入しました！`)
-        window.location.reload()
+        if (result.updatedPlayer) {
+          // customerAccountのplayerIdはFirestoreのドキュメントIDなので、
+          // updatedPlayerのstapokaBalanceをcustomerAccountに反映させる
+          setCustomerAccount({
+            ...customerAccount,
+            stapokaBalance: result.updatedPlayer.stapokaBalance, // スタック残高を更新
+          });
+          setCurrentStack(result.updatedPlayer.stapokaBalance); // ローカルの状態も更新
+        }
+        // ページのリロードは不要になる
+        // window.location.reload()
       } else {
         setPageError(result.message)
       }

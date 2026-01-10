@@ -116,12 +116,11 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
 
 /**
  * Purchase Stack Man Hand
- */
-export const purchaseStackManHand = async (
+ */export const purchaseStackManHand = async (
   storeId: string,
-  userId: string,
-  userName: string
-): Promise<{ success: boolean; message: string; handId?: string }> => {
+  playerId: string,
+  playerName: string
+): Promise<{ success: boolean; message: string; updatedPlayer?: any }> => {
   const db = getDb()
   if (!db) throw new Error("Firestore is not initialized")
   
@@ -251,12 +250,12 @@ export const purchaseStackManHand = async (
     await updateDoc(playerDoc.ref, updateData)
     
     // Purchase succeeded - return success even if subsequent operations fail
-    return {
-      success: true,
-      message: "Stack Man Handを購入しました",
-      handId: handDocRef.id,
-    }
-  } catch (error: any) {
+      return {
+        success: true,
+        message: "Stack Man Handを購入しました",
+        handId: handDocRef.id,
+      }
+    } catch (error: any) {
     console.error("Error purchasing Stack Man Hand:", error)
     
     // Check if it's a Firestore error
