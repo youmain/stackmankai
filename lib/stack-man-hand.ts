@@ -132,7 +132,15 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
       return { success: false, message: "Stack Man Hand機能が無効です" }
     }
     
-    // Get player's current stac    // 購入時の残高チェックは、スタポカ貯スタック (stapokaBalance) に対して行う
+    // 顧客アカウントのドキュメント参照を取得
+    const customerAccountRef = doc(db, "customerAccounts", customerAccountId);
+    const customerAccountSnap = await getDoc(customerAccountRef);
+    if (!customerAccountSnap.exists()) {
+      return { success: false, message: "顧客アカウントが見つかりません" };
+    }
+    const customerAccountData = customerAccountSnap.data();
+
+    // 購入時の残高チェックは、スタポカ貯スタック (stapokaBalance) に対して行う
     const currentStapokaBalance = customerAccountData.stapokaBalance ?? 0;
 
     console.log("[Purchase] Balance check (stapokaBalance):", {
