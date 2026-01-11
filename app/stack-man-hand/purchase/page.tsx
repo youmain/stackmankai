@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore"
-import { getDb } from "@/lib/firebase" } from "@/lib/firebase"
+import { doc, getDoc, collection, query, where, getDocs, onSnapshot } from "firebase/firestore"
+import { getDb } from "@/lib/firebase"
 import { useAuth } from "@/contexts/auth-context"
 import { getStackManHandSettings, purchaseStackManHand, getTodayStackManHands, calculateRemainingPurchases } from "@/lib/stack-man-hand"
 import { isWithinOperationHours, isWithinPurchaseWindow } from "@/lib/utils"
@@ -14,7 +14,7 @@ import { AlertCircle } from "lucide-react";
 
 export default function StackManHandPurchasePage() {
   const router = useRouter()
-  const { user, customerAccount, loading: authLoading, error: authError } = useAuth();
+  const { user, customerAccount, setCustomerAccount, loading: authLoading, error: authError } = useAuth();
   const [loading, setLoading] = useState(true)
   const [purchasing, setPurchasing] = useState(false)
   const [pageError, setPageError] = useState<string | null>(null)
@@ -29,22 +29,15 @@ export default function StackManHandPurchasePage() {
   const [storeName, setStoreName] = useState("")
 
   useEffect(() => {
-    const loadData = async () => {
-      if (authLoading) {
-        return
-      }
+    let unsubscribePlayer: (() => void) | null = null;
 
-      if (!customerAccount) {
-        console.log("[Purchase] No customerAccount found")
-        return
-      }
+    const loadData = async () => {
+      if (authLoading) return
+      if (!customerAccount) return
 
       try {
-        console.log("[Purchase] Loading data for customerAccount:", customerAccount)
-        
         const storeId = customerAccount.storeId
         const playerId = customerAccount.playerId
-        
         if (!storeId || !playerId) {
           setPageError("店舗IDまたはプレイヤーIDが見つかりません。")
           return
@@ -52,7 +45,7 @@ export default function StackManHandPurchasePage() {
 
         const storeSettings = await getStackManHandSettings(storeId)
         if (!storeSettings || !storeSettings.enabled) {
-          alert("Stack Man Hand機能が無効です")
+
           router.push("/customer-view")
           return
         }
@@ -61,84 +54,60 @@ export default function StackManHandPurchasePage() {
         const db = getDb()!
         const storeDocSnap = await getDoc(doc(db, "stores", storeId))
         if (storeDocSnap.exists()) {
-          const rawStoreData = storeDocSnap.data();
-          const storeData = {
-            ...rawStoreData,
-            createdAt: rawStoreData.createdAt && typeof rawStoreData.createdAt === 'object' && '_seconds' in rawStoreData.createdAt ? new Date(rawStoreData.createdAt._seconds * 1000).toISOString() : rawStoreData.createdAt,
-            updatedAt: rawStoreData.updatedAt && typeof rawStoreData.updatedAt === 'object' && '_seconds' in rawStoreData.updatedAt ? new Date(rawStoreData.updatedAt._seconds * 1000).toISOString() : rawStoreData.updatedAt,
-          };
-          console.log("[Purchase] Store data loaded:", storeData)
-
+          const storeData = storeDocSnap.data()
           setStoreName(storeData.storeName || storeData.name || "")
           setMinimumStack(storeData.stackResetSettings?.minimumStack || 10000)
+        }
 
-          if (storeData.pokerOperationHours && typeof storeData.pokerOperationHours === 'object') {
-            const processedPokerOperationHours = {
-              open: String(storeData.pokerOperationHours.open),
-              close: String(storeData.pokerOperationHours.close),
-            };
-            const isOperating = isWithinOperationHours(processedPokerOperationHours);
-            const isPurchasing = isWithinPurchaseWindow(processedPokerOperationHours);
-            if (!isOperating && !isPurchasing) {
-              const { open, close } = storeData.pokerOperationHours
-              setPageError(`現在は購入時間外です。購入可能時間: ${open || '不明'} - ${close || '不明'} (終了後1時間まで)`);
-              return
+        // プレイヤー情報のリアルタイム購読
+        const playerDocRef = doc(db, "players", playerId);
+        unsubscribePlayer = onSnapshot(playerDocRef, async (docSnap) => {
+          if (docSnap.exists()) {
+            const playerData = docSnap.data();
+
+            const stack = playerData.stapokaBalance ?? 0;
+            // AuthContextのcustomerAccountも最新のスタック値で更新
+            if (customerAccount && customerAccount.id) {
+              setCustomerAccount({
+                ...customerAccount,
+                stapokaBalance: stack,
+                systemBalance: playerData.systemBalance,
+              });
             }
+            // customerAccountのstapokaBalanceを更新した後に、その値をsetCurrentStackに設定
+            setCurrentStack(stack);
+            setPlayerName(playerData.name || customerAccount.playerName || "");
+
+            // 購入制限の再計算
+            const purchaseInfo = await calculateRemainingPurchases(storeId, docSnap.id, stack);
+            setMaxPurchases(purchaseInfo.maxPurchases);
+            setPurchasedToday(purchaseInfo.purchasesToday);
+            setRemainingPurchases(purchaseInfo.remaining);
           }
-        }
-
-        // プレイヤー情報の取得
-        let playerDocRef = doc(db, "players", `store_${storeId}`, "players", playerId);
-        let playerDocSnap = await getDoc(playerDocRef);
-        
-        if (!playerDocSnap.exists()) {
-          console.log("[Purchase] Player not found by Doc ID, searching by uniqueId:", playerId)
-          const playersCollectionRef = collection(db, "players", `store_${storeId}`, "players");
-          const q = query(playersCollectionRef, where("uniqueId", "==", isNaN(Number(playerId)) ? playerId : Number(playerId)));
-          const querySnapshot = await getDocs(q);
-          if (!querySnapshot.empty) {
-            playerDocSnap = querySnapshot.docs[0];
-          }
-        }
-
-        if (!playerDocSnap.exists()) {
-          setPageError(`プレイヤー情報が見つかりません。プレイヤーID: ${playerId}`);
-          return
-        }
-
-        const playerData = playerDocSnap.data();
-        const actualPlayerDocId = playerDocSnap.id;
-        console.log("[Purchase] Player data loaded:", playerData, "Actual Doc ID:", actualPlayerDocId)
-
-        const stack = playerData.stapokaBalance ?? playerData.systemBalance ?? 0
-        setCurrentStack(stack)
-        setPlayerName(playerData.name || customerAccount.playerName || "")
+        });
 
         const { cleanupStackManHands } = await import("@/lib/stack-man-hand")
         await cleanupStackManHands(storeId)
 
-        const hands = await getTodayStackManHands(storeId, actualPlayerDocId)
-        const processedHands = hands.map(hand => ({
+        const hands = await getTodayStackManHands(storeId, playerId)
+        setTodayHands(hands.map(hand => ({
           ...hand,
           purchasedAt: (hand.purchasedAt as any)?.toDate?.()?.toISOString() || (hand.purchasedAt as any),
           validUntil: (hand.validUntil as any)?.toDate?.()?.toISOString() || (hand.validUntil as any),
-        }))
-        setTodayHands(processedHands)
-
-        const purchaseInfo = await calculateRemainingPurchases(storeId, actualPlayerDocId, stack)
-        setMaxPurchases(purchaseInfo.maxPurchases)
-        setPurchasedToday(purchaseInfo.purchasesToday)
-        setRemainingPurchases(purchaseInfo.remaining)
+        })))
 
       } catch (error) {
-        console.error("Error loading data:", error)
-        setPageError(`データの読み込みに失敗しました。エラー: ${error instanceof Error ? error.message : String(error)}`)
+        
+        setPageError(`データの読み込みに失敗しました。`)
       } finally {
         setLoading(false)
       }
     }
 
     loadData()
+    return () => {
+      if (unsubscribePlayer) unsubscribePlayer()
+    }
   }, [authLoading, customerAccount, router])
 
   const handlePurchase = async () => {
@@ -148,25 +117,24 @@ export default function StackManHandPurchasePage() {
     setPageError(null)
 
     try {
-      const result = await purchaseStackManHand(customerAccount.storeId, customerAccount.playerId, customerAccount.playerName || playerName)
+      const result = await purchaseStackManHand(customerAccount.storeId, customerAccount.playerId, customerAccount.playerName || playerName, customerAccount.id)
       if (result.success) {
-        alert(`Stack Man Handを${settings.purchasePrice}💰で購入しました！`)
+// alert(`Stack Man Handを${settings.purchasePrice}💰で購入しました！`) // ユーザー体験向上のため、アラートは表示しない
         if (result.updatedPlayer) {
-          // customerAccountのplayerIdはFirestoreのドキュメントIDなので、
-          // updatedPlayerのstapokaBalanceをcustomerAccountに反映させる
+
           setCustomerAccount({
             ...customerAccount,
             stapokaBalance: result.updatedPlayer.stapokaBalance, // スタック残高を更新
+            systemBalance: result.updatedPlayer.systemBalance, // システム残高を更新
           });
           setCurrentStack(result.updatedPlayer.stapokaBalance); // ローカルの状態も更新
         }
-        // ページのリロードは不要になる
-        // window.location.reload()
+
       } else {
         setPageError(result.message)
       }
     } catch (error) {
-      console.error("Error purchasing Stack Man Hand:", error)
+      
       setPageError(`購入処理中にエラーが発生しました: ${error instanceof Error ? error.message : String(error)}`)
     } finally {
       setPurchasing(false)
