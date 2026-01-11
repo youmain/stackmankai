@@ -306,7 +306,8 @@ export const getActiveStackManHands = async (
   const handsQuery = query(
     handsRef,
     where("userId", "==", userId),
-    where("status", "==", "active")
+    where("status", "==", "active"),
+    orderBy("purchasedAt", "desc"),
   )
   
   const snapshot = await getDocs(handsQuery)
@@ -336,6 +337,8 @@ export const getTodayStackManHands = async (
   const handsQuery = query(
     handsRef,
     where("userId", "==", userId),
+    where("status", "==", "active"),
+    orderBy("purchasedAt", "desc"),
   )
   
   const snapshot = await getDocs(handsQuery)
