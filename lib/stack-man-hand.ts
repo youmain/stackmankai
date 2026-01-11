@@ -140,23 +140,6 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
     }
     const customerAccountData = customerAccountSnap.data();
 
-    // stapokaBalanceが未定義の場合、systemBalanceを初期値として使用する
-    let currentStapokaBalance = customerAccountData.stapokaBalance;
-    if (currentStapokaBalance === undefined) {
-      currentStapokaBalance = customerAccountData.systemBalance ?? 0;
-      // FirestoreにもstapokaBalanceを初期値として設定
-      await updateDoc(customerAccountRef, {
-        stapokaBalance: currentStapokaBalance,
-        updatedAt: serverTimestamp(),
-      });
-    }
-
-    console.log("[Purchase] Balance check (stapokaBalance):", {
-      currentStapokaBalance,
-      customerStapoka: customerAccountData.stapokaBalance,
-      customerSystemBalance: customerAccountData.systemBalance
-    });
-    
     // プレイヤーのドキュメント参照を取得
     let playerDocRef = doc(db, "players", playerId);
     let playerDocSnap = await getDoc(playerDocRef);
@@ -170,6 +153,32 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
       return { success: false, message: "プレイヤーが見つかりません" };
     }
     const playerData = playerDocSnap.data();
+
+    // stapokaBalanceが未定義、または0の場合、playerDataから取得し、customerAccountsを更新
+    let currentStapokaBalance = customerAccountData.stapokaBalance ?? 0;
+    const playerStapokaBalance = playerData.stapokaBalance ?? 0;
+
+    if (currentStapokaBalance === 0 && playerStapokaBalance > 0) {
+      currentStapokaBalance = playerStapokaBalance;
+      await updateDoc(customerAccountRef, {
+        stapokaBalance: currentStapokaBalance,
+        updatedAt: serverTimestamp(),
+      });
+    } else if (currentStapokaBalance === undefined) {
+      // 初回ロード時など、stapokaBalanceがcustomerAccountsに存在しない場合
+      currentStapokaBalance = playerData.systemBalance ?? 0; // systemBalanceを初期値として使用
+      await updateDoc(customerAccountRef, {
+        stapokaBalance: currentStapokaBalance,
+        updatedAt: serverTimestamp(),
+      });
+    }
+
+    console.log("[Purchase] Balance check (stapokaBalance):", {
+      currentStapokaBalance,
+      customerStapoka: customerAccountData.stapokaBalance,
+      playerStapoka: playerData.stapokaBalance,
+      customerSystemBalance: customerAccountData.systemBalance
+    });
 
     // 購入に必要なスタポカ貯スタック (stapokaBalance) があるかチェック
     if (currentStapokaBalance < settings.purchasePrice) {
