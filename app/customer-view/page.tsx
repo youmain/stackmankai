@@ -187,12 +187,13 @@ export default function CustomerView() {
 
 
 
-        customerPlayerId: customerAccount?.playerId,
-        playerUniqueId: player.uniqueId,
-        playerId: player.id,
-        playerName: player.name,
-        pokerName: player.pokerName,
-      })
+      // console.log("Checking match for player:", {
+      //   customerPlayerId: customerAccount?.playerId,
+      //   playerUniqueId: player.uniqueId,
+      //   playerId: player.id,
+      //   playerName: player.name,
+      //   pokerName: player.pokerName,
+      // })
 
       const matchConditions = [
         // 1. uniqueIdで照合（数値IDが生成されている場合）
