@@ -210,13 +210,13 @@ export default function CustomerView() {
       const isMatch = matchConditions.some((condition) => condition)
 
       if (isMatch) {
-  
-          playerId: player.id,
-          playerName: player.name,
-          pokerName: player.pokerName,
-          storeName: player.storeName,
-          storeId: player.storeId,
-        })
+        // console.log("Match found:", {
+        //   playerId: player.id,
+        //   playerName: player.name,
+        //   pokerName: player.pokerName,
+        //   storeName: player.storeName,
+        //   storeId: player.storeId,
+        // })
       }
 
       if (!isMatch) {
