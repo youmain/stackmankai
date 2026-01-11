@@ -140,13 +140,22 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
     }
     const customerAccountData = customerAccountSnap.data();
 
-    // 購入時の残高チェックは、スタポカ貯スタック (stapokaBalance) に対して行う
-    const currentStapokaBalance = customerAccountData.stapokaBalance ?? 0;
+    // stapokaBalanceが未定義の場合、systemBalanceを初期値として使用する
+    let currentStapokaBalance = customerAccountData.stapokaBalance;
+    if (currentStapokaBalance === undefined) {
+      currentStapokaBalance = customerAccountData.systemBalance ?? 0;
+      // FirestoreにもstapokaBalanceを初期値として設定
+      await updateDoc(customerAccountRef, {
+        stapokaBalance: currentStapokaBalance,
+        updatedAt: serverTimestamp(),
+      });
+    }
 
     console.log("[Purchase] Balance check (stapokaBalance):", {
       currentStapokaBalance,
-      customerStapoka: customerAccountData.stapokaBalance
-    })
+      customerStapoka: customerAccountData.stapokaBalance,
+      customerSystemBalance: customerAccountData.systemBalance
+    });
     
     // プレイヤーのドキュメント参照を取得
     let playerDocRef = doc(db, "players", playerId);
