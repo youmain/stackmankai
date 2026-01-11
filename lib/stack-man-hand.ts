@@ -179,6 +179,7 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
       playerStapoka: playerData.stapokaBalance,
       customerSystemBalance: customerAccountData.systemBalance
     });
+    console.log("[Purchase] Initial checks passed.");
 
     // 購入に必要なスタポカ貯スタック (stapokaBalance) があるかチェック
     if (currentStapokaBalance < settings.purchasePrice) {
@@ -230,7 +231,9 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
     status: "active", 
   }
     
-    const handDocRef = await addDoc(handsRef, handData)
+    console.log("[Purchase] Attempting to add new Stack Man Hand to Firestore.");
+    const handDocRef = await addDoc(handsRef, handData);
+    console.log("[Purchase] Stack Man Hand added successfully with ID:", handDocRef.id);
     
     // スタポカ貯スタック (stapokaBalance) を減算
     const newStapokaBalance = currentStapokaBalance - settings.purchasePrice;
@@ -248,13 +251,13 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
     });
 
     // プレイ用スタック (systemBalance) には影響を与えない
-    
-    // Purchase succeeded - return success even if subsequent operations fail
-      return {
-        success: true,
-        message: "Stack Man Handを購入しました",
-        handId: handDocRef.id,
-      }
+    console.log("[Purchase] All balance updates completed. Returning success.");
+    return {
+      success: true,
+      message: "Stack Man Handを購入しました",
+      handId: handDocRef.id,
+      updatedPlayer: { stapokaBalance: newStapokaBalance, systemBalance: playerData.systemBalance } // updatedPlayerを返す
+    };
     } catch (error: any) {
     console.error("Error purchasing Stack Man Hand:", error)
     

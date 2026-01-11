@@ -134,16 +134,18 @@ export default function StackManHandPurchasePage() {
     try {
       const result = await purchaseStackManHand(customerAccount.storeId, customerAccount.playerId, customerAccount.playerName || playerName, customerAccount.id)
       if (result.success) {
-// alert(`Stack Man Handを${settings.purchasePrice}💰で購入しました！`) // ユーザー体験向上のため、アラートは表示しない
+        alert(`Stack Man Handを${settings.purchasePrice}💰で購入しました！`); // 購入成功をユーザーに通知
         if (result.updatedPlayer) {
 
-          setCustomerAccount({
-            ...customerAccount,
-            stapokaBalance: result.updatedPlayer.stapokaBalance, // スタック残高を更新
-            systemBalance: result.updatedPlayer.systemBalance, // システム残高を更新
+          setCustomerAccount(prev => {
+            if (!prev) return null;
+            return {
+              ...prev,
+              stapokaBalance: result.updatedPlayer.stapokaBalance,
+              systemBalance: result.updatedPlayer.systemBalance,
+            };
           });
-          setCurrentStack(result.updatedPlayer.stapokaBalance); // ローカルの状態も更新
-          // 購入成功後、履歴を再フェッチして表示を更新
+          setCurrentStack(result.updatedPlayer.stapokaBalance);
           await fetchTodayHands(customerAccount.storeId, customerAccount.playerId);
         }
 
