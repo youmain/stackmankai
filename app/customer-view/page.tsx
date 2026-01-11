@@ -179,52 +179,17 @@ export default function CustomerView() {
 
   // linkedPlayerを早期に定義（useMemoで最適化）
   const linkedPlayer = useMemo(() => {
+    if (!customerAccount?.playerId) return undefined;
     return players.find((player) => {
-      if (!customerAccount?.playerId) {
-
-        return false;
-      }
-
-
-
-      // console.log("Checking match for player:", {
-      //   customerPlayerId: customerAccount?.playerId,
-      //   playerUniqueId: player.uniqueId,
-      //   playerId: player.id,
-      //   playerName: player.name,
-      //   pokerName: player.pokerName,
-      // })
-
       const matchConditions = [
-        // 1. uniqueIdで照合（数値IDが生成されている場合）
         player.uniqueId && player.uniqueId === customerAccount?.playerId,
-
-        // 2. Firestore IDで照合
         player.id === customerAccount?.playerId,
-
-        // 3. 名前で照合（フォールバック）
         player.name === customerAccount?.playerName,
         player.pokerName === customerAccount?.playerName,
-      ]
-
-      const isMatch = matchConditions.some((condition) => condition)
-
-      if (isMatch) {
-        // console.log("Match found:", {
-        //   playerId: player.id,
-        //   playerName: player.name,
-        //   pokerName: player.pokerName,
-        //   storeName: player.storeName,
-        //   storeId: player.storeId,
-        // })
-      }
-
-      if (!isMatch) {
-
-      }
-      return isMatch
-    })
-  }, [players, customerAccount?.playerId, customerAccount?.playerName, customerAccount]);
+      ];
+      return matchConditions.some((condition) => condition);
+    });
+  }, [players, customerAccount]);
 
   useEffect(() => {
 
