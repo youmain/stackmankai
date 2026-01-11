@@ -336,7 +336,6 @@ export const getTodayStackManHands = async (
   const handsQuery = query(
     handsRef,
     where("userId", "==", userId),
-    where("purchasedAt", ">=", Timestamp.fromDate(threeDaysAgo))
   )
   
   const snapshot = await getDocs(handsQuery)
