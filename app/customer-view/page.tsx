@@ -209,10 +209,6 @@ export default function CustomerView() {
         const needsUpdate = !customerAccount.storeId || hasInvalidPlayerName
         
         if (needsUpdate && linkedPlayer.storeId) {
-    
-            storeId: linkedPlayer.storeId,
-            playerName: linkedPlayer.name || linkedPlayer.pokerName,
-          })
           try {
             const playerName = linkedPlayer.name || linkedPlayer.pokerName || `プレイヤー${linkedPlayer.uniqueId}`
             const storeName = linkedPlayer.storeName || "未設定"
