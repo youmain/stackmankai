@@ -141,13 +141,16 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
       return { success: false, message: "顧客アカウントが見つかりません" };
     }
     const customerAccountData = customerAccountSnap.data();
-    const currentStapokaBalance = customerAccountData.stapokaBalance || 0;
+    // stapokaBalanceが未定義または0の場合、systemBalanceをフォールバックとして使用
+    const currentStapokaBalance = customerAccountData.stapokaBalance ?? customerAccountData.systemBalance ?? 0;
 
     console.log("[Purchase] Searching for player:", {
       storeId,
       playerId,
       customerAccountId,
-      currentStapokaBalance
+      currentStapokaBalance,
+      rawStapoka: customerAccountData.stapokaBalance,
+      rawSystem: customerAccountData.systemBalance
     })
     
     // プレイヤーのドキュメント参照を取得
