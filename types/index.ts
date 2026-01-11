@@ -3,8 +3,9 @@ export interface Player {
   uniqueId: string // ランダム生成されたユニークID（サブスク機能用）
   name: string
   pokerName?: string // ポーカーネーム（オプション）
-  furigana?: string // 読み仮名（オプション）
-  systemBalance: number // システム残高
+furigana?: string // 読み仮名（オプション） systemBalance: number; // 店舗の貯スタック（ゲームプレイで変動）
+
+
   rewardPoints: number // 貯まっているCP (Cashback Points)
   currentGameId?: string // 現在参加中のゲームID
   isPlaying: boolean // プレイ中かどうか
@@ -296,6 +297,10 @@ export interface CustomerAccount {
   id: string
   email: string
   uid?: string // Firebase Auth UID
+stapokaBalance: number; // スタポカ貯スタック
+
+
+
   role?: string // ユーザーロール
   playerId?: string // 紐づけされたプレイヤーID
   playerName?: string // 紐づけされたプレイヤー名

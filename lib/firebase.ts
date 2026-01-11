@@ -21,6 +21,8 @@ let auth: Auth | null = null
 let initializationAttempted = false
 let initializationError: Error | null = null
 
+export const isDemoMode = process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true'
+
 function initializeFirebase() {
   if (initializationAttempted) {
     return
@@ -77,14 +79,13 @@ export const isFirebaseConfigured = () => {
   if (!initializationAttempted) {
     initializeFirebase()
   }
-  // デフォルト値が設定されているため、常にtrueを返す
-  // 実際の接続エラーは各操作で処理される
+
+  if (process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') return false;
   return true
 }
 
 export const getInitializationError = () => initializationError
 
-export const isDemoMode = false
 
 export function getDb(): Firestore | null {
   if (!initializationAttempted) {

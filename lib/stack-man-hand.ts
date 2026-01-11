@@ -119,7 +119,8 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
  */export const purchaseStackManHand = async (
   storeId: string,
   playerId: string,
-  playerName: string
+  playerName: string,
+  customerAccountId: string // customerAccountのIDを追加
 ): Promise<{ success: boolean; message: string; updatedPlayer?: any }> => {
   const db = getDb()
   if (!db) throw new Error("Firestore is not initialized")
@@ -132,40 +133,39 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
     }
     
     // Get player's current stack
+
+    // customerAccountの現在のstapokaBalanceを取得
+    const customerAccountRef = doc(db, "customerAccounts", customerAccountId);
+    const customerAccountSnap = await getDoc(customerAccountRef);
+    if (!customerAccountSnap.exists()) {
+      return { success: false, message: "顧客アカウントが見つかりません" };
+    }
+    const customerAccountData = customerAccountSnap.data();
+    const currentStapokaBalance = customerAccountData.stapokaBalance || 0;
+
     console.log("[Purchase] Searching for player:", {
       storeId,
-      userId,
-      type: typeof userId
+      playerId,
+      customerAccountId,
+      currentStapokaBalance
     })
     
     // 店舗分離構造に対応: players/store_{storeId}/players/{playerId}
-    let playerDoc = null
-    let playerData = null
+    const playerDocRef = doc(db, "players", `store_${storeId}`, "players", playerId);
+    const playerDocSnap = await getDoc(playerDocRef);
     
-    try {
-      console.log("[Purchase] Getting player from store-isolated structure...")
-      const playerDocRef = doc(db, "players", `store_${storeId}`, "players", userId)
-      const playerDocSnap = await getDoc(playerDocRef)
-      
-      if (playerDocSnap.exists()) {
-        console.log("[Purchase] Player found in store-isolated structure")
-        playerDoc = playerDocSnap
-        playerData = playerDocSnap.data()
-      } else {
-        console.log("[Purchase] Player not found in store-isolated structure")
-      }
-    } catch (error) {
-      console.error("[Purchase] Error getting player:", error)
+    if (!playerDocSnap.exists()) {
+      return { success: false, message: "プレイヤーが見つかりません" };
     }
-    
-    // If still not found, return error
-    if (!playerDoc || !playerData) {
-      console.error("[Purchase] Player not found:", {
-        userId,
-        storeId
-      })
-      return { success: false, message: "プレイヤーが見つかりません" }
-    }
+    const playerData = playerDocSnap.data();
+    const currentSystemBalance = playerData.systemBalance || 0;
+
+    console.log("[Purchase] Player data loaded:", {
+      id: playerDocSnap.id,
+      name: playerData.name,
+      storeId: playerData.storeId,
+      systemBalance: currentSystemBalance,
+    });
     
     console.log("[Purchase] Player data loaded (raw):")
     console.dir(playerData, { depth: null })
@@ -177,8 +177,10 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
       systemBalance: playerData.systemBalance,
       stapokaBalance: playerData.stapokaBalance
     })
-    // スタポカバランスがない場合はsystemBalanceを使用（既存プレイヤー対応）
-    const currentStack = playerData.stapokaBalance ?? playerData.systemBalance ?? 0
+    // 購入に必要なスタポカ残高があるかチェック
+    if (currentStapokaBalance < settings.purchasePrice) {
+      return { success: false, message: `スタポカ残高が不足しています。（${settings.purchasePrice.toLocaleString()}💰必要）` };
+    }
     
     // Get minimum stack from store settings
     const storeDoc = await getDoc(doc(db, "stores", storeId))
@@ -188,14 +190,7 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
     const storeData = storeDoc.data()
     const minimumStack = storeData.stackResetSettings?.minimumStack || 10000
     
-    // Check if player has enough chips above minimum stack
-    const availableChips = currentStack - minimumStack
-    if (availableChips < settings.purchasePrice) {
-      return { 
-        success: false, 
-        message: `購入には最低保証額（${minimumStack.toLocaleString()}）以上のチップが必要です` 
-      }
-    }
+
     
     // Generate random hand
     const cards = generateRandomHand()
@@ -216,8 +211,8 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
   // Create Stack Man Hand
   const handsRef = collection(getDb()!, "stores", storeId, "stackManHands")
   const handData: Omit<StackManHand, "id"> = {
-    userId,
-    userName,
+    userId: customerAccountId,
+    userName: playerName,
     storeId,
     cards,
     handRank: "",
@@ -234,20 +229,20 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
     
     const handDocRef = await addDoc(handsRef, handData)
     
-    // Deduct chips from player's stapoka balance
-    const updateData: any = {
+    // stapokaBalanceを減算し、playersコレクションとcustomerAccountsコレクションの両方を更新
+    const newStapokaBalance = currentStapokaBalance - settings.purchasePrice;
+    const newSystemBalance = currentSystemBalance + settings.rewardBaseAmount; // 購入により得られるスタック量
+
+    await updateDoc(playerDocRef, {
+      stapokaBalance: newStapokaBalance,
+      systemBalance: newSystemBalance,
       updatedAt: serverTimestamp(),
-    }
-    
-    // スタポカバランスが存在する場合はそれを更新、ない場合は新規作成
-    if (playerData.stapokaBalance !== undefined) {
-      updateData.stapokaBalance = currentStack - settings.purchasePrice
-    } else {
-      // 既存プレイヤーの場合: systemBalanceをstapokaBalanceにコピーしてから減算
-      updateData.stapokaBalance = currentStack - settings.purchasePrice
-    }
-    
-    await updateDoc(playerDoc.ref, updateData)
+    });
+
+    await updateDoc(customerAccountRef, {
+      stapokaBalance: newStapokaBalance,
+      updatedAt: serverTimestamp(),
+    });
     
     // Purchase succeeded - return success even if subsequent operations fail
       return {
@@ -411,12 +406,11 @@ export const calculateRemainingPurchases = async (
   // Calculate already spent chips
   const alreadySpent = purchasedToday * settings.purchasePrice
   
-  // Restore initial stack (before any purchases today)
-  const initialStack = currentStack + alreadySpent
-  
-  // Calculate max purchases based on available chips from initial stack
-  const availableChips = initialStack - minimumStack
-  const maxPurchases = Math.floor(availableChips / settings.purchasePrice)
+  // 現在のスタックから直接計算するように変更（初期スタックへの復元を廃止）
+  const availableChips = currentStack - minimumStack
+  // すでに購入した分も含めた最大購入可能回数を計算
+  const additionalPurchases = Math.floor(availableChips / settings.purchasePrice)
+  const maxPurchases = purchasedToday + additionalPurchases
   
   // Debug logging
   console.log('calculateRemainingPurchases:', {
@@ -424,7 +418,7 @@ export const calculateRemainingPurchases = async (
     minimumStack,
     purchasedToday,
     alreadySpent,
-    initialStack,
+                                 // initialStack,,,,,,,k,,,
     availableChips,
     purchasePrice: settings.purchasePrice,
     maxPurchases

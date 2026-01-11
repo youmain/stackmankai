@@ -61,11 +61,8 @@ export default function CustomerView() {
 
   // forceResetパラメータでゲームをリセット（一時的な機能）
   useEffect(() => {
-    // ページが表示されたときにアカウント情報を再取得
-    if (!authLoading && customerAccount) {
-      refreshCustomerAccount();
-    }
-  }, [authLoading, customerAccount, refreshCustomerAccount]);
+
+  }, [authLoading, customerAccount?.storeId, customerAccount?.playerId]);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
@@ -151,7 +148,7 @@ export default function CustomerView() {
   const currentMonthStr = currentDate.toISOString().slice(0, 7) // YYYY-MM
   const today = new Date().toISOString().split("T")[0]
 
-  // const [showDetailedData, setShowDetailedData] = useState(false)
+
   const [showPlayerIdForm, setShowPlayerIdForm] = useState(false)
 
   const [originalPlayerData, setOriginalPlayerData] = useState<{ playerId: string; playerName: string } | null>(null)
@@ -183,9 +180,13 @@ export default function CustomerView() {
   // linkedPlayerを早期に定義（useMemoで最適化）
   const linkedPlayer = useMemo(() => {
     return players.find((player) => {
-      if (!customerAccount?.playerId) return false
+      if (!customerAccount?.playerId) {
 
-      console.log("[v0] プレイヤー照合チェック:", {
+        return false;
+      }
+
+
+
         customerPlayerId: customerAccount?.playerId,
         playerUniqueId: player.uniqueId,
         playerId: player.id,
@@ -208,7 +209,7 @@ export default function CustomerView() {
       const isMatch = matchConditions.some((condition) => condition)
 
       if (isMatch) {
-        console.log("[v0] プレイヤー照合成功:", {
+  
           playerId: player.id,
           playerName: player.name,
           pokerName: player.pokerName,
@@ -217,27 +218,24 @@ export default function CustomerView() {
         })
       }
 
+      if (!isMatch) {
+
+      }
       return isMatch
     })
-  }, [players, customerAccount?.playerId, customerAccount?.playerName])
+  }, [players, customerAccount?.playerId, customerAccount?.playerName, customerAccount]);
+
+  useEffect(() => {
+
+
+
+
+  }, [authLoading, customerAccount, players, linkedPlayer]);
 
   // linkedPlayerが見つかった時にstoreIdを自動更新
   useEffect(() => {
-    console.log("[v0] === useEffect triggered ===")
-    console.log("[v0] linkedPlayer:", linkedPlayer ? {
-      id: linkedPlayer.id,
-      name: linkedPlayer.name,
-      uniqueId: linkedPlayer.uniqueId,
-      storeId: linkedPlayer.storeId,
-      storeName: linkedPlayer.storeName
-    } : "NOT FOUND")
-    console.log("[v0] customerAccount:", customerAccount ? {
-      id: customerAccount.id,
-      playerId: customerAccount.playerId,
-      playerName: customerAccount.playerName,
-      storeId: customerAccount.storeId
-    } : "NOT FOUND")
     
+
     const updateStoreIdIfNeeded = async () => {
       if (linkedPlayer && customerAccount) {
         // storeIdまたはplayerNameが未設定または不正な場合に更新
@@ -245,7 +243,7 @@ export default function CustomerView() {
         const needsUpdate = !customerAccount.storeId || hasInvalidPlayerName
         
         if (needsUpdate && linkedPlayer.storeId) {
-          console.log("[v0] Updating customerAccount with player info:", {
+    
             storeId: linkedPlayer.storeId,
             playerName: linkedPlayer.name || linkedPlayer.pokerName,
           })
@@ -265,15 +263,15 @@ export default function CustomerView() {
               storeName: storeName,
               playerName: playerName,
             })
-            console.log("[v0] CustomerAccount updated successfully")
+            // // console.log("[v0] CustomerAccount updated successfully")
           } catch (error) {
-            console.error("[v0] Error updating customerAccount:", error)
+            // console.error("[v0] Error updating customerAccount:", error)
           }
         }
       }
     }
     updateStoreIdIfNeeded()
-  }, [linkedPlayer, customerAccount?.id, customerAccount?.storeId, customerAccount?.playerName])
+  }, [linkedPlayer, customerAccount?.id, customerAccount?.storeId, customerAccount?.playerName, authLoading, customerAccount])
 
   useEffect(() => {
     const handlePaymentCompletion = async () => {
@@ -281,14 +279,14 @@ export default function CustomerView() {
       const sessionId = urlParams.get("session_id")
 
       if (sessionId) {
-        console.log("[v0] Payment completion detected with session ID:", sessionId)
+        // console.log("[v0] Payment completion detected with session ID:", sessionId)
 
         // Get pending registration data from sessionStorage
         const pendingRegistration = sessionStorage.getItem("pendingRegistration")
         if (pendingRegistration) {
           try {
             const { email, password } = JSON.parse(pendingRegistration)
-            console.log("[v0] Creating customer account after payment completion")
+            // console.log("[v0] Creating customer account after payment completion")
 
             // Create customer account in Firestore
             const customerId = await createCustomerAccount(email, sessionId, sessionId)
@@ -312,7 +310,7 @@ export default function CustomerView() {
             // Clean up URL
             window.history.replaceState({}, document.title, "/customer-view")
 
-            console.log("[v0] Customer account created successfully after payment")
+            // console.log("[v0] Customer account created successfully after payment")
           } catch (error) {
             console.error("[v0] Error creating customer account after payment:", error)
           }
@@ -324,16 +322,16 @@ export default function CustomerView() {
   }, [])
 
   useEffect(() => {
-    console.log("[v0] Customer View Page - Current Customer State:", currentCustomer)
-    console.log("[v0] Customer View Page - Skip Linking State:", skipLinking)
-    console.log(
+    // console.log("[v0] Customer View Page - Current Customer State:", currentCustomer)
+    // console.log("[v0] Customer View Page - Skip Linking State:", skipLinking)
+    // console.log(
       "[v0] Customer View Page - Should show linking form:",
       currentCustomer && !currentCustomer.playerId && !skipLinking,
     )
 
     if (customerAccount) {
       sessionStorage.setItem("currentCustomerAccount", JSON.stringify(customerAccount))
-      console.log("[v0] customerAccount saved to sessionStorage:", customerAccount)
+      // console.log("[v0] customerAccount saved to sessionStorage:", customerAccount)
     }
   }, [currentCustomer, skipLinking, customerAccount])
 
@@ -343,8 +341,8 @@ export default function CustomerView() {
       return
     }
 
-    console.log("[v0] プレイヤー検索開始:", playerIdInput.trim())
-    console.log("[v0] 利用可能なプレイヤー数:", players.length)
+    // console.log("[v0] プレイヤー検索開始:", playerIdInput.trim())
+    // console.log("[v0] 利用可能なプレイヤー数:", players.length)
 
     const searchTerm = playerIdInput.trim().toLowerCase()
 
@@ -378,7 +376,7 @@ export default function CustomerView() {
       const matchFound = checks.some((check) => check)
 
       if (matchFound) {
-        console.log("[v0] プレイヤー検索成功:", {
+        // console.log("[v0] プレイヤー検索成功:", {
           searchTerm: playerIdInput.trim(),
           foundPlayer: {
             id: player.id,
@@ -393,10 +391,10 @@ export default function CustomerView() {
     })
 
     if (!targetPlayer) {
-      console.log("[v0] プレイヤー検索失敗 - 利用可能なプレイヤー例:")
+      // console.log("[v0] プレイヤー検索失敗 - 利用可能なプレイヤー例:")
       const availableExamples = players.slice(0, 10).map((player, index) => {
         const info = `${index + 1}. 名前: ${player.name || "未設定"}, ポーカーネーム: ${player.pokerName || "未設定"}, ID: ${player.uniqueId || player.id}`
-        console.log(`[v0] ${info}`)
+        // console.log(`[v0] ${info}`)
         return info
       })
 
@@ -474,7 +472,7 @@ ${availableExamples.slice(0, 5).join("\n")}
       await resetPlayerStatistics(linkedPlayer.id, getDisplayName(linkedPlayer))
       setIsResetConfirmOpen(false)
 
-      console.log("[v0] 統計リセット完了 - データ更新中")
+      // console.log("[v0] 統計リセット完了 - データ更新中")
 
       // 成功メッセージを表示
       alert("統計データをリセットしました。貯スタックは保持されています。")
@@ -492,50 +490,52 @@ ${availableExamples.slice(0, 5).join("\n")}
   }
 
   useEffect(() => {
-    console.log("[v0] 🎯 お客さん専用ランキングページ初期化開始")
+    // console.log("[v0] 🎯 お客さん専用ランキングページ初期化開始")
 
     // 認証状態の安定化
     const initializeAuth = () => {
       const currentUserEmail = sessionStorage.getItem("currentUserEmail")
-      console.log("[v0] 認証初期化 - 保存されたメール:", currentUserEmail)
+      // console.log("[v0] 認証初期化 - 保存されたメール:", currentUserEmail)
 
       if (currentUserEmail) {
         // メールアドレスが保存されている場合、そのユーザーを優先的に設定
-        console.log("[v0] 保存されたメールアドレスでユーザー検索:", currentUserEmail)
+        // console.log("[v0] 保存されたメールアドレスでユーザー検索:", currentUserEmail)
       }
     }
 
     initializeAuth()
 
     // auth-contextで既にcustomerAccountを取得しているため、ここでの取得は不要
-    console.log("[v0] ✅ auth-contextからのcustomerAccountを使用:", {
+    // // console.log("[v0] ✅ auth-contextからのcustomerAccountを使用:", {
       email: customerAccount?.email,
       playerId: customerAccount?.playerId,
       playerName: customerAccount?.playerName,
     })
     setDataLoaded((prev) => ({ ...prev, customers: true }))
 
-    const storeId = customerAccount?.storeId
-    const unsubscribePlayers = subscribeToPlayers((players) => {
-      console.log("[v0] 👥 プレイヤー同期受信:", players.length, "人")
-      setPlayers(players)
-      setDataLoaded((prev) => ({ ...prev, players: true }))
-    }, undefined, storeId) // storeIdを渡してフィルタリング
-
+    let unsubscribePlayers: (() => void) | null = null;
+    if (customerAccount?.storeId && customerAccount?.playerId) {
+      const storeId = customerAccount.storeId;
+      unsubscribePlayers = subscribeToPlayers((players) => {
+        // // console.log("[v0] 👥 プレイヤー同期受信:", players.length, "人")
+        setPlayers(players)
+        setDataLoaded((prev) => ({ ...prev, players: true }))
+      }, undefined, storeId);
+    }
     const unsubscribeDailyRankings = subscribeToDailyRankings((rankings) => {
-      console.log("[v0] 📊 日別ランキング同期受信:", rankings.length, "件")
+      // // console.log("[v0] 📊 日別ランキング同期受信:", rankings.length, "件")
       setDailyRankings(rankings)
       setDataLoaded((prev) => ({ ...prev, dailyRankings: true }))
     }, storeId)
 
     const unsubscribeMonthlyPoints = subscribeToMonthlyPoints(currentYear, currentMonth, (points) => {
-        console.log("[v0] 📈 月間RP同期受信:", points.length, "件")
+        // // console.log("[v0] 📈 月間RP同期受信:", points.length, "件")
         setMonthlyPoints(points)
         setDataLoaded((prev) => ({ ...prev, monthlyPoints: true }))
       }, storeId)
 
     const unsubscribeStoreSettings = subscribeToStoreRankingSettings((settings) => {
-      console.log("[v0] ⚙️ 店舗ランキング設定同期受信:", settings ? "1 件" : "0 件")
+      // // console.log("[v0] ⚙️ 店舗ランキング設定同期受信:", settings ? "1 件" : "0 件")
       setStoreSettings(settings)
       
       if (settings) {
@@ -548,41 +548,41 @@ ${availableExamples.slice(0, 5).join("\n")}
     })
 
     const unsubscribeRakeHistory = subscribeToRakeHistory((history) => {
-      console.log("[v0] 📊 レーキ履歴同期受信:", history.length, "件")
+      // // console.log("[v0] 📊 レーキ履歴同期受信:", history.length, "件")
       setRakeHistory(history)
     }, storeId)
 
     let unsubscribePointHistory: (() => void) | null = null
     if (linkedPlayer?.id) {
-      console.log("[v0] ポイント履歴リスナー設定:", linkedPlayer.id)
+      // // console.log("[v0] ポイント履歴リスナー設定:", linkedPlayer.id)
       unsubscribePointHistory = subscribeToPointHistory(linkedPlayer.id, (history) => {
-        console.log("[v0] ポイント履歴受信:", history.length, "件")
+        // // console.log("[v0] ポイント履歴受信:", history.length, "件")
         setPointHistory(history)
       })
     } else {
-      console.log("[v0] linkedPlayerが未定義のためポイント履歴リスナーをスキップ")
+      // // console.log("[v0] linkedPlayerが未定義のためポイント履歴リスナーをスキップ")
     }
 
 
     return () => {
-      console.log("[v0] 🔄 リスナークリーンアップ実行")
+      // // console.log("[v0] 🔄 リスナークリーンアップ実行")
       unsubscribePlayers()
       unsubscribeDailyRankings()
       unsubscribeMonthlyPoints()
       unsubscribeStoreSettings()
       unsubscribeRakeHistory()
       if (unsubscribePointHistory) {
-        unsubscribePointHistory()
+         unsubscribePointHistory()
       }
     }
-  }, [currentYear, currentMonth, linkedPlayer?.id, customerAccount?.storeId]) // Add customerAccount dependency
+  }, [currentYear, currentMonth, linkedPlayer?.id, customerAccount?.storeId, customerAccount?.playerId]);
 
   useEffect(() => {
-    const allDataLoaded = Object.values(dataLoaded).every((loaded) => loaded)
+    const allDataLoaded = Object.values(dataLoaded).every((loaded) => loaded);
     if (allDataLoaded && !isLoading) {
-      console.log("[v0] ✅ 全データ同期完了 - ローディング終了")
+      // // console.log("[v0] ✅ 全データ同期完了 - ローディング終了")
     } else if (allDataLoaded && isLoading) {
-      console.log("[v0] ✅ 全データ同期完了 - ローディング終了")
+      // // console.log("[v0] ✅ 全データ同期完了 - ローディング終了")
       setIsLoading(false)
     }
   }, [dataLoaded, isLoading])
@@ -590,26 +590,26 @@ ${availableExamples.slice(0, 5).join("\n")}
   // linkedPlayerは上部（136行目）でuseMemoを使って定義済み
 
   useEffect(() => {
-    console.log("[v0] Menu Debug - customerAccount?.playerId:", customerAccount?.playerId)
-    console.log("[v0] Menu Debug - customerAccount?.playerName:", customerAccount?.playerName)
-    console.log("[v0] Menu Debug - players count:", players.length)
-    console.log("[v0] Menu Debug - linkedPlayer found:", !!linkedPlayer)
+    // console.log("[v0] Menu Debug - customerAccount?.playerId:", customerAccount?.playerId)
+    // console.log("[v0] Menu Debug - customerAccount?.playerName:", customerAccount?.playerName)
+    // console.log("[v0] Menu Debug - players count:", players.length)
+    // console.log("[v0] Menu Debug - linkedPlayer found:", !!linkedPlayer)
 
     if (customerAccount?.playerId && !linkedPlayer) {
-      console.log("[v0] プレイヤー照合失敗 - 詳細情報:")
-      console.log("- 検索対象ID:", customerAccount.playerId)
-      console.log("- 検索対象名前:", customerAccount.playerName)
-      console.log("- 利用可能なプレイヤー（最初の5人）:")
+      // console.log("[v0] プレイヤー照合失敗 - 詳細情報:")
+      // console.log("- 検索対象ID:", customerAccount.playerId)
+      // console.log("- 検索対象名前:", customerAccount.playerName)
+      // console.log("- 利用可能なプレイヤー（最初の5人）:")
       players.slice(0, 5).forEach((player, index) => {
-        console.log(
+        // console.log(
           `[v0] ${index + 1}. ID: ${player.id}, uniqueId: ${player.uniqueId}, name: ${player.name}, pokerName: ${player.pokerName}`,
         )
       })
     }
 
     if (players.length > 0) {
-      console.log("[v0] Menu Debug - first player uniqueId:", players[0].uniqueId)
-      console.log("[v0] Menu Debug - sample player data:", {
+      // console.log("[v0] Menu Debug - first player uniqueId:", players[0].uniqueId)
+      // console.log("[v0] Menu Debug - sample player data:", {
         id: players[0].id,
         uniqueId: players[0].uniqueId,
         name: players[0].name,
@@ -619,29 +619,29 @@ ${availableExamples.slice(0, 5).join("\n")}
   }, [customerAccount, players, linkedPlayer])
 
   const handleDetailedDataClick = () => {
-    console.log("[v0] handleDetailedDataClick called")
-    console.log("[v0] customerAccount?.playerId:", customerAccount?.playerId)
-    console.log("[v0] linkedPlayer:", linkedPlayer)
+    // console.log("[v0] handleDetailedDataClick called")
+    // console.log("[v0] customerAccount?.playerId:", customerAccount?.playerId)
+    // console.log("[v0] linkedPlayer:", linkedPlayer)
 
     if (customerAccount?.playerId && linkedPlayer) {
-      console.log("[v0] Conditions met, setting modal data")
+      // console.log("[v0] Conditions met, setting modal data")
       try {
         const displayName = getDisplayName(linkedPlayer)
-        console.log("[v0] Display name:", displayName)
+        // console.log("[v0] Display name:", displayName)
 
         setSelectedPlayerForDetailedData({
           playerId: customerAccount.playerId,
           playerName: displayName,
           player: linkedPlayer,
         })
-        console.log("[v0] Modal data set, opening modal")
+        // console.log("[v0] Modal data set, opening modal")
         setIsDetailedDataModalOpen(true)
-        console.log("[v0] Modal opened successfully")
+        // console.log("[v0] Modal opened successfully")
       } catch (error) {
         console.error("[v0] Error in handleDetailedDataClick:", error)
       }
     } else {
-      console.log("[v0] Conditions not met - playerId:", customerAccount?.playerId, "linkedPlayer:", !!linkedPlayer)
+      // console.log("[v0] Conditions not met - playerId:", customerAccount?.playerId, "linkedPlayer:", !!linkedPlayer)
     }
   }
 
@@ -817,7 +817,7 @@ ${availableExamples.slice(0, 5).join("\n")}
   }
 
   const handlePlayerLinkClick = () => {
-    console.log("[v0] プレイヤー紐づけボタンクリック")
+    // console.log("[v0] プレイヤー紐づけボタンクリック")
     setShowPlayerLinkModal(true)
     setSkipLinking(false)
   }
@@ -1134,6 +1134,7 @@ ${availableExamples.slice(0, 5).join("\n")}
                 <CardTitle className="flex items-center gap-2 text-green-700 text-lg sm:text-xl">
                   <User className="h-5 w-5" />
                   プレイヤー情報
+                  
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -1149,7 +1150,7 @@ ${availableExamples.slice(0, 5).join("\n")}
                   <div>
                     <p className="text-sm text-gray-600">貯スタック</p>
                     <p className="text-lg font-semibold text-blue-600">
-                      {linkedPlayer.systemBalance?.toLocaleString() || 0}💰
+                      {linkedPlayer.systemBalance.toLocaleString()}💰
                     </p>
                   </div>
                   <div 
@@ -1162,11 +1163,10 @@ ${availableExamples.slice(0, 5).join("\n")}
                       onClick={refreshCustomerAccount}
                     >
                       <p className="text-lg font-semibold text-green-600">
-                         {(customerAccount?.stapokaBalance ?? linkedPlayer?.stapokaBalance ?? linkedPlayer?.systemBalance ?? 0).toLocaleString()}💰
+                          {customerAccount.stapokaBalance.toLocaleString()}💰
                       </p>
                       {authLoading && <RefreshCw className="h-4 w-4 animate-spin text-gray-500" />}
                     </div>
-                    {console.log("Debug: authLoading", authLoading, "customerAccount", customerAccount)}
                     <p className="text-xs text-green-500 mt-1">クリックでStack Man Hand購入</p>
                   </div>
                   <div>
@@ -1980,7 +1980,7 @@ ${availableExamples.slice(0, 5).join("\n")}
         <PlayerDetailedDataModal
           isOpen={isDetailedDataModalOpen}
           onClose={() => {
-            console.log("[v0] Closing detailed data modal")
+            // console.log("[v0] Closing detailed data modal")
             setIsDetailedDataModalOpen(false)
             setSelectedPlayerForDetailedData(null)
           }}
