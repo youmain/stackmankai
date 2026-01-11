@@ -1697,10 +1697,23 @@ export const createCustomerInFirestore = async (data: Partial<CustomerAccount>, 
   return docRef.id
 }
 
-export const updateCustomerAccount = async (customerId: string, data: Partial<CustomerAccount>): Promise<void> => {
+export const updateCustomerAccount = async (uid: string, data: Partial<CustomerAccount>): Promise<void> => {
+  if (isDemoMode) {
+    const currentAccount = mockCustomerAccounts[uid];
+    if (currentAccount) {
+      Object.assign(currentAccount, data);
+      notifyCustomerAccountListeners(uid); // 変更をリスナーに通知
+    }
+    return;
+  }
   if (!isFirebaseConfigured()) return
-  await updateDoc(doc(getCustomerAccountsCollection(), customerId), { ...data, updatedAt: serverTimestamp() })
-}
+  const db = checkFirebaseConfig();
+  const customerRef = doc(getCustomerAccountsCollection(), uid);
+  await updateDoc(customerRef, {
+    ...data,
+    updatedAt: serverTimestamp(),
+  });
+};
 
 export const linkPlayerToCustomer = async (customerId: string, playerUniqueId: string, playerName: string, storeId?: string): Promise<void> => {
   if (!isFirebaseConfigured()) return
@@ -2547,20 +2560,4 @@ const notifyCustomerAccountListeners = (uid: string) => {
   }
 };
 
-// updateCustomerAccountのモック実装
-export const updateCustomerAccount = async (uid: string, data: Partial<CustomerAccount>): Promise<void> => {
-  if (isDemoMode) {
-    const currentAccount = mockCustomerAccounts[uid];
-    if (currentAccount) {
-      Object.assign(currentAccount, data);
-      notifyCustomerAccountListeners(uid); // 変更をリスナーに通知
-    }
-    return;
-  }
-  const db = checkFirebaseConfig();
-  const customerRef = doc(getCustomerAccountsCollection(), uid);
-  await updateDoc(customerRef, {
-    ...data,
-    updatedAt: serverTimestamp(),
-  });
-};
+// updateCustomerAccount is defined above with both production and mock support.
