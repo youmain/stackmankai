@@ -28,35 +28,49 @@ export default function StackManHandPurchasePage() {
   const [playerName, setPlayerName] = useState("")
   const [storeName, setStoreName] = useState("")
 
+  // Stack Man Hand履歴をフェッチする関数
+  const fetchTodayHands = async (storeId: string, playerId: string) => {
+    try {
+      const hands = await getTodayStackManHands(storeId, playerId);
+      setTodayHands(hands.map(hand => ({
+        ...hand,
+        purchasedAt: (hand.purchasedAt as any)?.toDate?.()?.toISOString() || (hand.purchasedAt as any),
+        validUntil: (hand.validUntil as any)?.toDate?.()?.toISOString() || (hand.validUntil as any),
+      })));
+    } catch (error) {
+      console.error("Error fetching today's Stack Man Hands:", error);
+      setPageError(`履歴の読み込みに失敗しました。`);
+    }
+  };
+
   useEffect(() => {
     let unsubscribePlayer: (() => void) | null = null;
 
     const loadData = async () => {
-      if (authLoading) return
-      if (!customerAccount) return
+      if (authLoading) return;
+      if (!customerAccount) return;
 
       try {
-        const storeId = customerAccount.storeId
-        const playerId = customerAccount.playerId
+        const storeId = customerAccount.storeId;
+        const playerId = customerAccount.playerId;
         if (!storeId || !playerId) {
-          setPageError("店舗IDまたはプレイヤーIDが見つかりません。")
-          return
+          setPageError("店舗IDまたはプレイヤーIDが見つかりません。");
+          return;
         }
 
-        const storeSettings = await getStackManHandSettings(storeId)
+        const storeSettings = await getStackManHandSettings(storeId);
         if (!storeSettings || !storeSettings.enabled) {
-
-          router.push("/customer-view")
-          return
+          router.push("/customer-view");
+          return;
         }
-        setSettings(storeSettings)
+        setSettings(storeSettings);
 
-        const db = getDb()!
-        const storeDocSnap = await getDoc(doc(db, "stores", storeId))
+        const db = getDb()!;
+        const storeDocSnap = await getDoc(doc(db, "stores", storeId));
         if (storeDocSnap.exists()) {
-          const storeData = storeDocSnap.data()
-          setStoreName(storeData.storeName || storeData.name || "")
-          setMinimumStack(storeData.stackResetSettings?.minimumStack || 10000)
+          const storeData = storeDocSnap.data();
+          setStoreName(storeData.storeName || storeData.name || "");
+          setMinimumStack(storeData.stackResetSettings?.minimumStack || 10000);
         }
 
         // プレイヤー情報のリアルタイム購読
@@ -92,29 +106,24 @@ export default function StackManHandPurchasePage() {
           }
         });
 
-        const { cleanupStackManHands } = await import("@/lib/stack-man-hand")
-        await cleanupStackManHands(storeId)
+        const { cleanupStackManHands } = await import("@/lib/stack-man-hand");
+        await cleanupStackManHands(storeId);
 
-        const hands = await getTodayStackManHands(storeId, playerId)
-        setTodayHands(hands.map(hand => ({
-          ...hand,
-          purchasedAt: (hand.purchasedAt as any)?.toDate?.()?.toISOString() || (hand.purchasedAt as any),
-          validUntil: (hand.validUntil as any)?.toDate?.()?.toISOString() || (hand.validUntil as any),
-        })))
+        // 初回ロード時に履歴をフェッチ
+        await fetchTodayHands(storeId, playerId);
 
       } catch (error) {
-        
-        setPageError(`データの読み込みに失敗しました。`)
+        setPageError(`データの読み込みに失敗しました。`);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    loadData()
+    loadData();
     return () => {
-      if (unsubscribePlayer) unsubscribePlayer()
-    }
-  }, [authLoading, customerAccount, router])
+      if (unsubscribePlayer) unsubscribePlayer();
+    };
+  }, [authLoading, customerAccount, router]);
 
   const handlePurchase = async () => {
     if (!settings || !customerAccount || purchasing) return
@@ -134,10 +143,12 @@ export default function StackManHandPurchasePage() {
             systemBalance: result.updatedPlayer.systemBalance, // システム残高を更新
           });
           setCurrentStack(result.updatedPlayer.stapokaBalance); // ローカルの状態も更新
+          // 購入成功後、履歴を再フェッチして表示を更新
+          await fetchTodayHands(customerAccount.storeId, customerAccount.playerId);
         }
 
       } else {
-        setPageError(result.message)
+        setPageError(result.message);
       }
     } catch (error) {
       
