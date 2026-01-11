@@ -184,7 +184,7 @@ export default function StackManHandPurchasePage() {
       <div className="bg-white shadow rounded-lg p-6 mb-6">
         <p className="mb-2"><strong>店舗:</strong> {storeName}</p>
         <p className="mb-2"><strong>プレイヤー:</strong> {playerName}</p>
-        <p className="mb-2"><strong>現在のスタック:</strong> {currentStack.toLocaleString()}💰</p>
+        <p className="mb-2"><strong>スタポカ貯スタック:</strong> {currentStack.toLocaleString()}💰</p>
         <p className="mb-2"><strong>最低保証額:</strong> {minimumStack.toLocaleString()}💰</p>
         <p className="mb-2"><strong>購入可能回数:</strong> {remainingPurchases}回 / 最大{maxPurchases}回 (本日{purchasedToday}回購入済み)</p>
         <p className="mb-4"><strong>購入価格:</strong> {settings?.purchasePrice.toLocaleString()}💰</p>

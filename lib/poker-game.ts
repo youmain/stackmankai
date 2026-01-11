@@ -145,6 +145,14 @@ export const joinPokerGame = async (
       players: [...gameData.players, newPlayer],
       updatedAt: serverTimestamp(),
     }))
+
+    // Update player's stapokaBalance in the players collection
+    const db = getDb()!
+    const playerRef = doc(db, "players", userId);
+    await updateDoc(playerRef, {
+      stapokaBalance: gameData.players.find(p => p.userId === userId)?.stack || 0, // Assuming stack is the new stapokaBalance after joining
+      updatedAt: serverTimestamp(),
+    });
   }, "座席への参加に失敗しました")
 }
 
@@ -365,15 +373,23 @@ export const performAction = async (
     nextPlayerIndex = gameData.currentPlayerIndex
   }
   
-  await updateDoc(gameDoc, removeUndefined({
-    players: gameData.players,
-    pot: newPot,
-    currentBet: newCurrentBet,
-    currentPlayerIndex: nextPlayerIndex,
-    actionHistory: actionHistory,
-    turnStartTime: new Date(), // ターン開始時刻を記録
-    updatedAt: serverTimestamp(),
-  }))
+    await updateDoc(gameDoc, removeUndefined({
+      players: gameData.players,
+      pot: newPot,
+      currentBet: newCurrentBet,
+      currentPlayerIndex: nextPlayerIndex,
+      actionHistory: actionHistory,
+      turnStartTime: new Date(), // ターン開始時刻を記録
+      updatedAt: serverTimestamp(),
+    }))
+
+    // Update player's stapokaBalance in the players collection
+    const db = getDb()!
+    const playerRef = doc(db, "players", userId);
+    await updateDoc(playerRef, {
+      stapokaBalance: player.stack,
+      updatedAt: serverTimestamp(),
+    });
   
     // Check if phase should advance automatically
     // Pass the updated game data directly to avoid reading stale data from Firestore
