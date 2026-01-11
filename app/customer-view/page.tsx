@@ -287,9 +287,9 @@ export default function CustomerView() {
     // console.log("[v0] Customer View Page - Current Customer State:", currentCustomer)
     // console.log("[v0] Customer View Page - Skip Linking State:", skipLinking)
     // console.log(
-      "[v0] Customer View Page - Should show linking form:",
-      currentCustomer && !currentCustomer.playerId && !skipLinking,
-    )
+    //   "[v0] Customer View Page - Should show linking form:",
+    //   currentCustomer && !currentCustomer.playerId && !skipLinking,
+    // )
 
     if (customerAccount) {
       sessionStorage.setItem("currentCustomerAccount", JSON.stringify(customerAccount))
@@ -339,14 +339,14 @@ export default function CustomerView() {
 
       if (matchFound) {
         // console.log("[v0] プレイヤー検索成功:", {
-          searchTerm: playerIdInput.trim(),
-          foundPlayer: {
-            id: player.id,
-            uniqueId: player.uniqueId,
-            name: player.name,
-            pokerName: player.pokerName,
-          },
-        })
+        //   searchTerm: playerIdInput.trim(),
+        //   foundPlayer: {
+        //     id: player.id,
+        //     uniqueId: player.uniqueId,
+        //     name: player.name,
+        //     pokerName: player.pokerName,
+        //   },
+        // })
       }
 
       return matchFound
@@ -469,10 +469,10 @@ ${availableExamples.slice(0, 5).join("\n")}
 
     // auth-contextで既にcustomerAccountを取得しているため、ここでの取得は不要
     // // console.log("[v0] ✅ auth-contextからのcustomerAccountを使用:", {
-      email: customerAccount?.email,
-      playerId: customerAccount?.playerId,
-      playerName: customerAccount?.playerName,
-    })
+    //   email: customerAccount?.email,
+    //   playerId: customerAccount?.playerId,
+    //   playerName: customerAccount?.playerName,
+    // })
     setDataLoaded((prev) => ({ ...prev, customers: true }))
 
     let unsubscribePlayers: (() => void) | null = null;
@@ -562,21 +562,21 @@ ${availableExamples.slice(0, 5).join("\n")}
       // console.log("- 検索対象ID:", customerAccount.playerId)
       // console.log("- 検索対象名前:", customerAccount.playerName)
       // console.log("- 利用可能なプレイヤー（最初の5人）:")
-      players.slice(0, 5).forEach((player, index) => {
-        // console.log(
-          `[v0] ${index + 1}. ID: ${player.id}, uniqueId: ${player.uniqueId}, name: ${player.name}, pokerName: ${player.pokerName}`,
-        )
-      })
+      // players.slice(0, 5).forEach((player, index) => {
+      //   // console.log(
+      //   //   `[v0] ${index + 1}. ID: ${player.id}, uniqueId: ${player.uniqueId}, name: ${player.name}, pokerName: ${player.pokerName}`,
+      //   // )
+      // })
     }
 
     if (players.length > 0) {
-      // console.log("[v0] Menu Debug - first player uniqueId:", players[0].uniqueId)
-      // console.log("[v0] Menu Debug - sample player data:", {
-        id: players[0].id,
-        uniqueId: players[0].uniqueId,
-        name: players[0].name,
-        pokerName: players[0].pokerName,
-      })
+      // // console.log("[v0] Menu Debug - first player uniqueId:", players[0].uniqueId)
+      // // console.log("[v0] Menu Debug - sample player data:", {
+      //   id: players[0].id,
+      //   uniqueId: players[0].uniqueId,
+      //   name: players[0].name,
+      //   pokerName: players[0].pokerName,
+      // })
     }
   }, [customerAccount, players, linkedPlayer])
 
