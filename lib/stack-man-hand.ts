@@ -141,26 +141,12 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
       return { success: false, message: "顧客アカウントが見つかりません" };
     }
     const customerAccountData = customerAccountSnap.data();
-    // stapokaBalanceが未定義または0の場合、systemBalanceをフォールバックとして使用
-    const currentStapokaBalance = customerAccountData.stapokaBalance ?? customerAccountData.systemBalance ?? 0;
-
-    console.log("[Purchase] Searching for player:", {
-      storeId,
-      playerId,
-      customerAccountId,
-      currentStapokaBalance,
-      rawStapoka: customerAccountData.stapokaBalance,
-      rawSystem: customerAccountData.systemBalance
-    })
     
     // プレイヤーのドキュメント参照を取得
-    // 以前のパス `players/store_${storeId}/players/${playerId}` が間違っている可能性があるため、
-    // `players/${playerId}` を試みます。
     let playerDocRef = doc(db, "players", playerId);
     let playerDocSnap = await getDoc(playerDocRef);
     
     if (!playerDocSnap.exists()) {
-      // フォールバック: 店舗分離構造を試す
       playerDocRef = doc(db, "players", `store_${storeId}`, "players", playerId);
       playerDocSnap = await getDoc(playerDocRef);
     }
@@ -170,6 +156,25 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
     }
     const playerData = playerDocSnap.data();
     const currentSystemBalance = playerData.systemBalance || 0;
+
+    // 残高の決定ロジックを強化:
+    // 1. customerAccount.stapokaBalance (最新の共通残高)
+    // 2. customerAccount.systemBalance (古い共通残高)
+    // 3. playerData.stapokaBalance (店舗ごとの最新残高)
+    // 4. playerData.systemBalance (店舗ごとの古い残高 - 画面表示に近い可能性が高い)
+    const currentStapokaBalance = 
+      customerAccountData.stapokaBalance ?? 
+      customerAccountData.systemBalance ?? 
+      playerData.stapokaBalance ?? 
+      playerData.systemBalance ?? 0;
+
+    console.log("[Purchase] Final balance check:", {
+      currentStapokaBalance,
+      customerStapoka: customerAccountData.stapokaBalance,
+      customerSystem: customerAccountData.systemBalance,
+      playerStapoka: playerData.stapokaBalance,
+      playerSystem: playerData.systemBalance
+    })
 
     console.log("[Purchase] Player data loaded:", {
       id: playerDocSnap.id,
@@ -184,9 +189,9 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
     //   storeId: playerData.storeId,
     //   systemBalance: currentSystemBalance,
     // });
-    // 購入に必要なスタポカ残高があるかチェック
-    if (currentStapokaBalance < settings.purchasePrice) {
-      return { success: false, message: `スタポカ残高が不足しています。（${settings.purchasePrice.toLocaleString()}💰必要）` };
+    // 購入に必要なプレイ用スタック (systemBalance) があるかチェック
+    if (currentSystemBalance < settings.purchasePrice) {
+      return { success: false, message: `スタックが不足しています。（${settings.purchasePrice.toLocaleString()}💰必要）` };
     }
     
     // Get minimum stack from store settings
@@ -236,20 +241,15 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
     
     const handDocRef = await addDoc(handsRef, handData)
     
-    // stapokaBalanceを減算し、playersコレクションとcustomerAccountsコレクションの両方を更新
-    const newStapokaBalance = currentStapokaBalance - settings.purchasePrice;
-    const newSystemBalance = currentSystemBalance + settings.rewardBaseAmount; // 購入により得られるスタック量
+    // プレイ用スタック (systemBalance) を減算
+    const newSystemBalance = currentSystemBalance - settings.purchasePrice;
 
     await updateDoc(playerDocRef, {
-      stapokaBalance: newStapokaBalance,
       systemBalance: newSystemBalance,
       updatedAt: serverTimestamp(),
     });
 
-    await updateDoc(customerAccountRef, {
-      stapokaBalance: newStapokaBalance,
-      updatedAt: serverTimestamp(),
-    });
+    // スタポカ貯スタック (stapokaBalance) への同期は行わない（独立して管理するため）
     
     // Purchase succeeded - return success even if subsequent operations fail
       return {
