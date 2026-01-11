@@ -150,9 +150,17 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
       currentStapokaBalance
     })
     
-    // 店舗分離構造に対応: players/store_{storeId}/players/{playerId}
-    const playerDocRef = doc(db, "players", `store_${storeId}`, "players", playerId);
-    const playerDocSnap = await getDoc(playerDocRef);
+    // プレイヤーのドキュメント参照を取得
+    // 以前のパス `players/store_${storeId}/players/${playerId}` が間違っている可能性があるため、
+    // `players/${playerId}` を試みます。
+    let playerDocRef = doc(db, "players", playerId);
+    let playerDocSnap = await getDoc(playerDocRef);
+    
+    if (!playerDocSnap.exists()) {
+      // フォールバック: 店舗分離構造を試す
+      playerDocRef = doc(db, "players", `store_${storeId}`, "players", playerId);
+      playerDocSnap = await getDoc(playerDocRef);
+    }
     
     if (!playerDocSnap.exists()) {
       return { success: false, message: "プレイヤーが見つかりません" };
@@ -167,16 +175,12 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
       systemBalance: currentSystemBalance,
     });
     
-    console.log("[Purchase] Player data loaded (raw):")
-    console.dir(playerData, { depth: null })
-    console.log("[Purchase] Player data loaded (parsed):")
-    console.log({
-      id: playerDoc.id,
-      name: playerData.name,
-      storeId: playerData.storeId,
-      systemBalance: playerData.systemBalance,
-      stapokaBalance: playerData.stapokaBalance
-    })
+    // console.log("[Purchase] Player data loaded:", {
+    //   id: playerDocSnap.id,
+    //   name: playerData.name,
+    //   storeId: playerData.storeId,
+    //   systemBalance: currentSystemBalance,
+    // });
     // 購入に必要なスタポカ残高があるかチェック
     if (currentStapokaBalance < settings.purchasePrice) {
       return { success: false, message: `スタポカ残高が不足しています。（${settings.purchasePrice.toLocaleString()}💰必要）` };
