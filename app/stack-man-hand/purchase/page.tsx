@@ -64,29 +64,30 @@ export default function StackManHandPurchasePage() {
         unsubscribePlayer = onSnapshot(playerDocRef, async (docSnap) => {
           if (docSnap.exists()) {
             const playerData = docSnap.data();
-
             const stack = playerData.stapokaBalance ?? 0;
-            // AuthContextのcustomerAccountも最新のスタック値で更新
-            if (customerAccount && customerAccount.id) {
-              setCustomerAccount({
-                ...customerAccount,
-                stapokaBalance: stack,
-                systemBalance: playerData.systemBalance,
-              });
-            }
-            // customerAccountのstapokaBalanceを更新した後に、その値をsetCurrentStackに設定
-            setCurrentStack(stack);
-            setPlayerName(playerData.name || customerAccount.playerName || "");
 
-            // 購入制限の再計算（必要な場合のみ実行するように、後ほどuseEffect外で管理することを検討）
-            // ここでは一旦、無限ループを防ぐためにログを削除し、状態更新を最小限にします
-            try {
-              const purchaseInfo = await calculateRemainingPurchases(storeId, docSnap.id, stack);
-              setMaxPurchases(purchaseInfo.maxPurchases);
-              setPurchasedToday(purchaseInfo.purchasesToday);
-              setRemainingPurchases(purchaseInfo.remaining);
-            } catch (e) {
-              console.error("Error calculating remaining purchases:", e);
+            // customerAccountが利用可能な場合のみ状態を更新
+            if (customerAccount && customerAccount.id) {
+              setCustomerAccount(prev => {
+                // prevがnullの場合は更新しない
+                if (!prev) return null;
+                return {
+                  ...prev,
+                  stapokaBalance: stack,
+                  systemBalance: playerData.systemBalance,
+                };
+              });
+              setCurrentStack(stack);
+              setPlayerName(playerData.name || customerAccount.playerName || "");
+
+              // 購入制限の再計算
+              calculateRemainingPurchases(storeId, docSnap.id, stack)
+                .then(purchaseInfo => {
+                  setMaxPurchases(purchaseInfo.maxPurchases);
+                  setPurchasedToday(purchaseInfo.purchasesToday);
+                  setRemainingPurchases(purchaseInfo.remaining);
+                })
+                .catch(e => console.error("Error calculating remaining purchases:", e));
             }
           }
         });
