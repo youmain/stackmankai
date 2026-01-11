@@ -488,13 +488,13 @@ ${availableExamples.slice(0, 5).join("\n")}
       // // console.log("[v0] 📊 日別ランキング同期受信:", rankings.length, "件")
       setDailyRankings(rankings)
       setDataLoaded((prev) => ({ ...prev, dailyRankings: true }))
-    }, storeId)
+    }, customerAccount?.storeId)
 
     const unsubscribeMonthlyPoints = subscribeToMonthlyPoints(currentYear, currentMonth, (points) => {
         // // console.log("[v0] 📈 月間RP同期受信:", points.length, "件")
         setMonthlyPoints(points)
         setDataLoaded((prev) => ({ ...prev, monthlyPoints: true }))
-      }, storeId)
+      }, customerAccount?.storeId)
 
     const unsubscribeStoreSettings = subscribeToStoreRankingSettings((settings) => {
       // // console.log("[v0] ⚙️ 店舗ランキング設定同期受信:", settings ? "1 件" : "0 件")
@@ -512,7 +512,7 @@ ${availableExamples.slice(0, 5).join("\n")}
     const unsubscribeRakeHistory = subscribeToRakeHistory((history) => {
       // // console.log("[v0] 📊 レーキ履歴同期受信:", history.length, "件")
       setRakeHistory(history)
-    }, storeId)
+    }, customerAccount?.storeId)
 
     let unsubscribePointHistory: (() => void) | null = null
     if (linkedPlayer?.id) {
