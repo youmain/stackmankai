@@ -29,9 +29,9 @@ export default function StackManHandPurchasePage() {
   const [storeName, setStoreName] = useState("")
 
   // Stack Man Hand履歴をフェッチする関数
-  const fetchTodayHands = async (storeId: string, playerId: string) => {
+  const fetchTodayHands = async (storeId: string, customerAccountId: string) => {
     try {
-      const hands = await getTodayStackManHands(storeId, playerId);
+      const hands = await getTodayStackManHands(storeId, customerAccountId);
       setTodayHands(hands.map(hand => ({
         ...hand,
         purchasedAt: (hand.purchasedAt as any)?.toDate?.()?.toISOString() || (hand.purchasedAt as any),
@@ -110,7 +110,7 @@ export default function StackManHandPurchasePage() {
         await cleanupStackManHands(storeId);
 
         // 初回ロード時に履歴をフェッチ
-        await fetchTodayHands(storeId, playerId);
+        await fetchTodayHands(storeId, customerAccount.id);
 
       } catch (error) {
         setPageError(`データの読み込みに失敗しました。`);
@@ -146,7 +146,7 @@ export default function StackManHandPurchasePage() {
             };
           });
           setCurrentStack(result.updatedPlayer.stapokaBalance);
-          await fetchTodayHands(customerAccount.storeId, customerAccount.playerId);
+          await fetchTodayHands(customerAccount.storeId, customerAccount.id);
         }
 
       } else {
