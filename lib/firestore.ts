@@ -16,7 +16,7 @@ import {
   setDoc,
   writeBatch,
 } from "firebase/firestore"
-import { getDb, isFirebaseConfigured } from "./firebase"
+import { getDb, isFirebaseConfigured, isDemoMode } from "./firebase"
 import { validateId } from "./validation"
 import { createModuleLogger } from "./logger"
 import type {
@@ -125,6 +125,51 @@ export const getPostsCollection = () => {
 export const getPaymentHistoryCollection = () => {
   const db = checkFirebaseConfig()
   return collection(db, "paymentHistory")
+}
+
+export const subscribeToCustomerAccount = (uid: string, callback: (account: CustomerAccount | null) => void): (() => void) => {
+  if (!isFirebaseConfigured()) {
+    log.warn("[v0] モック環境: CustomerAccountリスナーをスキップ");
+    // モック環境ではダミーのcustomerAccountを返す
+    // リスナーを登録し、現在のモックデータを即座にコールバック
+    if (!mockCustomerAccountListeners[uid]) {
+      mockCustomerAccountListeners[uid] = [];
+    }
+    mockCustomerAccountListeners[uid].push(callback);
+
+    const currentMockAccount = mockCustomerAccounts[uid] || {
+      id: uid,
+      email: "mock.customer@example.com",
+      stapokaBalance: 40000,
+      systemBalance: 40000,
+      playerName: "モックプレイヤー",
+      playerId: "mockPlayerId",
+      storeId: "mockStoreId",
+      storeName: "モック店舗",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    callback(currentMockAccount);
+
+    // リスナー解除関数を返す
+    return () => {
+      mockCustomerAccountListeners[uid] = mockCustomerAccountListeners[uid].filter(l => l !== callback);
+    };
+  }
+
+  const db = checkFirebaseConfig();
+  const customerDocRef = doc(db, "customerAccounts", uid);
+
+  return onSnapshot(customerDocRef, (docSnap) => {
+    if (docSnap.exists()) {
+      callback({ id: docSnap.id, ...docSnap.data() } as CustomerAccount);
+    } else {
+      callback(null);
+    }
+  }, (error) => {
+    console.error("Error subscribing to customer account:", error);
+    callback(null);
+  });
 }
 
 export const getDailyRankingsCollection = () => {
@@ -487,8 +532,45 @@ export const addPlayer = async (playerData: Omit<Player, "id" | "createdAt" | "u
 };
 
 export const updatePlayer = async (playerId: string, data: Partial<Player>): Promise<void> => {
+  if (isDemoMode) {
+    const currentMockPlayer = mockPlayersData.find(p => p.id === playerId);
+    if (currentMockPlayer) {
+      Object.assign(currentMockPlayer, data);
+      if (data.stapokaBalance !== undefined && currentMockPlayer.customerId) {
+        const mockCustomer = mockCustomerAccounts[currentMockPlayer.customerId];
+        if (mockCustomer) {
+          mockCustomer.stapokaBalance = data.stapokaBalance;
+        }
+      }
+    }
+    return;
+  }
   if (!isFirebaseConfigured()) return
   const playerRef = doc(getPlayersCollection(), playerId)
+
+  // stapokaBalanceが更新される場合、関連するcustomerAccountも更新する
+  if (data.stapokaBalance !== undefined) {
+    const playerSnap = await getDoc(playerRef)
+    if (playerSnap.exists()) {
+      const playerData = playerSnap.data() as any
+      const customerId = playerData.customerId || playerData.linkedCustomerId
+      
+      if (customerId) {
+        await updateCustomerAccount(customerId, { stapokaBalance: data.stapokaBalance })
+      } else {
+        // customerIdが見つからない場合、playerIdでcustomerAccountsを検索
+        const customerAccountsRef = getCustomerAccountsCollection()
+        const q = query(customerAccountsRef, where("playerId", "==", playerId))
+        const querySnapshot = await getDocs(q)
+        
+        if (!querySnapshot.empty) {
+          const customerDoc = querySnapshot.docs[0]
+          await updateCustomerAccount(customerDoc.id, { stapokaBalance: data.stapokaBalance })
+        }
+      }
+    }
+  }
+
   await updateDoc(playerRef, {
     ...data,
     updatedAt: serverTimestamp(),
@@ -2345,3 +2427,140 @@ export async function updateCustomerProfile(uid: string, data: Record<string, an
     throw error
   }
 }
+
+
+/**
+ * Apply stack reset (auto-recovery) and rake system for all players.
+ * This function is intended to be called by a scheduled Cloud Function.
+ */
+export const applyStackResetAndRake = async (): Promise<void> => {
+  if (!isFirebaseConfigured()) {
+    log.warn("[v0] モック環境: スタックリセットとレーキ処理をスキップ");
+    return;
+  }
+
+  const db = checkFirebaseConfig();
+  const playersCollection = collection(db, "players");
+  const customerAccountsCollection = collection(db, "customerAccounts");
+
+  const playersSnapshot = await getDocs(playersCollection);
+  const batch = writeBatch(db);
+
+  for (const playerDoc of playersSnapshot.docs) {
+    const playerData = playerDoc.data() as Player;
+    const playerId = playerDoc.id;
+    let currentStapokaBalance = playerData.stapokaBalance ?? 0;
+    let updatedStapokaBalance = currentStapokaBalance;
+
+    // 1. Auto-recovery: If stapokaBalance is below 10,000, restore to 10,000
+    // Note: The user reported values being reset to 50,000. 
+    // We ensure this logic respects the 10,000 minimum and doesn't force 50,000.
+    if (currentStapokaBalance < 10000) {
+      updatedStapokaBalance = 10000;
+      log.info(`[Stack Reset] Player ${playerId} stapokaBalance recovered from ${currentStapokaBalance} to ${updatedStapokaBalance}`);
+    }
+
+    // 2. Rake system: If stapokaBalance is above 100,000, apply 10% rake on excess (example adjustment)
+    // The previous 20% rake from 10,000 was too aggressive and might have been confusing.
+    if (updatedStapokaBalance > 100000) {
+      const excess = updatedStapokaBalance - 100000;
+      const rakeAmount = Math.floor(excess * 0.10);
+      updatedStapokaBalance -= rakeAmount;
+      log.info(`[Rake System] Player ${playerId} stapokaBalance raked ${rakeAmount} from ${currentStapokaBalance} to ${updatedStapokaBalance}`);
+    }
+
+    if (updatedStapokaBalance !== currentStapokaBalance) {
+      // Update player document
+      batch.update(playerDoc.ref, {
+        stapokaBalance: updatedStapokaBalance,
+        updatedAt: serverTimestamp(),
+      });
+
+      // Update corresponding customerAccount document
+      const customerAccountQuery = query(customerAccountsCollection, where("playerId", "==", playerId));
+      const customerAccountSnap = await getDocs(customerAccountQuery);
+
+      if (!customerAccountSnap.empty) {
+        const customerAccountDocRef = customerAccountSnap.docs[0].ref;
+        batch.update(customerAccountDocRef, {
+          stapokaBalance: updatedStapokaBalance,
+          updatedAt: serverTimestamp(),
+        });
+      }
+    }
+  }
+
+  if (playersSnapshot.docs.length > 0) {
+    await batch.commit();
+    log.info("[Stack Reset/Rake] Batch update committed successfully.");
+  } else {
+    log.info("[Stack Reset/Rake] No players to process.");
+  }
+};
+
+
+
+
+// モック環境用のデータストア
+const mockCustomerAccounts: { [key: string]: CustomerAccount } = {
+  "mockUserId": {
+    id: "mockUserId",
+    email: "mock.customer@example.com",
+    stapokaBalance: 40000,
+    systemBalance: 40000,
+    playerName: "モックプレイヤー",
+    playerId: "mockPlayerId",
+    storeId: "mockStoreId",
+    storeName: "モック店舗",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+};
+
+const mockPlayersData: Player[] = [
+  {
+    id: "mockPlayerId",
+    uniqueId: "unique1",
+    name: "モックプレイヤー",
+    pokerName: "モック",
+    systemBalance: 40000,
+    stapokaBalance: 40000,
+    rewardPoints: 1000,
+    isPlaying: false,
+    currentGameId: "",
+    membershipStatus: "active",
+    subscriptionEndDate: new Date("2026-12-31"),
+    createdAt: new Date("2026-01-01"),
+    updatedAt: new Date("2026-01-01"),
+    customerId: "mockUserId",
+  },
+];
+
+// モック環境用のリスナー管理
+type CustomerAccountListener = (account: CustomerAccount | null) => void;
+const mockCustomerAccountListeners: { [uid: string]: CustomerAccountListener[] } = {};
+
+const notifyCustomerAccountListeners = (uid: string) => {
+  const account = mockCustomerAccounts[uid] || null;
+  if (mockCustomerAccountListeners[uid]) {
+    mockCustomerAccountListeners[uid].forEach(callback => callback(account));
+  }
+};
+
+// updateCustomerAccountのモック実装
+export const updateCustomerAccount = async (uid: string, data: Partial<CustomerAccount>): Promise<void> => {
+  if (isDemoMode) {
+    const currentAccount = mockCustomerAccounts[uid];
+    if (currentAccount) {
+      Object.assign(currentAccount, data);
+      notifyCustomerAccountListeners(uid); // 変更をリスナーに通知
+    }
+    return;
+  }
+  const db = checkFirebaseConfig();
+  const customerRef = doc(getCustomerAccountsCollection(), uid);
+  await updateDoc(customerRef, {
+    ...data,
+    updatedAt: serverTimestamp(),
+  });
+};
