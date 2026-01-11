@@ -416,17 +416,7 @@ export const calculateRemainingPurchases = async (
   const additionalPurchases = Math.floor(availableChips / settings.purchasePrice)
   const maxPurchases = purchasedToday + additionalPurchases
   
-  // Debug logging
-  console.log('calculateRemainingPurchases:', {
-    currentStack,
-    minimumStack,
-    purchasedToday,
-    alreadySpent,
-                                 // initialStack,,,,,,,k,,,
-    availableChips,
-    purchasePrice: settings.purchasePrice,
-    maxPurchases
-  })
+  // Debug logging removed to prevent console flooding
   
   // Calculate remaining
   const remaining = Math.max(0, maxPurchases - purchasedToday)

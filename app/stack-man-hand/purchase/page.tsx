@@ -78,11 +78,16 @@ export default function StackManHandPurchasePage() {
             setCurrentStack(stack);
             setPlayerName(playerData.name || customerAccount.playerName || "");
 
-            // 購入制限の再計算
-            const purchaseInfo = await calculateRemainingPurchases(storeId, docSnap.id, stack);
-            setMaxPurchases(purchaseInfo.maxPurchases);
-            setPurchasedToday(purchaseInfo.purchasesToday);
-            setRemainingPurchases(purchaseInfo.remaining);
+            // 購入制限の再計算（必要な場合のみ実行するように、後ほどuseEffect外で管理することを検討）
+            // ここでは一旦、無限ループを防ぐためにログを削除し、状態更新を最小限にします
+            try {
+              const purchaseInfo = await calculateRemainingPurchases(storeId, docSnap.id, stack);
+              setMaxPurchases(purchaseInfo.maxPurchases);
+              setPurchasedToday(purchaseInfo.purchasesToday);
+              setRemainingPurchases(purchaseInfo.remaining);
+            } catch (e) {
+              console.error("Error calculating remaining purchases:", e);
+            }
           }
         });
 
