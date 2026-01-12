@@ -250,7 +250,7 @@ export default function CustomerView() {
 
     const unsubscribes: (() => void)[] = []
 
-    if (currentCustomer.storeId) {
+    if (currentCustomer.storeId !== undefined) {
       unsubscribes.push(subscribeToPlayers(currentCustomer.storeId, setPlayers))
       unsubscribes.push(subscribeToDailyRankings(currentCustomer.storeId, setDailyRankings))
       unsubscribes.push(subscribeToMonthlyPoints(currentCustomer.storeId, setMonthlyPoints))
@@ -258,7 +258,7 @@ export default function CustomerView() {
       unsubscribes.push(subscribeToRakeHistory(currentCustomer.storeId, setRakeHistory))
     }
 
-    if (currentCustomer.id) { // ローカル変数を使用
+    if (currentCustomer.id !== undefined) { // ローカル変数を使用
       unsubscribes.push(subscribeToPointHistory(currentCustomer.id, setPointHistory))
     }
 
