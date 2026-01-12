@@ -536,7 +536,7 @@ export default function CustomerView() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="font-medium">スタポカ貯スタック</span>
-                  <span className="font-semibold">{customerAccount.stapokaBalance?.toLocaleString() || 0}💰</span>
+                  <span className="font-semibold">{customerAccount?.stapokaBalance?.toLocaleString() || 0}💰</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="font-medium">顧客ID</span>
