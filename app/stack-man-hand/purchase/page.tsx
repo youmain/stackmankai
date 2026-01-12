@@ -74,14 +74,13 @@ export default function StackManHandPurchasePage() {
         }
 
         // プレイヤー情報のリアルタイム購読
-        const playerDocRef = doc(db, "players", playerId);
-        unsubscribePlayer = onSnapshot(playerDocRef, async (docSnap) => {
-          if (docSnap.exists()) {
-            const playerData = docSnap.data();
-            const stack = playerData.stapokaBalance ?? 0;
+        if (customerAccount && customerAccount.id) {
+          const playerDocRef = doc(db, "players", playerId);
+          unsubscribePlayer = onSnapshot(playerDocRef, async (docSnap) => {
+            if (docSnap.exists()) {
+              const playerData = docSnap.data();
+              const stack = playerData.stapokaBalance ?? 0;
 
-            // customerAccountが利用可能な場合のみ状態を更新
-            if (customerAccount && customerAccount.id) {
               setCustomerAccount(prev => {
                 // prevがnullの場合は更新しない
                 if (!prev) return null;
@@ -103,8 +102,8 @@ export default function StackManHandPurchasePage() {
                 })
                 .catch(e => console.error("Error calculating remaining purchases:", e));
             }
-          }
-        });
+          });
+        }
 
         const { cleanupStackManHands } = await import("@/lib/stack-man-hand");
         await cleanupStackManHands(storeId);
