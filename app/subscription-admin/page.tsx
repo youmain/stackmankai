@@ -16,7 +16,7 @@ import { Users, TrendingUp, DollarSign, UserCheck, Search, Download, Eye, Bot } 
 import {
   subscribeToCustomerAccounts,
   subscribeToPlayers,
-  updateCustomerSubscription,
+  updateCustomerAccount,
   linkPlayerToCustomer,
 } from "@/lib/firestore"
 import type { CustomerAccount, PaymentHistory, Player } from "@/types"
@@ -83,7 +83,7 @@ export default function SubscriptionAdminPage() {
   const handleStatusUpdate = async (customerId: string, newStatus: CustomerAccount["subscriptionStatus"]) => {
     setIsLoading(true)
     try {
-      await updateCustomerSubscription(customerId, newStatus)
+      await updateCustomerAccount(customerId, { subscriptionStatus: newStatus })
     } catch (error) {
       console.error("❌ サブスクリプション状態更新エラー:", error)
     } finally {

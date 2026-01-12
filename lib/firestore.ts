@@ -373,44 +373,28 @@ export const createOrUpdateUser = async (name: string): Promise<string> => {
   }
 
   const db = checkFirebaseConfig()
-  const usersCollection = getUsersCollection()
+  const playersCollection = getPlayersCollection()
 
   const q = query(usersCollection, where("name", "==", name), limit(1))
   const snapshot = await getDocs(q)
 
   if (!snapshot.empty) {
-    const existingUser = snapshot.docs[0]
-    await updateDoc(doc(usersCollection, existingUser.id), {
-      lastLoginAt: serverTimestamp(),
-      isOnline: true,
+    const userId = snapshot.docs[0].id
+    log.info("[v0] 既存ユーザーを更新", { userId, name })
+    await updateDoc(doc(usersCollection, userId), {
+      name,
+      updatedAt: serverTimestamp(),
     })
-    return existingUser.id
+    return userId
+  } else {
+    log.info("[v0] 新規ユーザーを作成", { name })
+    const docRef = await addDoc(usersCollection, {
+      name,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    })
+    return docRef.id
   }
-
-  const newUserRef = await addDoc(usersCollection, {
-    name,
-    isOnline: true,
-    createdAt: serverTimestamp(),
-    lastLoginAt: serverTimestamp(),
-  })
-
-  return newUserRef.id
-}
-
-export const updateUserOnlineStatus = async (userId: string, isOnline: boolean): Promise<void> => {
-  if (!isFirebaseConfigured()) {
-    log.info("[v0] モック環境: オンライン状態更新をシミュレート", { userId, isOnline })
-    return
-  }
-
-  const db = checkFirebaseConfig()
-  const validatedId = validateId(userId, "ユーザーID")
-  const userRef = doc(getUsersCollection(), validatedId)
-
-  await updateDoc(userRef, {
-    isOnline,
-    lastSeenAt: serverTimestamp(),
-  })
 }
 
 export const subscribeToUsers = (callback: (users: any[]) => void): (() => void) => {
@@ -419,19 +403,11 @@ export const subscribeToUsers = (callback: (users: any[]) => void): (() => void)
     return () => {}
   }
   const usersCollection = getUsersCollection()
-  if (!usersCollection) return () => {}
-
-  const q = query(usersCollection, orderBy("lastLoginAt", "desc"), limit(20))
+  const q = query(usersCollection, orderBy("name"))
   return onSnapshot(q, (snapshot) => {
     const users = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
     callback(users)
   })
-}
-
-export const deleteUser = async (userId: string): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-  const db = checkFirebaseConfig()
-  await deleteDoc(doc(getUsersCollection(), userId))
 }
 
 // --- Player Functions ---
@@ -439,22 +415,22 @@ export const deleteUser = async (userId: string): Promise<void> => {
 import { performanceMonitor } from './performance-monitor'
 
 export const subscribeToPlayers = (
-  onUpdate: (players: Player[]) => void,
+  callback: (players: Player[]) => void,
   onError?: (error: Error) => void,
   storeId?: string | null,
 ): (() => void) => {
   if (!isFirebaseConfigured()) {
-    onUpdate(mockPlayers)
+    callback(mockPlayers)
     return () => {}
   }
-  // storeIdを使ってサブコレクションにアクセス
-  const playersCollection = getPlayersCollection(storeId || undefined)
-  if (!playersCollection) return () => {}
 
-  // トップレベルコレクションの場合、storeIdが指定されていればフィルタリング
-  const q = storeId
-    ? query(playersCollection, where("storeId", "==", storeId))
-    : playersCollection
+  const playersCollection = getPlayersCollection()
+  let q = query(playersCollection, orderBy("name"))
+
+  if (storeId) {
+    q = query(playersCollection, where("storeId", "==", storeId), orderBy("name"))
+  }
+
   return onSnapshot(
     q,
     (snapshot) => {
@@ -465,256 +441,137 @@ export const subscribeToPlayers = (
           const data = doc.data()
           return {
             id: doc.id,
-            ...data,
-            createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt || Date.now()),
-            updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate() : new Date(data.updatedAt || Date.now()),
-            subscriptionEndDate: data.subscriptionEndDate?.toDate
-              ? data.subscriptionEndDate.toDate()
-              : data.subscriptionEndDate
-                ? new Date(data.subscriptionEndDate)
-                : undefined,
+            name: data.name || "",
+            pokerName: data.pokerName || "",
+            email: data.email || "",
+            storeId: data.storeId || "",
+            totalBuyin: data.totalBuyin || 0,
+            totalProfit: data.totalProfit || 0,
+            totalGames: data.totalGames || 0,
+            rewardPoints: data.rewardPoints || 0,
+            totalCPEarned: data.totalCPEarned || 0,
+            membershipRank: data.membershipRank || "bronze",
+            lastGameDate: data.lastGameDate?.toDate() || null,
+            createdAt: data.createdAt?.toDate() || new Date(),
+            updatedAt: data.updatedAt?.toDate() || new Date(),
+            isArchived: data.isArchived || false,
           } as Player
-        }),
-        { documentCount: snapshot.docs.length }
+        })
       )
-      
-      // ソート処理のパフォーマンスを計測
-      const sortedPlayers = performanceMonitor.measure(
-        'Client: Sort players by name',
-        () => players.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ja')),
-        { playerCount: players.length }
-      )
-      
-      onUpdate(sortedPlayers)
+      callback(players)
     },
-    onError,
+    (error) => {
+      console.error("Error fetching players:", error)
+      if (onError) {
+        onError(error)
+      }
+    },
   )
 }
 
-export const addPlayer = async (playerData: Omit<Player, "id" | "createdAt" | "updatedAt">) => {
-  try {
-    // 1. フラットなplayersコレクションにプレイヤーを追加（既存の動作）
-    const dbInstance = checkFirebaseConfig()
-    const playersCollectionRef = collection(dbInstance, "players");
-    const newPlayerDocRef = await addDoc(playersCollectionRef, {
-      ...playerData,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    });
-
-    // 2. 新しいドキュメントのIDをuniqueIdとして設定（もし設定されていなければ）
-    //    これは、プレイヤーIDがFirestoreのドキュメントIDと異なる場合に必要
-    //    もしuniqueIdが既にplayerDataに含まれている場合はこのステップは不要
-    if (!playerData.uniqueId) {
-      await setDoc(newPlayerDocRef, { uniqueId: newPlayerDocRef.id }, { merge: true });
-      playerData.uniqueId = newPlayerDocRef.id; // playerDataも更新
-    }
-
-    // 3. 店舗分離構造のパスにもプレイヤーデータをコピー
-    //    players / store_{storeId} / players / {uniqueId} の形式で保存
-    if (playerData.storeId && playerData.uniqueId) {
-      const storePlayersCollectionRef = collection(dbInstance, `players/store_${playerData.storeId}/players`);
-      await setDoc(doc(storePlayersCollectionRef, playerData.uniqueId), {
-        ...playerData,
-        id: newPlayerDocRef.id, // 元のFirestore IDも保存
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      });
-      console.log(`[Firestore] Player data also saved to store-separated path: players/store_${playerData.storeId}/players/${playerData.uniqueId}`);
-    }
-
-    console.log("[Firestore] Player added successfully with ID:", newPlayerDocRef.id);
-    return newPlayerDocRef.id;
-  } catch (error) {
-    console.error("[Firestore] Error adding player:", error);
-    throw error;
+export const getPlayer = async (id: string): Promise<Player | null> => {
+  if (!isFirebaseConfigured()) {
+    const player = mockPlayers.find((p) => p.id === id)
+    return player || null
   }
-};
-
-export const updatePlayer = async (playerId: string, data: Partial<Player>): Promise<void> => {
-  if (isDemoMode) {
-    const currentMockPlayer = mockPlayersData.find(p => p.id === playerId);
-    if (currentMockPlayer) {
-      Object.assign(currentMockPlayer, data);
-      if (data.stapokaBalance !== undefined && currentMockPlayer.customerId) {
-        const mockCustomer = mockCustomerAccounts[currentMockPlayer.customerId];
-        if (mockCustomer) {
-          mockCustomer.stapokaBalance = data.stapokaBalance;
-        }
-      }
-    }
-    return;
+  const validatedId = validateId(id, "プレイヤーID")
+  const playerRef = doc(getPlayersCollection(), validatedId)
+  const playerSnap = await getDoc(playerRef)
+  if (!playerSnap.exists()) {
+    return null
   }
-  if (!isFirebaseConfigured()) return
-  const playerRef = doc(getPlayersCollection(), playerId)
-
-  // stapokaBalanceが更新される場合、関連するcustomerAccountも更新する
-  if (data.stapokaBalance !== undefined) {
-    const playerSnap = await getDoc(playerRef)
-    if (playerSnap.exists()) {
-      const playerData = playerSnap.data() as any
-      const customerId = playerData.customerId || playerData.linkedCustomerId
-      
-      if (customerId) {
-        await updateCustomerAccount(customerId, { stapokaBalance: data.stapokaBalance })
-      } else {
-        // customerIdが見つからない場合、playerIdでcustomerAccountsを検索
-        const customerAccountsRef = getCustomerAccountsCollection()
-        const q = query(customerAccountsRef, where("playerId", "==", playerId))
-        const querySnapshot = await getDocs(q)
-        
-        if (!querySnapshot.empty) {
-          const customerDoc = querySnapshot.docs[0]
-          await updateCustomerAccount(customerDoc.id, { stapokaBalance: data.stapokaBalance })
-        }
-      }
-    }
-  }
-
-  await updateDoc(playerRef, {
-    ...data,
-    updatedAt: serverTimestamp(),
-  })
+  return { id: playerSnap.id, ...playerSnap.data() } as Player
 }
 
-export const deletePlayer = async (playerId: string): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-
-  try {
-    const db = checkFirebaseConfig()
-    const batch = writeBatch(checkFirebaseConfig())
-
-    // Delete player
-    batch.delete(doc(getPlayersCollection(), playerId))
-
-    // Delete point history
-    const pointHistoryRef = getPointHistoryCollection()
-    const pointHistoryQuery = query(pointHistoryRef, where("playerId", "==", playerId))
-    const pointHistorySnap = await getDocs(pointHistoryQuery)
-    pointHistorySnap.docs.forEach((doc) => batch.delete(doc.ref))
-
-    // Delete receipts
-    const receiptsRef = getReceiptsCollection()
-    const receiptsQuery = query(receiptsRef, where("playerId", "==", playerId))
-    const receiptsSnap = await getDocs(receiptsQuery)
-    receiptsSnap.docs.forEach((doc) => batch.delete(doc.ref))
-
-    // Delete transactions
-    const transactionsRef = getTransactionsCollection()
-    const transactionsQuery = query(transactionsRef, where("playerId", "==", playerId))
-    const transactionsSnap = await getDocs(transactionsQuery)
-    transactionsSnap.docs.forEach((doc) => batch.delete(doc.ref))
-
-    await batch.commit()
-    console.log(`[v0] Player ${playerId} and related data deleted successfully`)
-  } catch (error) {
-    console.error(`[v0] Error deleting player ${playerId}:`, error)
-    throw error
+export const addPlayer = async (player: Omit<Player, "id">): Promise<string> => {
+  if (!isFirebaseConfigured()) {
+    log.info("[v0] モック環境: プレイヤー追加をシミュレート", { player })
+    return `mock_player_${Date.now()}`
   }
-}
-
-export const deleteAllPlayers = async (): Promise<void> => {
-  if (!isFirebaseConfigured()) return
   const playersCollection = getPlayersCollection()
-  const snapshot = await getDocs(playersCollection)
-  const batch = writeBatch(checkFirebaseConfig())
-  snapshot.docs.forEach((doc) => {
-    batch.delete(doc.ref)
-  })
-  await batch.commit()
-}
-
-export const getPlayer = async (playerId: string): Promise<Player | null> => {
-  if (!isFirebaseConfigured()) return mockPlayers.find((p) => p.id === playerId) || null
-  const playerRef = doc(getPlayersCollection(), playerId)
-  const snapshot = await getDoc(playerRef)
-  if (!snapshot.exists()) return null
-  return { id: snapshot.id, ...snapshot.data() } as Player
-}
-
-export const togglePlayerStatus = async (
-  playerId: string,
-  status: "normal" | "special" | "deduction",
-  updatedBy: string,
-): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-  const playerRef = doc(getPlayersCollection(), playerId)
-  await updateDoc(playerRef, {
-    isSpecial: status === "special",
-    isDeduction: status === "deduction",
-    updatedAt: serverTimestamp(),
-  })
-}
-
-export const updatePlayerBalance = async (
-  playerId: string,
-  amount: number,
-  reason: string,
-  updatedBy: string,
-): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-  const playerRef = doc(getPlayersCollection(), playerId)
-  const player = await getDoc(playerRef)
-  if (!player.exists()) throw new Error("Player not found")
-  const currentBalance = player.data().systemBalance || 0
-  await updateDoc(playerRef, {
-    systemBalance: currentBalance + amount,
-    updatedAt: serverTimestamp(),
-  })
-}
-
-export const resetPlayerStatistics = async (): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-  const playersCollection = getPlayersCollection()
-  const snapshot = await getDocs(playersCollection)
-  const batch = writeBatch(checkFirebaseConfig())
-  snapshot.docs.forEach((doc) => {
-    batch.update(doc.ref, {
-      totalBuyIn: 0,
-      totalStack: 0,
-      gameCount: 0,
-      lastPlayedAt: null,
-    })
-  })
-  await batch.commit()
-}
-
-// --- Game Functions ---
-
-export const createGame = async (name: string): Promise<string> => {
-  if (!isFirebaseConfigured()) return `mock_game_${Date.now()}`
-  const gamesCollection = getGamesCollection()
-  const docRef = await addDoc(gamesCollection, {
-    name,
-    isActive: true,
-    participants: [],
+  const docRef = await addDoc(playersCollection, {
+    ...player,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   })
   return docRef.id
 }
 
+export const updatePlayer = async (id: string, updates: Partial<Player>): Promise<void> => {
+  if (!isFirebaseConfigured()) {
+    log.info("[v0] モック環境: プレイヤー更新をシミュレート", { id, updates })
+    return
+  }
+  const validatedId = validateId(id, "プレイヤーID")
+  const playerRef = doc(getPlayersCollection(), validatedId)
+  await updateDoc(playerRef, { ...updates, updatedAt: serverTimestamp() })
+}
+
+export const deletePlayer = async (id: string): Promise<void> => {
+  if (!isFirebaseConfigured()) {
+    log.info("[v0] モック環境: プレイヤー削除をシミュレート", { id })
+    return
+  }
+  const validatedId = validateId(id, "プレイヤーID")
+  await deleteDoc(doc(getPlayersCollection(), validatedId))
+}
+
+export const archivePlayer = async (id: string): Promise<void> => {
+  if (!isFirebaseConfigured()) {
+    log.info("[v0] モック環境: プレイヤーのアーカイブをシミュレート", { id })
+    return
+  }
+  const validatedId = validateId(id, "プレイヤーID")
+  const playerRef = doc(getPlayersCollection(), validatedId)
+  await updateDoc(playerRef, { isArchived: true, updatedAt: serverTimestamp() })
+}
+
+export const unarchivePlayer = async (id: string): Promise<void> => {
+  if (!isFirebaseConfigured()) {
+    log.info("[v0] モック環境: プレイヤーのアーカイブ解除をシミュレート", { id })
+    return
+  }
+  const validatedId = validateId(id, "プレイヤーID")
+  const playerRef = doc(getPlayersCollection(), validatedId)
+  await updateDoc(playerRef, { isArchived: false, updatedAt: serverTimestamp() })
+}
+
+export const updatePlayerMembershipRank = async (playerId: string): Promise<void> => {
+  if (!isFirebaseConfigured()) {
+    log.info("[v0] モック環境: メンバーシップランク更新をシミュレート", { playerId })
+    return
+  }
+
+  const player = await getPlayer(playerId)
+  if (!player) return
+
+  const totalCP = player.totalCPEarned || 0
+  let newRank = "bronze"
+  if (totalCP >= 100000) {
+    newRank = "platinum"
+  } else if (totalCP >= 50000) {
+    newRank = "gold"
+  } else if (totalCP >= 10000) {
+    newRank = "silver"
+  }
+
+  if (newRank !== player.membershipRank) {
+    await updatePlayer(playerId, { membershipRank: newRank })
+    log.info(`[v0] プレイヤー ${playerId} のランクが ${newRank} に更新されました`)
+  }
+}
+
+// --- Game Functions ---
+
 export const subscribeToActiveGames = (callback: (games: Game[]) => void): (() => void) => {
   if (!isFirebaseConfigured()) {
-    callback(mockGames)
+    callback(mockGames.filter((g) => g.status === "active"))
     return () => {}
   }
   const gamesCollection = getGamesCollection()
-  const q = query(gamesCollection, where("isActive", "==", true), orderBy("createdAt", "desc"))
+  const q = query(gamesCollection, where("status", "==", "active"), orderBy("startTime", "desc"))
   return onSnapshot(q, (snapshot) => {
-    const games = snapshot.docs.map((doc) => {
-      const data = doc.data()
-      return {
-        id: doc.id,
-        ...data,
-        createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt || Date.now()),
-        updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate() : new Date(data.updatedAt || Date.now()),
-        participants: (data.participants || []).map((p: any) => ({
-          ...p,
-          joinedAt: p.joinedAt?.toDate ? p.joinedAt.toDate() : new Date(p.joinedAt || Date.now()),
-        })),
-      } as Game
-    })
+    const games = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Game)
     callback(games)
   })
 }
@@ -725,397 +582,61 @@ export const subscribeToGames = (callback: (games: Game[]) => void): (() => void
     return () => {}
   }
   const gamesCollection = getGamesCollection()
-  const q = query(gamesCollection, orderBy("createdAt", "desc"), limit(50))
+  const q = query(gamesCollection, orderBy("startTime", "desc"))
   return onSnapshot(q, (snapshot) => {
-    const games = snapshot.docs.map((doc) => {
-      const data = doc.data()
-      return {
-        id: doc.id,
-        ...data,
-        createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt || Date.now()),
-        updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate() : new Date(data.updatedAt || Date.now()),
-        participants: (data.participants || []).map((p: any) => ({
-          ...p,
-          joinedAt: p.joinedAt?.toDate ? p.joinedAt.toDate() : new Date(p.joinedAt || Date.now()),
-        })),
-      } as Game
-    })
+    const games = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Game)
     callback(games)
   })
 }
 
-export const addPlayerToGame = async (
-  gameId: string,
-  playerId: string,
-  playerName: string,
-  buyInAmount: number,
-  addedBy: string,
-  purchaseAmount?: number, // 購入額を追加
-  receiptId?: string, // 伝票IDを追加
-): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-  const gameRef = doc(getGamesCollection(), gameId)
+export const getGame = async (id: string): Promise<Game | null> => {
+  if (!isFirebaseConfigured()) {
+    const game = mockGames.find((g) => g.id === id)
+    return game || null
+  }
+  const validatedId = validateId(id, "ゲームID")
+  const gameRef = doc(getGamesCollection(), validatedId)
   const gameSnap = await getDoc(gameRef)
-  if (!gameSnap.exists()) throw new Error("Game not found")
-
-  const gameData = gameSnap.data() as Game
-  const participants = gameData.participants || []
-
-  participants.push({
-    playerId,
-    playerName,
-    buyInAmount,
-    currentStack: buyInAmount,
-    additionalBuyIns: 0,
-    joinedAt: new Date(),
-  })
-
-  await updateDoc(gameRef, { participants, updatedAt: serverTimestamp() })
-
-  // プレイヤー情報を取得
-  const playerRef = doc(getPlayersCollection(), playerId)
-  const playerSnap = await getDoc(playerRef)
-  if (!playerSnap.exists()) throw new Error("Player not found")
-  
-  const playerData = playerSnap.data() as Player
-  const currentBalance = playerData.systemBalance || 0
-  
-  // 貿スタックから引き落とす金額を計算
-  const deductFromBalance = Math.min(currentBalance, buyInAmount)
-  const actualPurchase = purchaseAmount !== undefined ? purchaseAmount : Math.max(0, buyInAmount - currentBalance)
-  const newBalance = Math.max(0, currentBalance - buyInAmount)
-  
-  console.log("[v0] 💰 バイイン処理:", {
-    プレイヤー: playerName,
-    バイイン額: buyInAmount,
-    現在の貿スタック: currentBalance,
-    貿スタックから使用: deductFromBalance,
-    購入額: actualPurchase,
-    新しい貿スタック: newBalance,
-  })
-  
-  // プレイヤーの状態を更新（貿スタックを引き落とし）
-  await updatePlayer(playerId, { 
-    isPlaying: true, 
-    currentGameId: gameId,
-    systemBalance: newBalance,
-  })
-  
-  // 購入がある場合は購入履歴に記録
-  if (actualPurchase > 0) {
-    const purchaseHistoryRef = collection(checkFirebaseConfig(), "purchaseHistory")
-    await addDoc(purchaseHistoryRef, {
-      playerId,
-      playerName,
-      gameId,
-      amount: actualPurchase,
-      reason: "バイイン時の購入",
-      createdAt: serverTimestamp(),
-      createdBy: addedBy,
-    })
-    
-    console.log("[v0] 📝 購入履歴記録:", {
-      プレイヤー: playerName,
-      購入額: actualPurchase,
-      ゲームID: gameId,
-    })
-    
-    // 伝票がある場合は伝票にスタック購入項目を追加
-    if (receiptId) {
-      // 伝票IDが指定されている場合は直接使用
-      const itemsCollection = getReceiptItemsCollection()
-      await addDoc(itemsCollection, {
-        receiptId,
-        menuType: "stack_purchase",
-        itemName: "バイイン時スタック購入",
-        unitPrice: 1, // 1円/©（従業員が変更可能）
-        quantity: actualPurchase,
-        totalPrice: actualPurchase, // デフォルト: 購入© × 1円
-        isTaxable: false, // スタック購入は非課税
-        createdAt: serverTimestamp(),
-        createdBy: addedBy,
-      })
-      
-      // 伝票の合計金額を更新
-      await updateReceiptTotals(receiptId)
-      
-      console.log("[v0] 📦 伝票にスタック購入項目追加:", {
-        伝票ID: receiptId,
-        購入チップ: actualPurchase,
-        デフォルト金額: actualPurchase,
-      })
-    } else {
-      console.log("[v0] ⚠️ 伝票が見つからないためスタック購入項目を追加できません:", {
-        プレイヤーID: playerId,
-        ゲームID: gameId,
-        購入額: actualPurchase,
-      })
-    }
+  if (!gameSnap.exists()) {
+    return null
   }
+  return { id: gameSnap.id, ...gameSnap.data() } as Game
 }
 
-export const updateGameParticipantStack = async (
-  gameId: string,
-  playerId: string,
-  amount: number,
-  reason: string,
-  updatedBy: string,
-): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-
-  try {
-    const gameRef = doc(getGamesCollection(), gameId)
-    const gameSnap = await getDoc(gameRef)
-    if (!gameSnap.exists()) throw new Error("Game not found")
-
-    const gameData = gameSnap.data() as Game
-    const participants = gameData.participants || []
-    
-    // Find participant
-    const participantIndex = participants.findIndex((p) => p.playerId === playerId)
-    if (participantIndex === -1) {
-      throw new Error(`Participant ${playerId} not found in game ${gameId}`)
-    }
-
-    const participant = participants[participantIndex]
-    const oldStack = participant.currentStack
-    const newStack = oldStack + amount
-
-    participants[participantIndex] = {
-      ...participant,
-      currentStack: newStack,
-    }
-
-    await updateDoc(gameRef, { participants, updatedAt: serverTimestamp() })
-    
-    // プレイヤー情報を取得
-    const playerRef = doc(getPlayersCollection(), playerId)
-    const playerSnap = await getDoc(playerRef)
-    if (!playerSnap.exists()) throw new Error("Player not found")
-    
-    const playerData = playerSnap.data() as Player
-    const playerName = playerData.name
-    const currentBalance = playerData.systemBalance || 0
-    
-    // 貿スタックから引き落とす金額を計算
-    const deductFromBalance = Math.min(currentBalance, amount)
-    const purchaseAmount = Math.max(0, amount - currentBalance)
-    const newBalance = Math.max(0, currentBalance - amount)
-    
-    console.log("[v0] 💰 追加スタック処理:", {
-      プレイヤー: playerName,
-      追加スタック: amount,
-      現在の貿スタック: currentBalance,
-      貿スタックから使用: deductFromBalance,
-      購入額: purchaseAmount,
-      新しい貿スタック: newBalance,
-    })
-    
-    // プレイヤーの貿スタックを更新
-    await updatePlayer(playerId, { 
-      systemBalance: newBalance,
-    })
-    
-    // 購入がある場合は購入履歴に記録
-    if (purchaseAmount > 0) {
-      const purchaseHistoryRef = collection(checkFirebaseConfig(), "purchaseHistory")
-      await addDoc(purchaseHistoryRef, {
-        playerId,
-        playerName,
-        gameId,
-        amount: purchaseAmount,
-        reason: "追加スタック購入",
-        createdAt: serverTimestamp(),
-        createdBy: updatedBy,
-      })
-      
-      console.log("[v0] 📝 追加スタック購入履歴記録:", {
-        プレイヤー: playerName,
-        購入額: purchaseAmount,
-        ゲームID: gameId,
-      })
-      
-      // 伝票がある場合は伝票にスタック購入項目を追加
-      const receiptsCollection = getReceiptsCollection()
-      const q = query(
-        receiptsCollection,
-        where("playerId", "==", playerId),
-        where("status", "==", "active"),
-        where("gameId", "==", gameId),
-        limit(1)
-      )
-      const receiptsSnapshot = await getDocs(q)
-      
-      if (!receiptsSnapshot.empty) {
-        const receiptId = receiptsSnapshot.docs[0].id
-        const itemsCollection = getReceiptItemsCollection()
-        await addDoc(itemsCollection, {
-          receiptId,
-          menuType: "stack_purchase",
-          itemName: "追加スタック購入",
-          unitPrice: 1, // 1円/©（従業員が変更可能）
-          quantity: purchaseAmount,
-          totalPrice: purchaseAmount, // デフォルト: 購入© × 1円
-          isTaxable: false, // スタック購入は非課税
-          createdAt: serverTimestamp(),
-          createdBy: updatedBy,
-        })
-        
-        console.log("[v0] 📦 伝票に追加スタック購入項目追加:", {
-          伝票ID: receiptId,
-          購入チップ: purchaseAmount,
-          デフォルト金額: purchaseAmount,
-        })
-      } else {
-        console.log("[v0] ⚠️ 伝票が見つからないため追加スタック購入項目を追加できません:", {
-          プレイヤーID: playerId,
-          ゲームID: gameId,
-          購入額: purchaseAmount,
-        })
-      }
-    }
-    
-    console.log(`[v0] Game participant stack updated: ${playerId} ${oldStack} -> ${newStack}`)
-  } catch (error) {
-    console.error(`[v0] Error updating game participant stack:`, error)
-    throw error
+export const addGame = async (game: Omit<Game, "id">): Promise<string> => {
+  if (!isFirebaseConfigured()) {
+    log.info("[v0] モック環境: ゲーム追加をシミュレート", { game })
+    return `mock_game_${Date.now()}`
   }
+  const gamesCollection = getGamesCollection()
+  const docRef = await addDoc(gamesCollection, {
+    ...game,
+    startTime: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  })
+  return docRef.id
 }
 
-export const endGameWithFinalStacks = async (
-  gameId: string,
-  finalStacks: { playerId: string; finalStack: number }[],
-  endedBy: string,
-): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-  const gameRef = doc(getGamesCollection(), gameId)
-  await updateDoc(gameRef, { isActive: false, updatedAt: serverTimestamp() })
-
-  for (const stack of finalStacks) {
-    await updatePlayer(stack.playerId, { isPlaying: false, currentGameId: undefined })
+export const updateGame = async (id: string, updates: Partial<Game>): Promise<void> => {
+  if (!isFirebaseConfigured()) {
+    log.info("[v0] モック環境: ゲーム更新をシミュレート", { id, updates })
+    return
   }
+  const validatedId = validateId(id, "ゲームID")
+  const gameRef = doc(getGamesCollection(), validatedId)
+  await updateDoc(gameRef, { ...updates, updatedAt: serverTimestamp() })
+}
 
-  console.log("[v0] Game ended, updating rankings")
-  
-  // playersコレクションからstoreIdを取得
-  let storeId: string | undefined
-  if (finalStacks.length > 0) {
-    try {
-      const playerDoc = await getDoc(doc(getPlayersCollection(), finalStacks[0].playerId))
-      if (playerDoc.exists()) {
-        storeId = playerDoc.data().storeId
-      }
-    } catch (error) {
-      console.error("[v0] Error fetching player storeId:", error)
-    }
+export const deleteGame = async (id: string): Promise<void> => {
+  if (!isFirebaseConfigured()) {
+    log.info("[v0] モック環境: ゲーム削除をシミュレート", { id })
+    return
   }
-  
-  await updateProvisionalRankingForToday(storeId)
+  const validatedId = validateId(id, "ゲームID")
+  await deleteDoc(doc(getGamesCollection(), validatedId))
 }
 
 // --- Receipt Functions ---
-
-export const createReceipt = async (
-  playerId: string,
-  playerName: string,
-  gameId: string,
-  createdBy: string,
-): Promise<string> => {
-  if (!isFirebaseConfigured()) return `mock_receipt_${Date.now()}`
-  const receiptsCollection = getReceiptsCollection()
-  const docRef = await addDoc(receiptsCollection, {
-    playerId,
-    playerName,
-    gameId,
-    status: "active",
-    totalAmount: 0,
-    totalTax: 0,
-    createdAt: serverTimestamp(),
-    createdBy,
-  })
-  return docRef.id
-}
-
-export const createStandaloneReceipt = async (
-  playerId: string,
-  playerName: string,
-  createdBy: string,
-): Promise<string> => {
-  if (!isFirebaseConfigured()) return `mock_receipt_${Date.now()}`
-  const receiptsCollection = getReceiptsCollection()
-  const docRef = await addDoc(receiptsCollection, {
-    playerId,
-    playerName,
-    status: "active",
-    totalAmount: 0,
-    totalTax: 0,
-    createdAt: serverTimestamp(),
-    createdBy,
-  })
-  return docRef.id
-}
-
-export const updateReceiptTotals = async (receiptId: string): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-  
-  // 伝票の全項目を取得
-  const itemsCollection = getReceiptItemsCollection()
-  const q = query(itemsCollection, where("receiptId", "==", receiptId))
-  const itemsSnapshot = await getDocs(q)
-  
-  // 合計金額を計算
-  let totalAmount = 0
-  let totalTax = 0
-  
-  itemsSnapshot.docs.forEach((doc) => {
-    const item = doc.data() as ReceiptItem
-    totalAmount += item.totalPrice || 0
-    // 課税対象の場合は税金を計算（消費税10%）
-    if (item.isTaxable) {
-      totalTax += Math.floor((item.totalPrice || 0) * 0.1)
-    }
-  })
-  
-  // 伝票を更新
-  const receiptRef = doc(getReceiptsCollection(), receiptId)
-  await updateDoc(receiptRef, {
-    totalAmount,
-    totalTax,
-    updatedAt: serverTimestamp(),
-  })
-  
-  console.log("[v0] 📊 伝票合計金額更新:", {
-    伝票ID: receiptId,
-    合計金額: totalAmount,
-    消費税: totalTax,
-    項目数: itemsSnapshot.docs.length,
-  })
-}
-
-export const addReceiptItem = async (receiptId: string, item: Omit<ReceiptItem, "id">): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-  const itemsCollection = getReceiptItemsCollection()
-  await addDoc(itemsCollection, { ...item, receiptId })
-  // 項目追加後に合計金額を更新
-  await updateReceiptTotals(receiptId)
-}
-
-export const deleteReceiptItem = async (itemId: string): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-  
-  // 削除前に伝票IDを取得
-  const itemRef = doc(getReceiptItemsCollection(), itemId)
-  const itemSnap = await getDoc(itemRef)
-  const receiptId = itemSnap.exists() ? itemSnap.data().receiptId : null
-  
-  // 項目を削除
-  await deleteDoc(itemRef)
-  
-  // 伝票の合計金額を更新
-  if (receiptId) {
-    await updateReceiptTotals(receiptId)
-  }
-}
 
 export const subscribeToReceipts = (callback: (receipts: Receipt[]) => void, storeId?: string | null): (() => void) => {
   if (!isFirebaseConfigured()) {
@@ -1123,24 +644,14 @@ export const subscribeToReceipts = (callback: (receipts: Receipt[]) => void, sto
     return () => {}
   }
   const receiptsCollection = getReceiptsCollection()
-  const q = storeId
-    ? query(receiptsCollection, where("storeId", "==", storeId), orderBy("createdAt", "desc"), limit(50))
-    : query(receiptsCollection, orderBy("createdAt", "desc"), limit(50))
+  let q = query(receiptsCollection, orderBy("createdAt", "desc"))
+
+  if (storeId) {
+    q = query(receiptsCollection, where("storeId", "==", storeId), orderBy("createdAt", "desc"))
+  }
+
   return onSnapshot(q, (snapshot) => {
-    const receipts = snapshot.docs.map((doc) => {
-      const data = doc.data()
-      return {
-        id: doc.id,
-        ...data,
-        createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt || Date.now()),
-        updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate() : new Date(data.updatedAt || Date.now()),
-        settledAt: data.settledAt?.toDate
-          ? data.settledAt.toDate()
-          : data.settledAt
-            ? new Date(data.settledAt)
-            : undefined,
-      } as Receipt
-    })
+    const receipts = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Receipt)
     callback(receipts)
   })
 }
@@ -1153,16 +664,47 @@ export const subscribeToReceiptItems = (receiptId: string, callback: (items: Rec
   const itemsCollection = getReceiptItemsCollection()
   const q = query(itemsCollection, where("receiptId", "==", receiptId))
   return onSnapshot(q, (snapshot) => {
-    const items = snapshot.docs.map((doc) => {
-      const data = doc.data()
-      return {
-        id: doc.id,
-        ...data,
-        createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt || Date.now()),
-      } as ReceiptItem
-    })
+    const items = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as ReceiptItem)
     callback(items)
   })
+}
+
+export const getReceipt = async (id: string): Promise<Receipt | null> => {
+  if (!isFirebaseConfigured()) {
+    const receipt = mockReceipts.find((r) => r.id === id)
+    return receipt || null
+  }
+  const validatedId = validateId(id, "レシートID")
+  const receiptRef = doc(getReceiptsCollection(), validatedId)
+  const receiptSnap = await getDoc(receiptRef)
+  if (!receiptSnap.exists()) {
+    return null
+  }
+  return { id: receiptSnap.id, ...receiptSnap.data() } as Receipt
+}
+
+export const addReceipt = async (receipt: Omit<Receipt, "id">): Promise<string> => {
+  if (!isFirebaseConfigured()) {
+    log.info("[v0] モック環境: レシート追加をシミュレート", { receipt })
+    return `mock_receipt_${Date.now()}`
+  }
+  const receiptsCollection = getReceiptsCollection()
+  const docRef = await addDoc(receiptsCollection, {
+    ...receipt,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  })
+  return docRef.id
+}
+
+export const updateReceipt = async (id: string, updates: Partial<Receipt>): Promise<void> => {
+  if (!isFirebaseConfigured()) {
+    log.info("[v0] モック環境: レシート更新をシミュレート", { id, updates })
+    return
+  }
+  const validatedId = validateId(id, "レシートID")
+  const receiptRef = doc(getReceiptsCollection(), validatedId)
+  await updateDoc(receiptRef, { ...updates, updatedAt: serverTimestamp() })
 }
 
 export const completeReceipt = async (
@@ -1172,32 +714,33 @@ export const completeReceipt = async (
   pointsUsed: number,
   completedBy: string,
 ): Promise<void> => {
-  if (!isFirebaseConfigured()) return
+  if (!isFirebaseConfigured()) {
+    log.info("[v0] モック環境: レシート完了をシミュレート", { receiptId })
+    return
+  }
 
   try {
     const receiptRef = doc(getReceiptsCollection(), receiptId)
     const receiptSnap = await getDoc(receiptRef)
-    if (!receiptSnap.exists()) throw new Error("Receipt not found")
-
+    if (!receiptSnap.exists()) {
+      throw new Error(`Receipt with id ${receiptId} not found`)
+    }
     const receiptData = receiptSnap.data()
     const playerId = receiptData.playerId
+    const storeId = receiptData.storeId
 
-    // Deduct points if used
+    // ポイント付与ロジック
+    const settings = await getStoreRankingSettings(storeId)
+    const rateToUse = settings?.pointRate ?? 1 // デフォルト1%
+    let eligibleAmount = receiptData.totalAmount
+
+    // ポイント利用分はポイント付与対象外
     if (pointsUsed > 0) {
-      await deductRewardPoints(playerId, pointsUsed, "会計での使用", receiptId, completedBy)
+      eligibleAmount -= pointsUsed * (settings?.pointValue ?? 1) // 1P=1円換算
     }
 
-    // Award points
-    const settings = await getStoreRankingSettings()
-    const baseRate = settings?.cashbackPointsSettings?.baseRate || 5
-    const today = new Date().toISOString().split("T")[0]
-    const dailyRate = settings?.cashbackPointsSettings?.dailyRates?.[today]
-    const rateToUse = dailyRate !== undefined ? dailyRate : baseRate
-
-    // Calculate eligible amount for points
-    let eligibleAmount = receivedAmount
-    if (settings?.cashbackPointsSettings?.usageScope === "stack_only") {
-      // Get receipt items and sum stack purchases
+    // SMH購入以外のアイテムはポイント付与対象外
+    if (receiptData.items.some((item: any) => item.type !== "stack_purchase")) {
       const receiptItemsRef = getReceiptItemsCollection()
       const itemsQuery = query(receiptItemsRef, where("receiptId", "==", receiptId))
       const itemsSnap = await getDocs(itemsQuery)
@@ -1285,30 +828,40 @@ export const saveAdminPassword = async (password: string): Promise<void> => {
 
 // --- Ranking & Sales Functions ---
 
-export const subscribeToDailyRankings = (callback: (rankings: any[]) => void, storeId?: string | null): (() => void) => {
+export const subscribeToDailyRankings = (
+  callback: (rankings: PlayerRanking[]) => void,
+  storeId?: string | null,
+): (() => void) => {
   if (!isFirebaseConfigured()) {
     callback(mockDailyRankings)
     return () => {}
   }
+
   const rankingsCollection = getDailyRankingsCollection()
-  const q = storeId
-    ? query(rankingsCollection, where("storeId", "==", storeId), orderBy("date", "desc"), limit(30))
-    : query(rankingsCollection, orderBy("date", "desc"), limit(30))
+  let q = query(rankingsCollection, orderBy("date", "desc"), limit(30))
+
+  if (storeId) {
+    q = query(rankingsCollection, where("storeId", "==", storeId), orderBy("date", "desc"), limit(30))
+  }
+
   return onSnapshot(q, (snapshot) => {
     const rankings = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
     callback(rankings)
   })
 }
 
-export const subscribeToMonthlyPoints = (year: number, month: number, callback: (points: any[]) => void, storeId?: string | null): (() => void) => {
+export const subscribeToMonthlyPoints = (callback: (points: any[]) => void, storeId?: string | null): (() => void) => {
   if (!isFirebaseConfigured()) {
     callback(mockMonthlyPoints)
     return () => {}
   }
   const pointsCollection = getMonthlyPointsCollection()
-  const q = storeId
-    ? query(pointsCollection, where("storeId", "==", storeId), orderBy("month", "desc"), limit(12))
-    : query(pointsCollection, orderBy("month", "desc"), limit(12))
+  let q = query(pointsCollection, orderBy("month", "desc"), limit(12))
+
+  if (storeId) {
+    q = query(pointsCollection, where("storeId", "==", storeId), orderBy("month", "desc"), limit(12))
+  }
+
   return onSnapshot(q, (snapshot) => {
     const points = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
     callback(points)
@@ -1321,9 +874,12 @@ export const subscribeToMonthlyRankings = (callback: (rankings: any[]) => void, 
     return () => {}
   }
   const rankingsCollection = getMonthlyRankingsCollection()
-  const q = storeId
-    ? query(rankingsCollection, where("storeId", "==", storeId), orderBy("month", "desc"), limit(12))
-    : query(rankingsCollection, orderBy("month", "desc"), limit(12))
+  let q = query(rankingsCollection, orderBy("month", "desc"), limit(12))
+
+  if (storeId) {
+    q = query(rankingsCollection, where("storeId", "==", storeId), orderBy("month", "desc"), limit(12))
+  }
+
   return onSnapshot(q, (snapshot) => {
     const rankings = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
     callback(rankings)
@@ -1331,25 +887,20 @@ export const subscribeToMonthlyRankings = (callback: (rankings: any[]) => void, 
 }
 
 export const subscribeToDailySales = (
-  storeId: string | null,
-  callback: (sales: DailySales[]) => void
+  callback: (sales: DailySales[]) => void,
+  storeId?: string | null,
 ): (() => void) => {
   if (!isFirebaseConfigured()) {
     callback([])
     return () => {}
   }
   const salesCollection = getDailySalesCollection()
-  let q
+  let q = query(salesCollection, orderBy("date", "desc"), limit(30))
+
   if (storeId) {
-    q = query(
-      salesCollection,
-      where("storeId", "==", storeId),
-      orderBy("date", "desc"),
-      limit(30)
-    )
-  } else {
-    q = query(salesCollection, orderBy("date", "desc"), limit(30))
+    q = query(salesCollection, where("storeId", "==", storeId), orderBy("date", "desc"), limit(30))
   }
+
   return onSnapshot(q, (snapshot) => {
     const sales = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as DailySales)
     callback(sales)
@@ -1369,407 +920,85 @@ export const settleDailySales = async (date: string, salesData: any): Promise<vo
     ...salesData,
     date,
     createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
   })
 }
 
-export const confirmDailyRanking = async (date: string): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-  const rankingRef = doc(getDailyRankingsCollection(), date)
-  const rankingSnap = await getDoc(rankingRef)
-
-  if (!rankingSnap.exists()) return
-
-  const rankingData = rankingSnap.data()
-  const rankings = rankingData.rankings || []
-
-  // 月間ポイントへの反映
-  const month = date.substring(0, 7) // YYYY-MM
-  await updateMonthlyPoints(month)
-
-  await updateDoc(rankingRef, {
-    isConfirmed: true,
-    confirmedAt: serverTimestamp(),
-  })
-}
-
-export const updateMonthlyPoints = async (month: string): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-
-  try {
-    console.log(`[v0] Updating monthly points for ${month}`)
-
-    const startDate = `${month}-01`
-    const endDate = `${month}-31`
-
-    const dailyRankingsRef = getDailyRankingsCollection()
-    const q = query(
-      dailyRankingsRef,
-      where("date", ">=", startDate),
-      where("date", "<=", endDate),
-      where("isConfirmed", "==", true),
-    )
-
-    const snapshot = await getDocs(q)
-    const playerPoints: Record<string, { playerId: string; name: string; pokerName?: string; points: number; games: number }> = {}
-
-    snapshot.docs.forEach((doc) => {
-      const data = doc.data()
-      const rankings = data.rankings || []
-      rankings.forEach((r: any) => {
-        if (!playerPoints[r.playerId]) {
-          playerPoints[r.playerId] = { playerId: r.playerId, name: r.playerName, pokerName: r.pokerName, points: 0, games: 0 }
-        }
-        playerPoints[r.playerId].points += r.points || 0
-        playerPoints[r.playerId].games += 1
-      })
-    })
-
-    const monthlyPointsRef = doc(getMonthlyPointsCollection(), month)
-    await setDoc(monthlyPointsRef, {
-      month,
-      points: playerPoints,
-      updatedAt: serverTimestamp(),
-    })
-
-    console.log(`[v0] Monthly points updated for ${month}: ${Object.keys(playerPoints).length} players`)
-  } catch (error) {
-    console.error(`[v0] Error updating monthly points for ${month}:`, error)
-    throw error
+export const getStoreRankingSettings = async (storeId: string): Promise<StoreRankingSettings | null> => {
+  if (!isFirebaseConfigured()) {
+    return mockStoreRankingSettings.find((s) => s.id === storeId) || null
   }
-}
-
-
-export const resetAllRankings = async (): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-
-  try {
-    console.log("[v0] Reset all rankings started")
-
-    // Delete all daily rankings
-    const dailyRankingsRef = getDailyRankingsCollection()
-    const dailySnapshot = await getDocs(dailyRankingsRef)
-    const dailyBatch = writeBatch(checkFirebaseConfig())
-    dailySnapshot.docs.forEach((doc) => {
-      dailyBatch.delete(doc.ref)
-    })
-    await dailyBatch.commit()
-    console.log(`[v0] Daily rankings deleted: ${dailySnapshot.size} records`)
-
-    // Delete all monthly points
-    const monthlyPointsRef = getMonthlyPointsCollection()
-    const monthlySnapshot = await getDocs(monthlyPointsRef)
-    const monthlyBatch = writeBatch(checkFirebaseConfig())
-    monthlySnapshot.docs.forEach((doc) => {
-      monthlyBatch.delete(doc.ref)
-    })
-    await monthlyBatch.commit()
-    console.log(`[v0] Monthly points deleted: ${monthlySnapshot.size} records`)
-
-    console.log("[v0] All rankings reset completed")
-  } catch (error) {
-    console.error("[v0] Error resetting rankings:", error)
-    throw error
+  const settingsRef = doc(getStoreRankingSettingsCollection(), storeId)
+  const settingsSnap = await getDoc(settingsRef)
+  if (!settingsSnap.exists()) {
+    return null
   }
+  return { id: settingsSnap.id, ...settingsSnap.data() } as StoreRankingSettings
 }
 
-export const updateProvisionalRankingForToday = async (storeId?: string): Promise<void> => {
+export const saveStoreRankingSettings = async (storeId: string, settings: Partial<StoreRankingSettings>): Promise<void> => {
   if (!isFirebaseConfigured()) return
-
-  try {
-    const today = new Date().toISOString().split("T")[0] // YYYY-MM-DD format
-    
-    // storeIdでフィルタリング
-    let playersQuery
-    if (storeId) {
-      playersQuery = query(getPlayersCollection(), where("storeId", "==", storeId))
-    } else {
-      playersQuery = getPlayersCollection()
-    }
-    const players = await getDocs(playersQuery)
-    const storeSettings = await getStoreRankingSettings()
-
-    if (!storeSettings) return
-
-    // プレイヤーの収支を計算
-    const playerStats: Array<{
-      playerId: string
-      playerName: string
-      pokerName?: string
-      profit: number
-    }> = []
-
-    for (const playerDoc of players.docs) {
-      const playerData = playerDoc.data() as Player
-      const playerId = playerDoc.id
-
-      // 取引履歴から本日の収支を計算
-      const transactionsRef = collection(checkFirebaseConfig(), "transactions")
-      const q = query(
-        transactionsRef,
-        where("playerId", "==", playerId),
-        where("createdAt", ">=", Timestamp.fromDate(new Date(today))),
-        where("createdAt", "<", Timestamp.fromDate(new Date(new Date(today).getTime() + 24 * 60 * 60 * 1000))),
-      )
-      const transactionsSnapshot = await getDocs(q)
-
-      let profit = 0
-      for (const txDoc of transactionsSnapshot.docs) {
-        const tx = txDoc.data() as any
-        // ゲーム関連の取引から収支を計算
-        if (tx.type === "game_cashout" || tx.type === "game_buy_in" || tx.type === "game_additional") {
-          profit += tx.amount
-        }
-      }
-
-      if (profit !== 0) {
-        playerStats.push({
-          playerId,
-          playerName: playerData.name,
-          pokerName: playerData.pokerName,
-          profit,
-        })
-      }
-    }
-
-    // 収支でソート（高い順）
-    playerStats.sort((a, b) => b.profit - a.profit)
-
-    // ポイント倍率を確認（2倍デーかどうか）
-    const pointMultiplier = storeSettings.doublePointDays?.includes(today) ? 2 : 1
-
-    // ランキングを生成
-    const rankings: PlayerRanking[] = playerStats.map((stat, index) => {
-      let points = 0
-      const rank = index + 1
-
-      // ランク別ポイント配分
-      if (rank === 1) points = storeSettings.pointSystem.first
-      else if (rank === 2) points = storeSettings.pointSystem.second
-      else if (rank === 3) points = storeSettings.pointSystem.third
-      else if (rank === 4) points = storeSettings.pointSystem.fourth
-      else if (rank === 5) points = storeSettings.pointSystem.fifth
-      else points = 0
-
-      // 倍率を適用
-      points = Math.floor(points * pointMultiplier)
-
-      return {
-        playerId: stat.playerId,
-        playerName: stat.playerName,
-        pokerName: stat.pokerName,
-        rank,
-        profit: stat.profit,
-        points,
-      }
-    })
-
-    // 日別ランキングを更新
-    const dailyRankingsRef = getDailyRankingsCollection()
-    const rankingDocId = storeId ? `${storeId}_${today}` : today
-    const rankingDocRef = doc(dailyRankingsRef, rankingDocId)
-
-    await setDoc(rankingDocRef, {
-      date: today,
-      storeId: storeId || null,
-      rankings,
-      isConfirmed: false,
-      pointMultiplier,
-      createdAt: new Date().toISOString(),
-    })
-
-    console.log(`[v0] ✅ 日別ランキング更新完了: ${today}`, { ランキング数: rankings.length })
-  } catch (error) {
-    console.error("[v0] ❌ ランキング更新エラー:", error)
-  }
-}
-
-// --- Store Settings ---
-
-export const getStoreRankingSettings = async (): Promise<StoreRankingSettings | null> => {
-  if (!isFirebaseConfigured()) return mockStoreRankingSettings
-  const settingsCollection = getStoreRankingSettingsCollection()
-  const snapshot = await getDocs(settingsCollection)
-  if (snapshot.empty) return null
-  return { id: snapshot.docs[0].id, ...snapshot.docs[0].data() } as StoreRankingSettings
-}
-
-export const updateStoreRankingSettings = async (settings: Partial<StoreRankingSettings>): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-  const settingsCollection = getStoreRankingSettingsCollection()
-  const snapshot = await getDocs(settingsCollection)
-  if (snapshot.empty) {
-    await addDoc(settingsCollection, { ...settings, updatedAt: serverTimestamp() })
-  } else {
-    await updateDoc(doc(settingsCollection, snapshot.docs[0].id), { ...settings, updatedAt: serverTimestamp() })
-  }
+  const settingsRef = doc(getStoreRankingSettingsCollection(), storeId)
+  await setDoc(settingsRef, { ...settings, updatedAt: serverTimestamp() }, { merge: true })
 }
 
 export const subscribeToStoreRankingSettings = (
-  callback: (settings: StoreRankingSettings | null) => void,
+  callback: (settings: StoreRankingSettings[]) => void,
+  storeId?: string | null,
 ): (() => void) => {
   if (!isFirebaseConfigured()) {
     callback(mockStoreRankingSettings)
     return () => {}
   }
   const settingsCollection = getStoreRankingSettingsCollection()
-  return onSnapshot(settingsCollection, (snapshot) => {
-    if (snapshot.empty) {
-      callback(null)
-    } else {
-      callback({ id: snapshot.docs[0].id, ...snapshot.docs[0].data() } as StoreRankingSettings)
-    }
+  let q = query(settingsCollection)
+
+  if (storeId) {
+    q = query(settingsCollection, where("storeId", "==", storeId))
+  }
+
+  return onSnapshot(q, (snapshot) => {
+    const settings = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as StoreRankingSettings)
+    callback(settings)
   })
 }
 
-// --- Customer & Subscription ---
+// --- Customer Account Functions ---
 
-export const getCustomerByEmail = async (email: string): Promise<CustomerAccount | null> => {
-  if (!isFirebaseConfigured()) return null
-  const customersCollection = getCustomerAccountsCollection()
-  const q = query(customersCollection, where("email", "==", email), limit(1))
-  const snapshot = await getDocs(q)
-  if (snapshot.empty) return null
-  return { id: snapshot.docs[0].id, ...snapshot.docs[0].data() } as CustomerAccount
-}
-
-export const createCustomerAccount = async (data: Partial<CustomerAccount>, email: string, password: string): Promise<string> => {
-  console.log("[createCustomerAccount] ⏱️ 開始:", new Date().toISOString())
-  const overallStart = performance.now()
-  
-  if (!isFirebaseConfigured()) return `mock_customer_${Date.now()}`
-  
-  // Firebase Authenticationでユーザーを作成
-  console.log("[createCustomerAccount] ⏱️ Firebase Authユーザー作成開始")
-  const authStart = performance.now()
-  const { createUser, waitForAuthState } = await import("./firebase-auth")
-  const userCredential = await createUser(email, password)
-  const uid = userCredential.user.uid
-  console.log("[createCustomerAccount] ⏱️ Firebase Auth完了:", performance.now() - authStart, "ms")
-  
-  // 認証状態が反映されるまで待機（最大60秒）
-  // 注意: タイムアウトを無視して続行します（Firestoreのセキュリティルール違反が原因である可能性があるため）
-  console.log("[createCustomerAccount] ⏱️ 認証状態待機開始")
-
-  // customerAccountsドキュメントを作成（UIDをドキュメントIDとして使用）
-  console.log("[createCustomerAccount] ⏱️ customerAccountsドキュメント作成開始")
-  const docStart = performance.now()
-  log.info("[createCustomerAccount] customerAccountsドキュメントを作成中...")
-  const db = checkFirebaseConfig()
-  const docRef = doc(db, "customerAccounts", uid)
-  await setDoc(docRef, {
-    ...data,
-    uid: uid,
-    email: email,
-    role: "customer",
+export const createCustomerAccount = async (account: Omit<CustomerAccount, "id">): Promise<string> => {
+  if (!isFirebaseConfigured()) {
+    log.info("[v0] モック環境: 顧客アカウント作成をシミュレート", { account })
+    return `mock_customer_${Date.now()}`
+  }
+  const accountsCollection = getCustomerAccountsCollection()
+  const docRef = await addDoc(accountsCollection, {
+    ...account,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
-    // デフォルト値を設定（dataに含まれていない場合）
-    playerName: data.playerName || null,
-    playerId: data.playerId || null,
-    storeId: data.storeId || null,
-    storeName: data.storeName || null,
-    stripeCustomerId: data.stripeCustomerId || null,
-    subscriptionStatus: data.subscriptionStatus || "free_trial",
-    isBetaTester: data.isBetaTester !== undefined ? data.isBetaTester : true,
-  })
-  console.log("[createCustomerAccount] ⏱️ customerAccountsドキュメント作成完了:", performance.now() - docStart, "ms")
-  log.info("[createCustomerAccount] customerAccountsドキュメントを作成しました")
-  
-  console.log("[createCustomerAccount] ✅ 完了 - 総時間:", performance.now() - overallStart, "ms")
-  return uid
-}
-
-/**
- * Firestoreのみに顧客情報を作成（Firebase Authユーザーは既に存在する場合）
- * 自動修復用
- */
-export const createCustomerInFirestore = async (data: Partial<CustomerAccount>, email: string, uid: string): Promise<string> => {
-  if (!isFirebaseConfigured()) return `mock_customer_${Date.now()}`
-  
-  const customersCollection = getCustomerAccountsCollection()
-  const docRef = await addDoc(customersCollection, {
-    ...data,
-    uid: uid,
-    email: email,
-    createdAt: serverTimestamp()
   })
   return docRef.id
 }
 
-export const updateCustomerAccount = async (uid: string, data: Partial<CustomerAccount>): Promise<void> => {
-  if (isDemoMode) {
-    const currentAccount = mockCustomerAccounts[uid];
-    if (currentAccount) {
-      Object.assign(currentAccount, data);
-      notifyCustomerAccountListeners(uid); // 変更をリスナーに通知
-    }
-    return;
+export const getCustomerAccount = async (id: string): Promise<CustomerAccount | null> => {
+  if (!isFirebaseConfigured()) {
+    return null
   }
-  if (!isFirebaseConfigured()) return
-  const db = checkFirebaseConfig();
-  const customerRef = doc(getCustomerAccountsCollection(), uid);
-  await updateDoc(customerRef, {
-    ...data,
-    updatedAt: serverTimestamp(),
-  });
-};
+  const accountRef = doc(getCustomerAccountsCollection(), id)
+  const accountSnap = await getDoc(accountRef)
+  if (!accountSnap.exists()) {
+    return null
+  }
+  return { id: accountSnap.id, ...accountSnap.data() } as CustomerAccount
+}
 
-export const linkPlayerToCustomer = async (customerId: string, playerUniqueId: string, playerName: string, storeId?: string): Promise<void> => {
+export const updateCustomerAccount = async (id: string, updates: Partial<CustomerAccount>): Promise<void> => {
   if (!isFirebaseConfigured()) return
-  
-  const db = checkFirebaseConfig()
-  
-  // Search strategy: try uniqueId first, then name, then pokerName
-  let playerDoc: any = null
-  let searchAttempts = [
-    { field: "uniqueId", value: playerUniqueId, label: "プレイヤーID" },
-    { field: "name", value: playerName, label: "プレイヤー名" },
-    { field: "pokerName", value: playerName, label: "ポーカー名" },
-  ]
-  
-  for (const attempt of searchAttempts) {
-    // Search in the top-level players collection
-    let playersCollection = getPlayersCollection()
-    let conditions = [where(attempt.field, "==", attempt.value)]
-    
-    // If storeId is provided, add it as an additional filter
-    if (storeId) {
-      conditions.push(where("storeId", "==", storeId))
-    }
-    
-    const q = query(playersCollection, ...conditions)
-    const querySnapshot = await getDocs(q)
-    
-    if (!querySnapshot.empty) {
-      playerDoc = querySnapshot.docs[0]
-      log.info(`プレイヤー検索成功 (${attempt.label})`, { field: attempt.field, value: attempt.value })
-      break
-    }
-    
-    log.debug(`プレイヤー検索失敗 (${attempt.label})`, { field: attempt.field, value: attempt.value })
-  }
-  
-  if (!playerDoc) {
-    log.error("プレイヤーが見つかりません", { playerUniqueId, storeId })
-    throw new Error(`プレイヤーID "${playerUniqueId}" が見つかりません。店舗スタッフに正しいプレイヤーIDをご確認ください。`)
-  }
-  
-  const playerDocId = playerDoc.id
-  const playerData = playerDoc.data() as Player
-  
-  // Update customer account with player info and store info
-  await updateCustomerAccount(customerId, {
-    playerId: playerDocId,
-    playerName: playerData.name || playerName,
-    storeId: playerData.storeId,
-    storeName: playerData.storeName || "店舗",
-  })
-  
-  log.info("プレイヤー紐づけ完了", { customerId, playerDocId, playerName: playerData.name })
-  
-  // Update player with customer link (optional, if needed)
-  // await updatePlayer(playerDocId, { customerId })
+  const accountRef = doc(getCustomerAccountsCollection(), id)
+  await updateDoc(accountRef, { ...updates, updatedAt: serverTimestamp() })
+}
+
+export const deleteCustomerAccount = async (id: string): Promise<void> => {
+  if (!isFirebaseConfigured()) return
+  await deleteDoc(doc(getCustomerAccountsCollection(), id))
 }
 
 export const subscribeToCustomerAccounts = (callback: (customers: CustomerAccount[]) => void): (() => void) => {
@@ -1777,787 +1006,497 @@ export const subscribeToCustomerAccounts = (callback: (customers: CustomerAccoun
     callback([])
     return () => {}
   }
-  const customersCollection = getCustomerAccountsCollection()
-  return onSnapshot(customersCollection, (snapshot) => {
+  const accountsCollection = getCustomerAccountsCollection()
+  const q = query(accountsCollection, orderBy("createdAt", "desc"))
+  return onSnapshot(q, (snapshot) => {
     const customers = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as CustomerAccount)
     callback(customers)
   })
 }
 
-export const updateCustomerSubscription = async (customerId: string, status: string): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-  await updateCustomerAccount(customerId, { subscriptionStatus: status as any })
-}
+// --- Payment History Functions ---
 
-export const updateCustomerPayment = async (customerId: string, paymentData: any): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-  // 支払い情報の更新
-  await updateCustomerAccount(customerId, {
-  })
-}
-
-export const createPaymentHistory = async (data: Partial<PaymentHistory>): Promise<void> => {
-  if (!isFirebaseConfigured()) return
+export const addPaymentHistory = async (history: Omit<PaymentHistory, "id">): Promise<string> => {
+  if (!isFirebaseConfigured()) {
+    log.info("[v0] モック環境: 支払い履歴追加をシミュレート", { history })
+    return `mock_payment_history_${Date.now()}`
+  }
   const historyCollection = getPaymentHistoryCollection()
-  await addDoc(historyCollection, { ...data, createdAt: serverTimestamp() })
-}
-
-// --- Posts ---
-
-export const subscribeToPosts = (callback: (posts: Post[]) => void): (() => void) => {
-  if (!isFirebaseConfigured()) {
-    callback([])
-    return () => {}
-  }
-  const postsCollection = getPostsCollection()
-  const q = query(postsCollection, orderBy("createdAt", "desc"))
-  return onSnapshot(q, (snapshot) => {
-    const posts = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Post)
-    callback(posts)
+  const docRef = await addDoc(historyCollection, {
+    ...history,
+    createdAt: serverTimestamp(),
   })
-}
-
-export const subscribeToUserPosts = (userId: string, callback: (posts: Post[]) => void): (() => void) => {
-  if (!isFirebaseConfigured()) {
-    callback([])
-    return () => {}
-  }
-  const postsCollection = getPostsCollection()
-  const q = query(postsCollection, where("authorId", "==", userId), orderBy("createdAt", "desc"))
-  return onSnapshot(q, (snapshot) => {
-    const posts = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Post)
-    callback(posts)
-  })
-}
-
-export const subscribeToStorePosts = (storeId: string, callback: (posts: Post[]) => void): (() => void) => {
-  if (!isFirebaseConfigured()) {
-    callback([])
-    return () => {}
-  }
-  const postsCollection = getPostsCollection()
-  const q = query(postsCollection, where("storeId", "==", storeId), orderBy("createdAt", "desc"))
-  return onSnapshot(q, (snapshot) => {
-    const posts = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Post)
-    callback(posts)
-  })
-}
-
-export const subscribeToPost = (postId: string, callback: (post: Post | null) => void): (() => void) => {
-  if (!isFirebaseConfigured()) {
-    callback(null)
-    return () => {}
-  }
-  return onSnapshot(doc(getPostsCollection(), postId), (snapshot) => {
-    if (!snapshot.exists()) {
-      callback(null)
-    } else {
-      callback({ id: snapshot.id, ...snapshot.data() } as Post)
-    }
-  })
-}
-
-export const createPost = async (data: Partial<Post>): Promise<string> => {
-  if (!isFirebaseConfigured()) return `mock_post_${Date.now()}`
-  const postsCollection = getPostsCollection()
-  const docRef = await addDoc(postsCollection, { ...data, createdAt: serverTimestamp() })
   return docRef.id
 }
 
-export const deletePost = async (postId: string): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-  await deleteDoc(doc(getPostsCollection(), postId))
-}
-
-export const getPostById = async (postId: string): Promise<Post | null> => {
-  if (!isFirebaseConfigured()) return null
-  const postRef = doc(getPostsCollection(), postId)
-  const snapshot = await getDoc(postRef)
-  if (!snapshot.exists()) return null
-  return { id: snapshot.id, ...snapshot.data() } as Post
-}
-
-// --- History Subscriptions ---
-
 export const subscribeToPlayerPurchaseHistory = (
-  storeId: string | null,
-  callback: (history: Record<string, number>) => void
+  playerId: string,
+  callback: (history: PaymentHistory[]) => void,
 ): (() => void) => {
   if (!isFirebaseConfigured()) {
-    callback({})
+    callback([])
     return () => {}
   }
-  
-  // 購入履歴をpurchaseHistoryコレクションから取得
-  const purchaseHistoryCollection = collection(checkFirebaseConfig(), "purchaseHistory")
-  
-  let q
-  if (storeId) {
-    q = query(purchaseHistoryCollection, where("storeId", "==", storeId))
-  } else {
-    q = query(purchaseHistoryCollection)
-  }
-  
+  const historyCollection = getPaymentHistoryCollection()
+  const q = query(historyCollection, where("playerId", "==", playerId), orderBy("createdAt", "desc"))
   return onSnapshot(q, (snapshot) => {
-    const history: Record<string, number> = {}
-    snapshot.docs.forEach((doc) => {
-      const data = doc.data()
-      if (data.playerId && data.amount) {
-        history[data.playerId] = (history[data.playerId] || 0) + data.amount
-      }
-    })
-    
-    console.log("[v0] 💰 購入履歴集計:", {
-      プレイヤー数: Object.keys(history).length,
-      詳細: history,
-    })
-    
+    const history = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as PaymentHistory)
     callback(history)
   })
 }
+
+// --- Rake History Functions ---
 
 export const subscribeToRakeHistory = (callback: (history: any[]) => void, storeId?: string | null): (() => void) => {
   if (!isFirebaseConfigured()) {
     callback(mockRakeHistory)
     return () => {}
   }
-  const rakeCollection = getRakeHistoryCollection()
-  const q = storeId
-    ? query(rakeCollection, where("storeId", "==", storeId), orderBy("createdAt", "desc"), limit(50))
-    : query(rakeCollection, orderBy("createdAt", "desc"), limit(50))
+  const historyCollection = getRakeHistoryCollection()
+  let q = query(historyCollection, orderBy("date", "desc"), limit(30))
+
+  if (storeId) {
+    q = query(historyCollection, where("storeId", "==", storeId), orderBy("date", "desc"), limit(30))
+  }
+
   return onSnapshot(q, (snapshot) => {
-    const history = snapshot.docs.map((doc) => {
-      const data = doc.data()
-      return {
-        id: doc.id,
-        ...data,
-        createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt || Date.now()),
-      }
-    })
+    const history = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
     callback(history)
   })
 }
 
-// --- Deprecated / Alias Functions ---
-
-export const createPlayer = addPlayer
-
 // --- Store Functions ---
-
-export const getStoresCollection = () => {
-  const db = checkFirebaseConfig()
-  return collection(db, "stores")
-}
 
 export const subscribeToStores = (callback: (stores: any[]) => void): (() => void) => {
   if (!isFirebaseConfigured()) {
-    // モックデータを返す
-    callback([
-      { id: "store1", name: "StackManKai 渋谷店", slug: "shibuya", createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-      { id: "store2", name: "StackManKai 新宿店", slug: "shinjuku", createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-    ])
+    callback([])
     return () => {}
   }
-  const storesCollection = getStoresCollection()
-  const q = query(storesCollection, orderBy("name", "asc"))
+  const storesCollection = collection(getDb(), "stores")
+  const q = query(storesCollection, orderBy("name"))
   return onSnapshot(q, (snapshot) => {
-    const stores = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }))
+    const stores = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
     callback(stores)
   })
 }
 
-export const updatePlayerStore = async (playerId: string, storeId: string, storeName: string) => {
+export const getStore = async (id: string): Promise<any | null> => {
   if (!isFirebaseConfigured()) {
-    log.warn("Firebase is not configured, skipping updatePlayerStore")
+    return null
+  }
+  const storeRef = doc(collection(getDb(), "stores"), id)
+  const storeSnap = await getDoc(storeRef)
+  if (!storeSnap.exists()) {
+    return null
+  }
+  return { id: storeSnap.id, ...storeSnap.data() }
+}
+
+// --- Post Functions ---
+
+export const addPost = async (post: Omit<Post, "id">): Promise<string> => {
+  if (!isFirebaseConfigured()) {
+    log.info("[v0] モック環境: 投稿追加をシミュレート", { post })
+    return `mock_post_${Date.now()}`
+  }
+  const postsCollection = getPostsCollection()
+  const docRef = await addDoc(postsCollection, {
+    ...post,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  })
+  return docRef.id
+}
+
+export const updatePost = async (id: string, updates: Partial<Post>): Promise<void> => {
+  if (!isFirebaseConfigured()) {
+    log.info("[v0] モック環境: 投稿更新をシミュレート", { id, updates })
     return
   }
-  const playerDoc = doc(checkFirebaseConfig(), "players", playerId)
-  await updateDoc(playerDoc, {
-    storeId,
-    storeName,
-    updatedAt: serverTimestamp(),
+  const postRef = doc(getPostsCollection(), id)
+  await updateDoc(postRef, { ...updates, updatedAt: serverTimestamp() })
+}
+
+export const deletePost = async (id: string): Promise<void> => {
+  if (!isFirebaseConfigured()) {
+    log.info("[v0] モック環境: 投稿削除をシミュレート", { id })
+    return
+  }
+  await deleteDoc(doc(getPostsCollection(), id))
+}
+
+// --- Chat Functions ---
+
+export const subscribeToChatMessages = (
+  gameId: string,
+  callback: (messages: any[]) => void,
+): (() => void) => {
+  if (!isFirebaseConfigured()) {
+    callback([])
+    return () => {}
+  }
+  const messagesCollection = collection(getDb(), `games/${gameId}/chatMessages`)
+  const q = query(messagesCollection, orderBy("createdAt", "asc"))
+  return onSnapshot(q, (snapshot) => {
+    const messages = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+      createdAt: doc.data().createdAt?.toDate(),
+    }))
+    callback(messages)
   })
 }
 
-/**
- * プレイヤーの会員ランクを判定・更新する
- */
-export const updatePlayerMembershipRank = async (playerId: string): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-
-  try {
-    // プレイヤー情報を取得
-    const playerRef = doc(getPlayersCollection(), playerId)
-    const playerSnap = await getDoc(playerRef)
-    
-    if (!playerSnap.exists()) {
-      console.warn(`Player not found: ${playerId}`)
-      return
-    }
-
-    const playerData = playerSnap.data()
-    const totalCPEarned = playerData.totalCPEarned || 0
-
-    // 店舗設定を取得
-    const storeSettings = await getStoreRankingSettings()
-    if (!storeSettings?.membershipRankSettings?.enabled) {
-      // ランク制度が無効の場合は何もしない
-      return
-    }
-
-    const ranks = storeSettings.membershipRankSettings.ranks
-
-    // 現在のランクを判定
-    let newRank: "none" | "silver" | "gold" | "platinum" = "none"
-
-    if (totalCPEarned >= ranks.platinum.requiredCP) {
-      newRank = "platinum"
-    } else if (totalCPEarned >= ranks.gold.requiredCP) {
-      newRank = "gold"
-    } else if (totalCPEarned >= ranks.silver.requiredCP) {
-      newRank = "silver"
-    }
-
-    // ランクが変更された場合のみ更新
-    const currentRank = playerData.membershipRank || "none"
-    if (newRank !== currentRank) {
-      await updateDoc(playerRef, {
-        membershipRank: newRank,
-        updatedAt: serverTimestamp(),
-      })
-      console.log(`Player ${playerId} rank updated: ${currentRank} -> ${newRank}`)
-    }
-  } catch (error) {
-    console.error("Error updating player membership rank:", error)
+export const addChatMessage = async (gameId: string, message: any): Promise<void> => {
+  if (!isFirebaseConfigured()) {
+    log.info("[v0] モック環境: チャットメッセージ追加をシミュレート", { gameId, message })
+    return
   }
-}
-
-/**
- * プレイヤーのCP累積を更新し、ランクを再判定する
- */
-export const addPlayerCP = async (playerId: string, cpAmount: number): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-
-  try {
-    const playerRef = doc(getPlayersCollection(), playerId)
-    const playerSnap = await getDoc(playerRef)
-    
-    if (!playerSnap.exists()) {
-      console.warn(`Player not found: ${playerId}`)
-      return
-    }
-
-    const playerData = playerSnap.data()
-    const currentCP = playerData.rewardPoints || 0
-    const currentTotalCP = playerData.totalCPEarned || 0
-
-    // CP残高と累積CPを更新
-    await updateDoc(playerRef, {
-      rewardPoints: currentCP + cpAmount,
-      totalCPEarned: currentTotalCP + cpAmount,
-      updatedAt: serverTimestamp(),
-    })
-
-    // ランクを再判定
-    await updatePlayerMembershipRank(playerId)
-  } catch (error) {
-    console.error("Error adding player CP:", error)
-  }
-}
-
-/**
- * プレイヤーアカウントを解約（CP・累積CP・ランクをリセット）
- */
-export const cancelPlayerAccount = async (playerId: string): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-
-  try {
-    const playerRef = doc(getPlayersCollection(), playerId)
-    const playerSnap = await getDoc(playerRef)
-    
-    if (!playerSnap.exists()) {
-      console.warn(`Player not found: ${playerId}`)
-      return
-    }
-
-    // CP残高、累積CP、会員ランクをリセット
-    await updateDoc(playerRef, {
-      rewardPoints: 0,
-      totalCPEarned: 0,
-      membershipRank: "none",
-      updatedAt: serverTimestamp(),
-    })
-
-    console.log(`Player ${playerId} account cancelled: CP and rank reset`)
-  } catch (error) {
-    console.error("Error cancelling player account:", error)
-    throw error
-  }
-}
-
-/**
- * 全プレイヤーの会員ランクデータをリセット（獲得CP総額とランクを0/"none"に）
- */
-export const resetAllPlayersMembershipData = async (): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-
-  try {
-    const playersRef = getPlayersCollection()
-    const snapshot = await getDocs(playersRef)
-    
-    const batch = writeBatch(checkFirebaseConfig())
-    let count = 0
-
-    snapshot.docs.forEach((doc) => {
-      batch.update(doc.ref, {
-        totalCPEarned: 0,
-        membershipRank: "none",
-        updatedAt: serverTimestamp(),
-      })
-      count++
-    })
-
-    await batch.commit()
-    console.log(`Reset membership data for ${count} players`)
-  } catch (error) {
-    console.error("Error resetting all players membership data:", error)
-    throw error
-  }
-}
-
-// --- Chat Messages ---
-
-const getChatMessagesCollection = (storeId: string) => {
-  if (!storeId) throw new Error("Store ID not found")
-  const db = checkFirebaseConfig()
-  return collection(db, "chatRooms", `store_${storeId}`, "messages")
-}
-
-export const sendChatMessage = async (
-  message: string, 
-  userId: string, 
-  userName: string, 
-  storeId: string,
-  type: "user" | "system" = "user"
-): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-  if (!storeId) throw new Error("Store ID not found")
-  
-  const messagesCollection = getChatMessagesCollection(storeId)
+  const messagesCollection = collection(getDb(), `games/${gameId}/chatMessages`)
   await addDoc(messagesCollection, {
-    storeId,
-    userId,
-    userName,
-    message,
-    type,
+    ...message,
     createdAt: serverTimestamp(),
   })
 }
 
-export const subscribeToChatMessages = (
-  storeId: string,
-  callback: (messages: ChatMessage[]) => void,
-  onError?: (error: Error) => void,
-  joinedAt?: Date
+// --- Active Users Functions ---
+
+export const subscribeToActiveUsers = (
+  gameId: string,
+  callback: (users: any[]) => void,
 ): (() => void) => {
   if (!isFirebaseConfigured()) {
     callback([])
     return () => {}
   }
-  
-  if (!storeId) {
-    console.error("Store ID is required for chat subscription")
-    if (onError) onError(new Error("Store ID is required"))
-    callback([])
-    return () => {}
-  }
-  
-  try {
-    const messagesCollection = getChatMessagesCollection(storeId)
-    
-    // 入室時刻が指定されている場合は、それ以降のメッセージのみ取得
-    const q = joinedAt
-      ? query(messagesCollection, where("createdAt", ">=", Timestamp.fromDate(joinedAt)), orderBy("createdAt", "asc"))
-      : query(messagesCollection, orderBy("createdAt", "desc"), limit(200))
-    
-    return onSnapshot(
-      q,
-      (snapshot) => {
-        const messages = snapshot.docs.map((doc) => {
-          const data = doc.data()
-          return {
-            id: doc.id,
-            storeId: data.storeId,
-            userId: data.userId,
-            userName: data.userName,
-            message: data.message,
-            type: data.type || "user",
-            createdAt: data.createdAt?.toDate() || new Date(),
-          } as ChatMessage
-        })
-        // joinedAtが指定されていない場合は、新しい順から古い順に並び替え
-        if (!joinedAt) {
-          messages.reverse()
-        }
-        callback(messages)
-      },
-      (error) => {
-        console.error("Error subscribing to chat messages:", error)
-        if (onError) onError(error)
-      }
-    )
-  } catch (error) {
-    console.error("Error setting up chat subscription:", error)
-    if (onError) onError(error as Error)
-    callback([])
-    return () => {}
-  }
-}
-
-// ==========================================
-// Presence Management
-// ==========================================
-
-/**
- * Get presence collection reference for a store
- */
-const getPresenceCollection = (storeId: string) => {
-  const db = checkFirebaseConfig()
-  return collection(db, "chatRooms", `store_${storeId}`, "presence")
-}
-
-/**
- * Set user presence (online status)
- */
-export const setUserPresence = async (
-  storeId: string,
-  userId: string,
-  userName: string
-): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-  if (!storeId || !userId) throw new Error("Store ID and User ID are required")
-  
-  const presenceCollection = getPresenceCollection(storeId)
-  const presenceDoc = doc(presenceCollection, userId)
-  
-  await setDoc(presenceDoc, {
-    userId,
-    userName,
-    lastSeen: serverTimestamp(),
+  const activeUsersCollection = collection(getDb(), `games/${gameId}/activeUsers`)
+  return onSnapshot(activeUsersCollection, (snapshot) => {
+    const users = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+    callback(users)
   })
 }
 
-/**
- * Remove user presence (offline status)
- */
-export const removeUserPresence = async (
-  storeId: string,
-  userId: string
-): Promise<void> => {
-  if (!isFirebaseConfigured()) return
-  if (!storeId || !userId) return
-  
-  try {
-    const presenceCollection = getPresenceCollection(storeId)
-    const presenceDoc = doc(presenceCollection, userId)
-    await deleteDoc(presenceDoc)
-  } catch (error) {
-    console.error("Error removing user presence:", error)
+export const setActiveUser = async (gameId: string, userId: string, userData: any): Promise<void> => {
+  if (!isFirebaseConfigured()) {
+    log.info("[v0] モック環境: アクティブユーザー設定をシミュレート", { gameId, userId })
+    return
+  }
+  const userRef = doc(getDb(), `games/${gameId}/activeUsers`, userId)
+  await setDoc(userRef, userData, { merge: true })
+}
+
+export const removeActiveUser = async (gameId: string, userId: string): Promise<void> => {
+  if (!isFirebaseConfigured()) {
+    log.info("[v0] モック環境: アクティブユーザー削除をシミュレート", { gameId, userId })
+    return
+  }
+  const userRef = doc(getDb(), `games/${gameId}/activeUsers`, userId)
+  await deleteDoc(userRef)
+}
+
+// --- Mock Data Initialization ---
+
+const initializeMockData = async () => {
+  if (isDemoMode() && isFirebaseConfigured()) {
+    log.info("[v0] デモモード: モックデータを初期化します")
+    const db = checkFirebaseConfig()
+
+    const collections: { [key: string]: any[] } = {
+      players: mockPlayers,
+      games: mockGames,
+      receipts: mockReceipts,
+      rakeHistory: mockRakeHistory,
+      users: mockUsers,
+      storeRankingSettings: mockStoreRankingSettings,
+      dailyRankings: mockDailyRankings,
+      monthlyRankings: mockMonthlyRankings,
+      monthlyPoints: mockMonthlyPoints,
+    }
+
+    for (const collectionName in collections) {
+      const docs = await getDocs(collection(db, collectionName))
+      if (docs.empty) {
+        log.info(`[v0] ${collectionName} コレクションにモックデータを投入します`)
+        const colRef = collection(db, collectionName)
+        for (const mockDoc of collections[collectionName]) {
+          const { id, ...data } = mockDoc
+          await setDoc(doc(colRef, id), data)
+        }
+      } else {
+        log.info(`[v0] ${collectionName} コレクションは既にデータが存在するためスキップします`)
+      }
+    }
   }
 }
 
-/**
- * Subscribe to active users (presence)
- */
-export const subscribeToActiveUsers = (
-  storeId: string,
-  callback: (users: Array<{ userId: string; userName: string }>) => void,
-  onError?: (error: Error) => void
+if (isDemoMode()) {
+  initializeMockData()
+}
+
+// --- Other Functions ---
+
+export const getMembershipRankDetails = (rank: string) => {
+  switch (rank) {
+    case "platinum":
+      return { name: "プラチナ", color: "#E5E4E2" }
+    case "gold":
+      return { name: "ゴールド", color: "#FFD700" }
+    case "silver":
+      return { name: "シルバー", color: "#C0C0C0" }
+    default:
+      return { name: "ブロンズ", color: "#CD7F32" }
+  }
+}
+
+export const deleteAllPlayers = async (storeId: string): Promise<void> => {
+  if (!isFirebaseConfigured()) return
+  const playersCollection = getPlayersCollection()
+  const q = query(playersCollection, where("storeId", "==", storeId))
+  const snapshot = await getDocs(q)
+  const batch = writeBatch(checkFirebaseConfig())
+  snapshot.docs.forEach((doc) => {
+    batch.delete(doc.ref)
+  })
+  await batch.commit()
+}
+
+export const resetPlayerStatistics = async (storeId: string): Promise<void> => {
+  if (!isFirebaseConfigured()) return
+  const playersCollection = getPlayersCollection()
+  const q = query(playersCollection, where("storeId", "==", storeId))
+  const snapshot = await getDocs(q)
+  const batch = writeBatch(checkFirebaseConfig())
+  snapshot.docs.forEach((doc) => {
+    batch.update(doc.ref, {
+      totalBuyin: 0,
+      totalProfit: 0,
+      totalGames: 0,
+    })
+  })
+  await batch.commit()
+}
+
+export const deleteAllGames = async (storeId: string): Promise<void> => {
+  if (!isFirebaseConfigured()) return
+  const gamesCollection = getGamesCollection()
+  const q = query(gamesCollection, where("storeId", "==", storeId))
+  const snapshot = await getDocs(q)
+  const batch = writeBatch(checkFirebaseConfig())
+  snapshot.docs.forEach((doc) => {
+    batch.delete(doc.ref)
+  })
+  await batch.commit()
+}
+
+export const deleteAllReceipts = async (storeId: string): Promise<void> => {
+  if (!isFirebaseConfigured()) return
+  const receiptsCollection = getReceiptsCollection()
+  const q = query(receiptsCollection, where("storeId", "==", storeId))
+  const snapshot = await getDocs(q)
+  const batch = writeBatch(checkFirebaseConfig())
+  snapshot.docs.forEach((doc) => {
+    batch.delete(doc.ref)
+  })
+  await batch.commit()
+}
+
+export const deleteAllPosts = async (storeId: string): Promise<void> => {
+  if (!isFirebaseConfigured()) return
+  const postsCollection = getPostsCollection()
+  const q = query(postsCollection, where("storeId", "==", storeId))
+  const snapshot = await getDocs(q)
+  const batch = writeBatch(checkFirebaseConfig())
+  snapshot.docs.forEach((doc) => {
+    batch.delete(doc.ref)
+  })
+  await batch.commit()
+}
+
+export const subscribeToStorePosts = (
+  callback: (posts: Post[]) => void,
+  storeId?: string | null,
 ): (() => void) => {
   if (!isFirebaseConfigured()) {
     callback([])
     return () => {}
   }
-  
-  if (!storeId) {
-    console.error("Store ID is required for presence subscription")
-    if (onError) onError(new Error("Store ID is required"))
-    callback([])
-    return () => {}
+  const postsCollection = getPostsCollection()
+  let q = query(postsCollection, orderBy("createdAt", "desc"))
+
+  if (storeId) {
+    q = query(postsCollection, where("storeId", "==", storeId), orderBy("createdAt", "desc"))
   }
-  
-  try {
-    const presenceCollection = getPresenceCollection(storeId)
-    
-    return onSnapshot(
-      presenceCollection,
-      (snapshot) => {
-        const now = Date.now()
-        const oneMinuteAgo = now - 60 * 1000 // 1分前
-        
-        const activeUsers = snapshot.docs
-          .map((doc) => {
-            const data = doc.data()
-            return {
-              userId: data.userId,
-              userName: data.userName,
-              lastSeen: data.lastSeen?.toDate()?.getTime() || 0,
-            }
-          })
-          .filter((user) => user.lastSeen > oneMinuteAgo)
-          .map((user) => ({
-            userId: user.userId,
-            userName: user.userName,
-          }))
-        
-        callback(activeUsers)
-      },
-      (error) => {
-        console.error("Error subscribing to active users:", error)
-        if (onError) onError(error)
-      }
-    )
-  } catch (error) {
-    console.error("Error setting up presence subscription:", error)
-    if (onError) onError(error as Error)
-    callback([])
-    return () => {}
-  }
+
+  return onSnapshot(q, (snapshot) => {
+    const posts = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Post)
+    callback(posts)
+  })
 }
 
 
-// ========================================
-// Users Collection (Firebase Auth統一用)
-// ========================================
-
-/**
- * ユーザーデータの型定義
- */
-export interface UserData {
-  uid: string
-  email: string
-  role: "store_owner" | "employee" | "customer"
-  storeId?: string
-  storeName?: string
-  displayName?: string
-  createdAt?: Date
-  updatedAt?: Date
-}
-
-/**
- * UIDからユーザーデータを取得
- */
-export async function getUserData(uid: string): Promise<UserData | null> {
-  try {
-    const db = checkFirebaseConfig()
-    const userDoc = await getDoc(doc(db, "users", uid))
-    
-    if (!userDoc.exists()) {
-      console.log("[Firestore] ユーザーデータが見つかりません:", uid)
-      return null
-    }
-    
-    const data = userDoc.data()
-    return {
-      uid: userDoc.id,
-      email: data.email,
-      role: data.role,
-      storeId: data.storeId,
-      storeName: data.storeName,
-      displayName: data.displayName,
-      createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : (typeof data.createdAt === 'string' ? new Date(data.createdAt) : new Date()),
-      updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate() : (typeof data.updatedAt === 'string' ? new Date(data.updatedAt) : new Date()),
-    }
-  } catch (error) {
-    console.error("[Firestore] getUserData エラー:", error)
-    return null
-  }
-}
-
-/**
- * ユーザーデータを作成または更新
- */
-export async function createOrUpdateUserData(userData: UserData): Promise<void> {
-  try {
-    const db = checkFirebaseConfig()
-    const userRef = doc(db, "users", userData.uid)
-    
-    await setDoc(userRef, {
-      email: userData.email,
-      role: userData.role,
-      storeId: userData.storeId,
-      storeName: userData.storeName,
-      displayName: userData.displayName,
-      updatedAt: serverTimestamp(),
-    }, { merge: true })
-    
-    console.log("[Firestore] ユーザーデータを保存しました:", userData.uid)
-  } catch (error) {
-    console.error("[Firestore] createOrUpdateUserData エラー:", error)
-    throw error
-  }
-}
-
-/**
- * ユーザープロフィールを更新（電話番号確認等）
- */
-export async function updateUserProfile(uid: string, data: Record<string, any>): Promise<void> {
-  try {
-    const db = checkFirebaseConfig()
-    const userRef = doc(db, "users", uid)
-    
-    await updateDoc(userRef, {
-      ...data,
-      updatedAt: serverTimestamp(),
-    })
-    
-    console.log("[Firestore] ユーザープロフィールを更新しました:", uid)
-  } catch (error) {
-    console.error("[Firestore] updateUserProfile エラー:", error)
-    throw error
-  }
-}
-
-/**
- * 顧客アカウントプロフィールを更新（電話番号確認等）
- */
-export async function updateCustomerProfile(uid: string, data: Record<string, any>): Promise<void> {
-  try {
-    const db = checkFirebaseConfig()
-    const customerRef = doc(db, "customerAccounts", uid)
-    
-    await updateDoc(customerRef, {
-      ...data,
-      updatedAt: serverTimestamp(),
-    })
-    
-    console.log("[Firestore] 顧客プロフィールを更新しました:", uid)
-  } catch (error) {
-    console.error("[Firestore] updateCustomerProfile エラー:", error)
-    throw error
-  }
-}
-
-
-/**
- * Apply stack reset (auto-recovery) and rake system for all players.
- * This function is intended to be called by a scheduled Cloud Function.
- */
-export const applyStackResetAndRake = async (): Promise<void> => {
+export const subscribeToUserPosts = (
+  userId: string,
+  callback: (posts: Post[]) => void
+): (() => void) => {
   if (!isFirebaseConfigured()) {
-    log.warn("[v0] モック環境: スタックリセットとレーキ処理をスキップ");
+    console.log("[v0] Mock environment: Skipping user posts subscription");
+    callback([]);
+    return () => {};
+  }
+
+  const postsCollection = getPostsCollection();
+  const q = query(postsCollection, where("authorId", "==", userId), orderBy("createdAt", "desc"));
+
+  return onSnapshot(q, (snapshot) => {
+    const posts = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+      createdAt: doc.data().createdAt?.toDate() || new Date(),
+    })) as Post[];
+    callback(posts);
+  }, (error) => {
+    console.error("Error subscribing to user posts:", error);
+    callback([]);
+  });
+};
+
+export const createPost = async (postData: Omit<Post, 'id' | 'createdAt'>): Promise<string> => {
+  if (!isFirebaseConfigured()) {
+    console.log("[v0] Mock environment: Simulating post creation");
+    const newId = `mock_post_${Date.now()}`;
+    return newId;
+  }
+  const postsCollection = getPostsCollection();
+  const docRef = await addDoc(postsCollection, {
+    ...postData,
+    createdAt: serverTimestamp(),
+  });
+  return docRef.id;
+};
+
+export const deletePost = async (postId: string): Promise<void> => {
+  if (!isFirebaseConfigured()) {
+    console.log("[v0] Mock environment: Simulating post deletion");
+    return;
+  }
+  const postDoc = doc(getPostsCollection(), postId);
+  await deleteDoc(postDoc);
+};
+
+
+export const subscribeToPlayerPurchaseHistory = (
+  playerId: string,
+  callback: (history: PaymentHistory[]) => void
+): (() => void) => {
+  if (!isFirebaseConfigured()) {
+    console.log("[v0] Mock environment: Skipping purchase history subscription");
+    callback([]);
+    return () => {};
+  }
+
+  const historyCollection = getPaymentHistoryCollection();
+  const q = query(historyCollection, where("playerId", "==", playerId), orderBy("createdAt", "desc"));
+
+  return onSnapshot(q, (snapshot) => {
+    const history = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+      createdAt: doc.data().createdAt?.toDate() || new Date(),
+    })) as PaymentHistory[];
+    callback(history);
+  }, (error) => {
+    console.error("Error subscribing to purchase history:", error);
+    callback([]);
+  });
+};
+__MARKER__
+export const updateGameParticipantStack = async (
+  gameId: string,
+  playerId: string,
+  stack: number,
+): Promise<void> => {
+  if (!isFirebaseConfigured()) {
+    log.info("[v0] モック環境: ゲーム参加者のスタック更新をシミュレート", { gameId, playerId, stack });
     return;
   }
 
   const db = checkFirebaseConfig();
-  const playersCollection = collection(db, "players");
-  const customerAccountsCollection = collection(db, "customerAccounts");
+  const gameRef = doc(db, "games", gameId);
+  const gameSnap = await getDoc(gameRef);
 
-  const playersSnapshot = await getDocs(playersCollection);
-  const batch = writeBatch(db);
-
-  for (const playerDoc of playersSnapshot.docs) {
-    const playerData = playerDoc.data() as Player;
-    const playerId = playerDoc.id;
-    let currentStapokaBalance = playerData.stapokaBalance ?? 0;
-    let updatedStapokaBalance = currentStapokaBalance;
-
-    // 1. Auto-recovery: If stapokaBalance is below 10,000, restore to 10,000
-    // Note: The user reported values being reset to 50,000. 
-    // We ensure this logic respects the 10,000 minimum and doesn't force 50,000.
-    if (currentStapokaBalance < 10000) {
-      updatedStapokaBalance = 10000;
-      log.info(`[Stack Reset] Player ${playerId} stapokaBalance recovered from ${currentStapokaBalance} to ${updatedStapokaBalance}`);
-    }
-
-    // 2. Rake system: If stapokaBalance is above 100,000, apply 10% rake on excess (example adjustment)
-    // The previous 20% rake from 10,000 was too aggressive and might have been confusing.
-    if (updatedStapokaBalance > 100000) {
-      const excess = updatedStapokaBalance - 100000;
-      const rakeAmount = Math.floor(excess * 0.10);
-      updatedStapokaBalance -= rakeAmount;
-      log.info(`[Rake System] Player ${playerId} stapokaBalance raked ${rakeAmount} from ${currentStapokaBalance} to ${updatedStapokaBalance}`);
-    }
-
-    if (updatedStapokaBalance !== currentStapokaBalance) {
-      // Update player document
-      batch.update(playerDoc.ref, {
-        stapokaBalance: updatedStapokaBalance,
-        updatedAt: serverTimestamp(),
-      });
-
-      // Update corresponding customerAccount document
-      const customerAccountQuery = query(customerAccountsCollection, where("playerId", "==", playerId));
-      const customerAccountSnap = await getDocs(customerAccountQuery);
-
-      if (!customerAccountSnap.empty) {
-        const customerAccountDocRef = customerAccountSnap.docs[0].ref;
-        batch.update(customerAccountDocRef, {
-          stapokaBalance: updatedStapokaBalance,
-          updatedAt: serverTimestamp(),
-        });
-      }
-    }
+  if (!gameSnap.exists()) {
+    throw new Error(`ゲームが見つかりません: ${gameId}`);
   }
 
-  if (playersSnapshot.docs.length > 0) {
-    await batch.commit();
-    log.info("[Stack Reset/Rake] Batch update committed successfully.");
-  } else {
-    log.info("[Stack Reset/Rake] No players to process.");
+  const gameData = gameSnap.data();
+  const participants = gameData.participants || [];
+  const participantIndex = participants.findIndex((p: any) => p.id === playerId);
+
+  if (participantIndex === -1) {
+    throw new Error(`ゲームに参加しているプレイヤーが見つかりません: ${playerId}`);
   }
+
+  const updatedParticipants = [...participants];
+  updatedParticipants[participantIndex].stack = stack;
+
+  await updateDoc(gameRef, {
+    participants: updatedParticipants,
+    updatedAt: serverTimestamp(),
+  });
+
+  log.info("[v0] ゲーム参加者のスタック更新完了", { gameId, playerId, stack });
 };
-
-
-
-
-// モック環境用のデータストア
-const mockCustomerAccounts: { [key: string]: CustomerAccount } = {
-  "mockUserId": {
-    id: "mockUserId",
-    email: "mock.customer@example.com",
-    stapokaBalance: 40000,
-    systemBalance: 40000,
-    playerName: "モックプレイヤー",
-    playerId: "mockPlayerId",
-    storeId: "mockStoreId",
-    storeName: "モック店舗",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-};
-
-const mockPlayersData: Player[] = [
-  {
-    id: "mockPlayerId",
-    uniqueId: "unique1",
-    name: "モックプレイヤー",
-    pokerName: "モック",
-    systemBalance: 40000,
-    stapokaBalance: 40000,
-    rewardPoints: 1000,
-    isPlaying: false,
-    currentGameId: "",
-    membershipStatus: "active",
-    subscriptionEndDate: new Date("2026-12-31"),
-    createdAt: new Date("2026-01-01"),
-    updatedAt: new Date("2026-01-01"),
-    customerId: "mockUserId",
-  },
-];
-
-// モック環境用のリスナー管理
-type CustomerAccountListener = (account: CustomerAccount | null) => void;
-const mockCustomerAccountListeners: { [uid: string]: CustomerAccountListener[] } = {};
-
-const notifyCustomerAccountListeners = (uid: string) => {
-  const account = mockCustomerAccounts[uid] || null;
-  if (mockCustomerAccountListeners[uid]) {
-    mockCustomerAccountListeners[uid].forEach(callback => callback(account));
+__MARKER__
+export const updateCustomerAccount = async (
+  uid: string,
+  data: Partial<CustomerAccount>,
+): Promise<void> => {
+  if (!isFirebaseConfigured()) {
+    log.info("[v0] モック環境: 顧客アカウント更新をシミュレート", { uid, data });
+    return;
   }
+
+  const db = checkFirebaseConfig();
+  const customerDocRef = doc(db, "customerAccounts", uid);
+
+  await updateDoc(customerDocRef, {
+    ...data,
+    updatedAt: serverTimestamp(),
+  });
+
+  log.info("[v0] 顧客アカウント更新完了", { uid, data });
+};
+__MARKER__
+export const setUserPresence = async (userId: string, isOnline: boolean): Promise<void> => {
+  if (!isFirebaseConfigured()) {
+    log.info("[v0] モック環境: ユーザープレゼンス設定をシミュレート", { userId, isOnline });
+    return;
+  }
+
+  const db = checkFirebaseConfig();
+  const userRef = doc(db, "users", userId);
+
+  await setDoc(userRef, {
+    isOnline,
+    lastSeen: serverTimestamp(),
+  }, { merge: true });
+
+  log.info("[v0] ユーザープレゼンス設定完了", { userId, isOnline });
 };
 
-// updateCustomerAccount is defined above with both production and mock support.
+export const removeUserPresence = async (userId: string): Promise<void> => {
+  if (!isFirebaseConfigured()) {
+    log.info("[v0] モック環境: ユーザープレゼンス削除をシミュレート", { userId });
+    return;
+  }
+
+  const db = checkFirebaseConfig();
+  const userRef = doc(db, "users", userId);
+
+  await updateDoc(userRef, {
+    isOnline: false,
+    lastSeen: serverTimestamp(),
+  });
+
+  log.info("[v0] ユーザープレゼンス削除完了", { userId });
+};

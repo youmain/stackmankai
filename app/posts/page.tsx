@@ -15,7 +15,7 @@ import { Search, MessageCircle, Heart, Eye, Home } from "lucide-react"
 import Link from "next/link"
 import type { PostData } from "@/types/post"
 import { isFirebaseConfigured } from "@/lib/firebase"
-import { subscribeToPosts, subscribeToStorePosts } from "@/lib/firestore"
+import { subscribeToStorePosts } from "@/lib/firestore"
 
 // サンプルデータ
 const samplePosts: PostData[] = [
@@ -245,23 +245,14 @@ export default function PostsPage() {
         }
 
         // 店舗IDがあれば店舗フィルタリング、なければ全投稿
-        const unsubscribe = currentStoreId
-          ? subscribeToStorePosts(currentStoreId, (firestorePosts) => {
-              if (firestorePosts.length === 0) {
-                setPosts(samplePosts)
-              } else {
-                setPosts(firestorePosts)
-              }
-              setIsLoading(false)
-            })
-          : subscribeToPosts((firestorePosts) => {
-              if (firestorePosts.length === 0) {
-                setPosts(samplePosts)
-              } else {
-                setPosts(firestorePosts)
-              }
-              setIsLoading(false)
-            })
+        const unsubscribe = subscribeToStorePosts(currentStoreId, (firestorePosts) => {
+          if (firestorePosts.length === 0) {
+            setPosts(samplePosts)
+          } else {
+            setPosts(firestorePosts)
+          }
+          setIsLoading(false)
+        })
 
         return unsubscribe
       } catch (error) {

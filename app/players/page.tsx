@@ -20,6 +20,7 @@ import {
   updatePlayer, // Added updatePlayer import for ID generation
   addPlayer, // Added addPlayer import for JSON import functionality
   deleteAllPlayers, // 全プレイヤー削除関数をインポート
+  updateCustomerAccount, // updateCustomerPayment の代わりにインポート
 } from "@/lib/firestore"
 import type { Player } from "@/types"
 import { PlayerRegistrationModal } from "@/components/player-registration-modal"

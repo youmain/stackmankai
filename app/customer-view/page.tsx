@@ -263,7 +263,7 @@ export default function CustomerView() {
     }
 
     return () => {
-      unsubscribes.forEach(unsub => unsub())
+      unsubscribes.forEach(unsub => typeof unsub === 'function' && unsub())
     }
   }, [authLoading, customerAccount, router])
 

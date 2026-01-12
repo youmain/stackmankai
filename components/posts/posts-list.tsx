@@ -12,7 +12,7 @@ import { Search, MessageCircle, Heart, Eye } from "lucide-react"
 import Link from "next/link"
 import type { PostData } from "@/types/post"
 import { isFirebaseConfigured } from "@/lib/firebase"
-import { subscribeToPosts } from "@/lib/firestore"
+import { subscribeToStorePosts } from "@/lib/firestore"
 
 const samplePosts: PostData[] = [
   // ... サンプルデータは省略（既存のコードと同じ）
@@ -56,7 +56,7 @@ export function PostsList({ onPostClick }: PostsListProps = {}) {
         }
 
         console.log("[v0] 投稿リアルタイム監視開始")
-        const unsubscribe = subscribeToPosts((firestorePosts) => {
+        const unsubscribe = subscribeToStorePosts(undefined, (firestorePosts) => {
           console.log("[v0] 投稿データ取得:", firestorePosts.length, "件")
           setPosts(firestorePosts)
           setIsLoading(false)
