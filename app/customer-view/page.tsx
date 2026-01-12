@@ -246,18 +246,20 @@ export default function CustomerView() {
       return
     }
 
+    const currentCustomer = customerAccount; // ローカル変数にコピーして参照の安定性を確保
+
     const unsubscribes: (() => void)[] = []
 
-    if (customerAccount.storeId) {
-      unsubscribes.push(subscribeToPlayers(customerAccount.storeId, setPlayers))
-      unsubscribes.push(subscribeToDailyRankings(customerAccount.storeId, setDailyRankings))
-      unsubscribes.push(subscribeToMonthlyPoints(customerAccount.storeId, setMonthlyPoints))
-      unsubscribes.push(subscribeToStoreRankingSettings(customerAccount.storeId, setStoreSettings))
-      unsubscribes.push(subscribeToRakeHistory(customerAccount.storeId, setRakeHistory))
+    if (currentCustomer.storeId) {
+      unsubscribes.push(subscribeToPlayers(currentCustomer.storeId, setPlayers))
+      unsubscribes.push(subscribeToDailyRankings(currentCustomer.storeId, setDailyRankings))
+      unsubscribes.push(subscribeToMonthlyPoints(currentCustomer.storeId, setMonthlyPoints))
+      unsubscribes.push(subscribeToStoreRankingSettings(currentCustomer.storeId, setStoreSettings))
+      unsubscribes.push(subscribeToRakeHistory(currentCustomer.storeId, setRakeHistory))
     }
 
-    if (customerAccount?.id) { // Guard added here
-      unsubscribes.push(subscribeToPointHistory(customerAccount.id, setPointHistory))
+    if (currentCustomer.id) { // ローカル変数を使用
+      unsubscribes.push(subscribeToPointHistory(currentCustomer.id, setPointHistory))
     }
 
     return () => {
