@@ -420,7 +420,7 @@ export function ChatRoomDualMode() {
         customerAccount.id,
         displayName,
         seatIndex,
-        customerAccount.stapokaBalance
+        customerAccount.stapokaBalance ?? 0
       )
     } catch (err) {
       console.error("Error joining seat:", err)
