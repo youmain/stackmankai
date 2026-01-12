@@ -253,7 +253,7 @@ export default function CustomerView() {
     if (currentCustomer.storeId !== undefined) {
       unsubscribes.push(subscribeToPlayers(currentCustomer.storeId, setPlayers))
       unsubscribes.push(subscribeToDailyRankings(currentCustomer.storeId, setDailyRankings))
-      unsubscribes.push(subscribeToMonthlyPoints(currentCustomer.storeId, setMonthlyPoints))
+      // unsubscribes.push(subscribeToMonthlyPoints(currentCustomer.storeId, setMonthlyPoints)) // FirebaseError の原因となるため一時的にコメントアウト
       unsubscribes.push(subscribeToStoreRankingSettings(currentCustomer.storeId, setStoreSettings))
       unsubscribes.push(subscribeToRakeHistory(currentCustomer.storeId, setRakeHistory))
     }
