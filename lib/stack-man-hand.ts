@@ -306,15 +306,16 @@ export const getActiveStackManHands = async (
   const handsQuery = query(
     handsRef,
     where("userId", "==", userId),
-    where("status", "==", "active"),
-    orderBy("purchasedAt", "desc"),
   )
   
   const snapshot = await getDocs(handsQuery)
-  return snapshot.docs.map(doc => ({
+  const hands = snapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data(),
   })) as StackManHand[]
+
+  // クライアント側で status === "active" のフィルタリングと purchasedAt の降順にソート
+  return hands.filter(hand => hand.status === "active").sort((a, b) => b.purchasedAt.toMillis() - a.purchasedAt.toMillis())
 }
 
 /**
@@ -337,15 +338,17 @@ export const getTodayStackManHands = async (
   const handsQuery = query(
     handsRef,
     where("userId", "==", userId),
-    where("status", "==", "active"),
-    orderBy("purchasedAt", "desc"),
+    where("purchasedAt", ">=", Timestamp.fromDate(threeDaysAgo)),
   )
   
   const snapshot = await getDocs(handsQuery)
-  return snapshot.docs.map(doc => ({
+  const hands = snapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data(),
   })) as StackManHand[]
+
+  // クライアント側で status === "active" のフィルタリングと purchasedAt の降順にソート
+  return hands.filter(hand => hand.status === "active").sort((a, b) => b.purchasedAt.toMillis() - a.purchasedAt.toMillis())
 }
 
 /**
