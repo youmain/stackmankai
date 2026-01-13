@@ -43,7 +43,7 @@ interface AuthContextType {
   setCustomerAccount: (account: CustomerAccount) => void
   refreshCustomerAccount: () => Promise<void>
   signOut: () => void
-
+}
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
