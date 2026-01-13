@@ -1377,34 +1377,6 @@ export const createPost = async (postData: Omit<Post, 'id' | 'createdAt'>): Prom
 };
 
 
-
-
-export const subscribeToPlayerPurchaseHistory = (
-  playerId: string,
-  callback: (history: PaymentHistory[]) => void
-): (() => void) => {
-  if (!isFirebaseConfigured()) {
-    console.log("[v0] Mock environment: Skipping purchase history subscription");
-    callback([]);
-    return () => {};
-  }
-
-  const historyCollection = getPaymentHistoryCollection();
-  const q = query(historyCollection, where("playerId", "==", playerId), orderBy("createdAt", "desc"));
-
-  return onSnapshot(q, (snapshot) => {
-    const history = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-      createdAt: doc.data().createdAt?.toDate() || new Date(),
-    })) as PaymentHistory[];
-    callback(history);
-  }, (error) => {
-    console.error("Error subscribing to purchase history:", error);
-    callback([]);
-  });
-};
-__MARKER__
 export const updateGameParticipantStack = async (
   gameId: string,
   playerId: string,
@@ -1441,27 +1413,6 @@ export const updateGameParticipantStack = async (
 
   log.info("[v0] ゲーム参加者のスタック更新完了", { gameId, playerId, stack });
 };
-__MARKER__
-export const updateCustomerAccount = async (
-  uid: string,
-  data: Partial<CustomerAccount>,
-): Promise<void> => {
-  if (!isFirebaseConfigured()) {
-    log.info("[v0] モック環境: 顧客アカウント更新をシミュレート", { uid, data });
-    return;
-  }
-
-  const db = checkFirebaseConfig();
-  const customerDocRef = doc(db, "customerAccounts", uid);
-
-  await updateDoc(customerDocRef, {
-    ...data,
-    updatedAt: serverTimestamp(),
-  });
-
-  log.info("[v0] 顧客アカウント更新完了", { uid, data });
-};
-__MARKER__
 export const setUserPresence = async (userId: string, isOnline: boolean): Promise<void> => {
   if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: ユーザープレゼンス設定をシミュレート", { userId, isOnline });
