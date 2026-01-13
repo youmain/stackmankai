@@ -32,7 +32,7 @@ interface AuthContextType {
   // 新しいプロパティ
   // storeIdとstoreNameはcustomerAccountから派生させるか、
   // customerAccountがnullでない場合にのみアクセスするように変更
-  // storeId: string | null; // 直接提供せず、customerAccount?.storeId でアクセスを推奨
+  storeId: string | undefined // 直接提供（user?.storeId から派生）
   // storeName: string | null; // 同上
   isStoreOwner: boolean
   isEmployee: boolean
@@ -43,7 +43,7 @@ interface AuthContextType {
   setCustomerAccount: (account: CustomerAccount) => void
   refreshCustomerAccount: () => Promise<void>
   signOut: () => void
-}
+
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
@@ -230,6 +230,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const userName = user?.displayName || user?.playerName || null
   const userId = user?.uid || null
   const userType = user?.role === "customer" ? "customer" : user?.role === "store_owner" ? "admin" : null
+  const storeId = user?.storeId
 
   const isStoreOwner = user?.role === "store_owner"
   const isEmployee = user?.role === "employee"
@@ -243,7 +244,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         userId,
         userType,
         customerAccount,
-
+        storeId,
         isStoreOwner,
         isEmployee,
         isCustomer,
