@@ -1495,3 +1495,15 @@ export const removeUserPresence = async (userId: string): Promise<void> => {
 
   log.info("[v0] ユーザープレゼンス削除完了", { userId });
 };
+
+export const createStandaloneReceipt = async (storeId: string, customerName: string, createdBy: string): Promise<string> => {
+  return addReceipt({
+    storeId,
+    customerName,
+    totalAmount: 0,
+    status: "open",
+    items: [],
+    createdBy,
+    updatedBy: createdBy,
+  } as any);
+};
