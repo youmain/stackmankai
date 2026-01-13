@@ -21,7 +21,7 @@ let auth: Auth | null = null
 let initializationAttempted = false
 let initializationError: Error | null = null
 
-export const isDemoMode = process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true'
+export const isDemoMode = () => process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true'
 
 function initializeFirebase() {
   if (initializationAttempted) {
