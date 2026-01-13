@@ -1376,14 +1376,7 @@ export const createPost = async (postData: Omit<Post, 'id' | 'createdAt'>): Prom
   return docRef.id;
 };
 
-export const deletePost = async (postId: string): Promise<void> => {
-  if (!isFirebaseConfigured()) {
-    console.log("[v0] Mock environment: Simulating post deletion");
-    return;
-  }
-  const postDoc = doc(getPostsCollection(), postId);
-  await deleteDoc(postDoc);
-};
+
 
 
 export const subscribeToPlayerPurchaseHistory = (
