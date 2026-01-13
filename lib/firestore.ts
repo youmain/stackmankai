@@ -1651,3 +1651,7 @@ export const updateCustomerPayment = async (customerId: string, amount: number):
 export const updateStoreRankingSettings = async (storeId: string, settings: Partial<StoreRankingSettings>): Promise<void> => {
   return saveStoreRankingSettings(storeId, settings);
 };
+
+export const cancelPlayerAccount = async (customerId: string): Promise<void> => {
+  await deleteCustomerAccount(customerId);
+};
