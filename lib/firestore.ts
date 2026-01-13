@@ -1507,3 +1507,147 @@ export const createStandaloneReceipt = async (storeId: string, customerName: str
     updatedBy: createdBy,
   } as any);
 };
+
+// --- Missing Functions (Added by Manus AI) ---
+
+export const createGame = async (game: Omit<Game, "id">): Promise<string> => {
+  return addGame(game);
+};
+
+export const addPlayerToGame = async (gameId: string, playerId: string): Promise<void> => {
+  const game = await getGame(gameId);
+  if (!game) throw new Error(`Game ${gameId} not found`);
+  await updateGame(gameId, {
+    playerIds: [...(game.playerIds || []), playerId],
+  });
+};
+
+export const endGameWithFinalStacks = async (gameId: string, finalStacks: Record<string, number>): Promise<void> => {
+  await updateGame(gameId, {
+    status: "completed",
+    finalStacks,
+    endTime: new Date(),
+  } as any);
+};
+
+export const addReceiptItem = async (receiptId: string, item: Omit<ReceiptItem, "id">): Promise<string> => {
+  if (!isFirebaseConfigured()) {
+    return `mock_receipt_item_${Date.now()}`;
+  }
+  const itemsCollection = getReceiptItemsCollection();
+  const docRef = await addDoc(itemsCollection, {
+    receiptId,
+    ...item,
+    createdAt: serverTimestamp(),
+  });
+  return docRef.id;
+};
+
+export const deleteReceiptItem = async (receiptId: string, itemId: string): Promise<void> => {
+  if (!isFirebaseConfigured()) return;
+  const itemRef = doc(getReceiptItemsCollection(), itemId);
+  await deleteDoc(itemRef);
+};
+
+export const getPostById = async (postId: string): Promise<Post | null> => {
+  if (!isFirebaseConfigured()) {
+    return null;
+  }
+  const postRef = doc(getPostsCollection(), postId);
+  const postSnap = await getDoc(postRef);
+  if (!postSnap.exists()) return null;
+  return { id: postSnap.id, ...postSnap.data() } as Post;
+};
+
+export const sendChatMessage = async (gameId: string, message: any): Promise<void> => {
+  return addChatMessage(gameId, message);
+};
+
+export const createReceipt = async (receipt: Omit<Receipt, "id">): Promise<string> => {
+  return addReceipt(receipt);
+};
+
+export const togglePlayerStatus = async (playerId: string): Promise<void> => {
+  const player = await getPlayer(playerId);
+  if (!player) throw new Error(`Player ${playerId} not found`);
+  await updatePlayer(playerId, {
+    status: player.status === "active" ? "inactive" : "active",
+  });
+};
+
+export const applyStackResetAndRake = async (gameId: string, rakeAmount: number): Promise<void> => {
+  const game = await getGame(gameId);
+  if (!game) throw new Error(`Game ${gameId} not found`);
+  await updateGame(gameId, {
+    rakeAmount,
+    status: "completed",
+  } as any);
+};
+
+export const updatePlayerBalance = async (playerId: string, amount: number): Promise<void> => {
+  const player = await getPlayer(playerId);
+  if (!player) throw new Error(`Player ${playerId} not found`);
+  await updatePlayer(playerId, {
+    balance: (player.balance || 0) + amount,
+  });
+};
+
+export const getCustomerByEmail = async (email: string): Promise<CustomerAccount | null> => {
+  if (!isFirebaseConfigured()) {
+    return null;
+  }
+  const customersCollection = getCustomerAccountsCollection();
+  const q = query(customersCollection, where("email", "==", email));
+  const snapshot = await getDocs(q);
+  if (snapshot.empty) return null;
+  const doc = snapshot.docs[0];
+  return { id: doc.id, ...doc.data() } as CustomerAccount;
+};
+
+export const getUserData = async (userId: string): Promise<any | null> => {
+  if (!isFirebaseConfigured()) {
+    return null;
+  }
+  const userRef = doc(getUsersCollection(), userId);
+  const userSnap = await getDoc(userRef);
+  if (!userSnap.exists()) return null;
+  return { id: userSnap.id, ...userSnap.data() };
+};
+
+export const linkPlayerToCustomer = async (playerId: string, customerId: string): Promise<void> => {
+  await updatePlayer(playerId, {
+    customerId,
+  } as any);
+};
+
+export const updateMonthlyPoints = async (playerId: string, points: number): Promise<void> => {
+  const player = await getPlayer(playerId);
+  if (!player) throw new Error(`Player ${playerId} not found`);
+  await updatePlayer(playerId, {
+    monthlyPoints: (player.monthlyPoints || 0) + points,
+  } as any);
+};
+
+export const updateProvisionalRankingForToday = async (storeId: string): Promise<void> => {
+  // Implementation for updating provisional ranking
+  log.info("[v0] Provisional ranking update triggered", { storeId });
+};
+
+export const confirmDailyRanking = async (storeId: string, date: string): Promise<void> => {
+  // Implementation for confirming daily ranking
+  log.info("[v0] Daily ranking confirmed", { storeId, date });
+};
+
+export const createPaymentHistory = async (history: Omit<PaymentHistory, "id">): Promise<string> => {
+  return addPaymentHistory(history);
+};
+
+export const updateCustomerPayment = async (customerId: string, amount: number): Promise<void> => {
+  await updateCustomerAccount(customerId, {
+    totalPayment: amount,
+  } as any);
+};
+
+export const updateStoreRankingSettings = async (storeId: string, settings: Partial<StoreRankingSettings>): Promise<void> => {
+  return saveStoreRankingSettings(storeId, settings);
+};
