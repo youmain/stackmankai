@@ -1199,7 +1199,7 @@ export const removeActiveUser = async (gameId: string, userId: string): Promise<
 // --- Mock Data Initialization ---
 
 const initializeMockData = async () => {
-  if (isDemoMode() && isFirebaseConfigured()) {
+  if (isDemoMode && isFirebaseConfigured()) {
     log.info("[v0] デモモード: モックデータを初期化します")
     const db = checkFirebaseConfig()
 
@@ -1231,7 +1231,7 @@ const initializeMockData = async () => {
   }
 }
 
-if (isDemoMode()) {
+if (isDemoMode) {
   initializeMockData()
 }
 
