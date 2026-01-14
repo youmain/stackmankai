@@ -48,6 +48,9 @@ export async function logErrorToFirestore(params: {
     });
 
     console.log(`[Error Monitoring] Error logged successfully with ID: ${docRef.id}`);
+    if (typeof window !== 'undefined') {
+      window.alert(`エラーがFirestoreに記録されました。ID: ${docRef.id}`);
+    }
     return docRef.id;
   } catch (e) {
     // ログ記録自体のエラーはコンソールに出力するのみ（無限ループ防止）
