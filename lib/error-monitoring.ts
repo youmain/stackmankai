@@ -2,7 +2,7 @@ import { ErrorLog, ErrorSeverity } from "@/types/error-monitoring";
 import { getDb } from "./firebase";
 import { collection, addDoc, serverTimestamp, query, orderBy, limit, getDocs } from "firebase/firestore";
 
-const ERROR_LOGS_COLLECTION = "errors";
+const ERROR_LOGS_COLLECTION = "error_logs";
 
 /**
  * エラーをFirestoreに記録する
@@ -44,7 +44,7 @@ export async function logErrorToFirestore(params: {
     console.log("[Error Monitoring] Attempting to log error to Firestore...", errorLog);
     const docRef = await addDoc(collection(db, ERROR_LOGS_COLLECTION), {
       ...errorLog,
-      createdAt: serverTimestamp(),
+      timestamp: serverTimestamp(),
     });
 
     console.log(`[Error Monitoring] Error logged successfully with ID: ${docRef.id}`);
@@ -69,7 +69,7 @@ export async function getRecentErrorLogs(count: number = 50): Promise<ErrorLog[]
 
     const q = query(
       collection(db, ERROR_LOGS_COLLECTION),
-      orderBy("createdAt", "desc"),
+      orderBy("timestamp", "desc"),
       limit(count)
     );
     

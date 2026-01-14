@@ -50,7 +50,11 @@ export default function ErrorLogsPage() {
                       {log.severity.toUpperCase()}
                     </Badge>
                     <span className="text-sm font-mono text-slate-500">
-                      {new Date(log.timestamp).toLocaleString()}
+                      {log.timestamp?.seconds 
+                        ? new Date(log.timestamp.seconds * 1000).toLocaleString() 
+                        : log.timestamp 
+                          ? new Date(log.timestamp).toLocaleString() 
+                          : '不明な時刻'}
                     </span>
                   </div>
                   <span className="text-xs text-slate-400">ID: {log.id}</span>
