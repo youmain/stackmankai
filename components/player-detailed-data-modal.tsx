@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts"
 import { TrendingUp, TrendingDown, Trophy, Target, Calendar, Coins, BarChart3, PieChartIcon, Activity } from 'lucide-react'
 import type { Player, Receipt, DailyRanking, MonthlyPoints, PointHistory } from "@/types"
-import { subscribeToReceipts, subscribeToDailyRankings, subscribeToMonthlyPoints, subscribeToPointHistory, subscribeToStores, updatePlayerStore } from "@/lib/firestore"
+import { subscribeToReceipts, subscribeToDailyRankings, subscribeToMonthlyPoints, subscribeToPointHistory, subscribeToStores, updatePlayer } from "@/lib/firestore"
 
 interface PlayerDetailedDataModalProps {
   isOpen: boolean
@@ -78,7 +78,7 @@ function PlayerDetailedDataModal({
 
   const handleStoreSelect = async (store: any) => {
     try {
-      await updatePlayerStore(playerId, store.id, store.name)
+      await updatePlayer(playerId, { storeId: store.id, storeName: store.name })
       if (player) {
         setPlayer({ ...player, storeId: store.id, storeName: store.name })
       }
