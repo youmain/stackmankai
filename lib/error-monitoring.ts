@@ -35,12 +35,13 @@ export async function logErrorToFirestore(params: {
     };
 
     // Firestoreに保存
+    console.log("[Error Monitoring] Attempting to log error to Firestore...", errorLog);
     const docRef = await addDoc(collection(db, ERROR_LOGS_COLLECTION), {
       ...errorLog,
       createdAt: serverTimestamp(),
     });
 
-    console.log(`[Error Monitoring] Error logged with ID: ${docRef.id}`);
+    console.log(`[Error Monitoring] Error logged successfully with ID: ${docRef.id}`);
     return docRef.id;
   } catch (e) {
     // ログ記録自体のエラーはコンソールに出力するのみ（無限ループ防止）
