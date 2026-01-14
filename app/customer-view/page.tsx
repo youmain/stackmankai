@@ -188,39 +188,44 @@ export default function CustomerView() {
         playerUniqueId: player.uniqueId,
         playerId: player.id,
         playerName: player.name,
-        pokerName: player.pokerName,
-      })
+	        pokerName: player.pokerName
+	      })
+	
+	      const pId = customerAccount?.playerId ? String(customerAccount.playerId).trim() : ""
+	      const pName = customerAccount?.playerName ? String(customerAccount.playerName).trim() : ""
 
       const matchConditions = [
         // 1. uniqueIdで照合（数値IDが生成されている場合）
-        player.uniqueId && customerAccount?.playerId && String(player.uniqueId).trim() === String(customerAccount.playerId).trim(),
+        player.uniqueId && pId && String(player.uniqueId).trim() === pId,
 
         // 2. Firestore IDで照合
-        player.id && customerAccount?.playerId && player.id.trim() === customerAccount.playerId.trim(),
+        player.id && pId && player.id.trim() === pId,
 
         // 3. 名前で照合（正規化して比較）
-        player.name && customerAccount?.playerName && player.name.trim() === customerAccount.playerName.trim(),
-        player.pokerName && customerAccount?.playerName && player.pokerName.trim() === customerAccount.playerName.trim(),
+        player.name && pName && player.name.trim() === pName,
+        player.pokerName && pName && player.pokerName.trim() === pName,
       ]
 
       const isMatch = matchConditions.some((condition) => condition)
 
       if (isMatch) {
         console.log("[v0] プレイヤー照合成功:", {
-          playerId: player.id,
-          playerName: player.name,
-          pokerName: player.pokerName,
-          storeName: player.storeName,
-          storeId: player.storeId,
+          searchId: pId,
+          searchName: pName,
+          matchedPlayer: {
+            id: player.id,
+            uniqueId: player.uniqueId,
+            name: player.name,
+            pokerName: player.pokerName,
+          },
         })
       }
 
       return isMatch
     })
-  }, [players, customerAccount?.playerId, customerAccount?.playerName])
-
-  // linkedPlayerが見つかった時にstoreIdを自動更新
-  useEffect(() => {
+	  }, [players, customerAccount?.playerId, customerAccount?.playerName])
+	
+	  useEffect(() => {
     console.log("[v0] === useEffect triggered ===")
     console.log("[v0] linkedPlayer:", linkedPlayer ? {
       id: linkedPlayer.id,
