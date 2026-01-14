@@ -1235,29 +1235,29 @@ ${availableExamples.slice(0, 5).join("\n")}
                     <p className="text-sm text-gray-600">ホーム店舗</p>
                     <p className="text-lg font-semibold text-gray-900">{linkedPlayer.storeName || "未設定"}</p>
                   </div>
-	                  <div>
-	                    <p className="text-sm text-gray-600">貯スタック</p>
-	                    <p className="text-lg font-semibold text-blue-600">
-	                      {linkedPlayer?.systemBalance?.toLocaleString() || 0}💰
-	                    </p>
-	                  </div>
-	                  <div 
-	                    className="cursor-pointer hover:bg-green-50 p-2 rounded-lg transition-colors"
-	                    onClick={() => router.push('/stack-man-hand/purchase')}
-	                  >
-	                    <p className="text-sm text-gray-600">スタポカ貯スタック</p>
-	                    <p className="text-lg font-semibold text-green-600">
-	                      {linkedPlayer?.systemBalance?.toLocaleString() || 0}💰
-	                    </p>
-	                    <p className="text-xs text-green-500 mt-1">クリックでStack Man Hand購入</p>
-	                  </div>
-	                  <div>
-	                    <p className="text-sm text-gray-600">CP (Cashback Points)</p>
-	                    <p className="text-lg font-semibold text-purple-600">
-	                      {linkedPlayer?.rewardPoints?.toLocaleString() || 0}CP
-	                    </p>
-	                    <p className="text-xs text-gray-500">今日のCP率: {currentRewardRate}%</p>
-	                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">貯スタック</p>
+                    <p className="text-lg font-semibold text-blue-600">
+                      {linkedPlayer?.systemBalance?.toLocaleString() || 0}💰
+                    </p>
+                  </div>
+                  <div 
+                    className="cursor-pointer hover:bg-green-50 p-2 rounded-lg transition-colors"
+                    onClick={() => router.push('/stack-man-hand/purchase')}
+                  >
+                    <p className="text-sm text-gray-600">スタポカ貯スタック</p>
+                    <p className="text-lg font-semibold text-green-600">
+                      {linkedPlayer?.systemBalance?.toLocaleString() || 0}💰
+                    </p>
+                    <p className="text-xs text-green-500 mt-1">クリックでStack Man Hand購入</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">CP (Cashback Points)</p>
+                    <p className="text-lg font-semibold text-purple-600">
+                      {linkedPlayer?.rewardPoints?.toLocaleString() || 0}CP
+                    </p>
+                    <p className="text-xs text-gray-500">今日のCP率: {currentRewardRate}%</p>
+                  </div>
                   {storeSettings?.membershipRankSettings?.enabled && (
                     <div>
                       <p className="text-sm text-gray-600">会員ランク</p>
