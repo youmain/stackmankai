@@ -23,6 +23,11 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
     // ログインしていない場合
     if (!user) {
       console.log("[AuthGuard] 未ログイン: ログインページへリダイレクト", pathname)
+      if (pathname === "/rankings") {
+        console.log("[AuthGuard] Rankings page access allowed for guest (temporarily for debug)");
+        setIsAuthorized(true);
+        return;
+      }
       // すでにログインページにいる場合は何もしない
       if (pathname === "/store-login" || pathname === "/customer-auth") {
         return
