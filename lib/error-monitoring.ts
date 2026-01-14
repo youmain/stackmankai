@@ -1,5 +1,5 @@
 import { ErrorLog, ErrorSeverity } from "@/types/error-monitoring";
-import { db } from "./firebase";
+import { getDb } from "./firebase";
 import { collection, addDoc, serverTimestamp, query, orderBy, limit, getDocs } from "firebase/firestore";
 
 const ERROR_LOGS_COLLECTION = "error_logs";
@@ -35,6 +35,12 @@ export async function logErrorToFirestore(params: {
     };
 
     // Firestoreに保存
+    const db = getDb();
+    if (!db) {
+      console.error("[Error Monitoring] Firestore is not available. Error not logged.");
+      return null;
+    }
+
     console.log("[Error Monitoring] Attempting to log error to Firestore...", errorLog);
     const docRef = await addDoc(collection(db, ERROR_LOGS_COLLECTION), {
       ...errorLog,
@@ -55,6 +61,9 @@ export async function logErrorToFirestore(params: {
  */
 export async function getRecentErrorLogs(count: number = 50): Promise<ErrorLog[]> {
   try {
+    const db = getDb();
+    if (!db) return [];
+
     const q = query(
       collection(db, ERROR_LOGS_COLLECTION),
       orderBy("createdAt", "desc"),
