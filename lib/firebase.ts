@@ -46,11 +46,15 @@ function initializeFirebase() {
     }
 
     // デバッグ: 環境変数の読み込み確認
+    if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
+      console.warn("[DEBUG] NEXT_PUBLIC_FIREBASE_API_KEY is not set, using default.");
+    }
     log.info(`Firebase初期化成功 - apiKey: ${firebaseConfig.apiKey.substring(0, 8)}..., authDomain: ${firebaseConfig.authDomain}`)
     console.log("[DEBUG] Firebase config:", {
       apiKey: firebaseConfig.apiKey.substring(0, 8) + "...",
       authDomain: firebaseConfig.authDomain,
       projectId: firebaseConfig.projectId,
+      isEnvSet: !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY
     })
   } catch (error) {
     initializationError = error as Error
