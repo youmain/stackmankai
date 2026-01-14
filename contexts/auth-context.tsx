@@ -133,23 +133,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 storeName: userData.storeName,
                 displayName: userData.displayName,
               });
-              setCustomerAccountState(null); // 店舗オーナーはcustomerAccountを持たない
+              setCustomerAccountState(null);
               setLoading(false);
               return;
             }
             
-            // usersコレクションに見つからない場合、customerAccountsを確認
-            // ここでonSnapshotを購読する
+            // usersコレクションに見つからない場合、デフォルトでcustomerロールを割り当て
+            setUser({
+              uid: firebaseUser.uid,
+              email: firebaseUser.email || "",
+              role: "customer",
+            });
+
+            // customerAccountsを購読
             unsubscribeCustomerAccount = subscribeToCustomerAccount(firebaseUser.uid, (account) => {
-	              // console.log("[Auth] 🔄 CustomerAccount同期受信:", account?.stapokaBalance);
-	              setCustomerAccountState(account);
-	              if (account) {
-	                setUser(prevUser => prevUser ? { ...prevUser, storeId: account.storeId, playerName: account.playerName, playerId: account.playerId } : null);
-	              } else {
-	                setUser(prevUser => prevUser ? { ...prevUser, storeId: undefined, playerName: undefined, playerId: undefined } : null);
-	              }
-	              setLoading(false);
-	            });
+              setCustomerAccountState(account);
+              if (account) {
+                setUser(prevUser => prevUser ? { 
+                  ...prevUser, 
+                  storeId: account.storeId, 
+                  playerName: account.playerName, 
+                  playerId: account.playerId 
+                } : {
+                  uid: firebaseUser.uid,
+                  email: firebaseUser.email || "",
+                  role: "customer",
+                  storeId: account.storeId,
+                  playerName: account.playerName,
+                  playerId: account.playerId
+                });
+              }
+              setLoading(false);
+            });
 
             // 初回ロード時にcustomerAccountのポーリングロジックは不要になるため削除
             // onSnapshotが初回データをすぐに提供するため
