@@ -193,10 +193,10 @@ export default function CustomerView() {
 
       const matchConditions = [
         // 1. uniqueIdで照合（数値IDが生成されている場合）
-        player.uniqueId && customerAccount?.playerId && String(player.uniqueId) === String(customerAccount.playerId),
+        player.uniqueId && customerAccount?.playerId && String(player.uniqueId).trim() === String(customerAccount.playerId).trim(),
 
         // 2. Firestore IDで照合
-        player.id && customerAccount?.playerId && player.id === customerAccount.playerId,
+        player.id && customerAccount?.playerId && player.id.trim() === customerAccount.playerId.trim(),
 
         // 3. 名前で照合（正規化して比較）
         player.name && customerAccount?.playerName && player.name.trim() === customerAccount.playerName.trim(),
