@@ -175,14 +175,15 @@ export default function PlayersPage() {
         storeId,
       )
 
-      console.log("[v0] 購入金額履歴リスナー開始")
-      unsubscribePurchaseHistory = subscribeToPlayerPurchaseHistory(
-        storeId,
-        (history) => {
-          console.log("[v0] 💰 購入金額履歴同期受信:", Object.keys(history).length, "プレイヤー")
-          setPlayerPurchaseHistory(history)
-        }
-      )
+      // 購入金額履歴リスナーは削除（playerId が必要だが、プレイヤー一覧ページでは不要）
+      // console.log("[v0] 購入金額履歴リスナー開始")
+      // unsubscribePurchaseHistory = subscribeToPlayerPurchaseHistory(
+      //   storeId,
+      //   (history) => {
+      //     console.log("[v0] 💰 購入金額履歴同期受信:", Object.keys(history).length, "プレイヤー")
+      //     setPlayerPurchaseHistory(history)
+      //   }
+      // )
 
       console.log("[v0] レーキ履歴リスナー開始")
       unsubscribeRakeHistory = subscribeToRakeHistory(
