@@ -147,21 +147,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             // customerAccountsを購読
             unsubscribeCustomerAccount = subscribeToCustomerAccount(firebaseUser.uid, (account) => {
+              console.log("[Auth] Customer account updated:", account);
               setCustomerAccountState(account);
               if (account) {
-                setUser(prevUser => prevUser ? { 
-                  ...prevUser, 
-                  storeId: account.storeId, 
-                  playerName: account.playerName, 
-                  playerId: account.playerId 
-                } : {
+                setUser(prevUser => ({
                   uid: firebaseUser.uid,
                   email: firebaseUser.email || "",
                   role: "customer",
+                  ...prevUser,
                   storeId: account.storeId,
                   playerName: account.playerName,
                   playerId: account.playerId
-                });
+                }));
               }
               setLoading(false);
             });
