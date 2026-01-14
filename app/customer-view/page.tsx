@@ -1521,7 +1521,7 @@ ${availableExamples.slice(0, 5).join("\n")}
 
             {/* 会員ランク特典表示 */}
             {storeSettings?.membershipRankSettings?.enabled &&
-              linkedPlayer.membershipRank &&
+              linkedPlayer?.membershipRank &&
               linkedPlayer.membershipRank !== "none" && (
                 <Card className="border-green-200 bg-green-50 shadow-md">
                   <CardContent className="py-4">
