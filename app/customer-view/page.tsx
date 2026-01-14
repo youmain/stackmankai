@@ -1196,9 +1196,8 @@ ${availableExamples.slice(0, 5).join("\n")}
                     variant="outline"
                     className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 bg-transparent"
                     onClick={() => {
-                      // Clear customer data and redirect to landing page
-                                       // customerAccountをnullに設定し、signOut関数を呼び出す
-                      setCustomerAccount(null)
+	                      // Clear customer data and redirect to landing page
+	                      setCustomerAccount(null)
                       signOut()
                       setIsMenuOpen(false)
                     }}
