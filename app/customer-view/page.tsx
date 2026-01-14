@@ -1529,16 +1529,17 @@ ${availableExamples.slice(0, 5).join("\n")}
                       <div className="flex items-center justify-center space-x-2">
                         <Gift className="h-6 w-6 text-green-600" />
                         <span className="text-lg font-bold text-green-800">
-                          {linkedPlayer.membershipRank === "platinum" && "プラチナ"}
-                          {linkedPlayer.membershipRank === "gold" && "ゴールド"}
-                          {linkedPlayer.membershipRank === "silver" && "シルバー"}
+                          {linkedPlayer?.membershipRank === "platinum" && "プラチナ"}
+                          {linkedPlayer?.membershipRank === "gold" && "ゴールド"}
+                          {linkedPlayer?.membershipRank === "silver" && "シルバー"}
                           会員特典
                         </span>
                         <Gift className="h-6 w-6 text-green-600" />
                       </div>
                       <div className="flex flex-wrap justify-center gap-2 text-sm">
                         {(() => {
-                          const rank = linkedPlayer.membershipRank as "silver" | "gold" | "platinum"
+                          const rank = linkedPlayer?.membershipRank as "silver" | "gold" | "platinum"
+                          if (!rank || !storeSettings.membershipRankSettings.ranks[rank]) return null
                           const benefits = storeSettings.membershipRankSettings.ranks[rank].benefits
                           const items = []
                           if (benefits.cpBoostPercentage > 0) {
