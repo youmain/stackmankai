@@ -188,11 +188,11 @@ export default function CustomerView() {
         playerUniqueId: player.uniqueId,
         playerId: player.id,
         playerName: player.name,
-	        pokerName: player.pokerName
-	      })
-	
-	      const pId = customerAccount?.playerId ? String(customerAccount.playerId).trim() : ""
-	      const pName = customerAccount?.playerName ? String(customerAccount.playerName).trim() : ""
+        pokerName: player.pokerName
+      })
+
+      const pId = customerAccount?.playerId ? String(customerAccount.playerId).trim() : ""
+      const pName = customerAccount?.playerName ? String(customerAccount.playerName).trim() : ""
 
       const matchConditions = [
         // 1. uniqueIdで照合（数値IDが生成されている場合）
