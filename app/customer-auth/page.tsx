@@ -116,7 +116,7 @@ export default function CustomerAuthPage() {
           localStorage.setItem("auth_userType", "customer")
           
           console.log("[Auth] 🚀 /customer-viewへリダイレクト")
-          window.location.href = "/customer-view"
+          window.location.href = "/rankings"
           return
         }
         
@@ -147,7 +147,7 @@ export default function CustomerAuthPage() {
   }
 
   const handleSkipToRanking = () => {
-    window.location.href = "/customer-view"
+    window.location.href = "/rankings"
   }
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -188,7 +188,7 @@ export default function CustomerAuthPage() {
 
       // 登録成功後、すぐにリダイレクト（認証状態の反映はリダイレクト先で監視）
       setSuccess("登録処理を開始しました。認証状態を確認中です...")
-      window.location.href = "/customer-view"
+      window.location.href = "/rankings"
     } catch (error) {
       setError(error instanceof Error ? error.message : "登録に失敗しました")
     } finally {
@@ -338,9 +338,9 @@ export default function CustomerAuthPage() {
       setLoginForm({ email: "", password: "" })
       
       // auth-contextのonAuthStateChangedが発火するまで少し待ってからリダイレクト
-      console.log("[Auth] 🚀 /customer-viewへリダイレクト")
+      console.log("[Auth] 🚀 /rankingsへリダイレクト")
       setTimeout(() => {
-        window.location.href = "/customer-view"
+        window.location.href = "/rankings"
       }, 500)
       
       // リダイレクトするのでfinallyでsetIsLoading(false)を実行しない
@@ -433,7 +433,7 @@ export default function CustomerAuthPage() {
               <p className="text-sm text-gray-600 mb-4">
                 ランキングページにアクセスして、あなたの戦績を確認しましょう！
               </p>
-              <Button onClick={() => (window.location.href = "/customer-view")} className="w-full mb-4">
+              <Button onClick={() => (window.location.href = "/rankings")} className="w-full mb-4">
                 ランキングページへ
               </Button>
 
@@ -751,7 +751,7 @@ export default function CustomerAuthPage() {
               <div className="space-y-2">
                 <Button
                   variant="secondary"
-                  onClick={() => (window.location.href = "/customer-view")}
+                  onClick={() => (window.location.href = "/rankings")}
                   className="w-full"
                 >
                   紐づけを後回しにしてランキングを見る
