@@ -143,6 +143,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               uid: firebaseUser.uid,
               email: firebaseUser.email || "",
               role: "customer",
+              storeId: "king-high-store", // テスト用デフォルト
             });
 
             // customerAccountsを購読
