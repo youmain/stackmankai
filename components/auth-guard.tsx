@@ -23,8 +23,9 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
     // ログインしていない場合
     if (!user) {
       console.log("[AuthGuard] 未ログイン: ログインページへリダイレクト", pathname)
+      // ランキングページは未ログインでも閲覧可能にする（デバッグおよび利便性のため）
       if (pathname === "/rankings") {
-        console.log("[AuthGuard] Rankings page access allowed for guest (temporarily for debug)");
+        console.log("[AuthGuard] Rankings page access allowed for guest");
         setIsAuthorized(true);
         return;
       }
@@ -46,13 +47,16 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
     }
 
     // ロールチェック
+    console.log("[AuthGuard] Role Check:", { role: user.role, pathname, isCustomer, isStoreOwner });
+    
     if (allowedRoles && allowedRoles.length > 0) {
       const userRole = user.role
       if (!allowedRoles.includes(userRole)) {
         console.log("[AuthGuard] 権限不足:", userRole, "許可:", allowedRoles)
         // 権限がない場合はトップまたは適切なダッシュボードへ
-        if (isCustomer) {
-          router.replace("/rankings")
+        if (userRole === "customer" || isCustomer) {
+          setIsAuthorized(true); // プレイヤーならランキングは見れるはず
+          return
         } else if (isStoreOwner || isEmployee) {
           router.replace("/admin")
         } else {
@@ -62,9 +66,16 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
       }
     } else {
       // デフォルトでは店舗オーナー、従業員、またはプレイヤーを許可
+      // ランキングページは誰でも（プレイヤー含む）見れるようにする
+      if (pathname === "/rankings") {
+        console.log("[AuthGuard] Allowing access to rankings for role:", user.role);
+        setIsAuthorized(true);
+        return;
+      }
+
       if (user.role !== "store_owner" && user.role !== "employee" && user.role !== "customer") {
         console.log("[AuthGuard] デフォルト権限不足:", user.role)
-        if (isCustomer) {
+        if (user.role === "customer" || isCustomer) {
           router.replace("/rankings")
         } else {
           router.replace("/")
