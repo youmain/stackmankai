@@ -2,7 +2,7 @@ import { ErrorLog, ErrorSeverity } from "@/types/error-monitoring";
 import { getDb } from "./firebase";
 import { collection, addDoc, serverTimestamp, query, orderBy, limit, getDocs } from "firebase/firestore";
 
-const ERROR_LOGS_COLLECTION = "error_logs";
+const ERROR_LOGS_COLLECTION = "errors";
 
 /**
  * エラーをFirestoreに記録する
