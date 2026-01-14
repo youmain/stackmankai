@@ -1258,62 +1258,62 @@ ${availableExamples.slice(0, 5).join("\n")}
                     </p>
                     <p className="text-xs text-gray-500">今日のCP率: {currentRewardRate}%</p>
                   </div>
-                  {storeSettings?.membershipRankSettings?.enabled && (
-                    <div>
-                      <p className="text-sm text-gray-600">会員ランク</p>
-                      <div className="flex items-center gap-2">
-                        {linkedPlayer.membershipRank === "platinum" && (
-                          <Badge className="bg-purple-600 text-white">プラチナ</Badge>
-                        )}
-                        {linkedPlayer.membershipRank === "gold" && (
-                          <Badge className="bg-yellow-500 text-white">ゴールド</Badge>
-                        )}
-                        {linkedPlayer.membershipRank === "silver" && (
-                          <Badge className="bg-gray-400 text-white">シルバー</Badge>
-                        )}
-                        {(!linkedPlayer.membershipRank || linkedPlayer.membershipRank === "none") && (
-                          <Badge variant="outline">一般</Badge>
-                        )}
-                      </div>
-                      {linkedPlayer.membershipRank && linkedPlayer.membershipRank !== "none" && linkedPlayer.membershipRank !== "platinum" && (
-                        <p className="text-xs text-gray-500 mt-1">
-                          次のランクまで: {(() => {
-                            const currentRank = linkedPlayer.membershipRank
-                            const totalCP = linkedPlayer.totalCPEarned || 0
-                            if (currentRank === "silver") {
-                              const required = storeSettings.membershipRankSettings.ranks.gold.requiredCP
-                              return `${(required - totalCP).toLocaleString()}CP`
-                            } else if (currentRank === "gold") {
-                              const required = storeSettings.membershipRankSettings.ranks.platinum.requiredCP
-                              return `${(required - totalCP).toLocaleString()}CP`
-                            }
-                            return "0CP"
-                          })()}
-                        </p>
-                      )}
-                      {(!linkedPlayer.membershipRank || linkedPlayer.membershipRank === "none") && (
-                        <p className="text-xs text-gray-500 mt-1">
-                          シルバーまで: {(() => {
-                            const totalCP = linkedPlayer.totalCPEarned || 0
-                            const required = storeSettings.membershipRankSettings.ranks.silver.requiredCP
-                            return `${(required - totalCP).toLocaleString()}CP`
-                          })()}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                  {linkedPlayer.pokerName && (
-                    <div>
-                      <p className="text-sm text-gray-600">ポーカーネーム</p>
-                      <p className="text-lg font-semibold text-purple-600">{linkedPlayer.pokerName}</p>
-                    </div>
-                  )}
-                  <div>
-                    <p className="text-sm text-gray-600">ステータス</p>
-                    <Badge variant={linkedPlayer.isPlaying ? "default" : "secondary"}>
-                      {linkedPlayer.isPlaying ? "プレイ中" : "待機中"}
-                    </Badge>
-                  </div>
+	                  {storeSettings?.membershipRankSettings?.enabled && (
+	                    <div>
+	                      <p className="text-sm text-gray-600">会員ランク</p>
+	                      <div className="flex items-center gap-2">
+	                        {linkedPlayer?.membershipRank === "platinum" && (
+	                          <Badge className="bg-purple-600 text-white">プラチナ</Badge>
+	                        )}
+	                        {linkedPlayer?.membershipRank === "gold" && (
+	                          <Badge className="bg-yellow-500 text-white">ゴールド</Badge>
+	                        )}
+	                        {linkedPlayer?.membershipRank === "silver" && (
+	                          <Badge className="bg-gray-400 text-white">シルバー</Badge>
+	                        )}
+	                        {(!linkedPlayer?.membershipRank || linkedPlayer?.membershipRank === "none") && (
+	                          <Badge variant="outline">一般</Badge>
+	                        )}
+	                      </div>
+	                      {linkedPlayer?.membershipRank && linkedPlayer?.membershipRank !== "none" && linkedPlayer?.membershipRank !== "platinum" && (
+	                        <p className="text-xs text-gray-500 mt-1">
+	                          次のランクまで: {(() => {
+	                            const currentRank = linkedPlayer?.membershipRank
+	                            const totalCP = linkedPlayer?.totalCPEarned || 0
+	                            if (currentRank === "silver") {
+	                              const required = storeSettings.membershipRankSettings.ranks.gold.requiredCP
+	                              return `${(required - totalCP).toLocaleString()}CP`
+	                            } else if (currentRank === "gold") {
+	                              const required = storeSettings.membershipRankSettings.ranks.platinum.requiredCP
+	                              return `${(required - totalCP).toLocaleString()}CP`
+	                            }
+	                            return "0CP"
+	                          })()}
+	                        </p>
+	                      )}
+	                      {(!linkedPlayer?.membershipRank || linkedPlayer?.membershipRank === "none") && (
+	                        <p className="text-xs text-gray-500 mt-1">
+	                          シルバーまで: {(() => {
+	                            const totalCP = linkedPlayer?.totalCPEarned || 0
+	                            const required = storeSettings.membershipRankSettings.ranks.silver.requiredCP
+	                            return `${(required - totalCP).toLocaleString()}CP`
+	                          })()}
+	                        </p>
+	                      )}
+	                    </div>
+	                  )}
+	                  {linkedPlayer?.pokerName && (
+	                    <div>
+	                      <p className="text-sm text-gray-600">ポーカーネーム</p>
+	                      <p className="text-lg font-semibold text-purple-600">{linkedPlayer?.pokerName}</p>
+	                    </div>
+	                  )}
+	                  <div>
+	                    <p className="text-sm text-gray-600">ステータス</p>
+	                    <Badge variant={linkedPlayer?.isPlaying ? "default" : "secondary"}>
+	                      {linkedPlayer?.isPlaying ? "プレイ中" : "待機中"}
+	                    </Badge>
+	                  </div>
                 </div>
                 <Button onClick={handleDetailedDataClick} className="w-full bg-blue-600 hover:bg-blue-700">
                   <BarChart3 className="h-4 w-4 mr-2" />
