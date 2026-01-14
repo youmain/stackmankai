@@ -193,14 +193,14 @@ export default function CustomerView() {
 
       const matchConditions = [
         // 1. uniqueIdで照合（数値IDが生成されている場合）
-        player.uniqueId && player.uniqueId === customerAccount?.playerId,
+        player.uniqueId && customerAccount?.playerId && String(player.uniqueId) === String(customerAccount.playerId),
 
         // 2. Firestore IDで照合
-        player.id === customerAccount?.playerId,
+        player.id && customerAccount?.playerId && player.id === customerAccount.playerId,
 
-        // 3. 名前で照合（フォールバック）
-        player.name === customerAccount?.playerName,
-        player.pokerName === customerAccount?.playerName,
+        // 3. 名前で照合（正規化して比較）
+        player.name && customerAccount?.playerName && player.name.trim() === customerAccount.playerName.trim(),
+        player.pokerName && customerAccount?.playerName && player.pokerName.trim() === customerAccount.playerName.trim(),
       ]
 
       const isMatch = matchConditions.some((condition) => condition)
@@ -540,8 +540,6 @@ ${availableExamples.slice(0, 5).join("\n")}
 
     initializeAuth()
 
-    if (!currentCustomer) return;
-
     const unsubscribeCustomers = subscribeToCustomerAccounts((customers) => {
       console.log("[v0] 👥 お客さんアカウント同期受信:", customers.length, "件")
 
@@ -687,7 +685,7 @@ ${availableExamples.slice(0, 5).join("\n")}
         unsubscribePointHistory()
       }
     }
-  }, [currentYear, currentMonth, linkedPlayer?.id, currentCustomer]) // Add linkedPlayer dependency
+  }, [currentYear, currentMonth, linkedPlayer?.id]) // Add linkedPlayer dependency
 
   useEffect(() => {
     const allDataLoaded = Object.values(dataLoaded).every((loaded) => loaded)
