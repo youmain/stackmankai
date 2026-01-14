@@ -10,9 +10,9 @@ const firebaseConfig = {
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "stackmankai.firebaseapp.com",
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "stackmankai",
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "stackmankai.firebasestorage.app",
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "436713065076",
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:436713065076:web:111033e0543a666a139f21",
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || "G-6X7E7Q4GQN",
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "1156500357078",
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:1156500357078:web:86697336338006934882ed",
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || "",
 }
 
 let app: FirebaseApp | null = null
@@ -46,16 +46,15 @@ function initializeFirebase() {
     }
 
     // デバッグ: 環境変数の読み込み確認
-    if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
-      console.warn("[DEBUG] NEXT_PUBLIC_FIREBASE_API_KEY is not set, using default.");
+    if (typeof window !== "undefined") {
+      console.log("[Firebase] Initialized with config:", {
+        apiKey: firebaseConfig.apiKey.substring(0, 8) + "...",
+        authDomain: firebaseConfig.authDomain,
+        projectId: firebaseConfig.projectId,
+        isEnvSet: !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY
+      });
     }
     log.info(`Firebase初期化成功 - apiKey: ${firebaseConfig.apiKey.substring(0, 8)}..., authDomain: ${firebaseConfig.authDomain}`)
-    console.log("[DEBUG] Firebase config:", {
-      apiKey: firebaseConfig.apiKey.substring(0, 8) + "...",
-      authDomain: firebaseConfig.authDomain,
-      projectId: firebaseConfig.projectId,
-      isEnvSet: !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY
-    })
   } catch (error) {
     initializationError = error as Error
     const errorMessage = (error as Error).message
