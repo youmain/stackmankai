@@ -32,7 +32,7 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
       if (pathname.startsWith("/admin") || pathname.startsWith("/players") || 
           pathname.startsWith("/receipts") || pathname.startsWith("/daily-sales") ||
           pathname.startsWith("/store-settings") || pathname.startsWith("/employee-management") ||
-          pathname.startsWith("/rankings") || pathname.startsWith("/store-ranking-settings")) {
+          pathname.startsWith("/store-ranking-settings")) {
         router.replace("/store-login")
       } else {
         router.replace("/customer-auth")
