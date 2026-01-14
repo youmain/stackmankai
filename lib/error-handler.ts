@@ -1,4 +1,5 @@
 import { toast } from "@/hooks/use-toast"
+import { logErrorToFirestore, determineSeverity } from "./error-monitoring"
 
 /**
  * エラーメッセージを抽出する
@@ -26,6 +27,13 @@ export function handleError(error: unknown, context?: string): void {
   } else {
     console.error("エラー:", error)
   }
+
+  // エラー監視システムに記録
+  logErrorToFirestore({
+    error,
+    context,
+    severity: determineSeverity(error)
+  })
 
   // Toast通知でユーザーにエラーを表示
   toast({
