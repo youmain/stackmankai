@@ -5,7 +5,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertTriangle } from "lucide-react"
 
 export function FirebaseConfigWarning() {
-  if (isFirebaseConfigured()) return null
+  if (isFirebaseConfigured) return null
 
   return (
     <Alert className="mb-4 border-red-200 bg-red-50">

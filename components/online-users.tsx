@@ -21,7 +21,7 @@ export function OnlineUsers() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!isFirebaseConfigured()) {
+    if (!isFirebaseConfigured) {
       console.log("[v0] 👥 Firebase設定不完全、ユーザーリスナーをスキップ")
       setError("v0プレビュー環境ではFirebaseが利用できません。Vercelにデプロイすると正常に動作します。")
       return
@@ -38,7 +38,7 @@ export function OnlineUsers() {
   }, [])
 
   const handleDeleteUser = async (userId: string, userName: string) => {
-    if (!isFirebaseConfigured()) {
+    if (!isFirebaseConfigured) {
       alert("v0プレビュー環境ではFirebaseが利用できません。Vercelにデプロイしてください。")
       return
     }
