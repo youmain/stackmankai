@@ -8,7 +8,7 @@ import { getDb, isFirebaseConfigured } from "./firebase"
 
 // Helper to ensure db is available
 const checkDb = () => {
-  if (!isFirebaseConfigured()) throw new Error("Firebase is not configured")
+  if (!isFirebaseConfigured) throw new Error("Firebase is not configured")
   const db = getDb()
   if (!db) throw new Error("Firestore is not initialized")
   return db
@@ -48,7 +48,7 @@ const getTargetHour = (timeString: string): number => {
  * Collect rake from all players
  */
 export const collectRake = async (storeId: string): Promise<{ success: boolean; message: string; amount?: number }> => {
-  if (!isFirebaseConfigured()) return { success: false, message: "Firebase is not configured" }
+  if (!isFirebaseConfigured) return { success: false, message: "Firebase is not configured" }
   const db = getDb()
   if (!db) throw new Error("Firestore is not initialized")
   
@@ -174,7 +174,7 @@ export const collectRake = async (storeId: string): Promise<{ success: boolean; 
  * Reset stacks for all players
  */
 export const resetStacks = async (storeId: string): Promise<{ success: boolean; message: string; resetCount?: number }> => {
-  if (!isFirebaseConfigured()) return { success: false, message: "Firebase is not configured" }
+  if (!isFirebaseConfigured) return { success: false, message: "Firebase is not configured" }
   const db = getDb()
   if (!db) throw new Error("Firestore is not initialized")
   
@@ -306,7 +306,7 @@ export const resetStacks = async (storeId: string): Promise<{ success: boolean; 
  * Should be called on app initialization
  */
 export const checkAndRunScheduledTasks = async (storeId: string): Promise<void> => {
-  if (!storeId || !isFirebaseConfigured()) return
+  if (!storeId || !isFirebaseConfigured) return
   
   try {
     const db = getDb()

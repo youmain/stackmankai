@@ -67,7 +67,7 @@ export const createPokerGame = async (
   smallBlind: number = 50,
   bigBlind: number = 100
 ): Promise<string> => {
-  if (!isFirebaseConfigured()) throw new Error("Firebase is not configured")
+  if (!isFirebaseConfigured) throw new Error("Firebase is not configured")
   if (!storeId) throw new Error("Store ID is required")
   
   const gameCollection = getPokerGameCollection(storeId)
@@ -114,7 +114,7 @@ export const joinPokerGame = async (
   buyIn: number
 ): Promise<void> => {
   return withErrorHandling(async () => {
-    if (!isFirebaseConfigured()) throw new Error("Firebase is not configured")
+    if (!isFirebaseConfigured) throw new Error("Firebase is not configured")
     
     const gameCollection = getPokerGameCollection(storeId)
     const gameDoc = doc(gameCollection, gameId)
@@ -164,7 +164,7 @@ export const leavePokerGame = async (
   gameId: string,
   userId: string
 ): Promise<void> => {
-  if (!isFirebaseConfigured()) throw new Error("Firebase is not configured")
+  if (!isFirebaseConfigured) throw new Error("Firebase is not configured")
   
   const gameCollection = getPokerGameCollection(storeId)
   const gameDoc = doc(gameCollection, gameId)
@@ -253,7 +253,7 @@ export const startNewHand = async (
   storeId: string,
   gameId: string
 ): Promise<void> => {
-  if (!isFirebaseConfigured()) throw new Error("Firebase is not configured")
+  if (!isFirebaseConfigured) throw new Error("Firebase is not configured")
   
   // Use the advanced logic from poker-game-advanced
   const { startNextHand } = await import("./poker-game-advanced")
@@ -271,7 +271,7 @@ export const performAction = async (
   amount?: number
 ): Promise<void> => {
   return withErrorHandling(async () => {
-    if (!isFirebaseConfigured()) throw new Error("Firebase is not configured")
+    if (!isFirebaseConfigured) throw new Error("Firebase is not configured")
     
     const gameCollection = getPokerGameCollection(storeId)
     const gameDoc = doc(gameCollection, gameId)
@@ -415,7 +415,7 @@ export const subscribeToPokerGame = (
   callback: (game: PokerGameState | null) => void,
   onError?: (error: Error) => void
 ): (() => void) => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     callback(null)
     return () => {}
   }

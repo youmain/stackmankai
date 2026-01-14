@@ -91,7 +91,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setError(null);
 
       try {
-        if (!isFirebaseConfigured()) {
+        if (!isFirebaseConfigured) {
           console.warn("[Auth] ⚠️ v0プレビュー環境ではFirebaseが利用できません。");
           console.warn("[Auth] Vercelにデプロイすると正常に動作します。");
           setLoading(false);
