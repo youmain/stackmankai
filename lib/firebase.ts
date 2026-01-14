@@ -75,14 +75,7 @@ function initializeFirebase() {
 // サーバー側とクライアント側の両方で初期化
 initializeFirebase()
 
-export const isFirebaseConfigured = () => {
-  if (!initializationAttempted) {
-    initializeFirebase()
-  }
-
-  if (process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') return false;
-  return true
-}
+export const isFirebaseConfigured = process.env.NEXT_PUBLIC_USE_MOCK_DATA !== 'true' && !!firebaseConfig.apiKey
 
 export const getInitializationError = () => initializationError
 

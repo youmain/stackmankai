@@ -130,7 +130,7 @@ export const getPaymentHistoryCollection = () => {
 }
 
 export const subscribeToCustomerAccount = (uid: string, callback: (account: CustomerAccount | null) => void): (() => void) => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.warn("[v0] モック環境: CustomerAccountリスナーをスキップ");
     // モック環境ではダミーのcustomerAccountを返す
     // リスナーを登録し、現在のモックデータを即座にコールバック
@@ -235,7 +235,7 @@ export const addRewardPoints = async (
   rate?: number,
   createdBy = "system",
 ): Promise<void> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: ポイント付与をシミュレート", { playerId, points, reason })
     return
   }
@@ -292,7 +292,7 @@ export const deductRewardPoints = async (
   receiptId?: string,
   createdBy = "system",
 ): Promise<void> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: ポイント消費をシミュレート", { playerId, points, reason })
     return
   }
@@ -342,7 +342,7 @@ export const deductRewardPoints = async (
 }
 
 export const subscribeToPointHistory = (playerId: string, callback: (history: any[]) => void): (() => void) => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.warn("[v0] モック環境: ポイント履歴リスナーをスキップ")
     callback([])
     return () => {}
@@ -369,7 +369,7 @@ export const subscribeToPointHistory = (playerId: string, callback: (history: an
 // --- User Functions ---
 
 export const createOrUpdateUser = async (name: string): Promise<string> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: ユーザー作成をシミュレート", { name })
     return `mock_user_${Date.now()}`
   }
@@ -400,7 +400,7 @@ export const createOrUpdateUser = async (name: string): Promise<string> => {
 }
 
 export const subscribeToUsers = (callback: (users: any[]) => void): (() => void) => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     callback(mockUsers)
     return () => {}
   }
@@ -421,7 +421,7 @@ export const subscribeToPlayers = (
   onError?: (error: Error) => void,
   storeId?: string | null,
 ): (() => void) => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     callback(mockPlayers)
     return () => {}
   }
@@ -472,7 +472,7 @@ export const subscribeToPlayers = (
 }
 
 export const getPlayer = async (id: string): Promise<Player | null> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     const player = mockPlayers.find((p) => p.id === id)
     return player || null
   }
@@ -486,7 +486,7 @@ export const getPlayer = async (id: string): Promise<Player | null> => {
 }
 
 export const addPlayer = async (player: Omit<Player, "id">): Promise<string> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: プレイヤー追加をシミュレート", { player })
     return `mock_player_${Date.now()}`
   }
@@ -500,7 +500,7 @@ export const addPlayer = async (player: Omit<Player, "id">): Promise<string> => 
 }
 
 export const updatePlayer = async (id: string, updates: Partial<Player>): Promise<void> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: プレイヤー更新をシミュレート", { id, updates })
     return
   }
@@ -510,7 +510,7 @@ export const updatePlayer = async (id: string, updates: Partial<Player>): Promis
 }
 
 export const deletePlayer = async (id: string): Promise<void> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: プレイヤー削除をシミュレート", { id })
     return
   }
@@ -519,7 +519,7 @@ export const deletePlayer = async (id: string): Promise<void> => {
 }
 
 export const archivePlayer = async (id: string): Promise<void> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: プレイヤーのアーカイブをシミュレート", { id })
     return
   }
@@ -529,7 +529,7 @@ export const archivePlayer = async (id: string): Promise<void> => {
 }
 
 export const unarchivePlayer = async (id: string): Promise<void> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: プレイヤーのアーカイブ解除をシミュレート", { id })
     return
   }
@@ -539,7 +539,7 @@ export const unarchivePlayer = async (id: string): Promise<void> => {
 }
 
 export const updatePlayerMembershipRank = async (playerId: string): Promise<void> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: メンバーシップランク更新をシミュレート", { playerId })
     return
   }
@@ -566,7 +566,7 @@ export const updatePlayerMembershipRank = async (playerId: string): Promise<void
 // --- Game Functions ---
 
 export const subscribeToActiveGames = (callback: (games: Game[]) => void): (() => void) => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     callback(mockGames.filter((g) => g.status === "active"))
     return () => {}
   }
@@ -579,7 +579,7 @@ export const subscribeToActiveGames = (callback: (games: Game[]) => void): (() =
 }
 
 export const subscribeToGames = (callback: (games: Game[]) => void): (() => void) => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     callback(mockGames)
     return () => {}
   }
@@ -592,7 +592,7 @@ export const subscribeToGames = (callback: (games: Game[]) => void): (() => void
 }
 
 export const getGame = async (id: string): Promise<Game | null> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     const game = mockGames.find((g) => g.id === id)
     return game || null
   }
@@ -606,7 +606,7 @@ export const getGame = async (id: string): Promise<Game | null> => {
 }
 
 export const addGame = async (game: Omit<Game, "id">): Promise<string> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: ゲーム追加をシミュレート", { game })
     return `mock_game_${Date.now()}`
   }
@@ -620,7 +620,7 @@ export const addGame = async (game: Omit<Game, "id">): Promise<string> => {
 }
 
 export const updateGame = async (id: string, updates: Partial<Game>): Promise<void> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: ゲーム更新をシミュレート", { id, updates })
     return
   }
@@ -630,7 +630,7 @@ export const updateGame = async (id: string, updates: Partial<Game>): Promise<vo
 }
 
 export const deleteGame = async (id: string): Promise<void> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: ゲーム削除をシミュレート", { id })
     return
   }
@@ -641,7 +641,7 @@ export const deleteGame = async (id: string): Promise<void> => {
 // --- Receipt Functions ---
 
 export const subscribeToReceipts = (callback: (receipts: Receipt[]) => void, storeId?: string | null): (() => void) => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     callback(mockReceipts)
     return () => {}
   }
@@ -659,7 +659,7 @@ export const subscribeToReceipts = (callback: (receipts: Receipt[]) => void, sto
 }
 
 export const subscribeToReceiptItems = (receiptId: string, callback: (items: ReceiptItem[]) => void): (() => void) => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     callback([])
     return () => {}
   }
@@ -672,7 +672,7 @@ export const subscribeToReceiptItems = (receiptId: string, callback: (items: Rec
 }
 
 export const getReceipt = async (id: string): Promise<Receipt | null> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     const receipt = mockReceipts.find((r) => r.id === id)
     return receipt || null
   }
@@ -686,7 +686,7 @@ export const getReceipt = async (id: string): Promise<Receipt | null> => {
 }
 
 export const addReceipt = async (receipt: Omit<Receipt, "id">): Promise<string> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: レシート追加をシミュレート", { receipt })
     return `mock_receipt_${Date.now()}`
   }
@@ -700,7 +700,7 @@ export const addReceipt = async (receipt: Omit<Receipt, "id">): Promise<string> 
 }
 
 export const updateReceipt = async (id: string, updates: Partial<Receipt>): Promise<void> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: レシート更新をシミュレート", { id, updates })
     return
   }
@@ -716,7 +716,7 @@ export const completeReceipt = async (
   pointsUsed: number,
   completedBy: string,
 ): Promise<void> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: レシート完了をシミュレート", { receiptId })
     return
   }
@@ -787,7 +787,7 @@ export const completeReceipt = async (
 }
 
 export const deleteReceipt = async (receiptId: string): Promise<void> => {
-  if (!isFirebaseConfigured()) return
+  if (!isFirebaseConfigured) return
 
   try {
     const db = checkFirebaseConfig()
@@ -813,7 +813,7 @@ export const deleteReceipt = async (receiptId: string): Promise<void> => {
 // --- Admin Functions ---
 
 export const getAdminPassword = async (): Promise<string | null> => {
-  if (!isFirebaseConfigured()) return "0000"
+  if (!isFirebaseConfigured) return "0000"
   const db = checkFirebaseConfig()
   const docRef = doc(db, "settings", "admin")
   const snapshot = await getDoc(docRef)
@@ -822,7 +822,7 @@ export const getAdminPassword = async (): Promise<string | null> => {
 }
 
 export const saveAdminPassword = async (password: string): Promise<void> => {
-  if (!isFirebaseConfigured()) return
+  if (!isFirebaseConfigured) return
   const db = checkFirebaseConfig()
   const docRef = doc(db, "settings", "admin")
   await setDoc(docRef, { password, updatedAt: serverTimestamp() })
@@ -834,7 +834,7 @@ export const subscribeToDailyRankings = (
   callback: (rankings: PlayerRanking[]) => void,
   storeId?: string | null,
 ): (() => void) => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     callback(mockDailyRankings)
     return () => {}
   }
@@ -853,7 +853,7 @@ export const subscribeToDailyRankings = (
 }
 
 export const subscribeToMonthlyPoints = (callback: (points: any[]) => void, storeId?: string | null): (() => void) => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     callback(mockMonthlyPoints)
     return () => {}
   }
@@ -871,7 +871,7 @@ export const subscribeToMonthlyPoints = (callback: (points: any[]) => void, stor
 }
 
 export const subscribeToMonthlyRankings = (callback: (rankings: any[]) => void, storeId?: string | null): (() => void) => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     callback(mockMonthlyRankings)
     return () => {}
   }
@@ -892,7 +892,7 @@ export const subscribeToDailySales = (
   callback: (sales: DailySales[]) => void,
   storeId?: string | null,
 ): (() => void) => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     callback([])
     return () => {}
   }
@@ -910,12 +910,12 @@ export const subscribeToDailySales = (
 }
 
 export const deleteDailySales = async (salesId: string): Promise<void> => {
-  if (!isFirebaseConfigured()) return
+  if (!isFirebaseConfigured) return
   await deleteDoc(doc(getDailySalesCollection(), salesId))
 }
 
 export const settleDailySales = async (date: string, salesData: any): Promise<void> => {
-  if (!isFirebaseConfigured()) return
+  if (!isFirebaseConfigured) return
   const salesCollection = getDailySalesCollection()
   const docRef = doc(salesCollection, date)
   await setDoc(docRef, {
@@ -926,7 +926,7 @@ export const settleDailySales = async (date: string, salesData: any): Promise<vo
 }
 
 export const getStoreRankingSettings = async (storeId: string): Promise<StoreRankingSettings | null> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     return mockStoreRankingSettings.find((s) => s.id === storeId) || null
   }
   const settingsRef = doc(getStoreRankingSettingsCollection(), storeId)
@@ -938,7 +938,7 @@ export const getStoreRankingSettings = async (storeId: string): Promise<StoreRan
 }
 
 export const saveStoreRankingSettings = async (storeId: string, settings: Partial<StoreRankingSettings>): Promise<void> => {
-  if (!isFirebaseConfigured()) return
+  if (!isFirebaseConfigured) return
   const settingsRef = doc(getStoreRankingSettingsCollection(), storeId)
   await setDoc(settingsRef, { ...settings, updatedAt: serverTimestamp() }, { merge: true })
 }
@@ -947,7 +947,7 @@ export const subscribeToStoreRankingSettings = (
   callback: (settings: StoreRankingSettings[]) => void,
   storeId?: string | null,
 ): (() => void) => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     callback(mockStoreRankingSettings)
     return () => {}
   }
@@ -967,7 +967,7 @@ export const subscribeToStoreRankingSettings = (
 // --- Customer Account Functions ---
 
 export const createCustomerAccount = async (account: Omit<CustomerAccount, "id">): Promise<string> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: 顧客アカウント作成をシミュレート", { account })
     return `mock_customer_${Date.now()}`
   }
@@ -981,7 +981,7 @@ export const createCustomerAccount = async (account: Omit<CustomerAccount, "id">
 }
 
 export const getCustomerAccount = async (id: string): Promise<CustomerAccount | null> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     return null
   }
   const accountRef = doc(getCustomerAccountsCollection(), id)
@@ -993,18 +993,18 @@ export const getCustomerAccount = async (id: string): Promise<CustomerAccount | 
 }
 
 export const updateCustomerAccount = async (id: string, updates: Partial<CustomerAccount>): Promise<void> => {
-  if (!isFirebaseConfigured()) return
+  if (!isFirebaseConfigured) return
   const accountRef = doc(getCustomerAccountsCollection(), id)
   await updateDoc(accountRef, { ...updates, updatedAt: serverTimestamp() })
 }
 
 export const deleteCustomerAccount = async (id: string): Promise<void> => {
-  if (!isFirebaseConfigured()) return
+  if (!isFirebaseConfigured) return
   await deleteDoc(doc(getCustomerAccountsCollection(), id))
 }
 
 export const subscribeToCustomerAccounts = (callback: (customers: CustomerAccount[]) => void): (() => void) => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     callback([])
     return () => {}
   }
@@ -1019,7 +1019,7 @@ export const subscribeToCustomerAccounts = (callback: (customers: CustomerAccoun
 // --- Payment History Functions ---
 
 export const addPaymentHistory = async (history: Omit<PaymentHistory, "id">): Promise<string> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: 支払い履歴追加をシミュレート", { history })
     return `mock_payment_history_${Date.now()}`
   }
@@ -1035,7 +1035,7 @@ export const subscribeToPlayerPurchaseHistory = (
   playerId: string,
   callback: (history: PaymentHistory[]) => void,
 ): (() => void) => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     callback([])
     return () => {}
   }
@@ -1050,7 +1050,7 @@ export const subscribeToPlayerPurchaseHistory = (
 // --- Rake History Functions ---
 
 export const subscribeToRakeHistory = (callback: (history: any[]) => void, storeId?: string | null): (() => void) => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     callback(mockRakeHistory)
     return () => {}
   }
@@ -1070,7 +1070,7 @@ export const subscribeToRakeHistory = (callback: (history: any[]) => void, store
 // --- Store Functions ---
 
 export const subscribeToStores = (callback: (stores: any[]) => void): (() => void) => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     callback([])
     return () => {}
   }
@@ -1083,7 +1083,7 @@ export const subscribeToStores = (callback: (stores: any[]) => void): (() => voi
 }
 
 export const getStore = async (id: string): Promise<any | null> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     return null
   }
   const storeRef = doc(collection(getDb(), "stores"), id)
@@ -1097,7 +1097,7 @@ export const getStore = async (id: string): Promise<any | null> => {
 // --- Post Functions ---
 
 export const addPost = async (post: Omit<Post, "id">): Promise<string> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: 投稿追加をシミュレート", { post })
     return `mock_post_${Date.now()}`
   }
@@ -1111,7 +1111,7 @@ export const addPost = async (post: Omit<Post, "id">): Promise<string> => {
 }
 
 export const updatePost = async (id: string, updates: Partial<Post>): Promise<void> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: 投稿更新をシミュレート", { id, updates })
     return
   }
@@ -1120,7 +1120,7 @@ export const updatePost = async (id: string, updates: Partial<Post>): Promise<vo
 }
 
 export const deletePost = async (id: string): Promise<void> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: 投稿削除をシミュレート", { id })
     return
   }
@@ -1133,7 +1133,7 @@ export const subscribeToChatMessages = (
   gameId: string,
   callback: (messages: any[]) => void,
 ): (() => void) => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     callback([])
     return () => {}
   }
@@ -1150,7 +1150,7 @@ export const subscribeToChatMessages = (
 }
 
 export const addChatMessage = async (gameId: string, message: any): Promise<void> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: チャットメッセージ追加をシミュレート", { gameId, message })
     return
   }
@@ -1167,7 +1167,7 @@ export const subscribeToActiveUsers = (
   gameId: string,
   callback: (users: any[]) => void,
 ): (() => void) => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     callback([])
     return () => {}
   }
@@ -1179,7 +1179,7 @@ export const subscribeToActiveUsers = (
 }
 
 export const setActiveUser = async (gameId: string, userId: string, userData: any): Promise<void> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: アクティブユーザー設定をシミュレート", { gameId, userId })
     return
   }
@@ -1188,7 +1188,7 @@ export const setActiveUser = async (gameId: string, userId: string, userData: an
 }
 
 export const removeActiveUser = async (gameId: string, userId: string): Promise<void> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: アクティブユーザー削除をシミュレート", { gameId, userId })
     return
   }
@@ -1199,7 +1199,7 @@ export const removeActiveUser = async (gameId: string, userId: string): Promise<
 // --- Mock Data Initialization ---
 
 const initializeMockData = async () => {
-  if (isDemoMode && isFirebaseConfigured()) {
+  if (isDemoMode && isFirebaseConfigured) {
     log.info("[v0] デモモード: モックデータを初期化します")
     const db = checkFirebaseConfig()
 
@@ -1251,7 +1251,7 @@ export const getMembershipRankDetails = (rank: string) => {
 }
 
 export const deleteAllPlayers = async (storeId: string): Promise<void> => {
-  if (!isFirebaseConfigured()) return
+  if (!isFirebaseConfigured) return
   const playersCollection = getPlayersCollection()
   const q = query(playersCollection, where("storeId", "==", storeId))
   const snapshot = await getDocs(q)
@@ -1263,7 +1263,7 @@ export const deleteAllPlayers = async (storeId: string): Promise<void> => {
 }
 
 export const resetPlayerStatistics = async (storeId: string): Promise<void> => {
-  if (!isFirebaseConfigured()) return
+  if (!isFirebaseConfigured) return
   const playersCollection = getPlayersCollection()
   const q = query(playersCollection, where("storeId", "==", storeId))
   const snapshot = await getDocs(q)
@@ -1279,7 +1279,7 @@ export const resetPlayerStatistics = async (storeId: string): Promise<void> => {
 }
 
 export const deleteAllGames = async (storeId: string): Promise<void> => {
-  if (!isFirebaseConfigured()) return
+  if (!isFirebaseConfigured) return
   const gamesCollection = getGamesCollection()
   const q = query(gamesCollection, where("storeId", "==", storeId))
   const snapshot = await getDocs(q)
@@ -1291,7 +1291,7 @@ export const deleteAllGames = async (storeId: string): Promise<void> => {
 }
 
 export const deleteAllReceipts = async (storeId: string): Promise<void> => {
-  if (!isFirebaseConfigured()) return
+  if (!isFirebaseConfigured) return
   const receiptsCollection = getReceiptsCollection()
   const q = query(receiptsCollection, where("storeId", "==", storeId))
   const snapshot = await getDocs(q)
@@ -1303,7 +1303,7 @@ export const deleteAllReceipts = async (storeId: string): Promise<void> => {
 }
 
 export const deleteAllPosts = async (storeId: string): Promise<void> => {
-  if (!isFirebaseConfigured()) return
+  if (!isFirebaseConfigured) return
   const postsCollection = getPostsCollection()
   const q = query(postsCollection, where("storeId", "==", storeId))
   const snapshot = await getDocs(q)
@@ -1318,7 +1318,7 @@ export const subscribeToStorePosts = (
   callback: (posts: Post[]) => void,
   storeId?: string | null,
 ): (() => void) => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     callback([])
     return () => {}
   }
@@ -1340,7 +1340,7 @@ export const subscribeToUserPosts = (
   userId: string,
   callback: (posts: Post[]) => void
 ): (() => void) => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     console.log("[v0] Mock environment: Skipping user posts subscription");
     callback([]);
     return () => {};
@@ -1363,7 +1363,7 @@ export const subscribeToUserPosts = (
 };
 
 export const createPost = async (postData: Omit<Post, 'id' | 'createdAt'>): Promise<string> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     console.log("[v0] Mock environment: Simulating post creation");
     const newId = `mock_post_${Date.now()}`;
     return newId;
@@ -1382,7 +1382,7 @@ export const updateGameParticipantStack = async (
   playerId: string,
   stack: number,
 ): Promise<void> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: ゲーム参加者のスタック更新をシミュレート", { gameId, playerId, stack });
     return;
   }
@@ -1414,7 +1414,7 @@ export const updateGameParticipantStack = async (
   log.info("[v0] ゲーム参加者のスタック更新完了", { gameId, playerId, stack });
 };
 export const setUserPresence = async (userId: string, isOnline: boolean): Promise<void> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: ユーザープレゼンス設定をシミュレート", { userId, isOnline });
     return;
   }
@@ -1431,7 +1431,7 @@ export const setUserPresence = async (userId: string, isOnline: boolean): Promis
 };
 
 export const removeUserPresence = async (userId: string): Promise<void> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     log.info("[v0] モック環境: ユーザープレゼンス削除をシミュレート", { userId });
     return;
   }
@@ -1482,7 +1482,7 @@ export const endGameWithFinalStacks = async (gameId: string, finalStacks: Record
 };
 
 export const addReceiptItem = async (receiptId: string, item: Omit<ReceiptItem, "id">): Promise<string> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     return `mock_receipt_item_${Date.now()}`;
   }
   const itemsCollection = getReceiptItemsCollection();
@@ -1495,13 +1495,13 @@ export const addReceiptItem = async (receiptId: string, item: Omit<ReceiptItem, 
 };
 
 export const deleteReceiptItem = async (receiptId: string, itemId: string): Promise<void> => {
-  if (!isFirebaseConfigured()) return;
+  if (!isFirebaseConfigured) return;
   const itemRef = doc(getReceiptItemsCollection(), itemId);
   await deleteDoc(itemRef);
 };
 
 export const getPostById = async (postId: string): Promise<Post | null> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     return null;
   }
   const postRef = doc(getPostsCollection(), postId);
@@ -1544,7 +1544,7 @@ export const updatePlayerBalance = async (playerId: string, amount: number): Pro
 };
 
 export const getCustomerByEmail = async (email: string): Promise<CustomerAccount | null> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     return null;
   }
   const customersCollection = getCustomerAccountsCollection();
@@ -1556,7 +1556,7 @@ export const getCustomerByEmail = async (email: string): Promise<CustomerAccount
 };
 
 export const getUserData = async (userId: string): Promise<any | null> => {
-  if (!isFirebaseConfigured()) {
+  if (!isFirebaseConfigured) {
     return null;
   }
   const userRef = doc(getUsersCollection(), userId);

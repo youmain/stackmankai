@@ -145,7 +145,7 @@ export default function PlayersPage() {
     console.log("[v0] プレイヤー管理画面マウント - リスナー初期化開始")
     console.log("[v0] 現在時刻:", new Date().toISOString())
 
-    if (!isFirebaseConfigured()) {
+    if (!isFirebaseConfigured) {
       console.log("[v0] 🔥 Firebase設定不完全、リスナー初期化をスキップ")
       setFirebaseError("Firebase設定が不完全です。Project Settingsで環境変数を設定してください。")
       return
