@@ -47,7 +47,7 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
         console.log("[AuthGuard] 権限不足:", userRole, "許可:", allowedRoles)
         // 権限がない場合はトップまたは適切なダッシュボードへ
         if (isCustomer) {
-          router.replace("/customer-view")
+          router.replace("/rankings")
         } else if (isStoreOwner || isEmployee) {
           router.replace("/admin")
         } else {
@@ -56,11 +56,11 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
         return
       }
     } else {
-      // デフォルトでは店舗オーナーまたは従業員のみ許可（既存の挙動を維持）
-      if (user.role !== "store_owner" && user.role !== "employee") {
+      // デフォルトでは店舗オーナー、従業員、またはプレイヤーを許可
+      if (user.role !== "store_owner" && user.role !== "employee" && user.role !== "customer") {
         console.log("[AuthGuard] デフォルト権限不足:", user.role)
         if (isCustomer) {
-          router.replace("/customer-view")
+          router.replace("/rankings")
         } else {
           router.replace("/")
         }
