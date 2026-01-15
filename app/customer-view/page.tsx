@@ -42,7 +42,6 @@ import { MyPostsList } from "@/components/posts/my-posts-list"
 import { PostDetail } from "@/components/posts/post-detail"
 import { AIPlayersInfo } from "@/components/ai-players-info"
 import { ChatRoomDualMode } from "@/components/chat/chat-room-dual-mode"
-import ErrorBoundary from "@/components/error-boundary"
 
 // interface RankingData { // lint/suspicious/noRedeclare: This type declaration shadows the imported type 'RankingData'.
 //   playerId: string
@@ -58,7 +57,7 @@ import ErrorBoundary from "@/components/error-boundary"
 // }
 
 export default function CustomerView() {
-  const { customerAccount, setCustomerAccount, signOut, loading: authLoading, refreshCustomerAccount } = useAuth()
+  const { customerAccount, setCustomerAccount, signOut } = useAuth()
   const router = useRouter()
 
   const [viewMode, setViewMode] = useState<"main" | "posts" | "my-posts" | "post-detail" | "ai-players" | "chat">("main")
@@ -180,7 +179,6 @@ export default function CustomerView() {
   }
 
   // linkedPlayerを早期に定義（useMemoで最適化）
-	
   const linkedPlayer = useMemo(() => {
     try {
       if (!players || players.length === 0) return null;
@@ -198,7 +196,9 @@ export default function CustomerView() {
       return null;
     }
   }, [players, customerAccount])
-	  useEffect(() => {
+
+  // linkedPlayerが見つかった時にstoreIdを自動更新
+  useEffect(() => {
     console.log("[v0] === useEffect triggered ===")
     console.log("[v0] linkedPlayer:", linkedPlayer ? {
       id: linkedPlayer.id,
@@ -215,7 +215,7 @@ export default function CustomerView() {
     } : "NOT FOUND")
     
     const updateStoreIdIfNeeded = async () => {
-      if (linkedPlayer && customerAccount && customerAccount.id) {
+      if (linkedPlayer && customerAccount) {
         // storeIdまたはplayerNameが未設定または不正な場合に更新
         const hasInvalidPlayerName = customerAccount.playerName?.startsWith("プレイヤー") || !customerAccount.playerName
         const needsUpdate = !customerAccount.storeId || hasInvalidPlayerName
@@ -575,7 +575,11 @@ ${availableExamples.slice(0, 5).join("\n")}
       setDataLoaded((prev) => ({ ...prev, dailyRankings: true }))
     }, storeId)
 
-    const unsubscribeMonthlyPoints = subscribeToMonthlyPoints(currentCustomer.storeId, setMonthlyPoints)
+    const unsubscribeMonthlyPoints = subscribeToMonthlyPoints(currentYear, currentMonth, (points) => {
+        console.log("[v0] 📈 月間RP同期受信:", points.length, "件")
+        setMonthlyPoints(points)
+        setDataLoaded((prev) => ({ ...prev, monthlyPoints: true }))
+      })
 
     // 店舗設定は1回のみ取得（キャッシュ付き、TTL: 5分）
     const fetchStoreSettings = async () => {
@@ -953,27 +957,7 @@ ${availableExamples.slice(0, 5).join("\n")}
     setViewMode("posts")
   }
 
-  const errorFallback = (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-red-600 flex items-center gap-2">
-            <AlertCircle className="h-5 w-5" />
-            表示エラー
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-gray-600">データの読み込み中に問題が発生しました。一部の機能が制限されている可能性があります。</p>
-          <Button onClick={() => window.location.reload()} className="w-full">
-            再読み込み
-          </Button>
-        </CardContent>
-      </Card>
-    </div>
-  );
-
   return (
-    <ErrorBoundary fallback={errorFallback}>
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
@@ -1189,10 +1173,12 @@ ${availableExamples.slice(0, 5).join("\n")}
                     variant="outline"
                     className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 bg-transparent"
                     onClick={() => {
-	                      // Clear customer data and redirect to landing page
-	                      setCustomerAccount(null)
+                      // Clear customer data and redirect to landing page
+                      // customerAccountをnullに設定し、signOut関数を呼び出す
+                      setCustomerAccount(null)
                       signOut()
                       setIsMenuOpen(false)
+                      window.location.href = "/"
                     }}
                   >
                     <LogOut className="mr-2 h-4 w-4" />
@@ -1231,7 +1217,7 @@ ${availableExamples.slice(0, 5).join("\n")}
                   <div>
                     <p className="text-sm text-gray-600">貯スタック</p>
                     <p className="text-lg font-semibold text-blue-600">
-                      {linkedPlayer?.systemBalance?.toLocaleString() || 0}💰
+                      {linkedPlayer.systemBalance?.toLocaleString() || 0}💰
                     </p>
                   </div>
                   <div 
@@ -1240,73 +1226,73 @@ ${availableExamples.slice(0, 5).join("\n")}
                   >
                     <p className="text-sm text-gray-600">スタポカ貯スタック</p>
                     <p className="text-lg font-semibold text-green-600">
-                      {linkedPlayer?.systemBalance?.toLocaleString() || 0}💰
+                      {linkedPlayer.systemBalance?.toLocaleString() || 0}💰
                     </p>
                     <p className="text-xs text-green-500 mt-1">クリックでStack Man Hand購入</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">CP (Cashback Points)</p>
                     <p className="text-lg font-semibold text-purple-600">
-                      {linkedPlayer?.rewardPoints?.toLocaleString() || 0}CP
+                      {linkedPlayer.rewardPoints?.toLocaleString() || 0}CP
                     </p>
                     <p className="text-xs text-gray-500">今日のCP率: {currentRewardRate}%</p>
                   </div>
-	                  {storeSettings?.membershipRankSettings?.enabled && (
-	                    <div>
-	                      <p className="text-sm text-gray-600">会員ランク</p>
-	                      <div className="flex items-center gap-2">
-	                        {linkedPlayer?.membershipRank === "platinum" && (
-	                          <Badge className="bg-purple-600 text-white">プラチナ</Badge>
-	                        )}
-	                        {linkedPlayer?.membershipRank === "gold" && (
-	                          <Badge className="bg-yellow-500 text-white">ゴールド</Badge>
-	                        )}
-	                        {linkedPlayer?.membershipRank === "silver" && (
-	                          <Badge className="bg-gray-400 text-white">シルバー</Badge>
-	                        )}
-	                        {(!linkedPlayer?.membershipRank || linkedPlayer?.membershipRank === "none") && (
-	                          <Badge variant="outline">一般</Badge>
-	                        )}
-	                      </div>
-	                      {linkedPlayer?.membershipRank && linkedPlayer?.membershipRank !== "none" && linkedPlayer?.membershipRank !== "platinum" && (
-	                        <p className="text-xs text-gray-500 mt-1">
-	                          次のランクまで: {(() => {
-	                            const currentRank = linkedPlayer?.membershipRank
-	                            const totalCP = linkedPlayer?.totalCPEarned || 0
-	                            if (currentRank === "silver") {
-	                              const required = storeSettings.membershipRankSettings.ranks.gold.requiredCP
-	                              return `${(required - totalCP).toLocaleString()}CP`
-	                            } else if (currentRank === "gold") {
-	                              const required = storeSettings.membershipRankSettings.ranks.platinum.requiredCP
-	                              return `${(required - totalCP).toLocaleString()}CP`
-	                            }
-	                            return "0CP"
-	                          })()}
-	                        </p>
-	                      )}
-	                      {(!linkedPlayer?.membershipRank || linkedPlayer?.membershipRank === "none") && (
-	                        <p className="text-xs text-gray-500 mt-1">
-	                          シルバーまで: {(() => {
-	                            const totalCP = linkedPlayer?.totalCPEarned || 0
-	                            const required = storeSettings.membershipRankSettings.ranks.silver.requiredCP
-	                            return `${(required - totalCP).toLocaleString()}CP`
-	                          })()}
-	                        </p>
-	                      )}
-	                    </div>
-	                  )}
-	                  {linkedPlayer?.pokerName && (
-	                    <div>
-	                      <p className="text-sm text-gray-600">ポーカーネーム</p>
-	                      <p className="text-lg font-semibold text-purple-600">{linkedPlayer?.pokerName}</p>
-	                    </div>
-	                  )}
-	                  <div>
-	                    <p className="text-sm text-gray-600">ステータス</p>
-	                    <Badge variant={linkedPlayer?.isPlaying ? "default" : "secondary"}>
-	                      {linkedPlayer?.isPlaying ? "プレイ中" : "待機中"}
-	                    </Badge>
-	                  </div>
+                  {storeSettings?.membershipRankSettings?.enabled && (
+                    <div>
+                      <p className="text-sm text-gray-600">会員ランク</p>
+                      <div className="flex items-center gap-2">
+                        {linkedPlayer.membershipRank === "platinum" && (
+                          <Badge className="bg-purple-600 text-white">プラチナ</Badge>
+                        )}
+                        {linkedPlayer.membershipRank === "gold" && (
+                          <Badge className="bg-yellow-500 text-white">ゴールド</Badge>
+                        )}
+                        {linkedPlayer.membershipRank === "silver" && (
+                          <Badge className="bg-gray-400 text-white">シルバー</Badge>
+                        )}
+                        {(!linkedPlayer.membershipRank || linkedPlayer.membershipRank === "none") && (
+                          <Badge variant="outline">一般</Badge>
+                        )}
+                      </div>
+                      {linkedPlayer.membershipRank && linkedPlayer.membershipRank !== "none" && linkedPlayer.membershipRank !== "platinum" && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          次のランクまで: {(() => {
+                            const currentRank = linkedPlayer.membershipRank
+                            const totalCP = linkedPlayer.totalCPEarned || 0
+                            if (currentRank === "silver") {
+                              const required = storeSettings.membershipRankSettings.ranks.gold.requiredCP
+                              return `${(required - totalCP).toLocaleString()}CP`
+                            } else if (currentRank === "gold") {
+                              const required = storeSettings.membershipRankSettings.ranks.platinum.requiredCP
+                              return `${(required - totalCP).toLocaleString()}CP`
+                            }
+                            return "0CP"
+                          })()}
+                        </p>
+                      )}
+                      {(!linkedPlayer.membershipRank || linkedPlayer.membershipRank === "none") && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          シルバーまで: {(() => {
+                            const totalCP = linkedPlayer.totalCPEarned || 0
+                            const required = storeSettings.membershipRankSettings.ranks.silver.requiredCP
+                            return `${(required - totalCP).toLocaleString()}CP`
+                          })()}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                  {linkedPlayer.pokerName && (
+                    <div>
+                      <p className="text-sm text-gray-600">ポーカーネーム</p>
+                      <p className="text-lg font-semibold text-purple-600">{linkedPlayer.pokerName}</p>
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-sm text-gray-600">ステータス</p>
+                    <Badge variant={linkedPlayer.isPlaying ? "default" : "secondary"}>
+                      {linkedPlayer.isPlaying ? "プレイ中" : "待機中"}
+                    </Badge>
+                  </div>
                 </div>
                 <Button onClick={handleDetailedDataClick} className="w-full bg-blue-600 hover:bg-blue-700">
                   <BarChart3 className="h-4 w-4 mr-2" />
@@ -1518,7 +1504,7 @@ ${availableExamples.slice(0, 5).join("\n")}
 
             {/* 会員ランク特典表示 */}
             {storeSettings?.membershipRankSettings?.enabled &&
-              linkedPlayer?.membershipRank &&
+              linkedPlayer.membershipRank &&
               linkedPlayer.membershipRank !== "none" && (
                 <Card className="border-green-200 bg-green-50 shadow-md">
                   <CardContent className="py-4">
@@ -1526,17 +1512,16 @@ ${availableExamples.slice(0, 5).join("\n")}
                       <div className="flex items-center justify-center space-x-2">
                         <Gift className="h-6 w-6 text-green-600" />
                         <span className="text-lg font-bold text-green-800">
-                          {linkedPlayer?.membershipRank === "platinum" && "プラチナ"}
-                          {linkedPlayer?.membershipRank === "gold" && "ゴールド"}
-                          {linkedPlayer?.membershipRank === "silver" && "シルバー"}
+                          {linkedPlayer.membershipRank === "platinum" && "プラチナ"}
+                          {linkedPlayer.membershipRank === "gold" && "ゴールド"}
+                          {linkedPlayer.membershipRank === "silver" && "シルバー"}
                           会員特典
                         </span>
                         <Gift className="h-6 w-6 text-green-600" />
                       </div>
                       <div className="flex flex-wrap justify-center gap-2 text-sm">
                         {(() => {
-                          const rank = linkedPlayer?.membershipRank as "silver" | "gold" | "platinum"
-                          if (!rank || !storeSettings.membershipRankSettings.ranks[rank]) return null
+                          const rank = linkedPlayer.membershipRank as "silver" | "gold" | "platinum"
                           const benefits = storeSettings.membershipRankSettings.ranks[rank].benefits
                           const items = []
                           if (benefits.cpBoostPercentage > 0) {
@@ -2410,6 +2395,5 @@ ${availableExamples.slice(0, 5).join("\n")}
         </SheetContent>
       </Sheet>
     </div>
-    </ErrorBoundary>
   )
 }
