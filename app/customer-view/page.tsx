@@ -42,6 +42,7 @@ import { MyPostsList } from "@/components/posts/my-posts-list"
 import { PostDetail } from "@/components/posts/post-detail"
 import { AIPlayersInfo } from "@/components/ai-players-info"
 import { ChatRoomDualMode } from "@/components/chat/chat-room-dual-mode"
+import ErrorBoundary from "@/components/error-boundary"
 
 // interface RankingData { // lint/suspicious/noRedeclare: This type declaration shadows the imported type 'RankingData'.
 //   playerId: string
@@ -179,52 +180,24 @@ export default function CustomerView() {
   }
 
   // linkedPlayerを早期に定義（useMemoで最適化）
-  const linkedPlayer = useMemo(() => {
-    return players.find((player) => {
-      if (!customerAccount?.playerId) return false
-
-      console.log("[v0] プレイヤー照合チェック:", {
-        customerPlayerId: customerAccount?.playerId,
-        playerUniqueId: player.uniqueId,
-        playerId: player.id,
-        playerName: player.name,
-        pokerName: player.pokerName
-      })
-
-      const pId = customerAccount?.playerId ? String(customerAccount.playerId).trim() : ""
-      const pName = customerAccount?.playerName ? String(customerAccount.playerName).trim() : ""
-
-      const matchConditions = [
-        // 1. uniqueIdで照合（数値IDが生成されている場合）
-        player.uniqueId && pId && String(player.uniqueId).trim() === pId,
-
-        // 2. Firestore IDで照合
-        player.id && pId && player.id.trim() === pId,
-
-        // 3. 名前で照合（正規化して比較）
-        player.name && pName && player.name.trim() === pName,
-        player.pokerName && pName && player.pokerName.trim() === pName,
-      ]
-
-      const isMatch = matchConditions.some((condition) => condition)
-
-      if (isMatch) {
-        console.log("[v0] プレイヤー照合成功:", {
-          searchId: pId,
-          searchName: pName,
-          matchedPlayer: {
-            id: player.id,
-            uniqueId: player.uniqueId,
-            name: player.name,
-            pokerName: player.pokerName,
-          },
-        })
-      }
-
-      return isMatch
-    })
-	  }, [players, customerAccount?.playerId, customerAccount?.playerName])
 	
+  const linkedPlayer = useMemo(() => {
+    try {
+      if (!players || players.length === 0) return null;
+      const pId = customerAccount?.playerId ? String(customerAccount.playerId).trim() : "";
+      const pName = customerAccount?.playerName ? String(customerAccount.playerName).trim() : "";
+      const dName = (customerAccount as any)?.displayName ? String((customerAccount as any).displayName).trim() : "";
+
+      return players.find(p => 
+        (pId && (String(p.uniqueId).trim() === pId || p.id?.trim() === pId)) ||
+        (pName && (p.name?.trim() === pName || p.pokerName?.trim() === pName)) ||
+        (dName && (p.name?.trim() === dName || p.pokerName?.trim() === dName))
+      ) || null;
+    } catch (e) {
+      console.error("[v0] Error in linkedPlayer useMemo:", e);
+      return null;
+    }
+  }, [players, customerAccount])
 	  useEffect(() => {
     console.log("[v0] === useEffect triggered ===")
     console.log("[v0] linkedPlayer:", linkedPlayer ? {
@@ -980,7 +953,27 @@ ${availableExamples.slice(0, 5).join("\n")}
     setViewMode("posts")
   }
 
+  const errorFallback = (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle className="text-red-600 flex items-center gap-2">
+            <AlertCircle className="h-5 w-5" />
+            表示エラー
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-gray-600">データの読み込み中に問題が発生しました。一部の機能が制限されている可能性があります。</p>
+          <Button onClick={() => window.location.reload()} className="w-full">
+            再読み込み
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
   return (
+    <ErrorBoundary fallback={errorFallback}>
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
@@ -2417,5 +2410,6 @@ ${availableExamples.slice(0, 5).join("\n")}
         </SheetContent>
       </Sheet>
     </div>
+    </ErrorBoundary>
   )
 }
