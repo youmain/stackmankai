@@ -242,7 +242,7 @@ export default function CustomerView() {
     } : "NOT FOUND")
     
     const updateStoreIdIfNeeded = async () => {
-      if (linkedPlayer && customerAccount) {
+      if (linkedPlayer && customerAccount && customerAccount.id) {
         // storeIdまたはplayerNameが未設定または不正な場合に更新
         const hasInvalidPlayerName = customerAccount.playerName?.startsWith("プレイヤー") || !customerAccount.playerName
         const needsUpdate = !customerAccount.storeId || hasInvalidPlayerName
