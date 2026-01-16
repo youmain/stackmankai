@@ -33,10 +33,9 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
     // 2. ログインしていない場合
     if (!user) {
       // すでに一度認証されている場合、一時的なnullの可能性があるため、即座にリダイレクトしない
-      // ただし、明示的なログアウトなどのケースもあるため、慎重に扱う
+      // ページ遷移や再レンダリング時の認証情報のチラつきを完全に防止する
       if (hasBeenAuthorized) {
-        console.log("[AuthGuard] User is null but was previously authorized. Waiting for state to stabilize. Path:", pathname);
-        // 一時的に表示を維持
+        console.log("[AuthGuard] User is null but was previously authorized. Maintaining view. Path:", pathname);
         setIsAuthorized(true);
         return;
       }

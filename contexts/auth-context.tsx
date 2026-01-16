@@ -223,19 +223,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       setUser(null)
       setCustomerAccountState(null)
-// console.log("[Auth] ✅ ログアウト成功")
       
-      // 強制リダイレクトでクライアント状態をリセット
-      setTimeout(() => {
-        window.location.href = "/customer-auth"
-      }, 100)
+      // 明示的なログアウト時はトップページへ
+      window.location.href = "/customer-auth"
     } catch (err) {
       console.error("[Auth] ❌ ログアウトエラー:", err)
       handleFirebaseError(err, "ログアウト")
-      // エラー時も強制リダイレクト
-      setTimeout(() => {
-        window.location.href = "/customer-auth"
-      }, 100)
+      window.location.href = "/customer-auth"
     }
   }
 
