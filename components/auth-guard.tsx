@@ -15,23 +15,36 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
   const router = useRouter()
   const pathname = usePathname()
   const [isAuthorized, setIsAuthorized] = useState(false)
+  const [hasBeenAuthorized, setHasBeenAuthorized] = useState(false)
 
   useEffect(() => {
-    // 認証情報の読み込み完了を待つ
+    // 1. 認証情報の読み込み中
     if (loading) {
-      console.log("[AuthGuard] Loading is true, returning early. Path:", pathname);
-      setIsAuthorized(false);
+      console.log("[AuthGuard] Loading is true. Path:", pathname);
+      // すでに一度認証されている場合は、読み込み中でもコンテンツを表示し続ける（チラつき防止）
+      if (hasBeenAuthorized) {
+        setIsAuthorized(true);
+      } else {
+        setIsAuthorized(false);
+      }
       return;
     }
 
-    // ログインしていない場合
-    // loadingがfalseになった後でuserがnullの場合のみリダイレクト
+    // 2. ログインしていない場合
     if (!user) {
+      // すでに一度認証されている場合、一時的なnullの可能性があるため、即座にリダイレクトしない
+      // ただし、明示的なログアウトなどのケースもあるため、慎重に扱う
+      if (hasBeenAuthorized) {
+        console.log("[AuthGuard] User is null but was previously authorized. Waiting for state to stabilize. Path:", pathname);
+        // 一時的に表示を維持
+        setIsAuthorized(true);
+        return;
+      }
+
       console.log("[AuthGuard] User is null, initiating redirect. Path:", pathname);
-      console.log("[AuthGuard] 未ログイン: ログインページへリダイレクト", pathname)
-      // ランキングページは未ログインでも閲覧可能にする（デバッグおよび利便性のため）
+      
+      // ランキングページは未ログインでも閲覧可能にする
       if (pathname === "/rankings") {
-        console.log("[AuthGuard] Rankings page access allowed for guest");
         setIsAuthorized(true);
         return;
       }
@@ -41,21 +54,21 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
         return
       }
       
-      // リダイレクトを実行し、isAuthorizedをfalseに設定
       setIsAuthorized(false);
       
-      // 現在のパスに応じて適切なログインページへ
       if (pathname.startsWith("/admin") || pathname.startsWith("/players") || 
           pathname.startsWith("/receipts") || pathname.startsWith("/daily-sales") ||
           pathname.startsWith("/store-settings") || pathname.startsWith("/employee-management") ||
           pathname.startsWith("/store-ranking-settings")) {
         router.replace("/store-login")
       } else {
-        console.log("[AuthGuard] Redirecting to /customer-auth from path:", pathname);
         router.replace("/customer-auth")
       }
       return
     }
+
+    // 3. ログインしている場合 - 権限チェック
+    setHasBeenAuthorized(true);
 
     // ロールチェック
     console.log("[AuthGuard] Role Check:", { role: user.role, pathname, isCustomer, isStoreOwner });
