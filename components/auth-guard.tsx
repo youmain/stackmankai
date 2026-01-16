@@ -40,8 +40,6 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
         return;
       }
 
-      console.log("[AuthGuard] User is null, initiating redirect. Path:", pathname);
-      
       // ランキングページは未ログインでも閲覧可能にする
       if (pathname === "/rankings") {
         setIsAuthorized(true);
@@ -52,7 +50,8 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
         setIsAuthorized(true);
         return
       }
-      
+
+      console.log("[AuthGuard] User is null, initiating redirect. Path:", pathname);
       setIsAuthorized(false);
       
       if (pathname.startsWith("/admin") || pathname.startsWith("/players") || 
