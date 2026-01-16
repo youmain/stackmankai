@@ -20,12 +20,14 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
     // 認証情報の読み込み完了を待つ
     if (loading) {
       console.log("[AuthGuard] Loading is true, returning early. Path:", pathname);
+      setIsAuthorized(false);
       return;
     }
 
     // ログインしていない場合
-    if (!user && !loading) {
-      console.log("[AuthGuard] User is null and loading is false, initiating redirect. Path:", pathname);
+    // loadingがfalseになった後でuserがnullの場合のみリダイレクト
+    if (!user) {
+      console.log("[AuthGuard] User is null, initiating redirect. Path:", pathname);
       console.log("[AuthGuard] 未ログイン: ログインページへリダイレクト", pathname)
       // ランキングページは未ログインでも閲覧可能にする（デバッグおよび利便性のため）
       if (pathname === "/rankings") {
@@ -35,8 +37,12 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
       }
       // すでにログインページにいる場合は何もしない
       if (pathname === "/store-login" || pathname === "/customer-auth") {
+        setIsAuthorized(true);
         return
       }
+      
+      // リダイレクトを実行し、isAuthorizedをfalseに設定
+      setIsAuthorized(false);
       
       // 現在のパスに応じて適切なログインページへ
       if (pathname.startsWith("/admin") || pathname.startsWith("/players") || 
