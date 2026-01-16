@@ -8,7 +8,10 @@
     "lint": "next lint",
     "start": "next start",
     "migrate:store-isolation": "tsx scripts/migrate-store-isolation.ts",
-    "check:data-integrity": "tsx scripts/check-data-integrity.ts"
+    "check:data-integrity": "tsx scripts/check-data-integrity.ts",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@ai-sdk/openai": "latest",
@@ -52,7 +55,6 @@
     "dotenv": "^17.2.3",
     "embla-carousel-react": "latest",
     "firebase": "^10.14.1",
-    "firebase-admin": "^13.6.0",
     "fs": "latest",
     "geist": "^1.3.1",
     "html5-qrcode": "^2.3.8",
@@ -80,13 +82,22 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.9",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.1",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22",
     "@types/react": "^19.2.3",
     "@types/react-dom": "^19.2.3",
+    "firebase-admin": "^13.6.0",
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.2.0",
     "postcss": "^8.4.47",
     "puppeteer": "^24.32.1",
     "tailwindcss": "^4.1.9",
+    "ts-jest": "^29.4.6",
     "tw-animate-css": "1.3.3",
-    "typescript": "^5"
+    "typescript": "^5",
+    "web-streams-polyfill": "^4.2.0"
   }
 }

@@ -3,9 +3,8 @@ export interface Player {
   uniqueId: string // ランダム生成されたユニークID（サブスク機能用）
   name: string
   pokerName?: string // ポーカーネーム（オプション）
-furigana?: string // 読み仮名（オプション） systemBalance: number; // 店舗の貯スタック（ゲームプレイで変動）
-
-
+  furigana?: string // 読み仮名（オプション）
+  systemBalance: number // 店舗の貯スタック（ゲームプレイで変動）
   rewardPoints: number // 貯まっているCP (Cashback Points)
   currentGameId?: string // 現在参加中のゲームID
   isPlaying: boolean // プレイ中かどうか
@@ -17,6 +16,8 @@ furigana?: string // 読み仮名（オプション） systemBalance: number; //
   storeName?: string // ホーム店舗名
   membershipRank?: "silver" | "gold" | "platinum" | "none" // 会員ランク
   totalCPEarned?: number // 獲得CP総額（ランク判定用、CP使用でも減らない）
+  playerId?: string // プレイヤーID（互換性用）
+  lastGameDate?: string | Date // 最後のゲーム日時
   createdAt: Date
   updatedAt: Date
 }
@@ -146,6 +147,9 @@ export interface RakeHistory {
   finalStack?: number
   buyIn?: number
   additionalStack?: number
+  profit?: number // 収支
+  rake?: number // レーキ
+  timestamp?: string | Date // タイムスタンプ
 }
 
 export interface Expense {
@@ -227,6 +231,10 @@ export interface PlayerRanking {
   rank: number // 順位
   profit: number // 収支
   points: number // 獲得ポイント
+  totalGames?: number // ゲーム数
+  winRate?: number // 勝率
+  maxWin?: number // 最大勝利
+  winStreak?: number // 連勝
 }
 
 export interface MonthlyPoints {
@@ -289,6 +297,9 @@ export interface StoreRankingSettings {
       platinum: MembershipRankConfig
     }
   }
+  // 月間ポイント目標
+  monthlyPointTarget?: number // 月間ポイント目標
+  rewardRate?: number // 還元率
   createdAt: string
   updatedAt: string
 }
@@ -297,10 +308,7 @@ export interface CustomerAccount {
   id: string
   email: string
   uid?: string // Firebase Auth UID
-stapokaBalance: number; // スタポカ貯スタック
-
-
-
+  stapokaBalance?: number // スタポカ貯スタック
   role?: string // ユーザーロール
   playerId?: string // 紐づけされたプレイヤーID
   playerName?: string // 紐づけされたプレイヤー名
@@ -374,6 +382,7 @@ export interface PointHistory {
   playerName: string
   type: "earn" | "use" // 獲得 or 使用
   points: number // CP数
+  point?: number // ポイント（互換性用）
   receiptId?: string // 関連する伝票ID
   purchaseAmount?: number // 購入金額（獲得時）
   rate?: number // 適用された還元率（獲得時）
@@ -402,3 +411,6 @@ export interface ChatMessage {
   type?: "user" | "system" // メッセージタイプ（デフォルト: "user"）
   createdAt: Date
 }
+
+// 互換性用の型エイリアス
+export type LinkedPlayer = Player

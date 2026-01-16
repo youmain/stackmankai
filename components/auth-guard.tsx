@@ -18,10 +18,14 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
 
   useEffect(() => {
     // 認証情報の読み込み完了を待つ
-    if (loading) return
+    if (loading) {
+      console.log("[AuthGuard] Loading is true, returning early. Path:", pathname);
+      return;
+    }
 
     // ログインしていない場合
-    if (!user) {
+    if (!user && !loading) {
+      console.log("[AuthGuard] User is null and loading is false, initiating redirect. Path:", pathname);
       console.log("[AuthGuard] 未ログイン: ログインページへリダイレクト", pathname)
       // ランキングページは未ログインでも閲覧可能にする（デバッグおよび利便性のため）
       if (pathname === "/rankings") {
@@ -41,6 +45,7 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
           pathname.startsWith("/store-ranking-settings")) {
         router.replace("/store-login")
       } else {
+        console.log("[AuthGuard] Redirecting to /customer-auth from path:", pathname);
         router.replace("/customer-auth")
       }
       return
@@ -86,7 +91,7 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
 
     // すべてのチェックをパス
     setIsAuthorized(true)
-  }, [user, loading, allowedRoles, router, pathname, isStoreOwner, isEmployee, isCustomer])
+  }, [user, loading, allowedRoles, router, pathname])
 
   // 読み込み中または未承認の場合は何も表示しない（またはローディングスピナー）
   if (loading || !isAuthorized) {

@@ -14,16 +14,22 @@ import { subscribeToReceipts, subscribeToDailyRankings, subscribeToMonthlyPoints
 interface PlayerDetailedDataModalProps {
   isOpen: boolean
   onClose: () => void
-  playerId: string
-  playerName: string
-  player?: Player
+  player?: Player | null
+  rakeHistory?: any[]
+  pointHistory?: any[]
+  getDisplayName?: (player: Player) => string
+  activeTab?: string
+  setActiveTab?: (tab: string) => void
+  selectedPlayerForChart?: string | null
+  setSelectedPlayerForChart?: (player: string | null) => void
+  isChartModalOpen?: boolean
+  setIsChartModalOpen?: (isOpen: boolean) => void
+  players?: Player[]
 }
 
 function PlayerDetailedDataModal({
   isOpen,
   onClose,
-  playerId,
-  playerName,
   player: passedPlayer,
 }: PlayerDetailedDataModalProps) {
   const [player, setPlayer] = useState<Player | null>(passedPlayer || null)
@@ -37,7 +43,7 @@ function PlayerDetailedDataModal({
   const [selectedStore, setSelectedStore] = useState<any>(null)
 
   useEffect(() => {
-    if (!isOpen || !playerId) return
+    if (!isOpen || !passedPlayer?.id) return
 
     const loadPlayerData = async () => {
       setLoading(true)
@@ -52,7 +58,7 @@ function PlayerDetailedDataModal({
         const currentYear = new Date().getFullYear()
         const currentMonth = new Date().getMonth() + 1
         const unsubscribeMonthlyPoints = subscribeToMonthlyPoints(currentYear, currentMonth, setMonthlyPoints)
-        const unsubscribePointHistory = subscribeToPointHistory(playerId, setPointHistory)
+        const unsubscribePointHistory = subscribeToPointHistory(passedPlayer.id, setPointHistory)
         const unsubscribeStores = subscribeToStores(setStores)
 
         setLoading(false)

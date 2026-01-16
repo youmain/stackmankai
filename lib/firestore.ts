@@ -852,7 +852,7 @@ export const subscribeToDailyRankings = (
   })
 }
 
-export const subscribeToMonthlyPoints = (callback: (points: any[]) => void, storeId?: string | null): (() => void) => {
+export const subscribeToMonthlyPoints = (year: number, month: number, callback: (points: any[]) => void, storeId?: string | null): (() => void) => {
   if (!isFirebaseConfigured) {
     callback(mockMonthlyPoints)
     return () => {}
