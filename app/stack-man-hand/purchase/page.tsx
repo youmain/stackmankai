@@ -182,7 +182,10 @@ export default function StackManHandPurchasePage() {
       }
     } finally {
       // finally ブロックで必ず setPurchasing(false) を実行
-      setPurchasing(false);
+      // 状態更新を非同期で実行して、確実に完了させる
+      Promise.resolve().then(() => {
+        setPurchasing(false);
+      }).catch(e => console.error("Error setting purchasing to false:", e));
     }
   }
 
