@@ -101,7 +101,7 @@ export const evaluateHandRank = (cards: Card[]): string => {
 }
 
 /**
- * Get store's Stack Man Hand settings
+ * Get Stack Man Hand settings for a store
  */
 export const getStackManHandSettings = async (storeId: string): Promise<StackManHandSettings | null> => {
   const db = getDb()
@@ -256,26 +256,27 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
     const newStapokaBalance = currentStapokaBalance - settings.purchasePrice;
 
     // 1. プレイヤーのドキュメントを更新 (stapokaBalance)
-    try {
-      await updateDoc(playerDocRef, {
-        stapokaBalance: newStapokaBalance,
-        updatedAt: serverTimestamp(),
-      });
-    } catch (updateError: any) {
-      console.error("[Purchase] Error updating player document:", updateError);
-      // プレイヤー更新失敗時も、顧客アカウント更新を試みる
-    }
-
     // 2. 顧客アカウントのドキュメントを更新 (stapokaBalance)
-    try {
-      await updateDoc(customerAccountRef, {
+    // これらの更新を並列実行し、両方の完了を待つ
+    const updatePromises = [
+      updateDoc(playerDocRef, {
         stapokaBalance: newStapokaBalance,
         updatedAt: serverTimestamp(),
-      });
-    } catch (updateError: any) {
-      console.error("[Purchase] Error updating customer account document:", updateError);
-      // 顧客アカウント更新失敗時も、成功として返す（ハンドは作成されているため）
-    }
+      }).catch((updateError: any) => {
+        console.error("[Purchase] Error updating player document:", updateError);
+        // エラーを記録しても続行
+      }),
+      updateDoc(customerAccountRef, {
+        stapokaBalance: newStapokaBalance,
+        updatedAt: serverTimestamp(),
+      }).catch((updateError: any) => {
+        console.error("[Purchase] Error updating customer account document:", updateError);
+        // エラーを記録しても続行
+      })
+    ];
+
+    // 両方の更新を待機してから成功を返す
+    await Promise.all(updatePromises);
 
     // プレイ用スタック (systemBalance) には影響を与えない
     console.log("[Purchase] All balance updates completed. Returning success.");
@@ -348,7 +349,6 @@ export const getActiveStackManHands = async (
 /**
  * Get player's Stack Man Hands purchased today
  * Now returns hands purchased within the last 3 days.
- * Returns empty array on error to prevent page from breaking.
  */
 export const getTodayStackManHands = async (
   storeId: string,
@@ -358,16 +358,10 @@ export const getTodayStackManHands = async (
     const db = getDb()
     if (!db) throw new Error("Firestore is not initialized")
     
-    // 3日前の0時0分0秒を取得
-    const threeDaysAgo = new Date()
-    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3)
-    threeDaysAgo.setHours(0, 0, 0, 0)
-    
     const handsRef = collection(getDb()!, "stores", storeId, "stackManHands")
     const handsQuery = query(
       handsRef,
       where("userId", "==", userId),
-      where("purchasedAt", ">=", Timestamp.fromDate(threeDaysAgo)),
     )
     
     const snapshot = await getDocs(handsQuery)
@@ -376,184 +370,72 @@ export const getTodayStackManHands = async (
       ...doc.data(),
     })) as StackManHand[]
 
-    // クライアント側で status === "active" のフィルタリングと purchasedAt の降順にソート
-    return hands.filter(hand => hand.status === "active").sort((a, b) => b.purchasedAt.toMillis() - a.purchasedAt.toMillis())
+    // 本日のハンドのみを返す
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    
+    return hands.filter(hand => {
+      const purchasedDate = hand.purchasedAt.toDate()
+      purchasedDate.setHours(0, 0, 0, 0)
+      return purchasedDate.getTime() === today.getTime()
+    }).sort((a, b) => b.purchasedAt.toMillis() - a.purchasedAt.toMillis())
   } catch (error) {
-    console.error("[getTodayStackManHands] Error fetching hands:", error)
-    // エラーが発生した場合は空配列を返す（ページ全体がエラーになるのを防ぐ）
-    return []
+    console.error("Error getting today's Stack Man Hands:", error)
+    return [] // エラー時は空配列を返す
   }
 }
 
 /**
- * Clean up Stack Man Hands older than 3 days (4th day deletion)
- * Returns 0 on error to prevent page from breaking.
- */
-export const cleanupStackManHands = async (storeId: string): Promise<number> => {
-  try {
-    const db = getDb()
-    if (!db) throw new Error("Firestore is not initialized")
-    
-    // 4日前の0時0分0秒を取得
-    const fourDaysAgo = new Date()
-    fourDaysAgo.setDate(fourDaysAgo.getDate() - 4)
-    fourDaysAgo.setHours(0, 0, 0, 0)
-    
-    const handsRef = collection(getDb()!, "stores", storeId, "stackManHands")
-    const handsQuery = query(
-      handsRef,
-      where("purchasedAt", "<", Timestamp.fromDate(fourDaysAgo))
-    )
-    
-    const snapshot = await getDocs(handsQuery)
-    const { writeBatch } = await import("firebase/firestore")
-    const batch = writeBatch(db)
-    let deletedCount = 0
-    
-    snapshot.docs.forEach((doc) => {
-      batch.delete(doc.ref)
-      deletedCount++
-    })
-    
-    if (deletedCount > 0) {
-      await batch.commit()
-      console.log(`[Cleanup] Deleted ${deletedCount} old Stack Man Hands for store ${storeId}`)
-    }
-    
-    return deletedCount
-  } catch (error) {
-    console.error("[cleanupStackManHands] Error cleaning up hands:", error)
-    // エラーが発生した場合は0を返す（ページ全体がエラーになるのを防ぐ）
-    return 0
-  }
-}
-
-/**
- * Calculate how many more hands can be purchased today
+ * Calculate remaining purchases for today
  */
 export const calculateRemainingPurchases = async (
   storeId: string,
   userId: string,
-  currentStack: number
-): Promise<{ maxPurchases: number; purchasedToday: number; remaining: number }> => {
-  const db = getDb()
-  if (!db) throw new Error("Firestore is not initialized")
-  
-  // Get store settings
-  const storeDoc = await getDoc(doc(db, "stores", storeId))
-  if (!storeDoc.exists()) {
-    return { maxPurchases: 0, purchasedToday: 0, remaining: 0 }
-  }
-  
-  const storeData = storeDoc.data()
-  const settings = storeData.stackManHandSettings
-  const minimumStack = storeData.stackResetSettings?.minimumStack || 10000
-  
-  if (!settings || !settings.enabled) {
-    return { maxPurchases: 0, purchasedToday: 0, remaining: 0 }
-  }
-  
-  // Get today's purchases first
-  const todayHands = await getTodayStackManHands(storeId, userId)
-  const purchasedToday = todayHands.length
-  
-  // Calculate already spent chips
-  const alreadySpent = purchasedToday * settings.purchasePrice
-  
-  // 現在のスタックから直接計算するように変更（初期スタックへの復元を廃止）
-  const availableChips = currentStack - minimumStack
-  // すでに購入した分も含めた最大購入可能回数を計算
-  const additionalPurchases = Math.floor(availableChips / settings.purchasePrice)
-  const maxPurchases = purchasedToday + additionalPurchases
-  
-  // Debug logging removed to prevent console flooding
-  
-  // Calculate remaining
-  const remaining = Math.max(0, maxPurchases - purchasedToday)
-  
-  return { maxPurchases, purchasedToday, remaining }
-}
-
-/**
- * Use Stack Man Hand (mark as used)
- */
-export const useStackManHand = async (
-  storeId: string,
-  handId: string,
-  result: "win" | "lose"
-): Promise<{ success: boolean; message: string }> => {
-  const db = getDb()
-  if (!db) throw new Error("Firestore is not initialized")
-  
+  maxPurchases: number
+): Promise<number> => {
   try {
-    const handRef = doc(db, "stores", storeId, "stackManHands", handId)
-    const handDoc = await getDoc(handRef)
-    
-    if (!handDoc.exists()) {
-      return { success: false, message: "ハンドが見つかりません" }
-    }
-    
-    const handData = handDoc.data() as StackManHand
-    
-    if (handData.status !== "active") {
-      return { success: false, message: "このハンドは既に使用済みまたは期限切れです" }
-    }
-    
-    // Update hand status
-    await updateDoc(handRef, {
-      status: "used",
-      usedAt: Timestamp.now(),
-      result,
-    })
-    
-    // If win, add store chips to player
-    if (result === "win") {
-      const playersRef = collection(getDb()!, "players", `store_${storeId}`, "players")
-      const playerQuery = query(playersRef, where("uniqueId", "==", handData.userId))
-      const playerSnapshot = await getDocs(playerQuery)
-      
-      if (!playerSnapshot.empty) {
-        const playerDoc = playerSnapshot.docs[0]
-        const playerData = playerDoc.data()
-        const currentStoreChips = playerData.storeChips || 0
-        
-        await updateDoc(playerDoc.ref, {
-          storeChips: currentStoreChips + handData.rewardAmount,
-          updatedAt: serverTimestamp(),
-        })
-      }
-    }
-    
-    return { success: true, message: result === "win" ? "勝利！店舗チップを獲得しました" : "残念、負けました" }
+    const todayHands = await getTodayStackManHands(storeId, userId)
+    return Math.max(0, maxPurchases - todayHands.length)
   } catch (error) {
-    console.error("Error using Stack Man Hand:", error)
-    return { success: false, message: "使用に失敗しました" }
+    console.error("Error calculating remaining purchases:", error)
+    return maxPurchases // エラー時は最大値を返す
   }
 }
 
 /**
- * Expire old Stack Man Hands (run daily)
+ * Cleanup old Stack Man Hands
  */
-export const expireOldStackManHands = async (storeId: string): Promise<number> => {
-  const db = getDb()
-  if (!db) throw new Error("Firestore is not initialized")
-  
-  const handsRef = collection(getDb()!, "stores", storeId, "stackManHands")
-  const now = Timestamp.now()
-  
-  const expiredQuery = query(
-    handsRef,
-    where("status", "==", "active"),
-    where("validUntil", "<", now)
-  )
-  
-  const snapshot = await getDocs(expiredQuery)
-  
-  let count = 0
-  for (const doc of snapshot.docs) {
-    await updateDoc(doc.ref, { status: "expired" })
-    count++
+export const cleanupStackManHands = async (storeId: string): Promise<void> => {
+  try {
+    const db = getDb()
+    if (!db) throw new Error("Firestore is not initialized")
+    
+    const handsRef = collection(getDb()!, "stores", storeId, "stackManHands")
+    const snapshot = await getDocs(handsRef)
+    
+    const now = new Date()
+    const deletePromises = snapshot.docs
+      .filter(doc => {
+        const hand = doc.data() as StackManHand
+        return hand.validUntil.toDate() < now
+      })
+      .map(doc => doc.ref.delete())
+    
+    await Promise.all(deletePromises)
+  } catch (error) {
+    console.error("Error cleaning up Stack Man Hands:", error)
+    // エラーが発生しても続行
   }
-  
-  return count
+}
+
+/**
+ * Fetch today's hands for a player
+ */
+export const fetchTodayHands = async (storeId: string, userId: string): Promise<StackManHand[]> => {
+  try {
+    return await getTodayStackManHands(storeId, userId)
+  } catch (error) {
+    console.error("Error fetching today's hands:", error)
+    return []
+  }
 }
