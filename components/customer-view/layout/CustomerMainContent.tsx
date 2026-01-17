@@ -56,7 +56,7 @@ export const CustomerMainContent: React.FC<CustomerMainContentProps> = ({
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">ホーム店舗</p>
-                  <p className="text-lg font-semibold text-gray-900">{linkedPlayer.storeName || "未設定"}</p>
+                  <p className="text-lg font-semibold text-gray-900">{customerAccount?.storeName || "未設定"}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">貯スタック</p>
