@@ -34,7 +34,8 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
     if (!user) {
       // すでに一度認証されている場合、一時的なnullの可能性があるため、即座にリダイレクトしない
       // ページ遷移や再レンダリング時の認証情報のチラつきを完全に防止する
-      if (hasBeenAuthorized || localStorage.getItem("is_authenticated") === "true") {
+      const isAuthStored = typeof window !== "undefined" && localStorage.getItem("is_authenticated") === "true";
+      if (hasBeenAuthorized || isAuthStored) {
         console.log("[AuthGuard] User is null but was previously authorized. Maintaining view. Path:", pathname);
         setIsAuthorized(true);
         return;
@@ -67,7 +68,9 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
 
     // 3. ログインしている場合 - 権限チェック
     setHasBeenAuthorized(true);
-    localStorage.setItem("is_authenticated", "true");
+    if (typeof window !== "undefined") {
+      localStorage.setItem("is_authenticated", "true");
+    }
 
     // ロールチェック
     console.log("[AuthGuard] Role Check:", { role: user.role, pathname, isCustomer, isStoreOwner });
