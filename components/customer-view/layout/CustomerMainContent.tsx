@@ -70,7 +70,7 @@ export const CustomerMainContent: React.FC<CustomerMainContentProps> = ({
                 >
                   <p className="text-sm text-gray-600">スタポカ貯スタック</p>
                   <p className="text-lg font-semibold text-green-600">
-                    {linkedPlayer.systemBalance?.toLocaleString() || 0}💰
+                    {customerAccount?.stapokaBalance?.toLocaleString() || 0}💰
                   </p>
                   <p className="text-xs text-green-500 mt-1">クリックでStack Man Hand購入</p>
                 </div>

@@ -160,8 +160,9 @@ export default function StackManHandPurchasePage() {
               };
             });
             setCurrentStack(result.updatedPlayer.stapokaBalance);
+            setPurchasing(false);
           }
-          await fetchTodayHands(customerAccount.storeId, customerAccount.id);
+          fetchTodayHands(customerAccount.storeId, customerAccount.id).catch(e => console.error("Error fetching hands:", e));
         }
       } else {
         if (isMounted.current) setPageError(result.message);
