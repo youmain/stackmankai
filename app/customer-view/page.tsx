@@ -30,6 +30,7 @@ export default function CustomerView() {
     playerIdInput, setPlayerIdInput, isLinking, setIsLinking, linkingError, setLinkingError, skipLinking, setSkipLinking,
     showLinkingSuccessModal, setShowLinkingSuccessModal, skipLinkingAfterSuccess, setSkipLinkingAfterSuccess, showConfirmation,
     setShowConfirmation, selectedPlayer, setSelectedPlayer, rakeHistory, setRakeHistory, selectedPlayerForChart, setSelectedPlayerForChart,
+    setSkipLinkingAfterSuccess,
     isChartModalOpen, setIsChartModalOpen, activeTab, setActiveTab, pointHistory, setPointHistory, currentRewardRate, setCurrentRewardRate,
     isLoading, setIsLoading, customerAccounts, setCustomerAccounts, dataLoaded, setDataLoaded, showPlayerIdForm, setShowPlayerIdForm,
     originalPlayerData, setOriginalPlayerData, isResetConfirmOpen, setIsResetConfirmOpen, isResetting, setIsResetting,
@@ -96,7 +97,7 @@ export default function CustomerView() {
     players,
     getDisplayName,
     signOut,
-  } as any)
+  })
 
   return (
     <div className="min-h-screen bg-gray-50">
