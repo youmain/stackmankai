@@ -35,7 +35,7 @@ const LinkingSuccessModal = memo(function LinkingSuccessModal({
             <Trophy className="h-4 w-4" />
             <AlertDescription className="text-green-800">
               <div className="space-y-2">
-                <p className="font-bold">プレイヤーID: {customerAccount?.playerId}</p>
+                <p className="font-bold">プレイヤーID: {customerAccount && customerAccount.playerId}</p>
                 <p className="text-sm">と紐づけされました</p>
               </div>
             </AlertDescription>

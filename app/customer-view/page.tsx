@@ -24,24 +24,11 @@ import AccountCancellationModal from "@/components/customer-view/modals/AccountC
 
 export default function CustomerView() {
   const state = useCustomerState()
-  const {
-    viewMode, setViewMode, selectedPostId, setSelectedPostId, isDetailedDataModalOpen, setIsDetailedDataModalOpen,
-    players, dailyRankings, monthlyPoints, storeSettings, selectedTab, setSelectedTab, isMenuOpen, setIsMenuOpen,
-    playerIdInput, setPlayerIdInput, isLinking, setIsLinking, linkingError, setLinkingError,
-    showLinkingSuccessModal, setShowLinkingSuccessModal, skipLinkingAfterSuccess, setSkipLinkingAfterSuccess, showConfirmation,
-    setShowConfirmation, selectedPlayer, rakeHistory, selectedPlayerForChart, setSelectedPlayerForChart,
-    isChartModalOpen, setIsChartModalOpen, activeTab, setActiveTab, pointHistory,
-    isLoading, dataLoaded, showPlayerIdForm, setShowPlayerIdForm,
-    isResetConfirmOpen, setIsResetConfirmOpen, isResetting,
-    isCancelConfirmOpen, setIsCancelConfirmOpen, isCancelling, showPlayerLinkModal, setShowPlayerLinkModal,
-    currentDate, currentYear, currentMonth, currentMonthStr, today,
-    customerAccount, setCustomerAccount, signOut, router,
-  } = state
 
   const { linkedPlayer, getDisplayName, getPlayerName } = useCustomerLogic({
-    players,
-    customerAccount,
-    setCustomerAccount,
+    players: state.players,
+    customerAccount: state.customerAccount,
+    setCustomerAccount: state.setCustomerAccount,
   })
 
   const handlers = useCustomerHandlers({
@@ -81,6 +68,7 @@ export default function CustomerView() {
     setShowPlayerIdForm: state.setShowPlayerIdForm,
     setShowPlayerLinkModal: state.setShowPlayerLinkModal,
     signOut: state.signOut,
+    playerId: state.customerAccount?.playerId || null,
   })
 
   const {
@@ -101,48 +89,48 @@ export default function CustomerView() {
   return (
     <div className="min-h-screen bg-gray-50">
       <CustomerHeader
-        customerAccount={customerAccount}
+        customerAccount={state.customerAccount}
         linkedPlayer={linkedPlayer}
         getDisplayName={getDisplayName}
-        setIsMenuOpen={setIsMenuOpen}
+        setIsMenuOpen={state.setIsMenuOpen}
       />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         <ViewSwitcher
-          viewMode={viewMode}
+          viewMode={state.viewMode}
           linkedPlayer={linkedPlayer}
-          customerAccount={customerAccount}
-          dailyRankings={dailyRankings}
-          monthlyPoints={monthlyPoints}
-          storeSettings={storeSettings}
-          rakeHistory={rakeHistory}
-          pointHistory={pointHistory}
-          players={players}
-          selectedPostId={selectedPostId}
-          selectedTab={selectedTab}
-          activeTab={activeTab}
-          currentDate={currentDate}
-          currentYear={currentYear}
-          currentMonth={currentMonth}
-          currentMonthStr={currentMonthStr}
-          today={today}
-          isLoading={isLoading}
+          customerAccount={state.customerAccount}
+          dailyRankings={state.dailyRankings}
+          monthlyPoints={state.monthlyPoints}
+          storeSettings={state.storeSettings}
+          rakeHistory={state.rakeHistory}
+          pointHistory={state.pointHistory}
+          players={state.players}
+          selectedPostId={state.selectedPostId}
+          selectedTab={state.selectedTab}
+          activeTab={state.activeTab}
+          currentDate={state.currentDate}
+          currentYear={state.currentYear}
+          currentMonth={state.currentMonth}
+          currentMonthStr={state.currentMonthStr}
+          today={state.today}
+          isLoading={state.isLoading}
           getDisplayName={getDisplayName}
           handlePostClick={handlePostClick}
           handleBackFromPostDetail={handleBackFromPostDetail}
-          setSelectedTab={setSelectedTab}
-          setActiveTab={setActiveTab}
-          setSelectedPlayerForChart={setSelectedPlayerForChart}
-          setIsChartModalOpen={setIsChartModalOpen}
+          setSelectedTab={state.setSelectedTab}
+          setActiveTab={state.setActiveTab}
+          setSelectedPlayerForChart={state.setSelectedPlayerForChart}
+          setIsChartModalOpen={state.setIsChartModalOpen}
         />
       </div>
 
       {/* Modals */}
       <MenuModal
-        isOpen={isMenuOpen}
-        onOpenChange={setIsMenuOpen}
-        customerAccount={customerAccount}
+        isOpen={state.isMenuOpen}
+        onOpenChange={state.setIsMenuOpen}
+        customerAccount={state.customerAccount}
         linkedPlayer={linkedPlayer}
         getDisplayName={getDisplayName}
         onDetailedDataClick={handleDetailedDataClick}
@@ -150,76 +138,76 @@ export default function CustomerView() {
         onResetStatistics={handleStatisticsReset}
         onPlayerLinkClick={handlePlayerLinkClick}
         onAccountCancellation={handleAccountCancellation}
-        onViewModeChange={setViewMode}
+        onViewModeChange={state.setViewMode}
         onLogout={() => {
-          setCustomerAccount(null)
-          signOut()
+          state.setCustomerAccount(null)
+          state.signOut()
           window.location.href = "/"
         }}
       />
 
       <ResetStatisticsModal
-        isOpen={isResetConfirmOpen}
-        onOpenChange={setIsResetConfirmOpen}
+        isOpen={state.isResetConfirmOpen}
+        onOpenChange={state.setIsResetConfirmOpen}
         linkedPlayer={linkedPlayer}
-        isResetting={isResetting}
+        isResetting={state.isResetting}
         onConfirm={handleStatisticsReset}
       />
 
       <PlayerLinkingModal
-        isOpen={showPlayerLinkModal || showPlayerIdForm}
+        isOpen={state.showPlayerLinkModal || state.showPlayerIdForm}
         onOpenChange={(open) => {
           if (!open) {
-            setShowPlayerLinkModal(false)
-            setShowPlayerIdForm(false)
-            setLinkingError(null)
+            state.setShowPlayerLinkModal(false)
+            state.setShowPlayerIdForm(false)
+            state.setLinkingError(null)
           }
         }}
-        playerIdInput={playerIdInput}
+        playerIdInput={state.playerIdInput}
         onPlayerIdInputChange={handlePlayerIdChange}
-        isLinking={isLinking}
-        linkingError={linkingError || ""}
+        isLinking={state.isLinking}
+        linkingError={state.linkingError || ""}
         onSearch={handlePlayerIdLink}
       />
 
       <PlayerConfirmationModal
-        isOpen={showConfirmation}
-        onOpenChange={setShowConfirmation}
-        selectedPlayer={selectedPlayer}
-        isLinking={isLinking}
+        isOpen={state.showConfirmation}
+        onOpenChange={state.setShowConfirmation}
+        selectedPlayer={state.selectedPlayer}
+        isLinking={state.isLinking}
         onConfirm={confirmPlayerLink}
       />
 
       <LinkingSuccessModal
-        isOpen={showLinkingSuccessModal}
-        onOpenChange={setShowLinkingSuccessModal}
-        customerAccount={customerAccount}
-        skipLinkingAfterSuccess={skipLinkingAfterSuccess}
+        isOpen={state.showLinkingSuccessModal}
+        onOpenChange={state.setShowLinkingSuccessModal}
+        customerAccount={state.customerAccount}
+        skipLinkingAfterSuccess={state.skipLinkingAfterSuccess}
         onSkipChange={handleSkipLinkingAfterSuccessChange}
-        onClose={() => setShowLinkingSuccessModal(false)}
+        onClose={() => state.setShowLinkingSuccessModal(false)}
       />
 
       <AccountCancellationModal
-        isOpen={isCancelConfirmOpen}
-        onOpenChange={setIsCancelConfirmOpen}
+        isOpen={state.isCancelConfirmOpen}
+        onOpenChange={state.setIsCancelConfirmOpen}
         onConfirm={handleAccountCancellation}
-        isCancelling={isCancelling}
+        isCancelling={state.isCancelling}
       />
 
       <PlayerDetailedDataModal
-        isOpen={isDetailedDataModalOpen}
-        onClose={() => setIsDetailedDataModalOpen(false)}
+        isOpen={state.isDetailedDataModalOpen}
+        onClose={() => state.setIsDetailedDataModalOpen(false)}
         player={null}
-        rakeHistory={rakeHistory}
-        pointHistory={pointHistory}
+        rakeHistory={state.rakeHistory}
+        pointHistory={state.pointHistory}
         getDisplayName={getDisplayName}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        selectedPlayerForChart={selectedPlayerForChart}
-        setSelectedPlayerForChart={setSelectedPlayerForChart}
-        isChartModalOpen={isChartModalOpen}
-        setIsChartModalOpen={setIsChartModalOpen}
-        players={players}
+        activeTab={state.activeTab}
+        setActiveTab={state.setActiveTab}
+        selectedPlayerForChart={state.selectedPlayerForChart}
+        setSelectedPlayerForChart={state.setSelectedPlayerForChart}
+        isChartModalOpen={state.isChartModalOpen}
+        setIsChartModalOpen={state.setIsChartModalOpen}
+        players={state.players}
       />
     </div>
   )

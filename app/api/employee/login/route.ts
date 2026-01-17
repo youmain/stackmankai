@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminDb } from '@/lib/firebase-admin';
 
-const adminDb = getAdminDb();
 import { v4 as uuidv4 } from 'uuid';
 
 export async function POST(req: NextRequest) {
   try {
+    const adminDb = getAdminDb();
     const { inviteCode, deviceInfo } = await req.json();
     
     // 招待コードを検証

@@ -127,7 +127,7 @@ const MenuModal = memo(function MenuModal({
               </div>
 
               <div className="space-y-2">
-                {customerAccount?.playerId && linkedPlayer ? (
+                {customerAccount && customerAccount.playerId && linkedPlayer ? (
                   <>
                     <Button
                       variant="ghost"
@@ -192,7 +192,7 @@ const MenuModal = memo(function MenuModal({
                       <AlertCircle className="h-4 w-4" />
                       <AlertDescription className="text-orange-800 text-sm">
                         プレイヤー情報が紐づけられていません。
-                        {customerAccount?.playerId && 'プレイヤーが見つからない可能性があります。'}
+                        {customerAccount && customerAccount.playerId && 'プレイヤーが見つからない可能性があります。'}
                       </AlertDescription>
                     </Alert>
                     <Button

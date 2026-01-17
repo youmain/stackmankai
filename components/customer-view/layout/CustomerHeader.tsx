@@ -25,7 +25,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
               <User className="h-8 w-8 text-purple-600" />
               <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
                 {/* currentCustomerの代わりにcustomerAccountを使用 */}
-                {customerAccount?.playerId && linkedPlayer
+                {customerAccount && customerAccount.playerId && linkedPlayer
                   ? `${getDisplayName(linkedPlayer)}さんのデータ`
                   : "マイページ"}
               </h1>

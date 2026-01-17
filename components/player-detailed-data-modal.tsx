@@ -80,11 +80,12 @@ function PlayerDetailedDataModal({
     return () => {
       cleanup?.then((fn) => fn?.())
     }
-  }, [isOpen, playerId, passedPlayer])
+  }, [isOpen, passedPlayer])
 
   const handleStoreSelect = async (store: any) => {
+    if (!player?.id) return
     try {
-      await updatePlayer(playerId, { storeId: store.id, storeName: store.name })
+      await updatePlayer(player.id, { storeId: store.id, storeName: store.name })
       if (player) {
         setPlayer({ ...player, storeId: store.id, storeName: store.name })
       }
@@ -99,7 +100,6 @@ function PlayerDetailedDataModal({
   // プレイヤーの伝票データをフィルタリング
   const playerReceipts = receipts.filter(
     (receipt) =>
-      receipt.playerName === playerName ||
       receipt.playerName === player?.name ||
       receipt.playerName === player?.pokerName,
   )
@@ -173,14 +173,13 @@ function PlayerDetailedDataModal({
   const todayRanking = dailyRankings.find((r) => r.date === new Date().toISOString().split('T')[0])
   const playerDailyRanking = todayRanking?.rankings.find(
     (ranking) =>
-      ranking.playerName === playerName ||
       ranking.playerName === player?.name ||
       ranking.playerName === player?.pokerName,
   )
 
   const playerMonthlyPoints = monthlyPoints.find(
     (points) =>
-      points.playerName === playerName || points.playerName === player?.name || points.playerName === player?.pokerName,
+      points.playerName === player?.name || points.playerName === player?.pokerName,
   )
 
   const monthlyRank =
@@ -188,7 +187,6 @@ function PlayerDetailedDataModal({
       .sort((a, b) => (b.totalPoints || 0) - (a.totalPoints || 0))
       .findIndex(
         (points) =>
-          points.playerName === playerName ||
           points.playerName === player?.name ||
           points.playerName === player?.pokerName,
       ) + 1
@@ -234,7 +232,7 @@ function PlayerDetailedDataModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] z-[9999] max-w-[95vw] sm:max-w-6xl max-h-[90vh] overflow-y-auto p-4 sm:p-6 bg-white border shadow-lg">
         <DialogHeader>
-          <DialogTitle className="text-lg sm:text-2xl font-bold text-center">{playerName}さんの詳細データ</DialogTitle>
+          <DialogTitle className="text-lg sm:text-2xl font-bold text-center">{player?.name}さんの詳細データ</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 sm:space-y-6">

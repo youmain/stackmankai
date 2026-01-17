@@ -136,13 +136,16 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
   // 月間ポイントランキング (page.tsxのロジックを再現)
   const monthlyPointRankings = useMemo(() => {
     if (!monthlyPoints || monthlyPoints.length === 0) return []
-    return monthlyPoints
+    return [...monthlyPoints]
       .sort((a, b) => b.totalPoints - a.totalPoints)
-      .map((mp, index) => ({
-        ...mp,
-        rank: index + 1,
-        playerName: getDisplayName(players.find(p => p.playerId === mp.playerId) || { playerId: mp.playerId, playerName: "不明なプレイヤー" }),
-      }))
+      .map((mp, index) => {
+        const player = players?.find(p => p.playerId === mp.playerId)
+        return {
+          ...mp,
+          rank: index + 1,
+          playerName: player ? getDisplayName(player) : "不明なプレイヤー",
+        }
+      })
   }, [monthlyPoints, players, getDisplayName])
 
   // プレイヤーの月間ポイント (page.tsxのロジックを再現)
@@ -218,29 +221,14 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
         <CustomerMainContent
           linkedPlayer={linkedPlayer}
           customerAccount={customerAccount}
-          playerStats={playerStats}
-          playerRanking={playerRanking}
-          monthlyPointRankings={monthlyPointRankings}
-          playerMonthlyPoints={playerMonthlyPoints}
-          rankings={rankings}
-          winRateRankings={winRateRankings}
-          maxWinRankings={maxWinRankings}
-          winStreakRankings={winStreakRankings}
+          viewMode={viewMode}
+          playerStats={playerStats as any}
+          pointHistory={pointHistory as any}
+          currentRewardRate={storeSettings?.rewardRate ?? 0.1}
           storeSettings={storeSettings}
-          players={players}
-          selectedTab={selectedTab}
-          activeTab={activeTab}
-          currentDate={currentDate}
-          currentYear={currentYear}
-          currentMonth={currentMonth}
-          currentMonthStr={currentMonthStr}
-          today={today}
-          isLoading={isLoading}
+          playingPlayers={players.filter(p => p.isPlaying)}
           getDisplayName={getDisplayName}
-          setSelectedTab={setSelectedTab}
-          setActiveTab={setActiveTab}
-          setSelectedPlayerForChart={setSelectedPlayerForChart}
-          setIsChartModalOpen={setIsChartModalOpen}
+          handleDetailedDataClick={() => setIsChartModalOpen(true)}
         />
       )
   }

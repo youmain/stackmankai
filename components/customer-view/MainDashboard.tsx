@@ -50,8 +50,8 @@ export const MainDashboard = React.memo<React.FC<MainDashboardProps>>(({
   onDetailedDataClick,
   onViewModeChange,
 }) => {
-  const sortedTodayRankings = [...dailyRankings].sort((a, b) => b.points - a.points)
-  const monthlyRanking = [...monthlyRankings].sort((a, b) => b.totalPoints - a.totalPoints)
+  const sortedTodayRankings = dailyRankings ? [...dailyRankings].sort((a, b) => b.points - a.points) : []
+  const monthlyRanking = monthlyRankings ? [...monthlyRankings].sort((a, b) => b.totalPoints - a.totalPoints) : []
 
   const formatMonth = (monthStr: string) => {
     const [year, month] = monthStr.split('-')
@@ -167,7 +167,7 @@ export const MainDashboard = React.memo<React.FC<MainDashboardProps>>(({
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => onDetailedDataClick(ranking.playerId, ranking.playerName)}
+                        onClick={() => onDetailedDataClick(ranking.playerId || "", ranking.playerName)}
                       >
                         詳細
                       </Button>
@@ -231,7 +231,7 @@ export const MainDashboard = React.memo<React.FC<MainDashboardProps>>(({
       </Card>
 
       {/* CP履歴 */}
-      {linkedPlayer && pointHistory.length > 0 && (
+      {linkedPlayer && pointHistory && pointHistory.length > 0 && (
         <Card className="shadow-md">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
@@ -243,7 +243,7 @@ export const MainDashboard = React.memo<React.FC<MainDashboardProps>>(({
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {pointHistory.slice(0, 10).map((history, index) => (
                 <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded text-sm">
-                  <span>{new Date(history.timestamp).toLocaleString('ja-JP')}</span>
+                  <span>{history.timestamp ? new Date(history.timestamp).toLocaleString('ja-JP') : '不明な日時'}</span>
                   <span className={history.points > 0 ? 'text-green-600' : 'text-red-600'}>
                     {history.points > 0 ? '+' : ''}{history.points}CP
                   </span>

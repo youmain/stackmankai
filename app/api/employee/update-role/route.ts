@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminAuth, getAdminDb } from '@/lib/firebase-admin';
 
-const adminAuth = getAdminAuth();
-const adminDb = getAdminDb();
-
 export async function POST(req: NextRequest) {
   try {
+    const adminAuth = getAdminAuth();
+    const adminDb = getAdminDb();
     const { employeeId, newRole } = await req.json();
     
     // Authorizationヘッダーからトークンを取得

@@ -50,6 +50,7 @@ interface CustomerHandlersProps {
   setShowPlayerIdForm: (show: boolean) => void
   setShowPlayerLinkModal: (show: boolean) => void
   signOut: () => void
+  playerId: string | null
 }
 
 export const useCustomerHandlers = (props: CustomerHandlersProps) => {
@@ -60,8 +61,10 @@ export const useCustomerHandlers = (props: CustomerHandlersProps) => {
     setIsPlayerConfirmationOpen, setIsLinkingSuccessOpen, setIsStatisticsResetOpen,
     setIsAccountCancellationOpen, setSelectedPlayerForDetailedData, setIsDetailedDataModalOpen,
     setViewMode, setSelectedPostId, setIsMenuOpen, setIsCancelling, setLinkingError,
-    setOriginalPlayerData, setShowPlayerIdForm, setShowPlayerLinkModal, signOut
+    setOriginalPlayerData, setShowPlayerIdForm, setShowPlayerLinkModal, signOut,
+    playerId
   } = props
+  const { setSkipLinkingAfterSuccess } = props
 
   // 1. 支払い完了処理
   const handlePaymentCompletion = useCallback(async () => {

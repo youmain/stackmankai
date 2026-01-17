@@ -98,15 +98,15 @@ export const CustomerMainContent: React.FC<CustomerMainContentProps> = ({
                         <Badge variant="outline">一般</Badge>
                       )}
                     </div>
-                    {linkedPlayer.membershipRank && linkedPlayer.membershipRank !== "none" && linkedPlayer.membershipRank !== "platinum" && (
+                    {linkedPlayer.membershipRank && linkedPlayer.membershipRank !== "none" && linkedPlayer.membershipRank !== "platinum" && storeSettings?.membershipRankSettings?.ranks && (
                       <p className="text-xs text-gray-500 mt-1">
                         次のランクまで: {(() => {
                           const currentRank = linkedPlayer.membershipRank
                           const totalCP = linkedPlayer.totalCPEarned || 0
-                          if (currentRank === "silver") {
+                          if (currentRank === "silver" && storeSettings.membershipRankSettings.ranks.gold) {
                             const required = storeSettings.membershipRankSettings.ranks.gold.requiredCP
                             return `${(required - totalCP).toLocaleString()}CP`
-                          } else if (currentRank === "gold") {
+                          } else if (currentRank === "gold" && storeSettings.membershipRankSettings.ranks.platinum) {
                             const required = storeSettings.membershipRankSettings.ranks.platinum.requiredCP
                             return `${(required - totalCP).toLocaleString()}CP`
                           }
@@ -114,7 +114,7 @@ export const CustomerMainContent: React.FC<CustomerMainContentProps> = ({
                         })()}
                       </p>
                     )}
-                    {(!linkedPlayer.membershipRank || linkedPlayer.membershipRank === "none") && (
+                    {(!linkedPlayer.membershipRank || linkedPlayer.membershipRank === "none") && storeSettings?.membershipRankSettings?.ranks?.silver && (
                       <p className="text-xs text-gray-500 mt-1">
                         シルバーまで: {(() => {
                           const totalCP = linkedPlayer.totalCPEarned || 0
@@ -145,7 +145,7 @@ export const CustomerMainContent: React.FC<CustomerMainContentProps> = ({
             </CardContent>
           </Card>
 
-          {pointHistory.length > 0 && (
+          {pointHistory && pointHistory.length > 0 && (
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
@@ -158,7 +158,7 @@ export const CustomerMainContent: React.FC<CustomerMainContentProps> = ({
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {pointHistory.slice(0, 10).map((history) => (
+                  {pointHistory.slice(0, 10).map((history: any) => (
                     <div
                       key={history.id}
                       className={`flex items-center justify-between p-4 rounded-lg border ${
@@ -286,7 +286,7 @@ export const CustomerMainContent: React.FC<CustomerMainContentProps> = ({
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0">
-          {playingPlayers.length > 0 ? (
+          {playingPlayers && playingPlayers.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {playingPlayers.map((player) => (
                 <Badge
