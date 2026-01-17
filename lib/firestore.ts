@@ -417,55 +417,71 @@ export const subscribeToUsers = (callback: (users: any[]) => void): (() => void)
 import { performanceMonitor } from './performance-monitor'
 
 export const subscribeToPlayers = (
-  callback: (players: Player[]) => void,
-  onError?: (error: Error) => void,
-  storeId?: string | null,
+  storeIdOrCallback: string | ((players: Player[]) => void),
+  callbackOrOnError?: ((players: Player[]) => void) | ((error: Error) => void),
+  storeIdOrUndefined?: string | null,
 ): (() => void) => {
+  // オーバーロード対応: 新しいシグネチャ (storeId, callback) と古いシグネチャ (callback, onError?, storeId?) の両方に対応
+  let actualStoreId: string | null = null
+  let actualCallback: (players: Player[]) => void
+  let actualOnError: ((error: Error) => void) | undefined
+
+  if (typeof storeIdOrCallback === "string") {
+    // 新しいシグネチャ: subscribeToPlayers(storeId, callback)
+    actualStoreId = storeIdOrCallback
+    actualCallback = callbackOrOnError as (players: Player[]) => void
+  } else {
+    // 古いシグネチャ: subscribeToPlayers(callback, onError?, storeId?)
+    actualCallback = storeIdOrCallback
+    actualOnError = callbackOrOnError as ((error: Error) => void) | undefined
+    actualStoreId = storeIdOrUndefined || null
+  }
+
   if (!isFirebaseConfigured) {
-    callback(mockPlayers)
+    if (actualStoreId) {
+      actualCallback(mockPlayers.filter((p) => p.storeId === actualStoreId))
+    } else {
+      actualCallback(mockPlayers)
+    }
     return () => {}
   }
 
   const playersCollection = getPlayersCollection()
   let q = query(playersCollection, orderBy("name"))
 
-  if (storeId) {
-    q = query(playersCollection, where("storeId", "==", storeId), orderBy("name"))
+  if (actualStoreId) {
+    q = query(playersCollection, where("storeId", "==", actualStoreId), orderBy("name"))
   }
 
   return onSnapshot(
     q,
     (snapshot) => {
-      // データマッピングのパフォーマンスを計測
-      const players = performanceMonitor.measure(
-        'Firestore: Map player documents',
-        () => snapshot.docs.map((doc) => {
-          const data = doc.data()
-          return {
-            id: doc.id,
-            name: data.name || "",
-            pokerName: data.pokerName || "",
-            email: data.email || "",
-            storeId: data.storeId || "",
-            totalBuyin: data.totalBuyin || 0,
-            totalProfit: data.totalProfit || 0,
-            totalGames: data.totalGames || 0,
-            rewardPoints: data.rewardPoints || 0,
-            totalCPEarned: data.totalCPEarned || 0,
-            membershipRank: data.membershipRank || "bronze",
-            lastGameDate: data.lastGameDate?.toDate() || null,
-            createdAt: data.createdAt?.toDate() || new Date(),
-            updatedAt: data.updatedAt?.toDate() || new Date(),
-            isArchived: data.isArchived || false,
-          } as Player
-        })
-      )
-      callback(players)
+      const players = snapshot.docs.map((doc) => {
+        const data = doc.data()
+        return {
+          id: doc.id,
+          name: data.name || "",
+          pokerName: data.pokerName || "",
+          email: data.email || "",
+          storeId: data.storeId || "",
+          totalBuyin: data.totalBuyin || 0,
+          totalProfit: data.totalProfit || 0,
+          totalGames: data.totalGames || 0,
+          rewardPoints: data.rewardPoints || 0,
+          totalCPEarned: data.totalCPEarned || 0,
+          membershipRank: data.membershipRank || "bronze",
+          lastGameDate: data.lastGameDate?.toDate() || null,
+          createdAt: data.createdAt?.toDate() || new Date(),
+          updatedAt: data.updatedAt?.toDate() || new Date(),
+          isArchived: data.isArchived || false,
+        } as Player
+      })
+      actualCallback(players)
     },
     (error) => {
       console.error("Error fetching players:", error)
-      if (onError) {
-        onError(error)
+      if (actualOnError) {
+        actualOnError(error)
       }
     },
   )

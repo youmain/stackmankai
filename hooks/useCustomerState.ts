@@ -11,6 +11,7 @@ import {
   CustomerAccount,
   RakeHistory,
 } from "@/types"
+import { subscribeToPlayers } from "@/lib/firestore"
 
 interface DataLoadedState {
   customers: boolean
@@ -50,6 +51,31 @@ export const useCustomerState = () => {
     monthlyPoints: false,
     storeSettings: false,
   })
+
+  // --- 7. Data Subscription Effects ---
+  useEffect(() => {
+    if (!customerAccount?.storeId) {
+      setPlayers([])
+      setDataLoaded((prev) => ({ ...prev, players: true }))
+      return
+    }
+
+    const unsubscribe = subscribeToPlayers(customerAccount.storeId, (newPlayers) => {
+      setPlayers(newPlayers)
+      setDataLoaded((prev) => ({ ...prev, players: true }))
+      setIsLoading(
+        !(
+          prev.customers &&
+          true && // players is handled here
+          prev.dailyRankings &&
+          prev.monthlyPoints &&
+          prev.storeSettings
+        ),
+      )
+    })
+
+    return () => unsubscribe
+  }, [customerAccount?.storeId])
 
   // --- 4. Player Linking/Modal State ---
   const [isDetailedDataModalOpen, setIsDetailedDataModalOpen] = useState(false)

@@ -54,7 +54,10 @@ export const useCustomerLogic = ({
         // 2. Firestore IDで照合
         player.id === customerAccount?.playerId,
 
-        // 3. 名前で照合（フォールバック）
+        // 3. Firebase UIDで照合 (認証情報との紐づけ)
+        player.firebaseUid === customerAccount?.playerId,
+
+        // 4. 名前で照合（フォールバック）
         player.name === customerAccount?.playerName,
         player.pokerName === customerAccount?.playerName,
       ]
