@@ -484,6 +484,23 @@ export function ChatRoomDualMode() {
     }
   }
 
+  const handleDeleteGame = async () => {
+    if (!customerAccount || !pokerGameId) return
+
+    if (!confirm("ゲームを削除しますか？")) return
+
+    try {
+      await deletePokerGame(customerAccount.storeId, pokerGameId)
+      setPokerGameId(null)
+      setPokerGame(null)
+      const storageKey = `pokerGameId_${customerAccount.storeId}`
+      localStorage.removeItem(storageKey)
+    } catch (err) {
+      console.error("Error deleting game:", err)
+      setError(err instanceof Error ? err.message : "ゲームを削除できませんでした")
+    }
+  }
+
   const handleResetGame = async () => {
     if (!customerAccount || !pokerGameId) return
 
