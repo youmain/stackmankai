@@ -65,11 +65,11 @@ export const useCustomerState = () => {
       setDataLoaded((prev) => ({ ...prev, players: true }))
       setIsLoading(
         !(
-          prev.customers &&
+          dataLoaded.customers &&
           true && // players is handled here
-          prev.dailyRankings &&
-          prev.monthlyPoints &&
-          prev.storeSettings
+          dataLoaded.dailyRankings &&
+          dataLoaded.monthlyPoints &&
+          dataLoaded.storeSettings
         ),
       )
     })
