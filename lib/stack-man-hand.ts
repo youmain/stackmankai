@@ -275,8 +275,16 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
       })
     ];
 
-    // 両方の更新を待機してから成功を返す
-    await Promise.all(updatePromises);
+    // 両方の更新を待機してから成功を返す（タイムアウト付き）
+    try {
+      await Promise.race([
+        Promise.all(updatePromises),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Update timeout')), 10000))
+      ]);
+    } catch (error) {
+      console.warn("[Purchase] Update timeout or error, but continuing:", error);
+      // タイムアウトまたはエラーが発生した場合も続行
+    }
 
     // プレイ用スタック (systemBalance) には影響を与えない
     console.log("[Purchase] All balance updates completed. Returning success.");
