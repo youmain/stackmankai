@@ -110,11 +110,12 @@ export default function StackManHandPurchasePage() {
 
             // calculateRemainingPurchases を呼び出す
             try {
-              const purchaseInfo = await calculateRemainingPurchases(storeId, playerId, stack);
+              const todayHands = await getTodayStackManHands(storeId, playerId);
+              const remaining = Math.max(0, storeSettings.maxPurchasesPerDay - todayHands.length);
               if (isMounted.current) {
-                setMaxPurchases(purchaseInfo.maxPurchases);
-                setPurchasedToday(purchaseInfo.purchasedToday);
-                setRemainingPurchases(purchaseInfo.remaining);
+                setMaxPurchases(storeSettings.maxPurchasesPerDay);
+                setPurchasedToday(todayHands.length);
+                setRemainingPurchases(remaining);
               }
             } catch (e) {
               console.error("Error calculating remaining purchases:", e);
