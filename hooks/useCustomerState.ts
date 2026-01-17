@@ -62,16 +62,20 @@ export const useCustomerState = () => {
 
     const unsubscribe = subscribeToPlayers(customerAccount.storeId, (newPlayers) => {
       setPlayers(newPlayers)
-      setDataLoaded((prev) => ({ ...prev, players: true }))
-      setIsLoading(
-        !(
-          dataLoaded.customers &&
-          true && // players is handled here
-          dataLoaded.dailyRankings &&
-          dataLoaded.monthlyPoints &&
-          dataLoaded.storeSettings
-        ),
-      )
+      setDataLoaded((prev) => {
+        const newState = { ...prev, players: true }
+        // 状態更新関数の中でisLoadingを判定することで、最新のdataLoadedを参照しつつ無限ループを防ぐ
+        setIsLoading(
+          !(
+            newState.customers &&
+            newState.players &&
+            newState.dailyRankings &&
+            newState.monthlyPoints &&
+            newState.storeSettings
+          ),
+        )
+        return newState
+      })
     })
 
     return () => unsubscribe
