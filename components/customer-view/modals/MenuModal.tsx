@@ -7,18 +7,18 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
 import {
-  BarChart3,
+  Home,
   Trophy,
+  BarChart3,
+  RefreshCw,
+  User,
+  MessageCircle,
+  Gift,
   FileText,
   History,
-  Bot,
-  RefreshCw,
-  AlertCircle,
   AlertTriangle,
-  Gift,
-  MessageCircle,
   LogOut,
-  User,
+  AlertCircle,
 } from 'lucide-react'
 import type { CustomerAccount, Player } from '@/types'
 
@@ -68,7 +68,16 @@ const MenuModal = memo(function MenuModal({
     handleClose()
   }
 
-  const handleRankingClick = () => {
+  const handleDashboard = () => {
+    handleViewModeChange('main')
+    // ページ内のランキングセクションにスクロール
+    const rankingSection = document.querySelector('[data-ranking-section]')
+    if (rankingSection) {
+      rankingSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
+
+  const handlePokerRanking = () => {
     handleViewModeChange('main')
     // ページ内のランキングセクションにスクロール
     const rankingSection = document.querySelector('[data-ranking-section]')
@@ -126,130 +135,142 @@ const MenuModal = memo(function MenuModal({
                 {linkedPlayer && <p>紐づけプレイヤー: {getDisplayName(linkedPlayer)}</p>}
               </div>
 
-              <div className="space-y-2">
-                {customerAccount && customerAccount.playerId && linkedPlayer ? (
-                  <>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start text-base py-3"
-                      onClick={handleDetailedData}
-                    >
-                      <BarChart3 className="h-5 w-5 mr-3" />
-                      詳細データを見る
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start text-base py-3"
-                      onClick={handleRankingClick}
-                    >
-                      <Trophy className="h-5 w-5 mr-3" />
-                      ポーカーランキング
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start text-base py-3"
-                      onClick={() => handleViewModeChange('posts')}
-                    >
-                      <FileText className="h-5 w-5 mr-3" />
-                      ハンド記録を見る
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start text-base py-3"
-                      onClick={() => handleViewModeChange('my-posts')}
-                    >
-                      <History className="h-5 w-5 mr-3" />
-                      自分の投稿履歴
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start text-base py-3"
-                      onClick={() => handleViewModeChange('ai-players')}
-                    >
-                      <Bot className="h-5 w-5 mr-3" />
-                      AIポーカープレイヤー紹介
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start text-base py-3 text-orange-600 hover:text-orange-700 hover:bg-orange-50"
-                      onClick={handleResetClick}
-                    >
-                      <RefreshCw className="h-5 w-5 mr-3" />
-                      統計データをリセット
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start text-base py-3"
-                      onClick={handlePlayerIdChangeClick}
-                    >
-                      <RefreshCw className="h-5 w-5 mr-3" />
-                      プレイヤーID変更
-                    </Button>
-                  </>
-                ) : (
-                  <div className="space-y-2">
-                    <Alert className="border-orange-200 bg-orange-50">
-                      <AlertCircle className="h-4 w-4" />
-                      <AlertDescription className="text-orange-800 text-sm">
-                        プレイヤー情報が紐づけられていません。
-                        {customerAccount && customerAccount.playerId && 'プレイヤーが見つからない可能性があります。'}
-                      </AlertDescription>
-                    </Alert>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-start text-base py-3 bg-transparent"
-                      onClick={handlePlayerLinking}
-                    >
-                      <User className="h-5 w-5 mr-3" />
-                      プレイヤー情報を紐づける
-                    </Button>
-                  </div>
-                )}
-              </div>
+              {/* linkedPlayerが存在する場合のみ、11項目のメニューを表示 */}
+              {linkedPlayer ? (
+                <div className="space-y-2">
+                  {/* 1. ダッシュボード */}
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-base py-3"
+                    onClick={handleDashboard}
+                  >
+                    <Home className="h-5 w-5 mr-3" />
+                    ダッシュボード
+                  </Button>
+
+                  {/* 2. ポーカーランキング */}
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-base py-3"
+                    onClick={handlePokerRanking}
+                  >
+                    <Trophy className="h-5 w-5 mr-3" />
+                    ポーカーランキング
+                  </Button>
+
+                  {/* 3. 詳細データを見る */}
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-base py-3"
+                    onClick={handleDetailedData}
+                  >
+                    <BarChart3 className="h-5 w-5 mr-3" />
+                    詳細データを見る
+                  </Button>
+
+                  {/* 4. 統計データをリセット */}
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-base py-3 text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                    onClick={handleResetClick}
+                  >
+                    <RefreshCw className="h-5 w-5 mr-3" />
+                    統計データをリセット
+                  </Button>
+
+                  {/* 5. プレイヤーID変更 */}
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-base py-3"
+                    onClick={handlePlayerIdChangeClick}
+                  >
+                    <User className="h-5 w-5 mr-3" />
+                    プレイヤーID変更
+                  </Button>
+
+                  {/* 6. チャット */}
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-base py-3"
+                    onClick={() => handleViewModeChange('chat')}
+                  >
+                    <MessageCircle className="h-5 w-5 mr-3" />
+                    チャット
+                  </Button>
+
+                  {/* 7. Stack Man Hand購入 */}
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-base py-3"
+                    onClick={handleStackManHandPurchase}
+                  >
+                    <Gift className="h-5 w-5 mr-3" />
+                    Stack Man Hand購入
+                  </Button>
+
+                  {/* 8. ハンド記録を見る */}
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-base py-3"
+                    onClick={() => handleViewModeChange('posts')}
+                  >
+                    <FileText className="h-5 w-5 mr-3" />
+                    ハンド記録を見る
+                  </Button>
+
+                  {/* 9. 自分の投稿履歴 */}
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-base py-3"
+                    onClick={() => handleViewModeChange('my-posts')}
+                  >
+                    <History className="h-5 w-5 mr-3" />
+                    自分の投稿履歴
+                  </Button>
+
+                  {/* 10. スタックマン解約 */}
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start text-orange-600 hover:text-orange-700 hover:bg-orange-50 bg-transparent"
+                    onClick={handleAccountCancellation}
+                  >
+                    <AlertTriangle className="mr-2 h-4 w-4" />
+                    スタックマン解約
+                  </Button>
+
+                  {/* 11. ログアウト */}
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 bg-transparent"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    ログアウト
+                  </Button>
+                </div>
+              ) : (
+                // linkedPlayerが存在しない場合は、プレイヤー情報紐付けのメッセージのみ表示
+                <div className="space-y-2">
+                  <Alert className="border-orange-200 bg-orange-50">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription className="text-orange-800 text-sm">
+                      プレイヤー情報が紐づけられていません。
+                      {customerAccount && customerAccount.playerId && 'プレイヤーが見つからない可能性があります。'}
+                    </AlertDescription>
+                  </Alert>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start text-base py-3 bg-transparent"
+                    onClick={handlePlayerLinking}
+                  >
+                    <User className="h-5 w-5 mr-3" />
+                    プレイヤー情報を紐づける
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </div>
-        <Separator />
-
-        <Button
-          variant="ghost"
-          className="w-full justify-start text-base py-3"
-          onClick={() => handleViewModeChange('chat')}
-        >
-          <MessageCircle className="h-5 w-5 mr-3" />
-          チャット
-        </Button>
-
-        <Separator />
-
-        <Button
-          variant="ghost"
-          className="w-full justify-start text-base py-3"
-          onClick={handleStackManHandPurchase}
-        >
-          <Gift className="h-5 w-5 mr-3" />
-          Stack Man Hand購入
-        </Button>
-
-        <Separator />
-
-        <Button
-          variant="outline"
-          className="w-full justify-start text-orange-600 hover:text-orange-700 hover:bg-orange-50 bg-transparent"
-          onClick={handleAccountCancellation}
-        >
-          <AlertTriangle className="mr-2 h-4 w-4" />
-          スタックマン解約
-        </Button>
-
-        <Button
-          variant="outline"
-          className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 bg-transparent"
-          onClick={handleLogout}
-        >
-          <LogOut className="mr-2 h-4 w-4" />
-          ログアウト
-        </Button>
       </SheetContent>
     </Sheet>
   )
