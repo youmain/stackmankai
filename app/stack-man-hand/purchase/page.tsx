@@ -165,10 +165,7 @@ export default function StackManHandPurchasePage() {
           setCurrentStack(result.updatedPlayer.stapokaBalance);
         }
         
-        // 履歴を非同期で更新（awaitしない）
-        if (isMounted.current) {
-          fetchTodayHands(customerAccount.storeId, customerAccount.id).catch(e => console.error("Error fetching hands:", e));
-        }
+        // 履歴の更新は削除（ページ遷移時に自動的に更新される）
       } else {
         // エラーメッセージを表示
         if (isMounted.current) {
