@@ -1,8 +1,8 @@
-"use client"
+'use client'
 
 import { useEffect, useState, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { doc, getDoc, collection, query, where, getDocs, onSnapshot } from "firebase/firestore"
+import { doc, getDoc } from "firebase/firestore"
 import { getDb } from "@/lib/firebase"
 import { useAuth } from "@/contexts/auth-context"
 import { getStackManHandSettings, purchaseStackManHand, getTodayStackManHands, calculateRemainingPurchases } from "@/lib/stack-man-hand"
@@ -19,6 +19,7 @@ export default function StackManHandPurchasePage() {
   const [purchasing, setPurchasing] = useState(false)
   const [pageError, setPageError] = useState<string | null>(null)
   const [handsError, setHandsError] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [settings, setSettings] = useState<StackManHandSettings | null>(null)
   const [todayHands, setTodayHands] = useState<StackManHand[]>([])
   const [currentStack, setCurrentStack] = useState(0)
@@ -59,8 +60,6 @@ export default function StackManHandPurchasePage() {
   };
 
   useEffect(() => {
-    let unsubscribePlayer: (() => void) | null = null;
-
     const loadData = async () => {
       if (authLoading) return;
       if (!customerAccount) return;
@@ -90,38 +89,37 @@ export default function StackManHandPurchasePage() {
           }
         }
 
-        // プレイヤー情報のリアルタイム購読
-        if (customerAccount && customerAccount.id) {
-          const playerDocRef = doc(db, "players", playerId);
-          unsubscribePlayer = onSnapshot(playerDocRef, async (docSnap) => {
-            if (docSnap.exists()) {
-              const playerData = docSnap.data();
-              const stack = playerData.stapokaBalance ?? 0;
+        // プレイヤー情報を初期読み込み時のみ取得（onSnapshot は使用しない）
+        const playerDocRef = doc(db, "players", playerId);
+        const playerDocSnap = await getDoc(playerDocRef);
+        if (playerDocSnap.exists()) {
+          const playerData = playerDocSnap.data();
+          const stack = playerData.stapokaBalance ?? 0;
 
+          if (isMounted.current) {
+            setCustomerAccount(prev => {
+              if (!prev) return null;
+              return {
+                ...prev,
+                stapokaBalance: stack,
+                systemBalance: playerData.systemBalance,
+              };
+            });
+            setCurrentStack(stack);
+            setPlayerName(playerData.name || customerAccount.playerName || "");
+
+            // calculateRemainingPurchases を呼び出す
+            try {
+              const purchaseInfo = await calculateRemainingPurchases(storeId, playerId, stack);
               if (isMounted.current) {
-                setCustomerAccount(prev => {
-                  if (!prev) return null;
-                  return {
-                    ...prev,
-                    stapokaBalance: stack,
-                    systemBalance: playerData.systemBalance,
-                  };
-                });
-                setCurrentStack(stack);
-                setPlayerName(playerData.name || customerAccount.playerName || "");
-
-                calculateRemainingPurchases(storeId, docSnap.id, stack)
-                  .then(purchaseInfo => {
-                    if (isMounted.current) {
-                      setMaxPurchases(purchaseInfo.maxPurchases);
-                      setPurchasedToday(purchaseInfo.purchasesToday);
-                      setRemainingPurchases(purchaseInfo.remaining);
-                    }
-                  })
-                  .catch(e => console.error("Error calculating remaining purchases:", e));
+                setMaxPurchases(purchaseInfo.maxPurchases);
+                setPurchasedToday(purchaseInfo.purchasedToday);
+                setRemainingPurchases(purchaseInfo.remaining);
               }
+            } catch (e) {
+              console.error("Error calculating remaining purchases:", e);
             }
-          });
+          }
         }
 
         const { cleanupStackManHands } = await import("@/lib/stack-man-hand");
@@ -137,22 +135,22 @@ export default function StackManHandPurchasePage() {
     };
 
     loadData();
-    return () => {
-      if (unsubscribePlayer) unsubscribePlayer();
-    };
-  }, [authLoading, customerAccount, router]);
+  }, [authLoading, customerAccount, router, setCustomerAccount]);
 
   const handlePurchase = async () => {
     if (!settings || !customerAccount || purchasing) return
 
     setPurchasing(true)
     setPageError(null)
+    setSuccessMessage(null)
 
     try {
       const result = await purchaseStackManHand(customerAccount.storeId, customerAccount.playerId, customerAccount.playerName || playerName, customerAccount.id)
       if (result.success) {
-        // 購入成功時は alert を表示
-        alert(`Stack Man Handを${settings.purchasePrice}💰で購入しました！`);
+        // 購入成功時はメッセージを表示（alert は使用しない）
+        if (isMounted.current) {
+          setSuccessMessage(`Stack Man Handを${settings.purchasePrice}💰で購入しました！`);
+        }
         
         // プレイヤー情報を更新
         if (result.updatedPlayer && isMounted.current) {
@@ -184,116 +182,149 @@ export default function StackManHandPurchasePage() {
       }
     } finally {
       // finally ブロックで必ず setPurchasing(false) を実行
-      // isMounted チェックは不要（状態更新は常に実行する）
       setPurchasing(false);
     }
   }
 
   if (authLoading || loading) {
-    return <div className="container mx-auto p-4">読み込み中...</div>
-  }
-
-  if (authError) {
-    return <div className="container mx-auto p-4 text-red-500">認証エラー: {authError.message}</div>
-  }
-
-  if (!customerAccount) {
-    return <div className="container mx-auto p-4 text-red-500">顧客アカウント情報が見つかりません。</div>
-  }
-
-  if (pageError) {
     return (
-      <div className="container mx-auto p-4">
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>エラー</AlertTitle>
-          <AlertDescription>{pageError}</AlertDescription>
-        </Alert>
-        <button 
-          onClick={() => window.location.reload()} 
-          className="mt-4 bg-gray-500 text-white px-4 py-2 rounded"
-        >
-          再試行
-        </button>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p>読み込み中...</p>
+        </div>
       </div>
     )
   }
 
-  const isPurchaseButtonDisabled = purchasing || remainingPurchases <= 0 || (currentStack - minimumStack) < (settings?.purchasePrice || 0)
+  if (authError || pageError) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+        <div className="max-w-2xl mx-auto">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>エラー</AlertTitle>
+            <AlertDescription>{authError || pageError}</AlertDescription>
+          </Alert>
+        </div>
+      </div>
+    )
+  }
+
+  if (!settings || !customerAccount) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+        <div className="max-w-2xl mx-auto">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>エラー</AlertTitle>
+            <AlertDescription>設定またはアカウント情報が見つかりません</AlertDescription>
+          </Alert>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Stack Man Hand 購入</h1>
-      <div className="bg-white shadow rounded-lg p-6 mb-6">
-        <p className="mb-2"><strong>店舗:</strong> {storeName}</p>
-        <p className="mb-2"><strong>プレイヤー:</strong> {playerName}</p>
-        <p className="mb-2"><strong>スタポカ貯スタック:</strong> {currentStack.toLocaleString()}💰</p>
-        <p className="mb-2"><strong>最低保証額:</strong> {minimumStack.toLocaleString()}💰</p>
-        <p className="mb-2"><strong>購入可能回数:</strong> {remainingPurchases}回 / 最大{maxPurchases}回 (本日{purchasedToday}回購入済み)</p>
-        <p className="mb-4"><strong>購入価格:</strong> {settings?.purchasePrice.toLocaleString()}💰</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">Stack Man Hand 購入</h1>
 
-        <button
-          onClick={handlePurchase}
-          disabled={isPurchaseButtonDisabled}
-          className={`w-full py-3 rounded-lg font-bold text-white transition-colors ${
-            isPurchaseButtonDisabled 
-              ? 'bg-gray-400 cursor-not-allowed' 
-              : 'bg-blue-600 hover:bg-blue-700'
-          }`}
-        >
-          {purchasing ? '処理中...' : 'Stack Man Handを購入'}
-        </button>
-        
-        {currentStack - minimumStack < (settings?.purchasePrice || 0) && (
-          <p className="text-red-500 text-sm mt-2">
-            ※最低保証額を差し引いた残高が不足しているため購入できません。
-          </p>
-        )}
-      </div>
-
-      <h2 className="text-xl font-bold mt-8 mb-4">本日のStack Man Hand履歴</h2>
-      {handsError && (
-        <Alert variant="destructive" className="mb-4">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>注意</AlertTitle>
-          <AlertDescription>{handsError}</AlertDescription>
-        </Alert>
-      )}
-      {todayHands.length === 0 ? (
-        <p className="text-gray-500">本日の購入履歴はありません。</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {todayHands.map((hand) => (
-            <div key={hand.id} className="bg-white border p-4 rounded-lg shadow-sm">
-              <div className="flex justify-between items-start mb-2">
-
-                <span className="text-xs text-gray-500">
-                  {hand.purchasedAt ? new Date(hand.purchasedAt).toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' }) + ' ' + new Date(hand.purchasedAt).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '不明'}
-                </span>
-              </div>
-
-
-              <div className="flex space-x-2 mb-3">
-                {hand.cards.map((card, index) => (
-                  <PlayingCard key={index} card={card as any} faceDown={false} />
-                ))}
-              </div>
-              <div className="border-t pt-2 mt-2 text-sm">
-                <p>倍率: x{hand.multiplier}</p>
-                <p className="font-bold text-blue-600">獲得報酬: {hand.finalReward.toLocaleString()}💰</p>
-              </div>
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+          <div className="space-y-3 mb-6">
+            <div className="flex justify-between">
+              <span className="text-gray-600">店舗:</span>
+              <span className="font-semibold">{storeName}</span>
             </div>
-          ))}
+            <div className="flex justify-between">
+              <span className="text-gray-600">プレイヤー:</span>
+              <span className="font-semibold">{playerName}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">スタポカ貯スタック:</span>
+              <span className="font-semibold text-blue-600">{currentStack.toLocaleString()}💰</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">最低保証額:</span>
+              <span className="font-semibold">{minimumStack.toLocaleString()}💰</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">購入可能回数:</span>
+              <span className="font-semibold">{remainingPurchases}回 / 最大{maxPurchases}回 (本日{purchasedToday}回購入済み)</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">購入価格:</span>
+              <span className="font-semibold text-red-600">{settings.purchasePrice.toLocaleString()}💰</span>
+            </div>
+          </div>
+
+          {successMessage && (
+            <Alert className="mb-4 bg-green-50 border-green-200">
+              <AlertCircle className="h-4 w-4 text-green-600" />
+              <AlertTitle className="text-green-800">成功</AlertTitle>
+              <AlertDescription className="text-green-700">{successMessage}</AlertDescription>
+            </Alert>
+          )}
+
+          <button
+            onClick={handlePurchase}
+            disabled={purchasing || remainingPurchases === 0 || currentStack < minimumStack + settings.purchasePrice}
+            className={`w-full py-3 px-4 rounded-lg font-semibold text-white transition-colors ${
+              purchasing
+                ? "bg-gray-400 cursor-not-allowed"
+                : remainingPurchases === 0 || currentStack < minimumStack + settings.purchasePrice
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700 active:bg-blue-800"
+            }`}
+          >
+            {purchasing ? "処理中..." : "Stack Man Handを購入"}
+          </button>
         </div>
-      )}
-      
-      <div className="mt-8">
-        <button 
-          onClick={() => router.push('/customer-view')}
-          className="text-blue-600 hover:underline"
-        >
-          ← 戻る
-        </button>
+
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <h2 className="text-xl font-bold mb-4 text-gray-800">本日のStack Man Hand履歴</h2>
+          
+          {handsError && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>警告</AlertTitle>
+              <AlertDescription>{handsError}</AlertDescription>
+            </Alert>
+          )}
+
+          {todayHands.length === 0 ? (
+            <p className="text-gray-500 text-center py-8">本日の購入履歴はありません。</p>
+          ) : (
+            <div className="space-y-4">
+              {todayHands.map((hand) => (
+                <div key={hand.id} className="border border-gray-200 rounded-lg p-4">
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="text-sm text-gray-500">
+                      {new Date(hand.purchasedAt).toLocaleString('ja-JP')}
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-center gap-2 mb-3">
+                    {hand.cards && hand.cards.map((card, idx) => (
+                      <PlayingCard key={idx} suit={card.suit} rank={card.rank} />
+                    ))}
+                  </div>
+
+                  <div className="flex justify-between text-sm">
+                    <div>
+                      <span className="text-gray-600">倍率: </span>
+                      <span className="font-semibold">x{hand.multiplier}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">獲得報酬: </span>
+                      <span className="font-semibold text-green-600">{hand.finalReward.toLocaleString()}💰</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
