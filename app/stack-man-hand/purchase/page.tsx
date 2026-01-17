@@ -18,6 +18,7 @@ export default function StackManHandPurchasePage() {
   const [loading, setLoading] = useState(true)
   const [purchasing, setPurchasing] = useState(false)
   const [pageError, setPageError] = useState<string | null>(null)
+  const [handsError, setHandsError] = useState<string | null>(null)
   const [settings, setSettings] = useState<StackManHandSettings | null>(null)
   const [todayHands, setTodayHands] = useState<StackManHand[]>([])
   const [currentStack, setCurrentStack] = useState(0)
@@ -39,6 +40,7 @@ export default function StackManHandPurchasePage() {
   // Stack Man Hand履歴をフェッチする関数
   const fetchTodayHands = async (storeId: string, customerAccountId: string) => {
     try {
+      setHandsError(null);
       const hands = await getTodayStackManHands(storeId, customerAccountId);
       if (isMounted.current) {
         setTodayHands(hands.map(hand => ({
@@ -50,7 +52,8 @@ export default function StackManHandPurchasePage() {
     } catch (error) {
       console.error("Error fetching today's Stack Man Hands:", error);
       if (isMounted.current) {
-        setPageError(`履歴の読み込みに失敗しました。`);
+        // ページ全体のエラーではなく、履歴読み込みのエラーとして扱う
+        setHandsError(`履歴の読み込みに失敗しました。`);
       }
     }
   };
@@ -148,7 +151,10 @@ export default function StackManHandPurchasePage() {
     try {
       const result = await purchaseStackManHand(customerAccount.storeId, customerAccount.playerId, customerAccount.playerName || playerName, customerAccount.id)
       if (result.success) {
+        // 購入成功時は alert を表示
         alert(`Stack Man Handを${settings.purchasePrice}💰で購入しました！`);
+        
+        // プレイヤー情報を更新
         if (result.updatedPlayer && isMounted.current) {
           setCustomerAccount(prev => {
             if (!prev) return null;
@@ -160,7 +166,8 @@ export default function StackManHandPurchasePage() {
           });
           setCurrentStack(result.updatedPlayer.stapokaBalance);
         }
-        // fetchTodayHandsを非同期で実行（awaitしない）
+        
+        // 履歴を非同期で更新（awaitしない）
         if (isMounted.current) {
           fetchTodayHands(customerAccount.storeId, customerAccount.id).catch(e => console.error("Error fetching hands:", e));
         }
@@ -176,9 +183,9 @@ export default function StackManHandPurchasePage() {
         setPageError(`購入処理中にエラーが発生しました: ${error instanceof Error ? error.message : String(error)}`);
       }
     } finally {
-      if (isMounted.current) {
-        setPurchasing(false);
-      }
+      // finally ブロックで必ず setPurchasing(false) を実行
+      // isMounted チェックは不要（状態更新は常に実行する）
+      setPurchasing(false);
     }
   }
 
@@ -245,6 +252,13 @@ export default function StackManHandPurchasePage() {
       </div>
 
       <h2 className="text-xl font-bold mt-8 mb-4">本日のStack Man Hand履歴</h2>
+      {handsError && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>注意</AlertTitle>
+          <AlertDescription>{handsError}</AlertDescription>
+        </Alert>
+      )}
       {todayHands.length === 0 ? (
         <p className="text-gray-500">本日の購入履歴はありません。</p>
       ) : (
