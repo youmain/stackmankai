@@ -44,22 +44,9 @@ export default function CustomerView() {
     setCustomerAccount,
   })
 
-  const {
-    handlePaymentCompletion,
-    handlePlayerIdLink,
-    confirmPlayerLink,
-    handleStatisticsReset,
-    handleDetailedDataClick,
-    handlePlayerClick,
-    handlePlayerIdChange,
-    handlePlayerLinkClick,
-    handleSkipLinkingAfterSuccessChange,
-    handlePostClick,
-    handleBackFromPostDetail,
-    handleAccountCancellation,
-  } = useCustomerHandlers({
+  const handlers = useCustomerHandlers({
     customerAccount: state.customerAccount,
-    linkedPlayer,
+    linkedPlayer: linkedPlayer,
     playerSearchId: state.playerIdInput,
     isPlayerLinking: state.isLinking,
     isPlayerConfirmationOpen: state.showConfirmation,
@@ -73,7 +60,8 @@ export default function CustomerView() {
     skipLinkingAfterSuccess: state.skipLinkingAfterSuccess,
     currentRewardRate: state.storeSettings?.rewardRate ?? 0.1,
     storeSettings: state.storeSettings,
-    setLinkedPlayer: () => {}, // useCustomerLogic handles this now
+    players: state.players,
+    setLinkedPlayer: () => {},
     setPlayerSearchId: state.setPlayerIdInput,
     setIsPlayerLinking: state.setIsLinking,
     setIsPlayerConfirmationOpen: state.setShowConfirmation,
@@ -92,11 +80,23 @@ export default function CustomerView() {
     setOriginalPlayerData: state.setOriginalPlayerData,
     setShowPlayerIdForm: state.setShowPlayerIdForm,
     setShowPlayerLinkModal: state.setShowPlayerLinkModal,
-    router: state.router,
-    players: state.players,
-    getDisplayName,
     signOut: state.signOut,
   })
+
+  const {
+    handlePaymentCompletion,
+    handlePlayerIdLink,
+    confirmPlayerLink,
+    handleStatisticsReset,
+    handleDetailedDataClick,
+    handlePlayerClick,
+    handlePlayerIdChange,
+    handlePlayerLinkClick,
+    handleSkipLinkingAfterSuccessChange,
+    handlePostClick,
+    handleBackFromPostDetail,
+    handleAccountCancellation,
+  } = handlers
 
   return (
     <div className="min-h-screen bg-gray-50">
