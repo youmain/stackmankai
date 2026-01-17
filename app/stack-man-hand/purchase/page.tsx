@@ -152,16 +152,7 @@ export default function StackManHandPurchasePage() {
           setCurrentStack(result.updatedPlayer.stapokaBalance);
         }
         
-        // 履歴の更新（タイムアウト付き）
-        try {
-          await Promise.race([
-            fetchTodayHands(customerAccount.storeId, customerAccount.id),
-            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000))
-          ]);
-        } catch (error) {
-          // タイムアウトまたはエラーが発生した場合は、無視して続行
-          console.warn("Failed to fetch today hands:", error);
-        }
+        // 注記: 履歴の更新は、ページをリロードした時に自動的に読み込まれます
       } else {
         // エラーメッセージを表示
         setPageError(result.message || "購入に失敗しました");
