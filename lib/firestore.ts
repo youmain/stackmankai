@@ -1165,14 +1165,17 @@ export const subscribeToChatMessages = (
   })
 }
 
-export const addChatMessage = async (gameId: string, message: any): Promise<void> => {
+export const addChatMessage = async (message: string, userId: string, userName: string, gameId: string): Promise<void> => {
   if (!isFirebaseConfigured) {
-    log.info("[v0] モック環境: チャットメッセージ追加をシミュレート", { gameId, message })
+    log.info("[v0] モック環境: チャットメッセージ追加をシミュレート", { gameId, message, userId, userName })
     return
   }
   const messagesCollection = collection(getDb(), `games/${gameId}/chatMessages`)
   await addDoc(messagesCollection, {
-    ...message,
+    message,
+    userId,
+    userName,
+    type: 'user',
     createdAt: serverTimestamp(),
   })
 }
@@ -1526,8 +1529,8 @@ export const getPostById = async (postId: string): Promise<Post | null> => {
   return { id: postSnap.id, ...postSnap.data() } as Post;
 };
 
-export const sendChatMessage = async (gameId: string, message: any): Promise<void> => {
-  return addChatMessage(gameId, message);
+export const sendChatMessage = async (message: string, userId: string, userName: string, gameId: string): Promise<void> => {
+  return addChatMessage(message, userId, userName, gameId);
 };
 
 export const createReceipt = async (receipt: Omit<Receipt, "id">): Promise<string> => {
