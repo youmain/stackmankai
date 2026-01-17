@@ -174,7 +174,10 @@ export default function StackManHandPurchasePage() {
       setPageError(`購入処理中にエラーが発生しました: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       // finally ブロックで必ず setPurchasing(false) を実行
-      setPurchasing(false);
+      // setTimeout を使用して、状态更新を確実に実行する
+      setTimeout(() => {
+        setPurchasing(false);
+      }, 0);
     }
   }
 
