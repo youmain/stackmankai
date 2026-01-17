@@ -232,23 +232,46 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
   }
     
     console.log("[Purchase] Attempting to add new Stack Man Hand to Firestore.");
-    const handDocRef = await addDoc(handsRef, handData);
-    console.log("[Purchase] Stack Man Hand added successfully with ID:", handDocRef.id);
+    let handDocRef;
+    try {
+      handDocRef = await addDoc(handsRef, handData);
+      console.log("[Purchase] Stack Man Hand added successfully with ID:", handDocRef.id);
+    } catch (addError: any) {
+      console.error("[Purchase] Error adding Stack Man Hand:", addError);
+      // addDocが失敗した場合、ここで即座にエラーを返す
+      if (addError?.code === 'resource-exhausted') {
+        return { 
+          success: false, 
+          message: "Firestoreの読み取り制限に達しました。\n\n午前9時（日本時間）にリセットされます。\nしばらく待ってから再度お試しください。" 
+        };
+      }
+      throw addError; // 他のエラーは外側のcatchで処理
+    }
     
     // スタポカ貯スタック (stapokaBalance) を減算
     const newStapokaBalance = currentStapokaBalance - settings.purchasePrice;
 
     // 1. プレイヤーのドキュメントを更新 (stapokaBalance)
-    await updateDoc(playerDocRef, {
-      stapokaBalance: newStapokaBalance,
-      updatedAt: serverTimestamp(),
-    });
+    try {
+      await updateDoc(playerDocRef, {
+        stapokaBalance: newStapokaBalance,
+        updatedAt: serverTimestamp(),
+      });
+    } catch (updateError: any) {
+      console.error("[Purchase] Error updating player document:", updateError);
+      // プレイヤー更新失敗時も、顧客アカウント更新を試みる
+    }
 
     // 2. 顧客アカウントのドキュメントを更新 (stapokaBalance)
-    await updateDoc(customerAccountRef, {
-      stapokaBalance: newStapokaBalance,
-      updatedAt: serverTimestamp(),
-    });
+    try {
+      await updateDoc(customerAccountRef, {
+        stapokaBalance: newStapokaBalance,
+        updatedAt: serverTimestamp(),
+      });
+    } catch (updateError: any) {
+      console.error("[Purchase] Error updating customer account document:", updateError);
+      // 顧客アカウント更新失敗時も、成功として返す（ハンドは作成されているため）
+    }
 
     // プレイ用スタック (systemBalance) には影響を与えない
     console.log("[Purchase] All balance updates completed. Returning success.");

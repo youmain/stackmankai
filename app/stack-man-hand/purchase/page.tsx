@@ -165,7 +165,10 @@ export default function StackManHandPurchasePage() {
           fetchTodayHands(customerAccount.storeId, customerAccount.id).catch(e => console.error("Error fetching hands:", e));
         }
       } else {
-        if (isMounted.current) setPageError(result.message);
+        if (isMounted.current) {
+          setPageError(result.message);
+          setPurchasing(false);
+        }
       }
     } catch (error) {
       if (isMounted.current) setPageError(`購入処理中にエラーが発生しました: ${error instanceof Error ? error.message : String(error)}`)
