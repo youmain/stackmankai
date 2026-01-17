@@ -108,7 +108,7 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
 
     // すべてのチェックをパス
     setIsAuthorized(true)
-  }, [user, loading, allowedRoles, router, pathname])
+  }, [user, loading, allowedRoles, pathname])
 
   // 読み込み中または未承認の場合は何も表示しない（またはローディングスピナー）
   if (loading || !isAuthorized) {

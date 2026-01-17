@@ -38,7 +38,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
               variant="outline"
               type="button"
               size="sm"
-              onClick={() => { console.log("[CustomerHeader] Menu button clicked."); setIsMenuOpen(true); }}
+              onClick={() => setIsMenuOpen(true)}
               className="flex items-center space-x-2"
             >
               <Menu className="h-4 w-4" />
