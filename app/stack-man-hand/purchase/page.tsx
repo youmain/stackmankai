@@ -111,9 +111,10 @@ export default function StackManHandPurchasePage() {
             // calculateRemainingPurchases を呼び出す
             try {
               const todayHands = await getTodayStackManHands(storeId, playerId);
-              const remaining = Math.max(0, storeSettings.maxPurchasesPerDay - todayHands.length);
+              const maxPurchasesPerDay = 25; // 最大購入回数
+              const remaining = Math.max(0, maxPurchasesPerDay - todayHands.length);
               if (isMounted.current) {
-                setMaxPurchases(storeSettings.maxPurchasesPerDay);
+                setMaxPurchases(maxPurchasesPerDay);
                 setPurchasedToday(todayHands.length);
                 setRemainingPurchases(remaining);
               }
