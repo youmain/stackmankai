@@ -149,31 +149,36 @@ export default function StackManHandPurchasePage() {
       const result = await purchaseStackManHand(customerAccount.storeId, customerAccount.playerId, customerAccount.playerName || playerName, customerAccount.id)
       if (result.success) {
         alert(`Stack Man Handを${settings.purchasePrice}💰で購入しました！`);
-        if (result.updatedPlayer) {
-          if (isMounted.current) {
-            setCustomerAccount(prev => {
-              if (!prev) return null;
-              return {
-                ...prev,
-                stapokaBalance: result.updatedPlayer.stapokaBalance,
-                systemBalance: result.updatedPlayer.systemBalance,
-              };
-            });
-            setCurrentStack(result.updatedPlayer.stapokaBalance);
-            setPurchasing(false);
-          }
+        if (result.updatedPlayer && isMounted.current) {
+          setCustomerAccount(prev => {
+            if (!prev) return null;
+            return {
+              ...prev,
+              stapokaBalance: result.updatedPlayer.stapokaBalance,
+              systemBalance: result.updatedPlayer.systemBalance,
+            };
+          });
+          setCurrentStack(result.updatedPlayer.stapokaBalance);
+        }
+        // fetchTodayHandsを非同期で実行（awaitしない）
+        if (isMounted.current) {
           fetchTodayHands(customerAccount.storeId, customerAccount.id).catch(e => console.error("Error fetching hands:", e));
         }
       } else {
+        // エラーメッセージを表示
         if (isMounted.current) {
-          setPageError(result.message);
-          setPurchasing(false);
+          setPageError(result.message || "購入に失敗しました");
         }
       }
     } catch (error) {
-      if (isMounted.current) setPageError(`購入処理中にエラーが発生しました: ${error instanceof Error ? error.message : String(error)}`)
+      console.error("Purchase error:", error);
+      if (isMounted.current) {
+        setPageError(`購入処理中にエラーが発生しました: ${error instanceof Error ? error.message : String(error)}`);
+      }
     } finally {
-      if (isMounted.current) setPurchasing(false)
+      if (isMounted.current) {
+        setPurchasing(false);
+      }
     }
   }
 
