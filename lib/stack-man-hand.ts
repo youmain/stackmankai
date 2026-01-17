@@ -245,7 +245,11 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
           message: "Firestoreの読み取り制限に達しました。\n\n午前9時（日本時間）にリセットされます。\nしばらく待ってから再度お試しください。" 
         };
       }
-      throw addError; // 他のエラーは外側のcatchで処理
+      // 他のエラーもエラーレスポンスを返す（throw しない）
+      return {
+        success: false,
+        message: `Stack Man Handの作成に失敗しました。\n\nエラー: ${addError?.message || String(addError)}`
+      };
     }
     
     // スタポカ貯スタック (stapokaBalance) を減算
