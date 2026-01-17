@@ -1,11 +1,11 @@
-'use client'
+"use client"
 
 import { useEffect, useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { doc, getDoc } from "firebase/firestore"
 import { getDb } from "@/lib/firebase"
 import { useAuth } from "@/contexts/auth-context"
-import { getStackManHandSettings, purchaseStackManHand, getTodayStackManHands, calculateRemainingPurchases } from "@/lib/stack-man-hand"
+import { getStackManHandSettings, purchaseStackManHand, getTodayStackManHands } from "@/lib/stack-man-hand"
 import { isWithinOperationHours, isWithinPurchaseWindow } from "@/lib/utils"
 import type { StackManHandSettings, StackManHand } from "@/types/stack-man-hand"
 import { PlayingCard } from "@/components/poker-table/playing-card"
@@ -24,7 +24,7 @@ export default function StackManHandPurchasePage() {
   const [todayHands, setTodayHands] = useState<StackManHand[]>([])
   const [currentStack, setCurrentStack] = useState(0)
   const [remainingPurchases, setRemainingPurchases] = useState(0)
-  const [maxPurchases, setMaxPurchases] = useState(0)
+  const [maxPurchases, setMaxPurchases] = useState(25) // 初期値を 25 に設定
   const [purchasedToday, setPurchasedToday] = useState(0)
   const [minimumStack, setMinimumStack] = useState(10000)
   const [playerName, setPlayerName] = useState("")
@@ -49,6 +49,9 @@ export default function StackManHandPurchasePage() {
           purchasedAt: (hand.purchasedAt as any)?.toDate?.()?.toISOString() || (hand.purchasedAt as any),
           validUntil: (hand.validUntil as any)?.toDate?.()?.toISOString() || (hand.validUntil as any),
         })));
+        // 本日の購入回数を更新
+        setPurchasedToday(hands.length);
+        setRemainingPurchases(Math.max(0, 25 - hands.length));
       }
     } catch (error) {
       console.error("Error fetching today's Stack Man Hands:", error);
@@ -104,26 +107,16 @@ export default function StackManHandPurchasePage() {
           });
           setCurrentStack(stack);
           setPlayerName(playerData.name || customerAccount.playerName || "");
-
-          // calculateRemainingPurchases を呼び出す
-          try {
-            const todayHands = await getTodayStackManHands(storeId, playerId);
-            const maxPurchasesPerDay = 25; // 最大購入回数
-            const remaining = Math.max(0, maxPurchasesPerDay - todayHands.length);
-            setMaxPurchases(maxPurchasesPerDay);
-            setPurchasedToday(todayHands.length);
-            setRemainingPurchases(remaining);
-          } catch (e) {
-            console.error("Error calculating remaining purchases:", e);
-          }
         }
+
+        // 本日のハンド履歴を取得
+        await fetchTodayHands(storeId, customerAccount.id);
 
         const { cleanupStackManHands } = await import("@/lib/stack-man-hand");
         await cleanupStackManHands(storeId);
 
-        await fetchTodayHands(storeId, customerAccount.id);
-
       } catch (error) {
+        console.error("Error loading data:", error);
         setPageError(`データの読み込みに失敗しました。`);
       } finally {
         setLoading(false);
@@ -159,7 +152,8 @@ export default function StackManHandPurchasePage() {
           setCurrentStack(result.updatedPlayer.stapokaBalance);
         }
         
-        // 履歴の更新は削除（ページ遷移時に自動的に更新される）
+        // 履歴の更新
+        await fetchTodayHands(customerAccount.storeId, customerAccount.id);
       } else {
         // エラーメッセージを表示
         setPageError(result.message || "購入に失敗しました");
@@ -169,7 +163,7 @@ export default function StackManHandPurchasePage() {
       setPageError(`購入処理中にエラーが発生しました: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       // finally ブロックで必ず setPurchasing(false) を実行
-      // setTimeout を使用して、状态更新を確実に実行する
+      // setTimeout を使用して、状態更新を確実に実行する
       setTimeout(() => {
         setPurchasing(false);
       }, 0);
@@ -178,23 +172,24 @@ export default function StackManHandPurchasePage() {
 
   if (authLoading || loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p>読み込み中...</p>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+        <div className="max-w-2xl mx-auto">
+          <div className="text-center">
+            <p className="text-gray-600">読み込み中...</p>
+          </div>
         </div>
       </div>
     )
   }
 
-  if (authError || pageError) {
+  if (pageError) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
         <div className="max-w-2xl mx-auto">
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>エラー</AlertTitle>
-            <AlertDescription>{authError || pageError}</AlertDescription>
+            <AlertDescription>{pageError}</AlertDescription>
           </Alert>
         </div>
       </div>
@@ -248,67 +243,55 @@ export default function StackManHandPurchasePage() {
             </div>
           </div>
 
-          {successMessage && (
-            <Alert className="mb-4 bg-green-50 border-green-200">
-              <AlertCircle className="h-4 w-4 text-green-600" />
-              <AlertTitle className="text-green-800">成功</AlertTitle>
-              <AlertDescription className="text-green-700">{successMessage}</AlertDescription>
-            </Alert>
-          )}
-
           <button
             onClick={handlePurchase}
-            disabled={purchasing || remainingPurchases === 0 || currentStack < minimumStack + settings.purchasePrice}
-            className={`w-full py-3 px-4 rounded-lg font-semibold text-white transition-colors ${
-              purchasing
-                ? "bg-gray-400 cursor-not-allowed"
-                : remainingPurchases === 0 || currentStack < minimumStack + settings.purchasePrice
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700 active:bg-blue-800"
-            }`}
+            disabled={purchasing || currentStack < settings.purchasePrice}
+            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition duration-200"
           >
             {purchasing ? "処理中..." : "Stack Man Handを購入"}
           </button>
+
+          {successMessage && (
+            <div className="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+              {successMessage}
+            </div>
+          )}
+
+          {pageError && (
+            <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+              {pageError}
+            </div>
+          )}
         </div>
 
         <div className="bg-white rounded-lg shadow-lg p-6">
           <h2 className="text-xl font-bold mb-4 text-gray-800">本日のStack Man Hand履歴</h2>
-          
+
           {handsError && (
-            <Alert variant="destructive" className="mb-4">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>警告</AlertTitle>
-              <AlertDescription>{handsError}</AlertDescription>
-            </Alert>
+            <div className="p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded mb-4">
+              {handsError}
+            </div>
           )}
 
           {todayHands.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">本日の購入履歴はありません。</p>
+            <p className="text-center text-gray-500">本日の購入履歴はありません。</p>
           ) : (
             <div className="space-y-4">
-              {todayHands.map((hand) => (
-                <div key={hand.id} className="border border-gray-200 rounded-lg p-4">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="text-sm text-gray-500">
-                      {new Date(hand.purchasedAt).toLocaleString('ja-JP')}
-                    </div>
+              {todayHands.map((hand, index) => (
+                <div key={index} className="border border-gray-200 rounded-lg p-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm text-gray-600">
+                      {new Date(hand.purchasedAt).toLocaleString("ja-JP")}
+                    </span>
                   </div>
-                  
-                  <div className="flex justify-center gap-2 mb-3">
-                    {hand.cards && hand.cards.map((card, idx) => (
-                      <PlayingCard key={idx} suit={card.suit} rank={card.rank} />
+                  <div className="flex justify-center gap-2 mb-2">
+                    {hand.cards.map((card, i) => (
+                      <PlayingCard key={i} suit={card.suit} rank={card.rank} />
                     ))}
                   </div>
-
-                  <div className="flex justify-between text-sm">
-                    <div>
-                      <span className="text-gray-600">倍率: </span>
-                      <span className="font-semibold">x{hand.multiplier}</span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">獲得報酬: </span>
-                      <span className="font-semibold text-green-600">{hand.finalReward.toLocaleString()}💰</span>
-                    </div>
+                  <div className="flex justify-between">
+                    <span>倍率: x{hand.multiplier}</span>
+                    <span className="font-semibold">獲得報酬: {hand.finalReward.toLocaleString()}💰</span>
                   </div>
                 </div>
               ))}
