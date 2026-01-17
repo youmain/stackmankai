@@ -68,7 +68,7 @@ export default function StackManHandPurchasePage() {
         const storeId = customerAccount.storeId;
         const playerId = customerAccount.playerId;
         if (!storeId || !playerId) {
-          if (isMounted.current) setPageError("店舗IDまたはプレイヤーIDが見つかりません。");
+          setPageError("店舗IDまたはプレイヤーIDが見つかりません。");
           return;
         }
 
@@ -77,16 +77,14 @@ export default function StackManHandPurchasePage() {
           router.push("/customer-view");
           return;
         }
-        if (isMounted.current) setSettings(storeSettings);
+        setSettings(storeSettings);
 
         const db = getDb()!;
         const storeDocSnap = await getDoc(doc(db, "stores", storeId));
         if (storeDocSnap.exists()) {
           const storeData = storeDocSnap.data();
-          if (isMounted.current) {
-            setStoreName(storeData.storeName || storeData.name || "");
-            setMinimumStack(storeData.stackResetSettings?.minimumStack || 10000);
-          }
+          setStoreName(storeData.storeName || storeData.name || "");
+          setMinimumStack(storeData.stackResetSettings?.minimumStack || 10000);
         }
 
         // プレイヤー情報を初期読み込み時のみ取得（onSnapshot は使用しない）
@@ -96,29 +94,27 @@ export default function StackManHandPurchasePage() {
           const playerData = playerDocSnap.data();
           const stack = playerData.stapokaBalance ?? 0;
 
-          if (isMounted.current) {
-            setCustomerAccount(prev => {
-              if (!prev) return null;
-              return {
-                ...prev,
-                stapokaBalance: stack,
-                systemBalance: playerData.systemBalance,
-              };
-            });
-            setCurrentStack(stack);
-            setPlayerName(playerData.name || customerAccount.playerName || "");
+          setCustomerAccount(prev => {
+            if (!prev) return null;
+            return {
+              ...prev,
+              stapokaBalance: stack,
+              systemBalance: playerData.systemBalance,
+            };
+          });
+          setCurrentStack(stack);
+          setPlayerName(playerData.name || customerAccount.playerName || "");
 
-            // calculateRemainingPurchases を呼び出す
-            try {
-              const todayHands = await getTodayStackManHands(storeId, playerId);
-              const maxPurchasesPerDay = 25; // 最大購入回数
-              const remaining = Math.max(0, maxPurchasesPerDay - todayHands.length);
-              setMaxPurchases(maxPurchasesPerDay);
-              setPurchasedToday(todayHands.length);
-              setRemainingPurchases(remaining);
-            } catch (e) {
-              console.error("Error calculating remaining purchases:", e);
-            }
+          // calculateRemainingPurchases を呼び出す
+          try {
+            const todayHands = await getTodayStackManHands(storeId, playerId);
+            const maxPurchasesPerDay = 25; // 最大購入回数
+            const remaining = Math.max(0, maxPurchasesPerDay - todayHands.length);
+            setMaxPurchases(maxPurchasesPerDay);
+            setPurchasedToday(todayHands.length);
+            setRemainingPurchases(remaining);
+          } catch (e) {
+            console.error("Error calculating remaining purchases:", e);
           }
         }
 
@@ -128,9 +124,9 @@ export default function StackManHandPurchasePage() {
         await fetchTodayHands(storeId, customerAccount.id);
 
       } catch (error) {
-        if (isMounted.current) setPageError(`データの読み込みに失敗しました。`);
+        setPageError(`データの読み込みに失敗しました。`);
       } finally {
-        if (isMounted.current) setLoading(false);
+        setLoading(false);
       }
     };
 
