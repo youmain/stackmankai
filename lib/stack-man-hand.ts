@@ -103,7 +103,7 @@ export const evaluateHandRank = (cards: Card[]): string => {
 /**
  * Get Stack Man Hand settings for a store
  */
-export const getStackManHandSettings = async (storeId: string): Promise<StackManHandSettings | null> => {
+export const getStackManHandSettings = async (storeId: string): Promise<(StackManHandSettings & { minimumStack: number }) | null> => {
   const db = getDb()
   if (!db) throw new Error("Firestore is not initialized")
   
@@ -111,7 +111,14 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
   if (!storeDoc.exists()) return null
   
   const storeData = storeDoc.data()
-  return storeData.stackManHandSettings || null
+  const settings = storeData.stackManHandSettings || null
+  if (!settings) return null
+  
+  // minimumStack を settings に追加して返す
+  return {
+    ...settings,
+    minimumStack: storeData.stackResetSettings?.minimumStack || 10000
+  }
 }
 
 /**
@@ -186,15 +193,8 @@ export const getStackManHandSettings = async (storeId: string): Promise<StackMan
       return { success: false, message: `スタポカ貯スタックが不足しています。（${settings.purchasePrice.toLocaleString()}💰必要）` };
     }
     
-    // Get minimum stack from store settings
-    const storeDoc = await getDoc(doc(db, "stores", storeId))
-    if (!storeDoc.exists()) {
-      return { success: false, message: "店舗が見つかりません" }
-    }
-    const storeData = storeDoc.data()
-    const minimumStack = storeData.stackResetSettings?.minimumStack || 10000
-    
-
+    // Get minimum stack from settings (already fetched)
+    const minimumStack = settings.minimumStack
     
     // Generate random hand
     const cards = generateRandomHand()
