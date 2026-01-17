@@ -131,6 +131,7 @@ const MenuModal = memo(function MenuModal({
                 <p>顧客ID: {customerAccount.id}</p>
                 <p>プレイヤーID: {customerAccount.playerId || '未設定'}</p>
                 <p>プレイヤー名: {customerAccount.playerName || '未設定'}</p>
+                <p>ホーム店舗: {customerAccount.storeName || '未設定'}</p>
                 <p>紐づけ状態: {linkedPlayer ? '成功' : '失敗'}</p>
                 {linkedPlayer && <p>紐づけプレイヤー: {getDisplayName(linkedPlayer)}</p>}
               </div>
