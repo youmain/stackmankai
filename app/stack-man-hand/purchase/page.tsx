@@ -148,12 +148,10 @@ export default function StackManHandPurchasePage() {
       const result = await purchaseStackManHand(customerAccount.storeId, customerAccount.playerId, customerAccount.playerName || playerName, customerAccount.id)
       if (result.success) {
         // 購入成功時はメッセージを表示（alert は使用しない）
-        if (isMounted.current) {
-          setSuccessMessage(`Stack Man Handを${settings.purchasePrice}💰で購入しました！`);
-        }
+        setSuccessMessage(`Stack Man Handを${settings.purchasePrice}💰で購入しました！`);
         
         // プレイヤー情報を更新
-        if (result.updatedPlayer && isMounted.current) {
+        if (result.updatedPlayer) {
           setCustomerAccount(prev => {
             if (!prev) return null;
             return {
@@ -168,18 +166,13 @@ export default function StackManHandPurchasePage() {
         // 履歴の更新は削除（ページ遷移時に自動的に更新される）
       } else {
         // エラーメッセージを表示
-        if (isMounted.current) {
-          setPageError(result.message || "購入に失敗しました");
-        }
+        setPageError(result.message || "購入に失敗しました");
       }
     } catch (error) {
       console.error("Purchase error:", error);
-      if (isMounted.current) {
-        setPageError(`購入処理中にエラーが発生しました: ${error instanceof Error ? error.message : String(error)}`);
-      }
+      setPageError(`購入処理中にエラーが発生しました: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       // finally ブロックで必ず setPurchasing(false) を実行
-      // isMounted チェックを削除して、常に実行する
       setPurchasing(false);
     }
   }
