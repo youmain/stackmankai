@@ -123,11 +123,8 @@ export default function StackManHandPurchasePage() {
     setSuccessMessage(null)
 
     try {
-      // タイムアウト付きで purchaseStackManHand を実行
-      const result = await Promise.race([
-        purchaseStackManHand(customerAccount.storeId, customerAccount.playerId, customerAccount.playerName || playerName, customerAccount.id),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Purchase timeout after 60 seconds')), 60000))
-      ]) as any
+      // purchaseStackManHand を実行
+      const result = await purchaseStackManHand(customerAccount.storeId, customerAccount.playerId, customerAccount.playerName || playerName, customerAccount.id) as any
       if (!result) {
         setPageError("購入処理の結果が取得できませんでした");
         return;
