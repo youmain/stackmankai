@@ -23,8 +23,9 @@ export interface PlayerBase {
  * types/index.ts の元々の Player 型に対応
  */
 export interface PlayerGameState extends PlayerBase {
-  systemBalance: number // 店舗の貯スタック（ゲームプレイで変動）
-  rewardPoints: number // 貯まっているCP (Cashback Points)
+  systemBalance: number // 【貯スタック】店舗が管理するスタック。ゲームプレイで変動。スタックマンハンド購入には使用されない。
+  stapokaBalance?: number // 【スタポカ貯スタック】チャットのポーカーゲーム内で獲得したチップ。スタックマンハンド購入に使用される。
+  rewardPoints: number // 【CP（キャッシュバックポイント）】会員ランク判定用。スタックマンハンド購入には使用されない。
   currentGameId?: string // 現在参加中のゲームID
   isPlaying: boolean // プレイ中かどうか
   isSpecial?: boolean // 特別仕様フラグを追加

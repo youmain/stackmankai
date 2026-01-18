@@ -173,7 +173,10 @@ export const getStackManHandSettings = async (storeId: string): Promise<(StackMa
       });
     } else if (currentStapokaBalance === undefined) {
       // 初回ロード時など、stapokaBalanceがcustomerAccountsに存在しない場合
-      currentStapokaBalance = playerData.systemBalance ?? 0; // systemBalanceを初期値として使用
+      // 注意: systemBalance（貯スタック）を使用してはいけない。
+      // stapokaBalance（スタポカ貯スタック）は、チャットのポーカーゲーム内で獲得したチップであり、
+      // systemBalance（貯スタック）は、店舗が管理するスタックであり、異なるものである。
+      currentStapokaBalance = 0; // 初期値は0とする
       await updateDoc(customerAccountRef, {
         stapokaBalance: currentStapokaBalance,
         updatedAt: serverTimestamp(),
