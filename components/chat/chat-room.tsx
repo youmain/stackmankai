@@ -102,12 +102,12 @@ export function ChatRoom() {
       console.error("Error setting presence:", err)
     )
     
-    // 30秒ごとにハートビートを送信
+    // 5分ごとにハートビートを送信
     const heartbeatInterval = setInterval(() => {
       setUserPresence(customerAccount.storeId, customerAccount.id, displayName).catch(err => 
         console.error("Error in heartbeat:", err)
       )
-    }, 30000)
+    }, 300000)
     
     // ページを閉じる時にプレゼンスを削除
     const handleBeforeUnload = () => {

@@ -1146,14 +1146,14 @@ export const deletePost = async (id: string): Promise<void> => {
 // --- Chat Functions ---
 
 export const subscribeToChatMessages = (
-  gameId: string,
+  storeId: string,
   callback: (messages: any[]) => void,
 ): (() => void) => {
   if (!isFirebaseConfigured) {
     callback([])
     return () => {}
   }
-  const messagesCollection = collection(getDb(), `games/${gameId}/chatMessages`)
+  const messagesCollection = collection(getDb(), `stores/${storeId}/chatMessages`)
   const q = query(messagesCollection, orderBy("createdAt", "asc"))
   return onSnapshot(q, (snapshot) => {
     const messages = snapshot.docs.map((doc) => ({
@@ -1165,12 +1165,12 @@ export const subscribeToChatMessages = (
   })
 }
 
-export const addChatMessage = async (message: string, userId: string, userName: string, gameId: string): Promise<void> => {
+export const addChatMessage = async (message: string, userId: string, userName: string, storeId: string): Promise<void> => {
   if (!isFirebaseConfigured) {
-    log.info("[v0] モック環境: チャットメッセージ追加をシミュレート", { gameId, message, userId, userName })
+    log.info("[v0] モック環境: チャットメッセージ追加をシミュレート", { storeId, message, userId, userName })
     return
   }
-  const messagesCollection = collection(getDb(), `games/${gameId}/chatMessages`)
+  const messagesCollection = collection(getDb(), `stores/${storeId}/chatMessages`)
   await addDoc(messagesCollection, {
     message,
     userId,
@@ -1183,14 +1183,14 @@ export const addChatMessage = async (message: string, userId: string, userName: 
 // --- Active Users Functions ---
 
 export const subscribeToActiveUsers = (
-  gameId: string,
+  storeId: string,
   callback: (users: any[]) => void,
 ): (() => void) => {
   if (!isFirebaseConfigured) {
     callback([])
     return () => {}
   }
-  const activeUsersCollection = collection(getDb(), `games/${gameId}/activeUsers`)
+  const activeUsersCollection = collection(getDb(), `stores/${storeId}/activeUsers`)
   return onSnapshot(activeUsersCollection, (snapshot) => {
     const users = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
     callback(users)
@@ -1432,38 +1432,36 @@ export const updateGameParticipantStack = async (
 
   log.info("[v0] ゲーム参加者のスタック更新完了", { gameId, playerId, stack });
 };
-export const setUserPresence = async (userId: string, isOnline: boolean): Promise<void> => {
+export const setUserPresence = async (storeId: string, userId: string, displayName: string): Promise<void> => {
   if (!isFirebaseConfigured) {
-    log.info("[v0] モック環境: ユーザープレゼンス設定をシミュレート", { userId, isOnline });
+    log.info("[v0] モック環境: ユーザープレゼンス設定をシミュレート", { storeId, userId, displayName });
     return;
   }
 
   const db = checkFirebaseConfig();
-  const userRef = doc(db, "users", userId);
+  const presenceRef = doc(db, "stores", storeId, "activeUsers", userId);
 
-  await setDoc(userRef, {
-    isOnline,
+  await setDoc(presenceRef, {
+    userId,
+    displayName,
     lastSeen: serverTimestamp(),
   }, { merge: true });
 
-  log.info("[v0] ユーザープレゼンス設定完了", { userId, isOnline });
+  log.info("[v0] ユーザープレゼンス設定完了", { storeId, userId, displayName });
 };
 
-export const removeUserPresence = async (userId: string): Promise<void> => {
+export const removeUserPresence = async (storeId: string, userId: string): Promise<void> => {
   if (!isFirebaseConfigured) {
-    log.info("[v0] モック環境: ユーザープレゼンス削除をシミュレート", { userId });
+    log.info("[v0] モック環境: ユーザープレゼンス削除をシミュレート", { storeId, userId });
     return;
   }
 
   const db = checkFirebaseConfig();
-  const userRef = doc(db, "users", userId);
+  const presenceRef = doc(db, "stores", storeId, "activeUsers", userId);
 
-  await updateDoc(userRef, {
-    isOnline: false,
-    lastSeen: serverTimestamp(),
-  });
+  await deleteDoc(presenceRef);
 
-  log.info("[v0] ユーザープレゼンス削除完了", { userId });
+  log.info("[v0] ユーザープレゼンス削除完了", { storeId, userId });
 };
 
 export const createStandaloneReceipt = async (storeId: string, customerName: string, createdBy: string): Promise<string> => {
@@ -1529,8 +1527,8 @@ export const getPostById = async (postId: string): Promise<Post | null> => {
   return { id: postSnap.id, ...postSnap.data() } as Post;
 };
 
-export const sendChatMessage = async (message: string, userId: string, userName: string, gameId: string): Promise<void> => {
-  return addChatMessage(message, userId, userName, gameId);
+export const sendChatMessage = async (message: string, userId: string, userName: string, storeId: string): Promise<void> => {
+  return addChatMessage(message, userId, userName, storeId);
 };
 
 export const createReceipt = async (receipt: Omit<Receipt, "id">): Promise<string> => {
