@@ -409,3 +409,44 @@ export const deleteAllReceipts = async (storeId: string): Promise<void> => {
   })
   await batch.commit()
 }
+
+
+export const createReceipt = async (receipt: Omit<Receipt, "id">): Promise<string> => {
+  return addReceipt(receipt);
+};
+
+
+export const createStandaloneReceipt = async (storeId: string, customerName: string, createdBy: string): Promise<string> => {
+  return addReceipt({
+    storeId,
+    customerName,
+    totalAmount: 0,
+    status: "open",
+    items: [],
+    createdBy,
+    updatedBy: createdBy,
+  } as any);
+};
+
+// --- Missing Functions (Added by Manus AI) ---
+
+
+export const addReceiptItem = async (receiptId: string, item: Omit<ReceiptItem, "id">): Promise<string> => {
+  if (!isFirebaseConfigured) {
+    return `mock_receipt_item_${Date.now()}`;
+  }
+  const itemsCollection = getReceiptItemsCollection();
+  const docRef = await addDoc(itemsCollection, {
+    receiptId,
+    ...item,
+    createdAt: serverTimestamp(),
+  });
+  return docRef.id;
+};
+
+
+export const deleteReceiptItem = async (receiptId: string, itemId: string): Promise<void> => {
+  if (!isFirebaseConfigured) return;
+  const itemRef = doc(getReceiptItemsCollection(), itemId);
+  await deleteDoc(itemRef);
+};

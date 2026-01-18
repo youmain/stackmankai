@@ -199,3 +199,88 @@ export const createPost = async (postData: Omit<Post, 'id' | 'createdAt'>): Prom
   });
   return docRef.id;
 };
+
+
+export const sendChatMessage = async (message: string, userId: string, userName: string, storeId: string): Promise<void> => {
+  return addChatMessage(message, userId, userName, storeId);
+};
+
+
+export const setUserPresence = async (storeId: string, userId: string, displayName: string): Promise<void> => {
+  if (!isFirebaseConfigured) {
+    log.info("[v0] モック環境: ユーザープレゼンス設定をシミュレート", { storeId, userId, displayName });
+    return;
+  }
+
+  const db = checkFirebaseConfig();
+  const presenceRef = doc(db, "stores", storeId, "activeUsers", userId);
+
+  await setDoc(presenceRef, {
+    userId,
+    displayName,
+    lastSeen: serverTimestamp(),
+  }, { merge: true });
+
+  log.info("[v0] ユーザープレゼンス設定完了", { storeId, userId, displayName });
+};
+
+
+export const removeUserPresence = async (storeId: string, userId: string): Promise<void> => {
+  if (!isFirebaseConfigured) {
+    log.info("[v0] モック環境: ユーザープレゼンス削除をシミュレート", { storeId, userId });
+    return;
+  }
+
+  const db = checkFirebaseConfig();
+  const presenceRef = doc(db, "stores", storeId, "activeUsers", userId);
+
+  await deleteDoc(presenceRef);
+
+  log.info("[v0] ユーザープレゼンス削除完了", { storeId, userId });
+};
+
+
+export const getPostById = async (postId: string): Promise<Post | null> => {
+  if (!isFirebaseConfigured) {
+    return null;
+  }
+  const postRef = doc(getPostsCollection(), postId);
+  const postSnap = await getDoc(postRef);
+  if (!postSnap.exists()) return null;
+  return { id: postSnap.id, ...postSnap.data() } as Post;
+};
+
+
+export const subscribeToStorePosts = (
+  callback: (posts: Post[]) => void,
+  storeId?: string | null,
+): (() => void) => {
+  if (!isFirebaseConfigured) {
+    callback([])
+    return () => {}
+  }
+  const postsCollection = getPostsCollection()
+  let q = query(postsCollection, orderBy("createdAt", "desc"))
+
+  if (storeId) {
+    q = query(postsCollection, where("storeId", "==", storeId), orderBy("createdAt", "desc"))
+  }
+
+  return onSnapshot(q, (snapshot) => {
+    const posts = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Post)
+    callback(posts)
+  })
+}
+
+
+export const deleteAllPosts = async (storeId: string): Promise<void> => {
+  if (!isFirebaseConfigured) return
+  const postsCollection = getPostsCollection()
+  const q = query(postsCollection, where("storeId", "==", storeId))
+  const snapshot = await getDocs(q)
+  const batch = writeBatch(checkFirebaseConfig())
+  snapshot.docs.forEach((doc) => {
+    batch.delete(doc.ref)
+  })
+  await batch.commit()
+}

@@ -199,3 +199,14 @@ export const confirmDailyRanking = async (storeId: string, date: string): Promis
   // Implementation for confirming daily ranking
   log.info("[v0] Daily ranking confirmed", { storeId, date });
 };
+
+
+export const updateProvisionalRankingForToday = async (storeId: string): Promise<void> => {
+  // Implementation for updating provisional ranking
+  log.info("[v0] Provisional ranking update triggered", { storeId });
+};
+
+
+export const updateStoreRankingSettings = async (storeId: string, settings: Partial<StoreRankingSettings>): Promise<void> => {
+  return saveStoreRankingSettings(storeId, settings);
+};

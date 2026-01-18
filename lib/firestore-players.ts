@@ -241,3 +241,26 @@ export const resetPlayerStatistics = async (storeId: string): Promise<void> => {
   })
   await batch.commit()
 }
+
+
+export const togglePlayerStatus = async (playerId: string): Promise<void> => {
+  const player = await getPlayer(playerId);
+  if (!player) throw new Error(`Player ${playerId} not found`);
+  await updatePlayer(playerId, {
+    status: player.status === "active" ? "inactive" : "active",
+  });
+};
+
+
+export const updatePlayerBalance = async (playerId: string, amount: number): Promise<void> => {
+  const player = await getPlayer(playerId);
+  if (!player) throw new Error(`Player ${playerId} not found`);
+  await updatePlayer(playerId, {
+    balance: (player.balance || 0) + amount,
+  });
+};
+
+
+export const cancelPlayerAccount = async (customerId: string): Promise<void> => {
+  await deleteCustomerAccount(customerId);
+};

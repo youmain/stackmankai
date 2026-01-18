@@ -145,3 +145,64 @@ export const applyStackResetAndRake = async (gameId: string, rakeAmount: number)
     status: "completed",
   } as any);
 };
+
+
+export const createGame = async (game: Omit<Game, "id">): Promise<string> => {
+  return addGame(game);
+};
+
+
+export const addPlayerToGame = async (gameId: string, playerId: string): Promise<void> => {
+  const game = await getGame(gameId);
+  if (!game) throw new Error(`Game ${gameId} not found`);
+  await updateGame(gameId, {
+    playerIds: [...(game.playerIds || []), playerId],
+  });
+};
+
+
+export const updateGameParticipantStack = async (
+  gameId: string,
+  playerId: string,
+  stack: number,
+): Promise<void> => {
+  if (!isFirebaseConfigured) {
+    log.info("[v0] モック環境: ゲーム参加者のスタック更新をシミュレート", { gameId, playerId, stack });
+    return;
+  }
+
+  const db = checkFirebaseConfig();
+  const gameRef = doc(db, "games", gameId);
+  const gameSnap = await getDoc(gameRef);
+
+  if (!gameSnap.exists()) {
+    throw new Error(`ゲームが見つかりません: ${gameId}`);
+  }
+
+  const gameData = gameSnap.data();
+  const participants = gameData.participants || [];
+  const participantIndex = participants.findIndex((p: any) => p.id === playerId);
+
+  if (participantIndex === -1) {
+    throw new Error(`ゲームに参加しているプレイヤーが見つかりません: ${playerId}`);
+  }
+
+  const updatedParticipants = [...participants];
+  updatedParticipants[participantIndex].stack = stack;
+
+  await updateDoc(gameRef, {
+    participants: updatedParticipants,
+    updatedAt: serverTimestamp(),
+  });
+
+  log.info("[v0] ゲーム参加者のスタック更新完了", { gameId, playerId, stack });
+};
+
+
+export const endGameWithFinalStacks = async (gameId: string, finalStacks: Record<string, number>): Promise<void> => {
+  await updateGame(gameId, {
+    status: "completed",
+    finalStacks,
+    endTime: new Date(),
+  } as any);
+};

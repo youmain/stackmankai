@@ -36,6 +36,8 @@ export {
   getMonthlyRankingsCollection,
   getMonthlyPointsCollection,
   getMembershipRankDetails,
+  getAdminPassword,
+  saveAdminPassword,
 } from './firestore-common'
 
 // --- Players ---
@@ -50,6 +52,9 @@ export {
   updatePlayerMembershipRank,
   deleteAllPlayers,
   resetPlayerStatistics,
+  togglePlayerStatus,
+  updatePlayerBalance,
+  cancelPlayerAccount,
 } from './firestore-players'
 
 // --- Games ---
@@ -62,6 +67,10 @@ export {
   deleteGame,
   deleteAllGames,
   applyStackResetAndRake,
+  createGame,
+  addPlayerToGame,
+  updateGameParticipantStack,
+  endGameWithFinalStacks,
 } from './firestore-games'
 
 // --- Transactions & Receipts & Points ---
@@ -78,6 +87,10 @@ export {
   completeReceipt,
   deleteReceipt,
   deleteAllReceipts,
+  createReceipt,
+  createStandaloneReceipt,
+  addReceiptItem,
+  deleteReceiptItem,
 } from './firestore-transactions'
 
 // --- Rankings & Statistics ---
@@ -93,6 +106,8 @@ export {
   subscribeToStoreRankingSettings,
   updateMonthlyPoints,
   confirmDailyRanking,
+  updateProvisionalRankingForToday,
+  updateStoreRankingSettings,
 } from './firestore-rankings'
 
 // --- Customers ---
@@ -124,6 +139,12 @@ export {
   removeActiveUser,
   subscribeToUserPosts,
   createPost,
+  getPostById,
+  subscribeToStorePosts,
+  deleteAllPosts,
+  sendChatMessage,
+  setUserPresence,
+  removeUserPresence,
 } from './firestore-posts'
 
 // --- Users & Stores ---
@@ -133,4 +154,5 @@ export {
   subscribeToRakeHistory,
   subscribeToStores,
   getStore,
+  getUserData,
 } from './firestore-users'

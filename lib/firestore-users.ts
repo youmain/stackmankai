@@ -143,3 +143,14 @@ export const getStore = async (id: string): Promise<any | null> => {
 }
 
 // --- Post Functions ---
+
+
+export const getUserData = async (userId: string): Promise<any | null> => {
+  if (!isFirebaseConfigured) {
+    return null;
+  }
+  const userRef = doc(getUsersCollection(), userId);
+  const userSnap = await getDoc(userRef);
+  if (!userSnap.exists()) return null;
+  return { id: userSnap.id, ...userSnap.data() };
+};

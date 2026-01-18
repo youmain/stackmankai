@@ -158,3 +158,23 @@ export const getMembershipRankDetails = (rank: string) => {
       return { name: "ブロンズ", color: "#CD7F32" }
   }
 }
+
+
+export const getAdminPassword = async (): Promise<string | null> => {
+  if (!isFirebaseConfigured) return "0000"
+  const db = checkFirebaseConfig()
+  const docRef = doc(db, "settings", "admin")
+  const snapshot = await getDoc(docRef)
+  if (!snapshot.exists()) return "0000"
+  return snapshot.data().password || "0000"
+}
+
+
+export const saveAdminPassword = async (password: string): Promise<void> => {
+  if (!isFirebaseConfigured) return
+  const db = checkFirebaseConfig()
+  const docRef = doc(db, "settings", "admin")
+  await setDoc(docRef, { password, updatedAt: serverTimestamp() })
+}
+
+// --- Ranking & Sales Functions ---
