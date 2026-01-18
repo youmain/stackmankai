@@ -34,11 +34,15 @@ export default function StackManHandPurchasePage() {
   // purchasing 状況を監視して、一定時間後に自動的にリセットします
   useEffect(() => {
     if (purchasing) {
+      console.log("[Auto-reset] purchasing state changed to true, starting 10 second timer");
       const timer = setTimeout(() => {
         console.log("[Auto-reset] Resetting purchasing state after 10 seconds");
         setPurchasing(false);
       }, 10000);
-      return () => clearTimeout(timer);
+      return () => {
+        console.log("[Auto-reset] Cleaning up timer");
+        clearTimeout(timer);
+      };
     }
   }, [purchasing]);
 
