@@ -124,7 +124,9 @@ export default function StackManHandPurchasePage() {
 
     try {
       // purchaseStackManHand を実行
+      console.log("[handlePurchase] Starting purchase...");
       const result = await purchaseStackManHand(customerAccount.storeId, customerAccount.playerId, customerAccount.playerName || playerName, customerAccount.id) as any
+      console.log("[handlePurchase] Purchase result:", result);
       if (!result) {
         setPageError("購入処理の結果が取得できませんでした");
         return;

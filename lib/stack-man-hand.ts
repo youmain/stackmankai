@@ -288,12 +288,14 @@ export const getStackManHandSettings = async (storeId: string): Promise<(StackMa
 
     // プレイ用スタック (systemBalance) には影響を与えない
     console.log("[Purchase] All balance updates completed. Returning success.");
-    return {
+    const successResult = {
       success: true,
       message: "Stack Man Handを購入しました",
       handId: handDocRef.id,
       updatedPlayer: { stapokaBalance: newStapokaBalance, systemBalance: playerData.systemBalance } // updatedPlayerを返す
     };
+    console.log("[Purchase] Returning success result:", successResult);
+    return successResult;
     } catch (error: any) {
     console.error("Error purchasing Stack Man Hand:", error)
     
