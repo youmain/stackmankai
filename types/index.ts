@@ -1,26 +1,6 @@
-export interface Player {
-  id: string
-  uniqueId: string // ランダム生成されたユニークID（サブスク機能用）
-  name: string
-  pokerName?: string // ポーカーネーム（オプション）
-  furigana?: string // 読み仮名（オプション）
-  systemBalance: number // 店舗の貯スタック（ゲームプレイで変動）
-  rewardPoints: number // 貯まっているCP (Cashback Points)
-  currentGameId?: string // 現在参加中のゲームID
-  isPlaying: boolean // プレイ中かどうか
-  isSpecial?: boolean // 特別仕様フラグを追加
-  isDeduction?: boolean // 差引仕様フラグ（ゲーム終了時に残ったマイナス分のみ購入金額として計上）
-  membershipStatus?: "trial" | "active" | "expired" | "none" // 会員ステータス
-  subscriptionEndDate?: Date // サブスクリプション有効期限
-  storeId?: string // ホーム店舗ID
-  storeName?: string // ホーム店舗名
-  membershipRank?: "silver" | "gold" | "platinum" | "none" // 会員ランク
-  totalCPEarned?: number // 獲得CP総額（ランク判定用、CP使用でも減らない）
-  playerId?: string // プレイヤーID（互換性用）
-  lastGameDate?: string | Date // 最後のゲーム日時
-  createdAt: Date
-  updatedAt: Date
-}
+// Player 型は types/player.ts で定義
+// ここでインポートして再エクスポート
+export type { Player, PlayerGameState, PlayerBase, LinkedPlayer } from './player'
 
 export interface Game {
   id: string
@@ -169,13 +149,9 @@ export interface Expense {
   createdBy: string // 登録者
 }
 
-export interface Store {
-  id: string
-  name: string // 店舗名
-  slug: string // URL用の店舗識別子
-  createdAt: string
-  updatedAt: string
-}
+// Store 型は types/store.ts で定義
+// ここでインポートして再エクスポート
+export type { Store } from './store'
 
 export interface StoreSettings {
   id: string
@@ -412,5 +388,4 @@ export interface ChatMessage {
   createdAt: Date
 }
 
-// 互換性用の型エイリアス
-export type LinkedPlayer = Player
+

@@ -125,13 +125,19 @@ export const getPlayer = async (id: string): Promise<Player | null> => {
     const player = mockPlayers.find((p) => p.id === id)
     return player || null
   }
-  const validatedId = validateId(id, "プレイヤーID")
-  const playerRef = doc(getPlayersCollection(), validatedId)
-  const playerSnap = await getDoc(playerRef)
-  if (!playerSnap.exists()) {
+  try {
+    const validatedId = validateId(id, "プレイヤーID")
+    const playerRef = doc(getPlayersCollection(), validatedId)
+    const playerSnap = await getDoc(playerRef)
+    if (!playerSnap.exists()) {
+      return null
+    }
+    return { id: playerSnap.id, ...playerSnap.data() } as Player
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] プレイヤー取得に失敗しました", { error: errorMessage, id })
     return null
   }
-  return { id: playerSnap.id, ...playerSnap.data() } as Player
 }
 
 export const addPlayer = async (player: Omit<Player, "id">): Promise<string> => {
@@ -139,13 +145,19 @@ export const addPlayer = async (player: Omit<Player, "id">): Promise<string> => 
     log.info("[v0] モック環境: プレイヤー追加をシミュレート", { player })
     return `mock_player_${Date.now()}`
   }
-  const playersCollection = getPlayersCollection()
-  const docRef = await addDoc(playersCollection, {
-    ...player,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-  })
-  return docRef.id
+  try {
+    const playersCollection = getPlayersCollection()
+    const docRef = await addDoc(playersCollection, {
+      ...player,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    })
+    return docRef.id
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] プレイヤー追加に失敗しました", { error: errorMessage })
+    throw error
+  }
 }
 
 export const updatePlayer = async (id: string, updates: Partial<Player>): Promise<void> => {
@@ -153,9 +165,15 @@ export const updatePlayer = async (id: string, updates: Partial<Player>): Promis
     log.info("[v0] モック環境: プレイヤー更新をシミュレート", { id, updates })
     return
   }
-  const validatedId = validateId(id, "プレイヤーID")
-  const playerRef = doc(getPlayersCollection(), validatedId)
-  await updateDoc(playerRef, { ...updates, updatedAt: serverTimestamp() })
+  try {
+    const validatedId = validateId(id, "プレイヤーID")
+    const playerRef = doc(getPlayersCollection(), validatedId)
+    await updateDoc(playerRef, { ...updates, updatedAt: serverTimestamp() })
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] プレイヤー更新に失敗しました", { error: errorMessage, id })
+    throw error
+  }
 }
 
 export const deletePlayer = async (id: string): Promise<void> => {
@@ -163,8 +181,14 @@ export const deletePlayer = async (id: string): Promise<void> => {
     log.info("[v0] モック環境: プレイヤー削除をシミュレート", { id })
     return
   }
-  const validatedId = validateId(id, "プレイヤーID")
-  await deleteDoc(doc(getPlayersCollection(), validatedId))
+  try {
+    const validatedId = validateId(id, "プレイヤーID")
+    await deleteDoc(doc(getPlayersCollection(), validatedId))
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] プレイヤー削除に失敗しました", { error: errorMessage, id })
+    throw error
+  }
 }
 
 export const archivePlayer = async (id: string): Promise<void> => {
@@ -172,9 +196,15 @@ export const archivePlayer = async (id: string): Promise<void> => {
     log.info("[v0] モック環境: プレイヤーのアーカイブをシミュレート", { id })
     return
   }
-  const validatedId = validateId(id, "プレイヤーID")
-  const playerRef = doc(getPlayersCollection(), validatedId)
-  await updateDoc(playerRef, { isArchived: true, updatedAt: serverTimestamp() })
+  try {
+    const validatedId = validateId(id, "プレイヤーID")
+    const playerRef = doc(getPlayersCollection(), validatedId)
+    await updateDoc(playerRef, { isArchived: true, updatedAt: serverTimestamp() })
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] プレイヤーアーカイブに失敗しました", { error: errorMessage, id })
+    throw error
+  }
 }
 
 export const unarchivePlayer = async (id: string): Promise<void> => {
@@ -182,9 +212,15 @@ export const unarchivePlayer = async (id: string): Promise<void> => {
     log.info("[v0] モック環境: プレイヤーのアーカイブ解除をシミュレート", { id })
     return
   }
-  const validatedId = validateId(id, "プレイヤーID")
-  const playerRef = doc(getPlayersCollection(), validatedId)
-  await updateDoc(playerRef, { isArchived: false, updatedAt: serverTimestamp() })
+  try {
+    const validatedId = validateId(id, "プレイヤーID")
+    const playerRef = doc(getPlayersCollection(), validatedId)
+    await updateDoc(playerRef, { isArchived: false, updatedAt: serverTimestamp() })
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] プレイヤーアーカイブ解除に失敗しました", { error: errorMessage, id })
+    throw error
+  }
 }
 
 export const updatePlayerMembershipRank = async (playerId: string): Promise<void> => {
@@ -193,22 +229,27 @@ export const updatePlayerMembershipRank = async (playerId: string): Promise<void
     return
   }
 
-  const player = await getPlayer(playerId)
-  if (!player) return
+  try {
+    const player = await getPlayer(playerId)
+    if (!player) return
 
-  const totalCP = player.totalCPEarned || 0
-  let newRank = "bronze"
-  if (totalCP >= 100000) {
-    newRank = "platinum"
-  } else if (totalCP >= 50000) {
-    newRank = "gold"
-  } else if (totalCP >= 10000) {
-    newRank = "silver"
-  }
+    const totalCP = player.totalCPEarned || 0
+    let newRank = "bronze"
+    if (totalCP >= 100000) {
+      newRank = "platinum"
+    } else if (totalCP >= 50000) {
+      newRank = "gold"
+    } else if (totalCP >= 10000) {
+      newRank = "silver"
+    }
 
-  if (newRank !== player.membershipRank) {
-    await updatePlayer(playerId, { membershipRank: newRank })
-    log.info(`[v0] プレイヤー ${playerId} のランクが ${newRank} に更新されました`)
+    if (newRank !== player.membershipRank) {
+      await updatePlayer(playerId, { membershipRank: newRank })
+      log.info(`[v0] プレイヤー ${playerId} のランクが ${newRank} に更新されました`)
+    }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] メンバーシップランク更新に失敗しました", { error: errorMessage, playerId })
   }
 }
 

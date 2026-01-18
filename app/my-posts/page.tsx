@@ -9,6 +9,7 @@ import { PostPreview } from "@/components/post-creation/post-preview"
 import { Home, Trash2, Eye, AlertCircle, PlusCircle, Sparkles } from "lucide-react"
 import Link from "next/link"
 import type { PostData } from "@/types/post"
+import type { PlayingCard } from "@/components/poker-table/playing-card"
 import { subscribeToUserPosts, deletePost, createPost } from "@/lib/firestore"
 import { useAuth } from "@/contexts/auth-context"
 import {
@@ -103,7 +104,7 @@ export default function MyPostsPage() {
             holeCards: [
               { suit: "spades", rank: "A" },
               { suit: "hearts", rank: "A" },
-            ] as [any, any],
+            ] as [PlayingCard, PlayingCard],
             action: "4bet → オールインコール",
             betAmount: "20,000円",
             description:
@@ -119,7 +120,7 @@ export default function MyPostsPage() {
                 cards: [
                   { suit: "spades", rank: "A" },
                   { suit: "hearts", rank: "A" },
-                ] as [any, any],
+                ] as [PlayingCard, PlayingCard],
                 action: "all-in" as const,
                 isActive: true,
               },
@@ -132,7 +133,7 @@ export default function MyPostsPage() {
                 cards: [
                   { suit: "diamonds", rank: "K" },
                   { suit: "clubs", rank: "K" },
-                ] as [any, any],
+                ] as [PlayingCard, PlayingCard],
                 action: "all-in" as const,
                 isActive: true,
                 isDealer: true,
@@ -148,7 +149,7 @@ export default function MyPostsPage() {
               { suit: "spades", rank: "Q" },
               { suit: "hearts", rank: "7" },
               { suit: "clubs", rank: "2" },
-            ] as [any, any, any],
+            ] as [PlayingCard, PlayingCard, PlayingCard],
             action: "オールイン済み",
             betAmount: "0円",
             description:
@@ -163,7 +164,7 @@ export default function MyPostsPage() {
                 cards: [
                   { suit: "spades", rank: "A" },
                   { suit: "hearts", rank: "A" },
-                ] as [any, any],
+                ] as [PlayingCard, PlayingCard],
                 isActive: true,
               },
               {
@@ -175,7 +176,7 @@ export default function MyPostsPage() {
                 cards: [
                   { suit: "diamonds", rank: "K" },
                   { suit: "clubs", rank: "K" },
-                ] as [any, any],
+                ] as [PlayingCard, PlayingCard],
                 isActive: true,
                 isDealer: true,
               },
@@ -190,7 +191,7 @@ export default function MyPostsPage() {
               { suit: "hearts", rank: "7" },
               { suit: "clubs", rank: "2" },
               { suit: "diamonds", rank: "9" },
-            ] as [any, any, any, any],
+            ] as [PlayingCard, PlayingCard, PlayingCard, PlayingCard],
             communityCard: { suit: "diamonds", rank: "9" },
             action: "オールイン済み",
             betAmount: "0円",
@@ -205,7 +206,7 @@ export default function MyPostsPage() {
                 cards: [
                   { suit: "spades", rank: "A" },
                   { suit: "hearts", rank: "A" },
-                ] as [any, any],
+                ] as [PlayingCard, PlayingCard],
                 isActive: true,
               },
               {
@@ -217,7 +218,7 @@ export default function MyPostsPage() {
                 cards: [
                   { suit: "diamonds", rank: "K" },
                   { suit: "clubs", rank: "K" },
-                ] as [any, any],
+                ] as [PlayingCard, PlayingCard],
                 isActive: true,
                 isDealer: true,
               },
@@ -233,7 +234,7 @@ export default function MyPostsPage() {
               { suit: "clubs", rank: "2" },
               { suit: "diamonds", rank: "9" },
               { suit: "spades", rank: "3" },
-            ] as [any, any, any, any, any],
+            ] as [PlayingCard, PlayingCard, PlayingCard, PlayingCard, PlayingCard],
             communityCard: { suit: "spades", rank: "3" },
             action: "オールイン済み",
             betAmount: "0円",
@@ -249,7 +250,7 @@ export default function MyPostsPage() {
                 cards: [
                   { suit: "spades", rank: "A" },
                   { suit: "hearts", rank: "A" },
-                ] as [any, any],
+                ] as [PlayingCard, PlayingCard],
                 isActive: true,
               },
               {
@@ -261,7 +262,7 @@ export default function MyPostsPage() {
                 cards: [
                   { suit: "diamonds", rank: "K" },
                   { suit: "clubs", rank: "K" },
-                ] as [any, any],
+                ] as [PlayingCard, PlayingCard],
                 isActive: false,
                 isDealer: true,
               },
@@ -294,7 +295,7 @@ export default function MyPostsPage() {
             holeCards: [
               { suit: "diamonds", rank: "A" },
               { suit: "diamonds", rank: "K" },
-            ] as [any, any],
+            ] as [PlayingCard, PlayingCard],
             action: "レイズ",
             betAmount: "1,000円",
             description:
@@ -310,7 +311,7 @@ export default function MyPostsPage() {
                 cards: [
                   { suit: "diamonds", rank: "A" },
                   { suit: "diamonds", rank: "K" },
-                ] as [any, any],
+                ] as [PlayingCard, PlayingCard],
                 action: "raise" as const,
                 isActive: true,
               },
@@ -323,7 +324,7 @@ export default function MyPostsPage() {
                 cards: [
                   { suit: "spades", rank: "Q" },
                   { suit: "hearts", rank: "Q" },
-                ] as [any, any],
+                ] as [PlayingCard, PlayingCard],
                 action: "call" as const,
                 isActive: true,
               },
@@ -338,7 +339,7 @@ export default function MyPostsPage() {
               { suit: "diamonds", rank: "9" },
               { suit: "diamonds", rank: "6" },
               { suit: "spades", rank: "2" },
-            ] as [any, any, any],
+            ] as [PlayingCard, PlayingCard, PlayingCard],
             action: "チェック → ベット",
             betAmount: "1,500円",
             description:
@@ -353,7 +354,7 @@ export default function MyPostsPage() {
                 cards: [
                   { suit: "diamonds", rank: "A" },
                   { suit: "diamonds", rank: "K" },
-                ] as [any, any],
+                ] as [PlayingCard, PlayingCard],
                 action: "bet" as const,
                 isActive: true,
               },
@@ -366,7 +367,7 @@ export default function MyPostsPage() {
                 cards: [
                   { suit: "spades", rank: "Q" },
                   { suit: "hearts", rank: "Q" },
-                ] as [any, any],
+                ] as [PlayingCard, PlayingCard],
                 action: "call" as const,
                 isActive: true,
               },
@@ -381,7 +382,7 @@ export default function MyPostsPage() {
               { suit: "diamonds", rank: "6" },
               { suit: "spades", rank: "2" },
               { suit: "diamonds", rank: "5" },
-            ] as [any, any, any, any],
+            ] as [PlayingCard, PlayingCard, PlayingCard, PlayingCard],
             communityCard: { suit: "diamonds", rank: "5" },
             action: "チェック → オールイン",
             betAmount: "12,500円",
@@ -397,7 +398,7 @@ export default function MyPostsPage() {
                 cards: [
                   { suit: "diamonds", rank: "A" },
                   { suit: "diamonds", rank: "K" },
-                ] as [any, any],
+                ] as [PlayingCard, PlayingCard],
                 action: "all-in" as const,
                 isActive: true,
               },
@@ -410,7 +411,7 @@ export default function MyPostsPage() {
                 cards: [
                   { suit: "spades", rank: "Q" },
                   { suit: "hearts", rank: "Q" },
-                ] as [any, any],
+                ] as [PlayingCard, PlayingCard],
                 action: "call" as const,
                 isActive: true,
               },
@@ -426,7 +427,7 @@ export default function MyPostsPage() {
               { suit: "spades", rank: "2" },
               { suit: "diamonds", rank: "5" },
               { suit: "clubs", rank: "8" },
-            ] as [any, any, any, any, any],
+            ] as [PlayingCard, PlayingCard, PlayingCard, PlayingCard, PlayingCard],
             communityCard: { suit: "clubs", rank: "8" },
             action: "オールイン済み",
             betAmount: "0円",
@@ -442,7 +443,7 @@ export default function MyPostsPage() {
                 cards: [
                   { suit: "diamonds", rank: "A" },
                   { suit: "diamonds", rank: "K" },
-                ] as [any, any],
+                ] as [PlayingCard, PlayingCard],
                 isActive: true,
               },
               {
@@ -454,7 +455,7 @@ export default function MyPostsPage() {
                 cards: [
                   { suit: "spades", rank: "Q" },
                   { suit: "hearts", rank: "Q" },
-                ] as [any, any],
+                ] as [PlayingCard, PlayingCard],
                 isActive: false,
               },
             ],
@@ -487,7 +488,7 @@ export default function MyPostsPage() {
             holeCards: [
               { suit: "spades", rank: "A" },
               { suit: "spades", rank: "K" },
-            ] as [any, any],
+            ] as [PlayingCard, PlayingCard],
             action: "3bet",
             betAmount: "900円",
             description:
@@ -521,7 +522,7 @@ export default function MyPostsPage() {
                 cards: [
                   { suit: "spades", rank: "A" },
                   { suit: "spades", rank: "K" },
-                ] as [any, any],
+                ] as [PlayingCard, PlayingCard],
                 isActive: true,
                 isDealer: true,
               },
@@ -554,7 +555,7 @@ export default function MyPostsPage() {
               { suit: "hearts", rank: "A" },
               { suit: "diamonds", rank: "K" },
               { suit: "clubs", rank: "7" },
-            ] as [any, any, any],
+            ] as [PlayingCard, PlayingCard, PlayingCard],
             action: "bet",
             betAmount: "1,800円",
             description:
@@ -587,7 +588,7 @@ export default function MyPostsPage() {
                 cards: [
                   { suit: "spades", rank: "A" },
                   { suit: "spades", rank: "K" },
-                ] as [any, any],
+                ] as [PlayingCard, PlayingCard],
                 isActive: true,
                 isDealer: true,
               },
@@ -602,7 +603,7 @@ export default function MyPostsPage() {
               { suit: "diamonds", rank: "K" },
               { suit: "clubs", rank: "7" },
               { suit: "spades", rank: "2" },
-            ] as [any, any, any, any],
+            ] as [PlayingCard, PlayingCard, PlayingCard, PlayingCard],
             communityCard: { suit: "spades", rank: "2" },
             action: "bet",
             betAmount: "3,500円",
@@ -627,7 +628,7 @@ export default function MyPostsPage() {
                 cards: [
                   { suit: "spades", rank: "A" },
                   { suit: "spades", rank: "K" },
-                ] as [any, any],
+                ] as [PlayingCard, PlayingCard],
                 isActive: true,
                 isDealer: true,
               },
@@ -643,7 +644,7 @@ export default function MyPostsPage() {
               { suit: "clubs", rank: "7" },
               { suit: "spades", rank: "2" },
               { suit: "clubs", rank: "9" },
-            ] as [any, any, any, any, any],
+            ] as [PlayingCard, PlayingCard, PlayingCard, PlayingCard, PlayingCard],
             communityCard: { suit: "clubs", rank: "9" },
             action: "bet",
             betAmount: "3,800円",
@@ -660,7 +661,7 @@ export default function MyPostsPage() {
                 cards: [
                   { suit: "diamonds", rank: "A" },
                   { suit: "diamonds", rank: "Q" },
-                ] as [any, any],
+                ] as [PlayingCard, PlayingCard],
                 isActive: true,
               },
               {
@@ -672,7 +673,7 @@ export default function MyPostsPage() {
                 cards: [
                   { suit: "spades", rank: "A" },
                   { suit: "spades", rank: "K" },
-                ] as [any, any],
+                ] as [PlayingCard, PlayingCard],
                 isActive: true,
                 isDealer: true,
               },

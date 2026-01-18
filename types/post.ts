@@ -1,6 +1,6 @@
 import type { PlayingCard } from "@/components/poker-table/playing-card"
 
-export interface Player {
+export interface PokerPlayerInGame {
   id: string
   name: string
   position: number
@@ -12,6 +12,9 @@ export interface Player {
   isDealer?: boolean
 }
 
+// 互換性用エイリアス
+export type Player = PokerPlayerInGame
+
 export interface SituationData {
   gameType: string
   blinds: string
@@ -20,7 +23,7 @@ export interface SituationData {
   description: string
 }
 
-export interface PlayerAction {
+export interface PokerPlayerAction {
   playerId: string
   playerName: string
   position: string
@@ -29,16 +32,19 @@ export interface PlayerAction {
   description?: string
 }
 
+// 互換性用エイリアス
+export type PlayerAction = PokerPlayerAction
+
 export interface StageData {
   situation: string
-  players: Player[]
+  players: PokerPlayerInGame[]
   communityCards: PlayingCard[]
   pot: number
   currentBet: number
   heroPosition: number
   action: string
   result?: string
-  playerActions?: PlayerAction[]
+  playerActions?: PokerPlayerAction[]
 }
 
 export interface PreflopData {
@@ -53,7 +59,7 @@ export interface PreflopData {
   currentBet?: number
   heroPosition?: number
   result?: string
-  playerActions?: PlayerAction[]
+  playerActions?: PokerPlayerAction[]
 }
 
 export interface FlopData {
@@ -67,7 +73,7 @@ export interface FlopData {
   currentBet?: number
   heroPosition?: number
   result?: string
-  playerActions?: PlayerAction[]
+  playerActions?: PokerPlayerAction[]
 }
 
 export interface TurnData {
@@ -82,7 +88,7 @@ export interface TurnData {
   currentBet?: number
   heroPosition?: number
   result?: string
-  playerActions?: PlayerAction[]
+  playerActions?: PokerPlayerAction[]
 }
 
 export interface RiverData {
@@ -97,7 +103,7 @@ export interface RiverData {
   currentBet?: number
   heroPosition?: number
   result?: string
-  playerActions?: PlayerAction[]
+  playerActions?: PokerPlayerAction[]
 }
 
 export interface ReflectionData {

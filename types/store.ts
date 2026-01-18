@@ -1,7 +1,7 @@
 import type { Timestamp } from "firebase/firestore"
 import type { PokerOperationHours } from "./stack-man-hand"
 
-export interface Store {
+export interface StoreDetail {
   id: string
   name: string
   storeCode: string // 6桁の店舗コード（例: "123456")
@@ -28,6 +28,9 @@ export interface Store {
   // チャットポーカー稼働時間設定
   pokerOperationHours?: PokerOperationHours
 }
+
+// 互換性用エイリアス
+export type Store = StoreDetail
 
 export interface StoreRegistrationData {
   name: string

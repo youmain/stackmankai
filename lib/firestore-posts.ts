@@ -54,13 +54,19 @@ export const addPost = async (post: Omit<Post, "id">): Promise<string> => {
     log.info("[v0] モック環境: 投稿追加をシミュレート", { post })
     return `mock_post_${Date.now()}`
   }
-  const postsCollection = getPostsCollection()
-  const docRef = await addDoc(postsCollection, {
-    ...post,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-  })
-  return docRef.id
+  try {
+    const postsCollection = getPostsCollection()
+    const docRef = await addDoc(postsCollection, {
+      ...post,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    })
+    return docRef.id
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] 投稿追加に失敗しました", { error: errorMessage, post })
+    throw error
+  }
 }
 
 export const updatePost = async (id: string, updates: Partial<Post>): Promise<void> => {
@@ -68,8 +74,14 @@ export const updatePost = async (id: string, updates: Partial<Post>): Promise<vo
     log.info("[v0] モック環境: 投稿更新をシミュレート", { id, updates })
     return
   }
-  const postRef = doc(getPostsCollection(), id)
-  await updateDoc(postRef, { ...updates, updatedAt: serverTimestamp() })
+  try {
+    const postRef = doc(getPostsCollection(), id)
+    await updateDoc(postRef, { ...updates, updatedAt: serverTimestamp() })
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] 投稿更新に失敗しました", { error: errorMessage, id })
+    throw error
+  }
 }
 
 export const deletePost = async (id: string): Promise<void> => {
@@ -77,7 +89,13 @@ export const deletePost = async (id: string): Promise<void> => {
     log.info("[v0] モック環境: 投稿削除をシミュレート", { id })
     return
   }
-  await deleteDoc(doc(getPostsCollection(), id))
+  try {
+    await deleteDoc(doc(getPostsCollection(), id))
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] 投稿削除に失敗しました", { error: errorMessage, id })
+    throw error
+  }
 }
 
 // --- Chat Functions ---
@@ -107,14 +125,20 @@ export const addChatMessage = async (message: string, userId: string, userName: 
     log.info("[v0] モック環境: チャットメッセージ追加をシミュレート", { storeId, message, userId, userName })
     return
   }
-  const messagesCollection = collection(getDb(), `stores/${storeId}/chatMessages`)
-  await addDoc(messagesCollection, {
-    message,
-    userId,
-    userName,
-    type: 'user',
-    createdAt: serverTimestamp(),
-  })
+  try {
+    const messagesCollection = collection(getDb(), `stores/${storeId}/chatMessages`)
+    await addDoc(messagesCollection, {
+      message,
+      userId,
+      userName,
+      type: 'user',
+      createdAt: serverTimestamp(),
+    })
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] チャットメッセージ追加に失敗しました", { error: errorMessage, storeId, userId })
+    throw error
+  }
 }
 
 // --- Active Users Functions ---
@@ -139,8 +163,14 @@ export const setActiveUser = async (gameId: string, userId: string, userData: an
     log.info("[v0] モック環境: アクティブユーザー設定をシミュレート", { gameId, userId })
     return
   }
-  const userRef = doc(getDb(), `games/${gameId}/activeUsers`, userId)
-  await setDoc(userRef, userData, { merge: true })
+  try {
+    const userRef = doc(getDb(), `games/${gameId}/activeUsers`, userId)
+    await setDoc(userRef, userData, { merge: true })
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] アクティブユーザー設定に失敗しました", { error: errorMessage, gameId, userId })
+    throw error
+  }
 }
 
 export const removeActiveUser = async (gameId: string, userId: string): Promise<void> => {
@@ -148,8 +178,14 @@ export const removeActiveUser = async (gameId: string, userId: string): Promise<
     log.info("[v0] モック環境: アクティブユーザー削除をシミュレート", { gameId, userId })
     return
   }
-  const userRef = doc(getDb(), `games/${gameId}/activeUsers`, userId)
-  await deleteDoc(userRef)
+  try {
+    const userRef = doc(getDb(), `games/${gameId}/activeUsers`, userId)
+    await deleteDoc(userRef)
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] アクティブユーザー削除に失敗しました", { error: errorMessage, gameId, userId })
+    throw error
+  }
 }
 
 // --- Mock Data Initialization ---
@@ -192,12 +228,18 @@ export const createPost = async (postData: Omit<Post, 'id' | 'createdAt'>): Prom
     const newId = `mock_post_${Date.now()}`;
     return newId;
   }
-  const postsCollection = getPostsCollection();
-  const docRef = await addDoc(postsCollection, {
-    ...postData,
-    createdAt: serverTimestamp(),
-  });
-  return docRef.id;
+  try {
+    const postsCollection = getPostsCollection();
+    const docRef = await addDoc(postsCollection, {
+      ...postData,
+      createdAt: serverTimestamp(),
+    });
+    return docRef.id;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] 投稿作成に失敗しました", { error: errorMessage })
+    throw error
+  }
 };
 
 
@@ -212,16 +254,22 @@ export const setUserPresence = async (storeId: string, userId: string, displayNa
     return;
   }
 
-  const db = checkFirebaseConfig();
-  const presenceRef = doc(db, "stores", storeId, "activeUsers", userId);
+  try {
+    const db = checkFirebaseConfig();
+    const presenceRef = doc(db, "stores", storeId, "activeUsers", userId);
 
-  await setDoc(presenceRef, {
-    userId,
-    displayName,
-    lastSeen: serverTimestamp(),
-  }, { merge: true });
+    await setDoc(presenceRef, {
+      userId,
+      displayName,
+      lastSeen: serverTimestamp(),
+    }, { merge: true });
 
-  log.info("[v0] ユーザープレゼンス設定完了", { storeId, userId, displayName });
+    log.info("[v0] ユーザープレゼンス設定完了", { storeId, userId, displayName });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] ユーザープレゼンス設定に失敗しました", { error: errorMessage, storeId, userId })
+    throw error
+  }
 };
 
 
@@ -231,12 +279,18 @@ export const removeUserPresence = async (storeId: string, userId: string): Promi
     return;
   }
 
-  const db = checkFirebaseConfig();
-  const presenceRef = doc(db, "stores", storeId, "activeUsers", userId);
+  try {
+    const db = checkFirebaseConfig();
+    const presenceRef = doc(db, "stores", storeId, "activeUsers", userId);
 
-  await deleteDoc(presenceRef);
+    await deleteDoc(presenceRef);
 
-  log.info("[v0] ユーザープレゼンス削除完了", { storeId, userId });
+    log.info("[v0] ユーザープレゼンス削除完了", { storeId, userId });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] ユーザープレゼンス削除に失敗しました", { error: errorMessage, storeId, userId })
+    throw error
+  }
 };
 
 
@@ -244,10 +298,16 @@ export const getPostById = async (postId: string): Promise<Post | null> => {
   if (!isFirebaseConfigured) {
     return null;
   }
-  const postRef = doc(getPostsCollection(), postId);
-  const postSnap = await getDoc(postRef);
-  if (!postSnap.exists()) return null;
-  return { id: postSnap.id, ...postSnap.data() } as Post;
+  try {
+    const postRef = doc(getPostsCollection(), postId);
+    const postSnap = await getDoc(postRef);
+    if (!postSnap.exists()) return null;
+    return { id: postSnap.id, ...postSnap.data() } as Post;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] 投稿取得に失敗しました", { error: errorMessage, postId })
+    return null;
+  }
 };
 
 
@@ -275,12 +335,18 @@ export const subscribeToStorePosts = (
 
 export const deleteAllPosts = async (storeId: string): Promise<void> => {
   if (!isFirebaseConfigured) return
-  const postsCollection = getPostsCollection()
-  const q = query(postsCollection, where("storeId", "==", storeId))
-  const snapshot = await getDocs(q)
-  const batch = writeBatch(checkFirebaseConfig())
-  snapshot.docs.forEach((doc) => {
-    batch.delete(doc.ref)
-  })
-  await batch.commit()
+  try {
+    const postsCollection = getPostsCollection()
+    const q = query(postsCollection, where("storeId", "==", storeId))
+    const snapshot = await getDocs(q)
+    const batch = writeBatch(checkFirebaseConfig())
+    snapshot.docs.forEach((doc) => {
+      batch.delete(doc.ref)
+    })
+    await batch.commit()
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] 投稿一括削除に失敗しました", { error: errorMessage, storeId })
+    throw error
+  }
 }
