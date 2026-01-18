@@ -99,36 +99,60 @@ export const createCustomerAccount = async (account: Omit<CustomerAccount, "id">
     log.info("[v0] モック環境: 顧客アカウント作成をシミュレート", { account })
     return `mock_customer_${Date.now()}`
   }
-  const accountsCollection = getCustomerAccountsCollection()
-  const docRef = await addDoc(accountsCollection, {
-    ...account,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-  })
-  return docRef.id
+  try {
+    const accountsCollection = getCustomerAccountsCollection()
+    const docRef = await addDoc(accountsCollection, {
+      ...account,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    })
+    return docRef.id
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] 顧客アカウント作成に失敗しました", { error: errorMessage })
+    throw error
+  }
 }
 
 export const getCustomerAccount = async (id: string): Promise<CustomerAccount | null> => {
   if (!isFirebaseConfigured) {
     return null
   }
-  const accountRef = doc(getCustomerAccountsCollection(), id)
-  const accountSnap = await getDoc(accountRef)
-  if (!accountSnap.exists()) {
+  try {
+    const accountRef = doc(getCustomerAccountsCollection(), id)
+    const accountSnap = await getDoc(accountRef)
+    if (!accountSnap.exists()) {
+      return null
+    }
+    return { id: accountSnap.id, ...accountSnap.data() } as CustomerAccount
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] 顧客アカウント取得に失敗しました", { error: errorMessage, id })
     return null
   }
-  return { id: accountSnap.id, ...accountSnap.data() } as CustomerAccount
 }
 
 export const updateCustomerAccount = async (id: string, updates: Partial<CustomerAccount>): Promise<void> => {
   if (!isFirebaseConfigured) return
-  const accountRef = doc(getCustomerAccountsCollection(), id)
-  await updateDoc(accountRef, { ...updates, updatedAt: serverTimestamp() })
+  try {
+    const accountRef = doc(getCustomerAccountsCollection(), id)
+    await updateDoc(accountRef, { ...updates, updatedAt: serverTimestamp() })
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] 顧客アカウント更新に失敗しました", { error: errorMessage, id })
+    throw error
+  }
 }
 
 export const deleteCustomerAccount = async (id: string): Promise<void> => {
   if (!isFirebaseConfigured) return
-  await deleteDoc(doc(getCustomerAccountsCollection(), id))
+  try {
+    await deleteDoc(doc(getCustomerAccountsCollection(), id))
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] 顧客アカウント削除に失敗しました", { error: errorMessage, id })
+    throw error
+  }
 }
 
 export const subscribeToCustomerAccounts = (callback: (customers: CustomerAccount[]) => void): (() => void) => {
@@ -151,12 +175,18 @@ export const addPaymentHistory = async (history: Omit<PaymentHistory, "id">): Pr
     log.info("[v0] モック環境: 支払い履歴追加をシミュレート", { history })
     return `mock_payment_history_${Date.now()}`
   }
-  const historyCollection = getPaymentHistoryCollection()
-  const docRef = await addDoc(historyCollection, {
-    ...history,
-    createdAt: serverTimestamp(),
-  })
-  return docRef.id
+  try {
+    const historyCollection = getPaymentHistoryCollection()
+    const docRef = await addDoc(historyCollection, {
+      ...history,
+      createdAt: serverTimestamp(),
+    })
+    return docRef.id
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] 支払い履歴追加に失敗しました", { error: errorMessage })
+    throw error
+  }
 }
 
 export const subscribeToPlayerPurchaseHistory = (
@@ -182,12 +212,18 @@ export const getCustomerByEmail = async (email: string): Promise<CustomerAccount
   if (!isFirebaseConfigured) {
     return null;
   }
-  const customersCollection = getCustomerAccountsCollection();
-  const q = query(customersCollection, where("email", "==", email));
-  const snapshot = await getDocs(q);
-  if (snapshot.empty) return null;
-  const doc = snapshot.docs[0];
-  return { id: doc.id, ...doc.data() } as CustomerAccount;
+  try {
+    const customersCollection = getCustomerAccountsCollection();
+    const q = query(customersCollection, where("email", "==", email));
+    const snapshot = await getDocs(q);
+    if (snapshot.empty) return null;
+    const doc = snapshot.docs[0];
+    return { id: doc.id, ...doc.data() } as CustomerAccount;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] メールアドレスで顧客を検索に失敗しました", { error: errorMessage, email })
+    return null
+  }
 };
 
 
@@ -212,28 +248,34 @@ export const createCustomerInFirestore = async (
     return uid || `mock_customer_${Date.now()}`
   }
 
-  const accountsCollection = getCustomerAccountsCollection()
-  
-  // uid が指定されている場合は、そのIDで作成
-  if (uid) {
-    const docRef = doc(accountsCollection, uid)
-    await setDoc(docRef, {
+  try {
+    const accountsCollection = getCustomerAccountsCollection()
+    
+    // uid が指定されている場合は、そのIDで作成
+    if (uid) {
+      const docRef = doc(accountsCollection, uid)
+      await setDoc(docRef, {
+        ...accountData,
+        email,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      })
+      return uid
+    }
+
+    // uid が指定されていない場合は、自動生成
+    const docRef = await addDoc(accountsCollection, {
       ...accountData,
       email,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     })
-    return uid
+    return docRef.id
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] Firestore に顧客アカウント作成に失敗しました", { error: errorMessage, email })
+    throw error
   }
-
-  // uid が指定されていない場合は、自動生成
-  const docRef = await addDoc(accountsCollection, {
-    ...accountData,
-    email,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-  })
-  return docRef.id
 }
 
 

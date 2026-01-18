@@ -130,36 +130,60 @@ export const subscribeToDailySales = (
 
 export const deleteDailySales = async (salesId: string): Promise<void> => {
   if (!isFirebaseConfigured) return
-  await deleteDoc(doc(getDailySalesCollection(), salesId))
+  try {
+    await deleteDoc(doc(getDailySalesCollection(), salesId))
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] 日次売上削除に失敗しました", { error: errorMessage, salesId })
+    throw error
+  }
 }
 
 export const settleDailySales = async (date: string, salesData: any): Promise<void> => {
   if (!isFirebaseConfigured) return
-  const salesCollection = getDailySalesCollection()
-  const docRef = doc(salesCollection, date)
-  await setDoc(docRef, {
-    ...salesData,
-    date,
-    createdAt: serverTimestamp(),
-  })
+  try {
+    const salesCollection = getDailySalesCollection()
+    const docRef = doc(salesCollection, date)
+    await setDoc(docRef, {
+      ...salesData,
+      date,
+      createdAt: serverTimestamp(),
+    })
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] 日次売上算出に失敗しました", { error: errorMessage, date })
+    throw error
+  }
 }
 
 export const getStoreRankingSettings = async (storeId: string): Promise<StoreRankingSettings | null> => {
   if (!isFirebaseConfigured) {
     return mockStoreRankingSettings.find((s) => s.id === storeId) || null
   }
-  const settingsRef = doc(getStoreRankingSettingsCollection(), storeId)
-  const settingsSnap = await getDoc(settingsRef)
-  if (!settingsSnap.exists()) {
+  try {
+    const settingsRef = doc(getStoreRankingSettingsCollection(), storeId)
+    const settingsSnap = await getDoc(settingsRef)
+    if (!settingsSnap.exists()) {
+      return null
+    }
+    return { id: settingsSnap.id, ...settingsSnap.data() } as StoreRankingSettings
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] 店舗ランキング設定取得に失敗しました", { error: errorMessage, storeId })
     return null
   }
-  return { id: settingsSnap.id, ...settingsSnap.data() } as StoreRankingSettings
 }
 
 export const saveStoreRankingSettings = async (storeId: string, settings: Partial<StoreRankingSettings>): Promise<void> => {
   if (!isFirebaseConfigured) return
-  const settingsRef = doc(getStoreRankingSettingsCollection(), storeId)
-  await setDoc(settingsRef, { ...settings, updatedAt: serverTimestamp() }, { merge: true })
+  try {
+    const settingsRef = doc(getStoreRankingSettingsCollection(), storeId)
+    await setDoc(settingsRef, { ...settings, updatedAt: serverTimestamp() }, { merge: true })
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] 店舗ランキング設定保存に失敗しました", { error: errorMessage, storeId })
+    throw error
+  }
 }
 
 export const subscribeToStoreRankingSettings = (
@@ -187,11 +211,17 @@ export const subscribeToStoreRankingSettings = (
 
 
 export const updateMonthlyPoints = async (playerId: string, points: number): Promise<void> => {
-  const player = await getPlayer(playerId);
-  if (!player) throw new Error(`Player ${playerId} not found`);
-  await updatePlayer(playerId, {
-    monthlyPoints: (player.monthlyPoints || 0) + points,
-  } as any);
+  try {
+    const player = await getPlayer(playerId);
+    if (!player) throw new Error(`Player ${playerId} not found`);
+    await updatePlayer(playerId, {
+      monthlyPoints: (player.monthlyPoints || 0) + points,
+    } as any);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] 月間ポイント更新に失敗しました", { error: errorMessage, playerId })
+    throw error
+  }
 };
 
 
@@ -208,5 +238,11 @@ export const updateProvisionalRankingForToday = async (storeId: string): Promise
 
 
 export const updateStoreRankingSettings = async (storeId: string, settings: Partial<StoreRankingSettings>): Promise<void> => {
-  return saveStoreRankingSettings(storeId, settings);
+  try {
+    return saveStoreRankingSettings(storeId, settings);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] 店舗ランキング設定更新に失敗しました", { error: errorMessage, storeId })
+    throw error
+  }
 };

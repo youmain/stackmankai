@@ -400,14 +400,20 @@ export const deleteReceipt = async (receiptId: string): Promise<void> => {
 
 export const deleteAllReceipts = async (storeId: string): Promise<void> => {
   if (!isFirebaseConfigured) return
-  const receiptsCollection = getReceiptsCollection()
-  const q = query(receiptsCollection, where("storeId", "==", storeId))
-  const snapshot = await getDocs(q)
-  const batch = writeBatch(checkFirebaseConfig())
-  snapshot.docs.forEach((doc) => {
-    batch.delete(doc.ref)
-  })
-  await batch.commit()
+  try {
+    const receiptsCollection = getReceiptsCollection()
+    const q = query(receiptsCollection, where("storeId", "==", storeId))
+    const snapshot = await getDocs(q)
+    const batch = writeBatch(checkFirebaseConfig())
+    snapshot.docs.forEach((doc) => {
+      batch.delete(doc.ref)
+    })
+    await batch.commit()
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] 会計一括削除に失敗しました", { error: errorMessage, storeId })
+    throw error
+  }
 }
 
 
@@ -435,18 +441,30 @@ export const addReceiptItem = async (receiptId: string, item: Omit<ReceiptItem, 
   if (!isFirebaseConfigured) {
     return `mock_receipt_item_${Date.now()}`;
   }
-  const itemsCollection = getReceiptItemsCollection();
-  const docRef = await addDoc(itemsCollection, {
-    receiptId,
-    ...item,
-    createdAt: serverTimestamp(),
-  });
-  return docRef.id;
+  try {
+    const itemsCollection = getReceiptItemsCollection();
+    const docRef = await addDoc(itemsCollection, {
+      receiptId,
+      ...item,
+      createdAt: serverTimestamp(),
+    });
+    return docRef.id;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] 会計項目追加に失敗しました", { error: errorMessage, receiptId })
+    throw error
+  }
 };
 
 
 export const deleteReceiptItem = async (receiptId: string, itemId: string): Promise<void> => {
   if (!isFirebaseConfigured) return;
-  const itemRef = doc(getReceiptItemsCollection(), itemId);
-  await deleteDoc(itemRef);
+  try {
+    const itemRef = doc(getReceiptItemsCollection(), itemId);
+    await deleteDoc(itemRef);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    log.error("[ERROR] 会計項目削除に失敗しました", { error: errorMessage, itemId })
+    throw error
+  }
 };

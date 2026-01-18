@@ -96,52 +96,58 @@ export const addGameParticipant = async (
   finalBalance: number,
   createdBy: string,
 ) => {
-  if (!db) throw new Error("Firestore not initialized")
-  const batch = writeBatch(db)
-  const gameRef = doc(getGamesCollection(), gameId)
+  try {
+    if (!db) throw new Error("Firestore not initialized")
+    const batch = writeBatch(db)
+    const gameRef = doc(getGamesCollection(), gameId)
 
-  // ゲームに参加者を追加
-  const gameSnap = await import("firebase/firestore").then((m) => m.getDoc(gameRef))
-  const gameData = gameSnap.data()
-  const participants = [...(gameData?.participants || []), participant]
+    // ゲームに参加者を追加
+    const gameSnap = await import("firebase/firestore").then((m) => m.getDoc(gameRef))
+    const gameData = gameSnap.data()
+    const participants = [...(gameData?.participants || []), participant]
 
-  batch.update(gameRef, {
-    participants,
-    updatedAt: serverTimestamp(),
-  })
+    batch.update(gameRef, {
+      participants,
+      updatedAt: serverTimestamp(),
+    })
 
-  // トランザクション記録を作成
-  const transactionRef = doc(getTransactionsCollection())
-  batch.set(transactionRef, {
-    playerId: participant.playerId,
-    gameId,
-    type: "game_buy_in",
-    amount: purchaseAmount > 0 ? -purchaseAmount : 0,
-    balanceBefore: currentBalance,
-    balanceAfter: finalBalance,
-    description:
-      purchaseAmount > 0
-        ? `ゲーム参加: ${gameName} (バイイン: ${participant.buyInAmount}©, 購入: ${purchaseAmount}©)`
-        : `ゲーム参加: ${gameName} (バイイン: ${participant.buyInAmount}©, システム残高から使用)`,
-    createdAt: serverTimestamp(),
-    createdBy,
-  })
+    // トランザクション記録を作成
+    const transactionRef = doc(getTransactionsCollection())
+    batch.set(transactionRef, {
+      playerId: participant.playerId,
+      gameId,
+      type: "game_buy_in",
+      amount: purchaseAmount > 0 ? -purchaseAmount : 0,
+      balanceBefore: currentBalance,
+      balanceAfter: finalBalance,
+      description:
+        purchaseAmount > 0
+          ? `ゲーム参加: ${gameName} (バイイン: ${participant.buyInAmount}©, 購入: ${purchaseAmount}©)`
+          : `ゲーム参加: ${gameName} (バイイン: ${participant.buyInAmount}©, システム残高から使用)`,
+      createdAt: serverTimestamp(),
+      createdBy,
+    })
 
-  // ゲームトランザクションを作成
-  const gameTransactionRef = doc(getGameTransactionsCollection())
-  batch.set(gameTransactionRef, {
-    gameId,
-    playerId: participant.playerId,
-    type: "buy_in",
-    amount: participant.buyInAmount,
-    stackBefore: 0,
-    stackAfter: participant.buyInAmount,
-    description: `ゲーム参加 - スタック: ${participant.buyInAmount}© (購入: ${purchaseAmount}©)`,
-    createdAt: serverTimestamp(),
-    createdBy,
-  })
+    // ゲームトランザクションを作成
+    const gameTransactionRef = doc(getGameTransactionsCollection())
+    batch.set(gameTransactionRef, {
+      gameId,
+      playerId: participant.playerId,
+      type: "buy_in",
+      amount: participant.buyInAmount,
+      stackBefore: 0,
+      stackAfter: participant.buyInAmount,
+      description: `ゲーム参加 - スタック: ${participant.buyInAmount}© (購入: ${purchaseAmount}©)`,
+      createdAt: serverTimestamp(),
+      createdBy,
+    })
 
-  await batch.commit()
+    await batch.commit()
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    console.error("[ERROR] ゲーム参加者追加に失敗しました", { error: errorMessage, gameId })
+    throw error
+  }
 }
 
 /**
