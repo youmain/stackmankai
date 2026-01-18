@@ -129,10 +129,7 @@ export default function StackManHandPurchasePage() {
       console.log("[handlePurchase] Purchase result:", result);
       if (!result) {
         setPageError("購入処理の結果が取得できませんでした");
-        return;
-      }
-      
-      if (result.success) {
+      } else if (result.success) {
         // 購入成功時はメッセージを表示（alert は使用しない）
         setSuccessMessage(`Stack Man Handを${settings.purchasePrice}💰で購入しました！`);
         
@@ -159,7 +156,9 @@ export default function StackManHandPurchasePage() {
       setPageError(`購入処理中にエラーが発生しました: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       // finally ブロックで必ず setPurchasing(false) を実行
+      console.log("[handlePurchase] Finally block - setting purchasing to false");
       setPurchasing(false);
+      console.log("[handlePurchase] Purchasing state updated to false");
     }
   }
 
