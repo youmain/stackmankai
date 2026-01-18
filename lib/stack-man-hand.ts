@@ -238,14 +238,17 @@ export const getStackManHandSettings = async (storeId: string): Promise<(StackMa
       console.log("[Purchase] Stack Man Hand added successfully with ID:", handDocRef.id);
     } catch (addError: any) {
       console.error("[Purchase] Error adding Stack Man Hand:", addError);
+      console.error("[Purchase] Error code:", addError?.code);
       // addDocが失敗した場合、ここで即座にエラーを返す
       if (addError?.code === 'resource-exhausted') {
+        console.log("[Purchase] Returning resource-exhausted error response");
         return { 
           success: false, 
           message: "Firestoreの読み取り制限に達しました。\n\n午前9時（日本時間）にリセットされます。\nしばらく待ってから再度お試しください。" 
         };
       }
       // 他のエラーもエラーレスポンスを返す（throw しない）
+      console.log("[Purchase] Returning generic error response");
       return {
         success: false,
         message: `Stack Man Handの作成に失敗しました。\n\nエラー: ${addError?.message || String(addError)}`
