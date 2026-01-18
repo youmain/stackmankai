@@ -21,7 +21,7 @@ let auth: Auth | null = null
 let initializationAttempted = false
 let initializationError: Error | null = null
 
-export const isDemoMode = process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true'
+
 
 function initializeFirebase() {
   if (initializationAttempted) {
@@ -78,7 +78,7 @@ function initializeFirebase() {
 // サーバー側とクライアント側の両方で初期化
 initializeFirebase()
 
-export const isFirebaseConfigured = process.env.NEXT_PUBLIC_USE_MOCK_DATA !== 'true' && !!firebaseConfig.apiKey
+export const isFirebaseConfigured = !!firebaseConfig.apiKey
 
 export const getInitializationError = () => initializationError
 

@@ -16,7 +16,7 @@ import {
   setDoc,
   writeBatch,
 } from "firebase/firestore"
-import { getDb, isFirebaseConfigured, isDemoMode } from "./firebase"
+import { getDb, isFirebaseConfigured } from "./firebase"
 
 // Force Vercel rebuild with stable version - Manus AI (2026-01-13)
 import { validateId } from "./validation"
@@ -1217,42 +1217,7 @@ export const removeActiveUser = async (gameId: string, userId: string): Promise<
 
 // --- Mock Data Initialization ---
 
-const initializeMockData = async () => {
-  if (isDemoMode && isFirebaseConfigured) {
-    log.info("[v0] デモモード: モックデータを初期化します")
-    const db = checkFirebaseConfig()
 
-    const collections: { [key: string]: any[] } = {
-      players: mockPlayers,
-      games: mockGames,
-      receipts: mockReceipts,
-      rakeHistory: mockRakeHistory,
-      users: mockUsers,
-      storeRankingSettings: mockStoreRankingSettings,
-      dailyRankings: mockDailyRankings,
-      monthlyRankings: mockMonthlyRankings,
-      monthlyPoints: mockMonthlyPoints,
-    }
-
-    for (const collectionName in collections) {
-      const docs = await getDocs(collection(db, collectionName))
-      if (docs.empty) {
-        log.info(`[v0] ${collectionName} コレクションにモックデータを投入します`)
-        const colRef = collection(db, collectionName)
-        for (const mockDoc of collections[collectionName]) {
-          const { id, ...data } = mockDoc
-          await setDoc(doc(colRef, id), data)
-        }
-      } else {
-        log.info(`[v0] ${collectionName} コレクションは既にデータが存在するためスキップします`)
-      }
-    }
-  }
-}
-
-if (isDemoMode) {
-  initializeMockData()
-}
 
 // --- Other Functions ---
 
