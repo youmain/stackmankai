@@ -29,36 +29,25 @@ export default function StackManHandPurchasePage() {
   const [minimumStack, setMinimumStack] = useState(10000)
   const [playerName, setPlayerName] = useState("")
   const [storeName, setStoreName] = useState("")
-  const isMounted = useRef(true);
 
-  useEffect(() => {
-    isMounted.current = true;
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
 
   // Stack Man Hand履歴をフェッチする関数
   const fetchTodayHands = async (storeId: string, customerAccountId: string) => {
     try {
       setHandsError(null);
       const hands = await getTodayStackManHands(storeId, customerAccountId);
-      if (isMounted.current) {
-        setTodayHands(hands.map(hand => ({
-          ...hand,
-          purchasedAt: (hand.purchasedAt as any)?.toDate?.()?.toISOString() || (hand.purchasedAt as any),
-          validUntil: (hand.validUntil as any)?.toDate?.()?.toISOString() || (hand.validUntil as any),
-        })));
-        // 本日の購入回数を更新
-        setPurchasedToday(hands.length);
-        setRemainingPurchases(Math.max(0, 25 - hands.length));
-      }
+      setTodayHands(hands.map(hand => ({
+        ...hand,
+        purchasedAt: (hand.purchasedAt as any)?.toDate?.()?.toISOString() || (hand.purchasedAt as any),
+        validUntil: (hand.validUntil as any)?.toDate?.()?.toISOString() || (hand.validUntil as any),
+      })));
+      // 本日の購入回数を更新
+      setPurchasedToday(hands.length);
+      setRemainingPurchases(Math.max(0, 25 - hands.length));
     } catch (error) {
       console.error("Error fetching today's Stack Man Hands:", error);
-      if (isMounted.current) {
-        // ページ全体のエラーではなく、履歴読み込みのエラーとして扱う
-        setHandsError(`履歴の読み込みに失敗しました。`);
-      }
+      // ページ全体のエラーではなく、履歴読み込みのエラーとして扱う
+      setHandsError(`履歴の読み込みに失敗しました。`);
     }
   };
 
