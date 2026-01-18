@@ -366,10 +366,22 @@ export const getTodayStackManHands = async (
     const db = getDb()
     if (!db) throw new Error("Firestore is not initialized")
     
+    // 本日の開始と終了時刻を計算
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const todayStart = Timestamp.fromDate(today)
+    
+    const tomorrow = new Date(today)
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    const todayEnd = Timestamp.fromDate(tomorrow)
+    
+    // Firestore クエリで本日のハンドのみを取得
     const handsRef = collection(getDb()!, "stores", storeId, "stackManHands")
     const handsQuery = query(
       handsRef,
       where("userId", "==", userId),
+      where("purchasedAt", ">=", todayStart),
+      where("purchasedAt", "<", todayEnd)
     )
     
     const snapshot = await getDocs(handsQuery)
@@ -378,15 +390,7 @@ export const getTodayStackManHands = async (
       ...doc.data(),
     })) as StackManHand[]
 
-    // 本日のハンドのみを返す
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    
-    return hands.filter(hand => {
-      const purchasedDate = hand.purchasedAt.toDate()
-      purchasedDate.setHours(0, 0, 0, 0)
-      return purchasedDate.getTime() === today.getTime()
-    }).sort((a, b) => b.purchasedAt.toMillis() - a.purchasedAt.toMillis())
+    return hands.sort((a, b) => b.purchasedAt.toMillis() - a.purchasedAt.toMillis())
   } catch (error) {
     console.error("Error getting today's Stack Man Hands:", error)
     return [] // エラー時は空配列を返す
