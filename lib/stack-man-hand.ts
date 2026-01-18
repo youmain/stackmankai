@@ -279,7 +279,7 @@ export const getStackManHandSettings = async (storeId: string): Promise<(StackMa
     try {
       await Promise.race([
         Promise.all(updatePromises),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Update timeout')), 10000))
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Update timeout')), 20000))
       ]);
     } catch (error) {
       console.warn("[Purchase] Update timeout or error, but continuing:", error);

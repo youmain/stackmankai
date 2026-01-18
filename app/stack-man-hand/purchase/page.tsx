@@ -137,7 +137,7 @@ export default function StackManHandPurchasePage() {
       // タイムアウト付きで purchaseStackManHand を実行
       const result = await Promise.race([
         purchaseStackManHand(customerAccount.storeId, customerAccount.playerId, customerAccount.playerName || playerName, customerAccount.id),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Purchase timeout after 30 seconds')), 30000))
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Purchase timeout after 60 seconds')), 60000))
       ]) as any
       if (result.success) {
         // 購入成功時はメッセージを表示（alert は使用しない）
