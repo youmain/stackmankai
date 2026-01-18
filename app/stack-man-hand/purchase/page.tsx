@@ -31,6 +31,17 @@ export default function StackManHandPurchasePage() {
   const [storeName, setStoreName] = useState("")
 
 
+  // purchasing 状況を監視して、一定時間後に自動的にリセットします
+  useEffect(() => {
+    if (purchasing) {
+      const timer = setTimeout(() => {
+        console.log("[Auto-reset] Resetting purchasing state after 10 seconds");
+        setPurchasing(false);
+      }, 10000);
+      return () => clearTimeout(timer);
+    }
+  }, [purchasing]);
+
   // Stack Man Hand履歴をフェッチする関数
   const fetchTodayHands = async (storeId: string, customerAccountId: string) => {
     try {
