@@ -128,6 +128,11 @@ export default function StackManHandPurchasePage() {
         purchaseStackManHand(customerAccount.storeId, customerAccount.playerId, customerAccount.playerName || playerName, customerAccount.id),
         new Promise((_, reject) => setTimeout(() => reject(new Error('Purchase timeout after 60 seconds')), 60000))
       ]) as any
+      if (!result) {
+        setPageError("購入処理の結果が取得できませんでした");
+        return;
+      }
+      
       if (result.success) {
         // 購入成功時はメッセージを表示（alert は使用しない）
         setSuccessMessage(`Stack Man Handを${settings.purchasePrice}💰で購入しました！`);
@@ -155,10 +160,7 @@ export default function StackManHandPurchasePage() {
       setPageError(`購入処理中にエラーが発生しました: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       // finally ブロックで必ず setPurchasing(false) を実行
-      // マイクロタスクを使用して、React のバッチ処理を回避し、確実に状態更新を実行する
-      setTimeout(() => {
-        setPurchasing(false);
-      }, 0);
+      setPurchasing(false);
     }
   }
 
