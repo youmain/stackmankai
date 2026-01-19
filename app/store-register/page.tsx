@@ -59,28 +59,50 @@ export default function StoreRegisterPage() {
       const uid = userCredential.user.uid
       console.log("[Client] Firebase user created:", uid)
 
-      // Step 2: サーバー側でFirestoreに店舗情報を保存
-      console.log("[Client] Step 2: Calling API: /api/store/register")
-      const response = await fetch("/api/store/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          uid, // Firebase Auth ユーザーID を送信
-        }),
+      // Step 2: クライアント側でFirestoreに店舗情報を保存
+      console.log("[Client] Step 2: Saving store data to Firestore...")
+      const { getFirestore, collection, doc, setDoc } = await import("firebase/firestore")
+      const db = getFirestore()
+
+      // 店舗コードを生成
+      const storeCode = Math.floor(100000 + Math.random() * 900000).toString()
+
+      // パスワードをBase64でハッシュ化
+      const hashedPassword = Buffer.from(formData.ownerPassword).toString("base64")
+
+      // Firestoreに店舗情報を保存
+      await setDoc(doc(db, "stores", uid), {
+        uid: uid,
+        ownerId: uid,
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone || "",
+        address: formData.address || "",
+        description: formData.description || "",
+        ownerEmail: formData.ownerEmail,
+        ownerPassword: hashedPassword,
+        storeCode: storeCode,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       })
 
-      console.log("[Client] API response:", response)
+      console.log("[Client] Store document created:", uid)
 
-      const data = await response.json()
+      // ユーザー情報も保存
+      await setDoc(doc(db, "users", uid), {
+        email: formData.ownerEmail,
+        role: "store_owner",
+        storeId: uid,
+        storeName: formData.name,
+        displayName: formData.name,
+        phoneVerified: false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      })
 
-      if (!response.ok) {
-        throw new Error(data.error || "登録に失敗しました")
-      }
+      console.log("[Client] User document created:", uid)
 
-      setGeneratedCode(data.storeCode)
+      setGeneratedCode(storeCode)
       
       // 登録成功後、ログインページにリダイレクト
       setTimeout(() => {
