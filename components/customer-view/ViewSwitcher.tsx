@@ -54,12 +54,13 @@ interface ViewSwitcherProps {
   setActiveTab: (tab: string) => void
   setSelectedPlayerForChart: (player: string | null) => void
   setIsChartModalOpen: (isOpen: boolean) => void
+  setViewMode: (mode: string) => void
 }
 
 export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
   viewMode, linkedPlayer, customerAccount, dailyRankings, monthlyPoints, storeSettings, rakeHistory, pointHistory, players,
   selectedPostId, selectedTab, activeTab, currentDate, currentYear, currentMonth, currentMonthStr, today, isLoading,
-  getDisplayName, handlePostClick, handleBackFromPostDetail, setSelectedTab, setActiveTab, setSelectedPlayerForChart, setIsChartModalOpen
+  getDisplayName, handlePostClick, handleBackFromPostDetail, setSelectedTab, setActiveTab, setSelectedPlayerForChart, setIsChartModalOpen, setViewMode
 }) => {
 
   // page.tsxから移動したuseMemoの計算結果をここで再計算するか、propsとして受け取る

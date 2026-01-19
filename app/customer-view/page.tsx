@@ -123,6 +123,7 @@ export default function CustomerView() {
           setActiveTab={state.setActiveTab}
           setSelectedPlayerForChart={state.setSelectedPlayerForChart}
           setIsChartModalOpen={state.setIsChartModalOpen}
+          setViewMode={state.setViewMode}
         />
       </div>
 
