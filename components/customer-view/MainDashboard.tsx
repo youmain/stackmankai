@@ -103,7 +103,7 @@ export const MainDashboard = React.memo<React.FC<MainDashboardProps>>(({
                 <div className="text-2xl sm:text-3xl font-bold text-purple-600">
                   {linkedPlayer && 'stapokaBalance' in linkedPlayer ? (linkedPlayer.stapokaBalance || 0).toLocaleString() : '0'}
                 </div>
-                <div className="text-xs text-gray-500 mt-1">ポーカーゲーム内チップ</div>
+                <div className="text-xs text-gray-500 mt-1">ポーカーゲーム内チップ / ハンド購入に使用可能</div>
               </div>
 
               {/* CP（キャッシュバックポイント） */}
