@@ -151,8 +151,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             });
 
             // customerAccountsを購読
-            unsubscribeCustomerAccount = subscribeToCustomerAccount(firebaseUser.uid, (account) => {
+            unsubscribeCustomerAccount = subscribeToCustomerAccount(firebaseUser.uid, async (account) => {
               console.log("[Auth] Customer account updated:", account);
+              
+              if (!account) {
+                // customerAccountが存在しない場合、自動で作成を試みる
+                console.log("[Auth] Customer account not found. Attempting to create a new one.");
+                try {
+                  const { createCustomerInFirestore } = await import("@/lib/firestore");
+                  const newAccountId = await createCustomerInFirestore({
+                    storeId: "king-high-store", // デフォルトの店舗ID
+                    playerName: firebaseUser.email?.split('@')[0] || "新規ユーザー",
+                    playerId: firebaseUser.uid, // 仮のplayerIdとしてuidを使用
+                    stapokaBalance: 0,
+                    systemBalance: 0,
+                  }, firebaseUser.email || "", firebaseUser.uid);
+                  console.log("[Auth] New customer account created with ID:", newAccountId);
+                  // 作成後、onSnapshotが新しいアカウントを検知して更新するため、ここでは何もしない
+                } catch (createError) {
+                  console.error("[Auth] Failed to auto-create customer account:", createError);
+                  // 作成に失敗しても、とりあえず続行
+                }
+              }
+              
               setCustomerAccountState(account);
               if (account) {
                 setUser(prevUser => ({
