@@ -291,19 +291,25 @@ export function ChatRoomDualMode() {
           </CardHeader>
           <CardContent className="flex-1 flex flex-col gap-4 overflow-hidden">
             <ChatPanel
+              height="100%"
+              showHeader={true}
               messages={messages}
-              hiddenMessageIds={hiddenMessageIds}
-              onToggleVisibility={handleToggleVisibility}
               newMessage={newMessage}
-              onMessageChange={setNewMessage}
-              onSendMessage={handleSendMessageClick}
               isSending={isSending}
               error={error}
-              onErrorClear={() => setError("")}
+              hiddenMessageIds={hiddenMessageIds}
               activeUsers={activeUsers}
+              currentUserId={customerAccount?.id || ""}
               inputRef={inputRef}
-              scrollAreaRef={scrollAreaRef}
-              messagesEndRef={messagesEndRef}
+              onMessageChange={setNewMessage}
+              onSendMessage={handleSendMessageClick}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault()
+                  handleSendMessageClick(e as any)
+                }
+              }}
+              onClearHistory={handleClearHistoryClick}
             />
           </CardContent>
         </Card>
