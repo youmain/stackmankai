@@ -212,6 +212,7 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
           linkedPlayer={linkedPlayer}
           customerAccount={customerAccount}
           getDisplayName={getDisplayName}
+          onViewModeChange={setViewMode}
         />
       )
     case "main":
