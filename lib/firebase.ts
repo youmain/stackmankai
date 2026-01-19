@@ -78,7 +78,9 @@ function initializeFirebase() {
 // サーバー側とクライアント側の両方で初期化
 initializeFirebase()
 
-export const isFirebaseConfigured = !!firebaseConfig.apiKey
+export function isFirebaseConfigured(): boolean {
+  return !!firebaseConfig.apiKey && !!app
+}
 
 export const getInitializationError = () => initializationError
 

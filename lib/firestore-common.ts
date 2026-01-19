@@ -161,20 +161,26 @@ export const getMembershipRankDetails = (rank: string) => {
 
 
 export const getAdminPassword = async (): Promise<string | null> => {
-  if (!isFirebaseConfigured) return "0000"
-  const db = checkFirebaseConfig()
-  const docRef = doc(db, "settings", "admin")
-  const snapshot = await getDoc(docRef)
-  if (!snapshot.exists()) return "0000"
-  return snapshot.data().password || "0000"
+  try {
+    const db = checkFirebaseConfig()
+    const docRef = doc(db, "settings", "admin")
+    const snapshot = await getDoc(docRef)
+    if (!snapshot.exists()) return "0000"
+    return snapshot.data().password || "0000"
+  } catch (error) {
+    return "0000"
+  }
 }
 
 
 export const saveAdminPassword = async (password: string): Promise<void> => {
-  if (!isFirebaseConfigured) return
-  const db = checkFirebaseConfig()
-  const docRef = doc(db, "settings", "admin")
-  await setDoc(docRef, { password, updatedAt: serverTimestamp() })
+  try {
+    const db = checkFirebaseConfig()
+    const docRef = doc(db, "settings", "admin")
+    await setDoc(docRef, { password, updatedAt: serverTimestamp() })
+  } catch (error) {
+    console.error("Failed to save admin password:", error)
+  }
 }
 
 // --- Ranking & Sales Functions ---

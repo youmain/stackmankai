@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from "next/server"
-import { registerStoreAdmin } from "@/lib/firestore-stores-admin"
 import type { StoreRegistrationData } from "@/types/store"
+import { getAdminDb } from "@/lib/firebase-admin"
+
+/**
+ * 6桁のランダムな店舗コードを生成
+ */
+function generateRandomCode(): string {
+  return Math.floor(100000 + Math.random() * 900000).toString()
+}
 
 export async function POST(request: NextRequest) {
   console.log("[API] Store registration API called")
   try {
-    const data: StoreRegistrationData = await request.json()
+    const data: StoreRegistrationData & { uid?: string } = await request.json()
     console.log("[API] Request data:", { ...data, ownerPassword: "***" })
     
     // バリデーション
@@ -23,16 +30,89 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 店舗登録を実行（Firebase Admin SDK版）
-    console.log("[API] Calling registerStoreAdmin...")
-    const result = await registerStoreAdmin(data)
-    console.log("[API] Registration successful:", result)
+    // UID がクライアント側から提供されているか確認
+    if (!data.uid) {
+      return NextResponse.json(
+        { error: "ユーザー認証が必要です。先にクライアント側で登録してください。" },
+        { status: 400 }
+      )
+    }
+
+    const uid = data.uid
+    const db = getAdminDb()
+
+    // パスワードのハッシュ化
+    const hashedOwnerPassword = Buffer.from(data.ownerPassword).toString("base64")
+
+    let storeCode = ""
+
+    // 店舗コードの重複チェック（最大10回試行）
+    let codeFound = false
+
+    for (let i = 0; i < 10; i++) {
+      const code = generateRandomCode()
+
+      try {
+        const querySnapshot = await db
+          .collection("stores")
+          .where("storeCode", "==", code)
+          .get()
+
+        if (querySnapshot.empty) {
+          storeCode = code
+          codeFound = true
+          break
+        }
+      } catch (e) {
+        console.warn("店舗コード重複チェックエラー:", e)
+        continue
+      }
+    }
+
+    if (!codeFound) {
+      throw new Error(
+        "店舗コードの生成に失敗しました。しばらくしてから再度お試しください。"
+      )
+    }
+
+    // Firestoreに店舗情報を保存
+    const storeRef = db.collection("stores").doc()
+    const storeId = storeRef.id
+
+    await storeRef.set({
+      uid: uid,
+      ownerId: uid,  // 招待コード生成APIの権限チェック用
+      name: data.name,
+      email: data.email,
+      phone: data.phone || "",
+      address: data.address || "",
+      description: data.description || "",
+      ownerEmail: data.ownerEmail,
+      ownerPassword: hashedOwnerPassword,
+      storeCode: storeCode,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    })
+
+    // usersコレクションにもユーザーデータを作成（ログイン用）
+    await db.collection("users").doc(uid).set({
+      email: data.ownerEmail,
+      role: "store_owner",
+      storeId: storeId,
+      storeName: data.name,
+      displayName: data.name,
+      phoneVerified: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    })
+
+    console.log(`[API] 店舗登録成功: ${storeId}, コード: ${storeCode}`)
 
     return NextResponse.json({
       success: true,
-      storeId: result.storeId,
-      storeCode: result.storeCode,
-      uid: result.uid,
+      storeId,
+      storeCode,
+      uid,
     })
   } catch (error: any) {
     console.error("[API] 店舗登録APIエラー:", error)

@@ -45,13 +45,31 @@ export default function StoreRegisterPage() {
     console.log("[Client] Form data:", { ...formData, ownerPassword: "***" })
 
     try {
-      console.log("[Client] Calling API: /api/store/register")
+      // Step 1: Firebase Authentication でユーザーを作成
+      console.log("[Client] Step 1: Creating Firebase Auth user...")
+      const { getAuth, createUserWithEmailAndPassword } = await import("firebase/auth")
+      const auth = getAuth()
+      
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formData.ownerEmail,
+        formData.ownerPassword
+      )
+      
+      const uid = userCredential.user.uid
+      console.log("[Client] Firebase user created:", uid)
+
+      // Step 2: サーバー側でFirestoreに店舗情報を保存
+      console.log("[Client] Step 2: Calling API: /api/store/register")
       const response = await fetch("/api/store/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          uid, // Firebase Auth ユーザーID を送信
+        }),
       })
 
       console.log("[Client] API response:", response)
