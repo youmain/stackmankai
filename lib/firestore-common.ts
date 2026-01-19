@@ -49,7 +49,7 @@ const log = createModuleLogger("Firestore")
 
 // --- 共通・ユーティリティ関数 ---
 
-export const checkFirebaseConfig = (): boolean => {
+export const checkFirebaseConfig = () => {
   const db = getDb()
   if (!db) {
     throw new Error("Firestoreが初期化されていません")
