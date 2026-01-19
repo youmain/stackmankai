@@ -50,9 +50,17 @@ const log = createModuleLogger("Firestore")
 // --- 共通・ユーティリティ関数 ---
 
 export const checkFirebaseConfig = () => {
+  if (typeof window !== "undefined") {
+    const isConfigured = !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY || 
+                        (window as any).__FIREBASE_CONFIGURED__;
+    if (!isConfigured) {
+      console.warn("[Firebase] Configuration missing in browser");
+    }
+  }
+
   const db = getDb()
   if (!db) {
-    throw new Error("Firestoreが初期化されていません")
+    throw new Error("Firestoreが初期化されていません。環境変数を確認してください。")
   }
   return db
 }
