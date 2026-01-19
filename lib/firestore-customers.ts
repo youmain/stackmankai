@@ -17,6 +17,7 @@ import {
   writeBatch,
 } from "firebase/firestore"
 import { getDb, isFirebaseConfigured } from "./firebase"
+import { checkFirebaseConfig } from "./firestore-common"
 
 // Force Vercel rebuild with stable version - Manus AI (2026-01-13)
 import { validateId } from "./validation"
@@ -79,7 +80,7 @@ export const subscribeToCustomerAccount = (uid: string, callback: (account: Cust
     };
   }
 
-  const db = checkFirebaseConfig();
+  const db = checkFirebaseConfig() as any;
   const customerDocRef = doc(db, "customerAccounts", uid);
 
   return onSnapshot(customerDocRef, (docSnap) => {

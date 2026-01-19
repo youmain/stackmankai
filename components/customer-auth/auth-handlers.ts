@@ -1,4 +1,4 @@
-import { getCustomerByEmail, linkPlayerToCustomer, createCustomerAccount } from "@/lib/firestore"
+import { getCustomerByEmail, linkPlayerToCustomer, createCustomerAccount, getCustomerAccountsCollection } from "@/lib/firestore"
 import { signIn, createUser, signInWithGoogle, getGoogleRedirectResult } from "@/lib/firebase-auth"
 import { saveAuthCache } from "@/lib/auth-cache"
 import { handleError, handleSuccess } from "@/lib/error-handler"
