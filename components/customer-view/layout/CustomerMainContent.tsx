@@ -29,7 +29,7 @@ export const CustomerMainContent: React.FC<CustomerMainContentProps> = ({
   pointHistory,
   currentRewardRate,
   storeSettings,
-  playingPlayers,
+  playingPlayers = [],
   getDisplayName,
   handleDetailedDataClick,
 }) => {
