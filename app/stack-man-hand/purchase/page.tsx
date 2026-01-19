@@ -79,10 +79,16 @@ export default function StackManHandPurchasePage() {
           return;
         }
 
-        const storeSettings = await getStackManHandSettings(storeId);
-        if (!storeSettings || !storeSettings.enabled) {
-          router.push("/customer-view");
-          return;
+        let storeSettings = await getStackManHandSettings(storeId);
+        if (!storeSettings) {
+          // 設定がない場合はデフォルト設定を使用
+          storeSettings = {
+            enabled: true,
+            purchasePrice: 1000,
+            rewardBaseAmount: 100,
+            operationHours: { open: "00:00", close: "23:59" },
+            minimumStack: 10000
+          } as any;
         }
         setSettings(storeSettings);
 
