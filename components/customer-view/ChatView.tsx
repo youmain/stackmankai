@@ -5,7 +5,10 @@ import { Button } from '@/components/ui/button'
 import { ChatRoomDualMode } from '@/components/chat/chat-room-dual-mode'
 
 interface ChatViewProps {
-  onViewModeChange: (mode: string) => void
+  linkedPlayer: any
+  customerAccount: any
+  getDisplayName: (player: any) => string
+  onViewModeChange?: (mode: string) => void
 }
 
 export const ChatView = React.memo<React.FC<ChatViewProps>>(({ onViewModeChange }) => {
