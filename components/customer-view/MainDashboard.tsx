@@ -20,6 +20,10 @@ import {
   BarChart3,
   TrendingUp,
   Zap,
+  Coins,
+  Wallet,
+  Crown,
+  User,
 } from 'lucide-react'
 import type { Player, StoreSettings, DailyRanking, MonthlyPoints } from '@/types'
 
@@ -67,6 +71,62 @@ export const MainDashboard = React.memo<React.FC<MainDashboardProps>>(({
 
   return (
     <>
+      {/* キングハイ - プレイヤーの資産情報表示 */}
+      <Card className="border-indigo-200 bg-gradient-to-r from-indigo-50 to-purple-50 shadow-lg">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-2xl sm:text-3xl text-indigo-900">
+            <Crown className="h-7 w-7 text-indigo-600" />
+            キングハイ
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {linkedPlayer ? (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {/* 貯スタック */}
+              <div className="bg-white rounded-lg p-4 shadow-sm border border-indigo-100">
+                <div className="flex items-center gap-2 mb-2">
+                  <Coins className="h-5 w-5 text-blue-600" />
+                  <span className="text-sm font-medium text-gray-600">貯スタック</span>
+                </div>
+                <div className="text-2xl sm:text-3xl font-bold text-blue-600">
+                  {linkedPlayer && 'systemBalance' in linkedPlayer ? (linkedPlayer.systemBalance || 0).toLocaleString() : '0'}
+                </div>
+                <div className="text-xs text-gray-500 mt-1">店舗管理スタック</div>
+              </div>
+
+              {/* スタポカ貯スタック */}
+              <div className="bg-white rounded-lg p-4 shadow-sm border border-purple-100">
+                <div className="flex items-center gap-2 mb-2">
+                  <Wallet className="h-5 w-5 text-purple-600" />
+                  <span className="text-sm font-medium text-gray-600">スタポカ貯スタック</span>
+                </div>
+                <div className="text-2xl sm:text-3xl font-bold text-purple-600">
+                  {linkedPlayer && 'stapokaBalance' in linkedPlayer ? (linkedPlayer.stapokaBalance || 0).toLocaleString() : '0'}
+                </div>
+                <div className="text-xs text-gray-500 mt-1">ポーカーゲーム内チップ</div>
+              </div>
+
+              {/* CP（キャッシュバックポイント） */}
+              <div className="bg-white rounded-lg p-4 shadow-sm border border-amber-100">
+                <div className="flex items-center gap-2 mb-2">
+                  <Gift className="h-5 w-5 text-amber-600" />
+                  <span className="text-sm font-medium text-gray-600">CP</span>
+                </div>
+                <div className="text-2xl sm:text-3xl font-bold text-amber-600">
+                  {linkedPlayer && 'rewardPoints' in linkedPlayer ? (linkedPlayer.rewardPoints || 0).toLocaleString() : '0'}
+                </div>
+                <div className="text-xs text-gray-500 mt-1">キャッシュバックポイント</div>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              <Crown className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <p className="text-lg font-medium">プレイヤーが紐付けられていません</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       {/* ポイント2倍デー表示 */}
       {isDoublePointDay && (
         <Card className="border-yellow-200 bg-yellow-50 shadow-md">
@@ -229,6 +289,61 @@ export const MainDashboard = React.memo<React.FC<MainDashboardProps>>(({
           )}
         </CardContent>
       </Card>
+
+      {/* プレイヤー情報セクション */}
+      {linkedPlayer && (
+        <Card className="shadow-md">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+              <User className="h-5 w-5 text-blue-500" />
+              プレイヤー情報
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-gray-600">プレイヤー名</p>
+                <p className="text-lg font-semibold text-gray-900">{linkedPlayer && 'name' in linkedPlayer ? linkedPlayer.name : 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">ホーム店舗</p>
+                <p className="text-lg font-semibold text-gray-900">{linkedPlayer && 'storeName' in linkedPlayer ? (linkedPlayer.storeName || "未設定") : "N/A"}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">ステータス</p>
+                <Badge variant={linkedPlayer && 'isPlaying' in linkedPlayer && linkedPlayer.isPlaying ? "default" : "secondary"}>
+                  {linkedPlayer && 'isPlaying' in linkedPlayer && linkedPlayer.isPlaying ? "プレイ中" : "待機中"}
+                </Badge>
+              </div>
+              {linkedPlayer && 'membershipRank' in linkedPlayer && storeSettings?.membershipRankSettings?.enabled && (
+                <div>
+                  <p className="text-sm text-gray-600">会員ランク</p>
+                  <div className="flex items-center gap-2">
+                    {linkedPlayer.membershipRank === "platinum" && (
+                      <Badge className="bg-purple-600 text-white">プラチナ</Badge>
+                    )}
+                    {linkedPlayer.membershipRank === "gold" && (
+                      <Badge className="bg-yellow-500 text-white">ゴールド</Badge>
+                    )}
+                    {linkedPlayer.membershipRank === "silver" && (
+                      <Badge className="bg-gray-400 text-white">シルバー</Badge>
+                    )}
+                    {(!linkedPlayer.membershipRank || linkedPlayer.membershipRank === "none") && (
+                      <Badge variant="outline">一般</Badge>
+                    )}
+                  </div>
+                </div>
+              )}
+              {linkedPlayer && 'pokerName' in linkedPlayer && linkedPlayer.pokerName && (
+                <div>
+                  <p className="text-sm text-gray-600">ポーカーネーム</p>
+                  <p className="text-lg font-semibold text-purple-600">{linkedPlayer.pokerName}</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* CP履歴 */}
       {linkedPlayer && pointHistory && pointHistory.length > 0 && (

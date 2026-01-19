@@ -63,6 +63,7 @@ export const subscribeToPlayers = (
     // 新しいシグネチャ: subscribeToPlayers(storeId, callback)
     actualStoreId = storeIdOrCallback
     actualCallback = callbackOrOnError as (players: Player[]) => void
+    actualOnError = storeIdOrUndefined as ((error: Error) => void) | undefined
   } else {
     // 古いシグネチャ: subscribeToPlayers(callback, onError?, storeId?)
     actualCallback = storeIdOrCallback
@@ -70,7 +71,7 @@ export const subscribeToPlayers = (
     actualStoreId = storeIdOrUndefined || null
   }
 
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     if (actualStoreId) {
       actualCallback(mockPlayers.filter((p) => p.storeId === actualStoreId))
     } else {
@@ -121,7 +122,7 @@ export const subscribeToPlayers = (
 }
 
 export const getPlayer = async (id: string): Promise<Player | null> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     const player = mockPlayers.find((p) => p.id === id)
     return player || null
   }
@@ -141,7 +142,7 @@ export const getPlayer = async (id: string): Promise<Player | null> => {
 }
 
 export const addPlayer = async (player: Omit<Player, "id">): Promise<string> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: プレイヤー追加をシミュレート", { player })
     return `mock_player_${Date.now()}`
   }
@@ -161,7 +162,7 @@ export const addPlayer = async (player: Omit<Player, "id">): Promise<string> => 
 }
 
 export const updatePlayer = async (id: string, updates: Partial<Player>): Promise<void> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: プレイヤー更新をシミュレート", { id, updates })
     return
   }
@@ -177,7 +178,7 @@ export const updatePlayer = async (id: string, updates: Partial<Player>): Promis
 }
 
 export const deletePlayer = async (id: string): Promise<void> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: プレイヤー削除をシミュレート", { id })
     return
   }
@@ -192,7 +193,7 @@ export const deletePlayer = async (id: string): Promise<void> => {
 }
 
 export const archivePlayer = async (id: string): Promise<void> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: プレイヤーのアーカイブをシミュレート", { id })
     return
   }
@@ -208,7 +209,7 @@ export const archivePlayer = async (id: string): Promise<void> => {
 }
 
 export const unarchivePlayer = async (id: string): Promise<void> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: プレイヤーのアーカイブ解除をシミュレート", { id })
     return
   }
@@ -224,7 +225,7 @@ export const unarchivePlayer = async (id: string): Promise<void> => {
 }
 
 export const updatePlayerMembershipRank = async (playerId: string): Promise<void> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: メンバーシップランク更新をシミュレート", { playerId })
     return
   }

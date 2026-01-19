@@ -105,11 +105,23 @@ export default function PlayersPage() {
 
     console.log("[v0] 🔄 プレイヤーデータ購読開始")
 
-    const unsubscribe = subscribeToPlayers((playersData) => {
-      console.log("[v0] ✅ プレイヤーデータ取得:", playersData.length, "件")
-      setPlayers(playersData)
-      setFirebaseError(null)
-    })
+    console.log("[v0] 🔄 プレイヤーデータ購読開始. storeId:", storeId)
+    
+    let unsubscribe: () => void = () => {}
+    
+    try {
+      unsubscribe = subscribeToPlayers(storeId || "", (playersData) => {
+        console.log("[v0] ✅ プレイヤーデータ取得成功:", playersData.length, "件")
+        setPlayers(playersData)
+        setFirebaseError(null)
+      }, (error) => {
+        console.error("[v0] ❌ プレイヤーデータ取得エラー:", error)
+        setFirebaseError(`データ取得エラー: ${error.message}`)
+      })
+    } catch (err: any) {
+      console.error("[v0] ❌ subscribeToPlayers 呼び出しエラー:", err)
+      setFirebaseError(`システムエラー: ${err.message}`)
+    }
 
     return () => {
       console.log("[v0] 🔄 プレイヤーデータ購読終了")

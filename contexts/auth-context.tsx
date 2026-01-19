@@ -125,17 +125,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             
             if (userDocSnap.exists()) {
               const userData = userDocSnap.data();
+              console.log("[Auth] User document found:", userData);
+              const role = userData.role || "store_owner";
               setUser({
                 uid: firebaseUser.uid,
                 email: userData.email || firebaseUser.email || "",
-                role: userData.role || "store_owner",
+                role: role as UserRole,
                 storeId: userData.storeId,
                 storeName: userData.storeName,
-                displayName: userData.displayName,
+                displayName: userData.displayName || userData.name,
               });
               setCustomerAccountState(null);
               setLoading(false);
               return;
+            } else {
+              console.warn("[Auth] User document NOT found for UID:", firebaseUser.uid);
             }
             
             // usersコレクションに見つからない場合、デフォルトでcustomerロールを割り当て
