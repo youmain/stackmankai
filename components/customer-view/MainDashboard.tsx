@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useCallback } from 'react'
+import Link from 'next/link'
 import {
   Card,
   CardContent,
@@ -95,16 +96,19 @@ export const MainDashboard = React.memo<React.FC<MainDashboardProps>>(({
               </div>
 
               {/* スタポカ貯スタック */}
-              <div className="bg-white rounded-lg p-4 shadow-sm border border-purple-100">
-                <div className="flex items-center gap-2 mb-2">
-                  <Wallet className="h-5 w-5 text-purple-600" />
-                  <span className="text-sm font-medium text-gray-600">スタポカ貯スタック</span>
+              <Link href="/stack-man-hand/purchase" className="block hover:shadow-md transition-shadow">
+                <div className="bg-white rounded-lg p-4 shadow-sm border border-purple-100 cursor-pointer hover:border-purple-300 h-full">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Wallet className="h-5 w-5 text-purple-600" />
+                    <span className="text-sm font-medium text-gray-600">スタポカ貯スタック</span>
+                  </div>
+                  <div className="text-2xl sm:text-3xl font-bold text-purple-600">
+                    {linkedPlayer && 'stapokaBalance' in linkedPlayer ? (linkedPlayer.stapokaBalance || 0).toLocaleString() : '0'}
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">ポーカーゲーム内チップ / ハンド購入に使用可能</div>
+                  <div className="text-xs text-purple-600 mt-2 font-semibold">→ ハンドを購入</div>
                 </div>
-                <div className="text-2xl sm:text-3xl font-bold text-purple-600">
-                  {linkedPlayer && 'stapokaBalance' in linkedPlayer ? (linkedPlayer.stapokaBalance || 0).toLocaleString() : '0'}
-                </div>
-                <div className="text-xs text-gray-500 mt-1">ポーカーゲーム内チップ / ハンド購入に使用可能</div>
-              </div>
+              </Link>
 
               {/* CP（キャッシュバックポイント） */}
               <div className="bg-white rounded-lg p-4 shadow-sm border border-amber-100">
@@ -283,91 +287,14 @@ export const MainDashboard = React.memo<React.FC<MainDashboardProps>>(({
             </div>
           ) : (
             <div className="text-center py-8 text-gray-500">
-              <BarChart3 className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <TrendingUp className="h-12 w-12 mx-auto mb-4 text-gray-300" />
               <p className="text-lg font-medium">月間ランキングはまだ確定していません</p>
             </div>
           )}
         </CardContent>
       </Card>
-
-      {/* プレイヤー情報セクション */}
-      {linkedPlayer && (
-        <Card className="shadow-md">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-              <User className="h-5 w-5 text-blue-500" />
-              プレイヤー情報
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm text-gray-600">プレイヤー名</p>
-                <p className="text-lg font-semibold text-gray-900">{linkedPlayer && 'name' in linkedPlayer ? linkedPlayer.name : 'N/A'}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">ホーム店舗</p>
-                <p className="text-lg font-semibold text-gray-900">{linkedPlayer && 'storeName' in linkedPlayer ? (linkedPlayer.storeName || "未設定") : "N/A"}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">ステータス</p>
-                <Badge variant={linkedPlayer && 'isPlaying' in linkedPlayer && linkedPlayer.isPlaying ? "default" : "secondary"}>
-                  {linkedPlayer && 'isPlaying' in linkedPlayer && linkedPlayer.isPlaying ? "プレイ中" : "待機中"}
-                </Badge>
-              </div>
-              {linkedPlayer && 'membershipRank' in linkedPlayer && storeSettings?.membershipRankSettings?.enabled && (
-                <div>
-                  <p className="text-sm text-gray-600">会員ランク</p>
-                  <div className="flex items-center gap-2">
-                    {linkedPlayer.membershipRank === "platinum" && (
-                      <Badge className="bg-purple-600 text-white">プラチナ</Badge>
-                    )}
-                    {linkedPlayer.membershipRank === "gold" && (
-                      <Badge className="bg-yellow-500 text-white">ゴールド</Badge>
-                    )}
-                    {linkedPlayer.membershipRank === "silver" && (
-                      <Badge className="bg-gray-400 text-white">シルバー</Badge>
-                    )}
-                    {(!linkedPlayer.membershipRank || linkedPlayer.membershipRank === "none") && (
-                      <Badge variant="outline">一般</Badge>
-                    )}
-                  </div>
-                </div>
-              )}
-              {linkedPlayer && 'pokerName' in linkedPlayer && linkedPlayer.pokerName && (
-                <div>
-                  <p className="text-sm text-gray-600">ポーカーネーム</p>
-                  <p className="text-lg font-semibold text-purple-600">{linkedPlayer.pokerName}</p>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* CP履歴 */}
-      {linkedPlayer && pointHistory && pointHistory.length > 0 && (
-        <Card className="shadow-md">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-              <Star className="h-5 w-5 text-purple-500" />
-              CP履歴
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2 max-h-64 overflow-y-auto">
-              {pointHistory.slice(0, 10).map((history, index) => (
-                <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded text-sm">
-                  <span>{history.timestamp ? new Date(history.timestamp).toLocaleString('ja-JP') : '不明な日時'}</span>
-                  <span className={history.points > 0 ? 'text-green-600' : 'text-red-600'}>
-                    {history.points > 0 ? '+' : ''}{history.points}CP
-                  </span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </>
   )
 })
+
+MainDashboard.displayName = 'MainDashboard'
