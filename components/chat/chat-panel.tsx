@@ -166,10 +166,12 @@ export const ChatPanel = memo(function ChatPanel({
                         <span className="font-semibold">{msg.userName}</span>
                         <span>: </span>
                         <span className="whitespace-pre-wrap break-words">{msg.message}</span>
-                        <span className="text-xs opacity-70 ml-2">({msg.createdAt.toLocaleTimeString("ja-JP", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })})</span>
+                        <span className="text-xs opacity-70 ml-2">({
+                          (msg.createdAt?.toDate ? msg.createdAt.toDate() : msg.createdAt).toLocaleTimeString("ja-JP", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        })</span>
                       </div>
                     </div>
                   </div>
