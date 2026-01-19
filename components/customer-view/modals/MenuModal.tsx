@@ -59,61 +59,102 @@ const MenuModal = memo(function MenuModal({
   }
 
   const handleViewModeChange = (mode: 'main' | 'posts' | 'my-posts' | 'post-detail' | 'ai-players' | 'chat') => {
-    onViewModeChange(mode)
-    handleClose()
+    try {
+      console.log("[MenuModal] handleViewModeChange called with mode:", mode);
+      onViewModeChange(mode)
+      handleClose()
+    } catch (error) {
+      console.error("[MenuModal] Error in handleViewModeChange:", error);
+    }
   }
 
   const handleDetailedData = () => {
-    onDetailedDataClick()
-    handleClose()
+    try {
+      onDetailedDataClick()
+      handleClose()
+    } catch (error) {
+      console.error("[MenuModal] Error in handleDetailedData:", error);
+    }
   }
 
   const handleDashboard = () => {
-    handleViewModeChange('main')
-    // ページ内のランキングセクションにスクロール
-    const rankingSection = document.querySelector('[data-ranking-section]')
-    if (rankingSection) {
-      rankingSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    try {
+      handleViewModeChange('main')
+      // ページ内のランキングセクションにスクロール
+      const rankingSection = document.querySelector('[data-ranking-section]')
+      if (rankingSection) {
+        rankingSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    } catch (error) {
+      console.error("[MenuModal] Error in handleDashboard:", error);
     }
   }
 
   const handlePokerRanking = () => {
-    handleViewModeChange('main')
-    // ページ内のランキングセクションにスクロール
-    const rankingSection = document.querySelector('[data-ranking-section]')
-    if (rankingSection) {
-      rankingSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    try {
+      handleViewModeChange('main')
+      // ページ内のランキングセクションにスクロール
+      const rankingSection = document.querySelector('[data-ranking-section]')
+      if (rankingSection) {
+        rankingSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    } catch (error) {
+      console.error("[MenuModal] Error in handlePokerRanking:", error);
     }
   }
 
   const handleResetClick = () => {
-    onResetStatistics()
-    handleClose()
+    try {
+      onResetStatistics()
+      handleClose()
+    } catch (error) {
+      console.error("[MenuModal] Error in handleResetClick:", error);
+    }
   }
 
   const handlePlayerIdChangeClick = () => {
-    onPlayerIdChange()
-    handleClose()
+    try {
+      onPlayerIdChange()
+      handleClose()
+    } catch (error) {
+      console.error("[MenuModal] Error in handlePlayerIdChangeClick:", error);
+    }
   }
 
   const handlePlayerLinking = () => {
-    onPlayerLinkClick()
-    handleClose()
+    try {
+      onPlayerLinkClick()
+      handleClose()
+    } catch (error) {
+      console.error("[MenuModal] Error in handlePlayerLinking:", error);
+    }
   }
 
   const handleStackManHandPurchase = () => {
-    router.push('/stack-man-hand/purchase')
-    handleClose()
+    try {
+      router.push('/stack-man-hand/purchase')
+      handleClose()
+    } catch (error) {
+      console.error("[MenuModal] Error in handleStackManHandPurchase:", error);
+    }
   }
 
-  const handleAccountCancellation = () => {
-    onAccountCancellation()
-    handleClose()
+  const handleAccountCancellationClick = () => {
+    try {
+      onAccountCancellation()
+      handleClose()
+    } catch (error) {
+      console.error("[MenuModal] Error in handleAccountCancellationClick:", error);
+    }
   }
 
-  const handleLogout = () => {
-    onLogout()
-    handleClose()
+  const handleLogoutClick = () => {
+    try {
+      onLogout()
+      handleClose()
+    } catch (error) {
+      console.error("[MenuModal] Error in handleLogoutClick:", error);
+    }
   }
 
   return (
@@ -238,7 +279,7 @@ const MenuModal = memo(function MenuModal({
                   <Button
                     variant="outline"
                     className="w-full justify-start text-orange-600 hover:text-orange-700 hover:bg-orange-50 bg-transparent"
-                    onClick={handleAccountCancellation}
+                    onClick={handleAccountCancellationClick}
                   >
                     <AlertTriangle className="mr-2 h-4 w-4" />
                     スタックマン解約
@@ -248,7 +289,7 @@ const MenuModal = memo(function MenuModal({
                   <Button
                     variant="outline"
                     className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 bg-transparent"
-                    onClick={handleLogout}
+                    onClick={handleLogoutClick}
                   >
                     <LogOut className="mr-2 h-4 w-4" />
                     ログアウト
@@ -323,13 +364,11 @@ const MenuModal = memo(function MenuModal({
                   自分の投稿履歴
                 </Button>
 
-                <Separator className="my-4" />
-
                 {/* 10. スタックマン解約 */}
                 <Button
                   variant="outline"
                   className="w-full justify-start text-orange-600 hover:text-orange-700 hover:bg-orange-50 bg-transparent"
-                  onClick={handleAccountCancellation}
+                  onClick={handleAccountCancellationClick}
                 >
                   <AlertTriangle className="mr-2 h-4 w-4" />
                   スタックマン解約
@@ -339,7 +378,7 @@ const MenuModal = memo(function MenuModal({
                 <Button
                   variant="outline"
                   className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 bg-transparent"
-                  onClick={handleLogout}
+                  onClick={handleLogoutClick}
                 >
                   <LogOut className="mr-2 h-4 w-4" />
                   ログアウト
@@ -348,79 +387,19 @@ const MenuModal = memo(function MenuModal({
             </div>
           )}
 
-          {/* customerAccountがない場合でも共通メニューを表示 */}
+          {/* customerAccountが存在しない場合 */}
           {!customerAccount && (
-            <div className="space-y-2">
-              <h4 className="text-sm font-semibold text-gray-600 pt-2">メニュー</h4>
-              {/* 6. チャット */}
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-base py-3"
-                onClick={() => handleViewModeChange('chat')}
-              >
-                <MessageCircle className="h-5 w-5 mr-3" />
-                チャット
-              </Button>
-
-              {/* 7. Stack Man Hand購入 */}
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-base py-3"
-                onClick={handleStackManHandPurchase}
-              >
-                <Gift className="h-5 w-5 mr-3" />
-                Stack Man Hand購入
-              </Button>
-
-              {/* 8. ハンド記録を見る */}
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-base py-3"
-                onClick={() => handleViewModeChange('posts')}
-              >
-                <FileText className="h-5 w-5 mr-3" />
-                ハンド記録を見る
-              </Button>
-
-              {/* 9. 自分の投稿履歴 */}
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-base py-3"
-                onClick={() => handleViewModeChange('my-posts')}
-              >
-                <History className="h-5 w-5 mr-3" />
-                自分の投稿履歴
-              </Button>
-
-              <Separator className="my-4" />
-
-              {/* 10. スタックマン解約 */}
-              <Button
-                variant="outline"
-                className="w-full justify-start text-orange-600 hover:text-orange-700 hover:bg-orange-50 bg-transparent"
-                onClick={handleAccountCancellation}
-              >
-                <AlertTriangle className="mr-2 h-4 w-4" />
-                スタックマン解約
-              </Button>
-
-              {/* 11. ログアウト */}
-              <Button
-                variant="outline"
-                className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 bg-transparent"
-                onClick={handleLogout}
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                ログアウト
-              </Button>
-            </div>
+            <Alert className="border-red-200 bg-red-50">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription className="text-red-800 text-sm">
+                顧客情報が見つかりません。再度ログインしてください。
+              </AlertDescription>
+            </Alert>
           )}
         </div>
       </SheetContent>
     </Sheet>
   )
 })
-
-MenuModal.displayName = 'MenuModal'
 
 export default MenuModal
