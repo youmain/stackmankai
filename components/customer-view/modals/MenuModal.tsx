@@ -136,9 +136,10 @@ const MenuModal = memo(function MenuModal({
                 {linkedPlayer && <p>紐づけプレイヤー: {getDisplayName(linkedPlayer)}</p>}
               </div>
 
-              {/* linkedPlayerが存在する場合のみ、11項目のメニューを表示 */}
-              {linkedPlayer ? (
-                <div className="space-y-2">
+              {/* プレイヤー紐付け状態に基づくメニュー */}
+              {linkedPlayer && (
+                <div className="space-y-2 mb-4">
+                  <h4 className="text-sm font-semibold text-gray-600 pt-2">プレイヤー向け機能</h4>
                   {/* 1. ダッシュボード */}
                   <Button
                     variant="ghost"
@@ -188,70 +189,12 @@ const MenuModal = memo(function MenuModal({
                     <User className="h-5 w-5 mr-3" />
                     プレイヤーID変更
                   </Button>
-
-                  {/* 6. チャット */}
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start text-base py-3"
-                    onClick={() => handleViewModeChange('chat')}
-                  >
-                    <MessageCircle className="h-5 w-5 mr-3" />
-                    チャット
-                  </Button>
-
-                  {/* 7. Stack Man Hand購入 */}
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start text-base py-3"
-                    onClick={handleStackManHandPurchase}
-                  >
-                    <Gift className="h-5 w-5 mr-3" />
-                    Stack Man Hand購入
-                  </Button>
-
-                  {/* 8. ハンド記録を見る */}
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start text-base py-3"
-                    onClick={() => handleViewModeChange('posts')}
-                  >
-                    <FileText className="h-5 w-5 mr-3" />
-                    ハンド記録を見る
-                  </Button>
-
-                  {/* 9. 自分の投稿履歴 */}
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start text-base py-3"
-                    onClick={() => handleViewModeChange('my-posts')}
-                  >
-                    <History className="h-5 w-5 mr-3" />
-                    自分の投稿履歴
-                  </Button>
-
-                  {/* 10. スタックマン解約 */}
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start text-orange-600 hover:text-orange-700 hover:bg-orange-50 bg-transparent"
-                    onClick={handleAccountCancellation}
-                  >
-                    <AlertTriangle className="mr-2 h-4 w-4" />
-                    スタックマン解約
-                  </Button>
-
-                  {/* 11. ログアウト */}
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 bg-transparent"
-                    onClick={handleLogout}
-                  >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    ログアウト
-                  </Button>
                 </div>
-              ) : (
-                // linkedPlayerが存在しない場合は、プレイヤー情報紐付けのメッセージのみ表示
-                <div className="space-y-2">
+              )}
+
+              {/* linkedPlayerが存在しない場合は、プレイヤー情報紐付けのメッセージとボタンを表示 */}
+              {!linkedPlayer && (
+                <div className="space-y-2 mb-4">
                   <Alert className="border-orange-200 bg-orange-50">
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription className="text-orange-800 text-sm">
@@ -269,6 +212,74 @@ const MenuModal = memo(function MenuModal({
                   </Button>
                 </div>
               )}
+
+              <Separator className="my-4" />
+
+              {/* 共通メニュー (紐付け状態に関わらず表示) */}
+              <div className="space-y-2">
+                <h4 className="text-sm font-semibold text-gray-600 pt-2">共通機能</h4>
+                {/* 6. チャット */}
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-base py-3"
+                  onClick={() => handleViewModeChange('chat')}
+                >
+                  <MessageCircle className="h-5 w-5 mr-3" />
+                  チャット
+                </Button>
+
+                {/* 7. Stack Man Hand購入 */}
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-base py-3"
+                  onClick={handleStackManHandPurchase}
+                >
+                  <Gift className="h-5 w-5 mr-3" />
+                  Stack Man Hand購入
+                </Button>
+
+                {/* 8. ハンド記録を見る */}
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-base py-3"
+                  onClick={() => handleViewModeChange('posts')}
+                >
+                  <FileText className="h-5 w-5 mr-3" />
+                  ハンド記録を見る
+                </Button>
+
+                {/* 9. 自分の投稿履歴 */}
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-base py-3"
+                  onClick={() => handleViewModeChange('my-posts')}
+                >
+                  <History className="h-5 w-5 mr-3" />
+                  自分の投稿履歴
+                </Button>
+
+                <Separator className="my-4" />
+
+                {/* 10. スタックマン解約 */}
+                <Button
+                  variant="outline"
+                  className="w-full justify-start text-orange-600 hover:text-orange-700 hover:bg-orange-50 bg-transparent"
+                  onClick={handleAccountCancellation}
+                >
+                  <AlertTriangle className="mr-2 h-4 w-4" />
+                  スタックマン解約
+                </Button>
+
+                {/* 11. ログアウト */}
+                <Button
+                  variant="outline"
+                  className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 bg-transparent"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  ログアウト
+                </Button>
+              </div>
             </div>
           )}
         </div>
