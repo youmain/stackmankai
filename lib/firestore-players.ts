@@ -108,6 +108,10 @@ export const subscribeToPlayers = (
           createdAt: data.createdAt?.toDate() || new Date(),
           updatedAt: data.updatedAt?.toDate() || new Date(),
           isArchived: data.isArchived || false,
+          systemBalance: data.systemBalance || 0,
+          stapokaBalance: data.stapokaBalance || 0,
+          storeName: data.storeName || "",
+          isPlaying: data.isPlaying || false,
         } as Player
       })
       actualCallback(players)
