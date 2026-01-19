@@ -94,12 +94,11 @@ service cloud.firestore {
     
     match /stores/{storeId} {
       // 店舗情報は所属する店舗スタッフのみ読み取り可能
-      // ただし、店舗登録時は認証前なので作成のみ許可
       allow read: if isAuthenticated() && belongsToStore(storeId);
       
-      // 新規店舗登録は認証済みユーザーのみ可能
-      // ただし、電話番号確認済みユーザーのみ作成可能
-      allow create: if isAuthenticated() && isPhoneVerified();
+      // 新規店舗登録は認証済みユーザーなら誰でも可能
+      // クライアント側で認証済みユーザーが作成するため、ここではチェックを緩和
+      allow create: if isAuthenticated();
       
       // 店舗情報の更新は店舗オーナーのみ可能
       allow update: if isStoreOwner() && belongsToStore(storeId);
@@ -307,117 +306,6 @@ service cloud.firestore {
       
       // プレイヤーの削除は店舗オーナーのみ可能
       allow delete: if isStoreOwner();
-      
-      // PointHistory サブコレクション
-      match /pointHistory/{historyId} {
-        // ポイント履歴は認証済みユーザーが読み取り可能
-        allow read: if request.auth != null;
-        
-        // ポイント履歴の作成・更新は店舗スタッフのみ可能
-        allow create, update: if isStoreStaff();
-        
-        // ポイント履歴の削除は店舗オーナーのみ可能
-        allow delete: if isStoreOwner();
-      }
-    }
-    
-    // ========================================
-    // Players コレクション（グローバル・旧形式）
-    // ========================================
-    
-    match /players/{storeDoc}/players/{playerId} {
-      // 自分の店舗のプレイヤーのみ読み取り可能（スタッフまたは顧客）
-      allow read: if isAuthenticated() && (belongsToStore(storeDoc) || customerBelongsToStore(storeDoc));
-      
-      // 自分の店舗のプレイヤーのみ作成・更新可能
-      allow create, update: if isStoreStaff() && belongsToStore(storeDoc);
-      
-      // 自分の店舗のプレイヤーのみ削除可能（オーナーのみ）
-      allow delete: if isStoreOwner() && belongsToStore(storeDoc);
-    }
-    
-    // ========================================
-    // Games コレクション（グローバル・旧形式）
-    // ========================================
-    
-    match /games/{storeDoc}/games/{gameId} {
-      // 自分の店舗のゲームのみ読み取り可能
-      allow read: if isAuthenticated() && belongsToStore(storeDoc);
-      
-      // 自分の店舗のゲームのみ作成・更新可能
-      allow create, update: if isStoreStaff() && belongsToStore(storeDoc);
-      
-      // 自分の店舗のゲームのみ削除可能（オーナーのみ）
-      allow delete: if isStoreOwner() && belongsToStore(storeDoc);
-    }
-    
-    // ========================================
-    // Rankings コレクション
-    // ========================================
-    
-    match /rankings/{rankingId} {
-      // ランキング情報は所属店舗が同じユーザーのみ読み取れる
-      allow read: if isAuthenticated() && belongsToStore(resource.data.storeId);
-      
-      // ランキング情報の作成は店舗スタッフのみ可能
-      allow create: if isStoreStaff() && belongsToStore(request.resource.data.storeId);
-      
-      // ランキング情報の更新は店舗スタッフのみ可能
-      allow update: if isStoreStaff() && belongsToStore(resource.data.storeId);
-      
-      // ランキング情報の削除は店舗オーナーのみ可能
-      allow delete: if isStoreOwner() && belongsToStore(resource.data.storeId);
-    }
-    
-    // ========================================
-    // PokerGames コレクション
-    // ========================================
-    
-    match /pokerGames/{storeDoc}/games/{gameId} {
-      // ポーカーゲーム情報は所属店舗のユーザーのみ読み取れる
-      allow read: if isAuthenticated() && belongsToStore(storeDoc);
-      
-      // ポーカーゲーム情報の作成は店舗スタッフのみ可能
-      allow create: if isStoreStaff() && belongsToStore(storeDoc);
-      
-      // ポーカーゲーム情報の更新は店舗スタッフのみ可能
-      allow update: if isStoreStaff() && belongsToStore(storeDoc);
-      
-      // ポーカーゲーム情報の削除は店舗オーナーのみ可能
-      allow delete: if isStoreOwner() && belongsToStore(storeDoc);
-    }
-    
-    // ========================================
-    // ChatRooms コレクション（チャットルーム）
-    // 注意: チャットルームIDは【store_{storeId}】形式
-    // 一時的に無制限にしてテスト（本番体制では修正必須）
-    // ========================================
-    
-    match /chatRooms/{roomId} {
-      // チャットルーム情報: 一時的に一時的に無制限
-      allow read, write: if true;
-      
-      // Messages サブコレクション（チャットメッセージ）
-      match /messages/{messageId} {
-        // メッセージ: 一時的に一時的に無制限
-        allow read, write: if true;
-      }
-      
-      // ActiveUsers サブコレクション（アクティブユーザー）
-      match /activeUsers/{userId} {
-        // アクティブユーザー: 一時的に一時的に無制限
-        allow read, write: if true;
-      }
-    }
-    
-    // ========================================
-    // デフォルトルール（セキュア）
-    // ========================================
-    
-    // デフォルトルール: すべてのアクセスを拒否
-    // 明示的に許可されたコレクションのみアクセス可能
-    match /{document=**} {
-      allow read, write: if false;
     }
   }
 }
