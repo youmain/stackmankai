@@ -190,6 +190,70 @@ const MenuModal = memo(function MenuModal({
                     <User className="h-5 w-5 mr-3" />
                     プレイヤーID変更
                   </Button>
+
+
+                  {/* 6. チャット */}
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-base py-3"
+                    onClick={() => handleViewModeChange('chat')}
+                  >
+                    <MessageCircle className="h-5 w-5 mr-3" />
+                    チャット
+                  </Button>
+
+                  {/* 7. Stack Man Hand購入 */}
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-base py-3"
+                    onClick={handleStackManHandPurchase}
+                  >
+                    <Gift className="h-5 w-5 mr-3" />
+                    Stack Man Hand購入
+                  </Button>
+
+
+
+                  {/* 8. ハンド記録を見る */}
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-base py-3"
+                    onClick={() => handleViewModeChange('posts')}
+                  >
+                    <FileText className="h-5 w-5 mr-3" />
+                    ハンド記録を見る
+                  </Button>
+
+                  {/* 9. 自分の投稿履歴 */}
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-base py-3"
+                    onClick={() => handleViewModeChange('my-posts')}
+                  >
+                    <History className="h-5 w-5 mr-3" />
+                    自分の投稿履歴
+                  </Button>
+
+                  {/* 10. スタックマン解約 */}
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start text-orange-600 hover:text-orange-700 hover:bg-orange-50 bg-transparent"
+                    onClick={handleAccountCancellation}
+                  >
+                    <AlertTriangle className="mr-2 h-4 w-4" />
+                    スタックマン解約
+                  </Button>
+
+                  {/* 11. ログアウト */}
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 bg-transparent"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    ログアウト
+                  </Button>
+
                 </div>
               )}
 
