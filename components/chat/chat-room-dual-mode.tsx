@@ -302,7 +302,7 @@ export function ChatRoomDualMode() {
               currentUserId={customerAccount?.id || ""}
               inputRef={inputRef}
               onMessageChange={setNewMessage}
-              onSendMessage={handleSendMessageClick}
+              onSendMessage={() => handleSendMessageClick({ preventDefault: () => {} } as any)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault()
