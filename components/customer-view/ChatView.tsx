@@ -11,17 +11,18 @@ interface ChatViewProps {
   onViewModeChange: (mode: any) => void
 }
 
-export const ChatView = React.memo<React.FC<ChatViewProps>>(({ 
+export const ChatView: React.FC<ChatViewProps> = React.memo(({ 
   onViewModeChange, 
   linkedPlayer, 
   customerAccount, 
   getDisplayName 
 }) => {
-  const handleModeChange = (mode: any) => {
+  const handleModeChange = React.useCallback((mode: any) => {
+    console.log('ChatView mode change:', mode);
     if (typeof onViewModeChange === 'function') {
       onViewModeChange(mode);
     }
-  };
+  }, [onViewModeChange]);
 
   return (
     <div className="space-y-4 h-full flex flex-col">
@@ -33,9 +34,6 @@ export const ChatView = React.memo<React.FC<ChatViewProps>>(({
       </div>
       <div className="flex-1 overflow-hidden">
         <ChatRoomDualMode 
-          storeId={customerAccount?.storeId}
-          customerAccountId={customerAccount?.id}
-          customerAccountName={getDisplayName(linkedPlayer)}
           onViewModeChange={handleModeChange}
         />
       </div>

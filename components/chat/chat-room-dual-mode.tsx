@@ -43,10 +43,13 @@ import {
 
 export function ChatRoomDualMode({ onViewModeChange }: { onViewModeChange?: (mode: any) => void }) {
   const { customerAccount } = useAuth()
-  const { viewMode, setViewMode: setInternalViewMode } = useViewMode()
+  const { viewMode: internalViewMode, setViewMode: setInternalViewMode } = useViewMode()
 
-  const setViewMode = useCallback((mode: any) => {
-    setInternalViewMode(mode);
+  const handleModeChange = useCallback((mode: any) => {
+    console.log('Mode change requested:', mode);
+    if (typeof setInternalViewMode === 'function') {
+      setInternalViewMode(mode);
+    }
     if (typeof onViewModeChange === 'function') {
       onViewModeChange(mode);
     }
@@ -244,7 +247,7 @@ export function ChatRoomDualMode({ onViewModeChange }: { onViewModeChange?: (mod
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-screen p-4 bg-gray-50">
       {/* Poker section */}
       <div className="lg:col-span-2 flex flex-col gap-4">
-        <ViewModeHeader viewMode={viewMode} onViewModeChange={setViewMode} />
+        <ViewModeHeader viewMode={internalViewMode} onModeChange={handleModeChange} />
 
         {error && (
           <Alert className="border-red-200 bg-red-50">
