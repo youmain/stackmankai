@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { User, Menu, Loader2 } from 'lucide-react'
+import { User, Menu, Loader2, AlertCircle } from 'lucide-react'
 
 import type { Player, DailyRanking, MonthlyPoints, StoreRankingSettings, RakeHistory, CustomerAccount } from "@/types"
 
@@ -20,6 +20,7 @@ import PlayerLinkingModal from "@/components/customer-view/modals/PlayerLinkingM
 import PlayerConfirmationModal from "@/components/customer-view/modals/PlayerConfirmationModal"
 import LinkingSuccessModal from "@/components/customer-view/modals/LinkingSuccessModal"
 import AccountCancellationModal from "@/components/customer-view/modals/AccountCancellationModal"
+import { Button } from "@/components/ui/button"
 
 export default function CustomerView() {
   const state = useCustomerState()
@@ -76,6 +77,22 @@ export default function CustomerView() {
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
         <Loader2 className="w-10 h-10 text-blue-600 animate-spin mb-4" />
         <p className="text-gray-600 font-medium">データを読み込み中...</p>
+      </div>
+    )
+  }
+
+  // エラー表示（customerAccountがない場合）
+  if (!state.isLoading && !state.customerAccount) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+        <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
+        <h2 className="text-xl font-bold text-gray-900 mb-2">認証エラー</h2>
+        <p className="text-gray-600 mb-6 text-center">
+          顧客情報が見つかりませんでした。<br />再度ログインしてください。
+        </p>
+        <Button onClick={() => state.signOut()} className="bg-blue-600 hover:bg-blue-700">
+          ログイン画面へ戻る
+        </Button>
       </div>
     )
   }
@@ -203,7 +220,7 @@ export default function CustomerView() {
       <PlayerDetailedDataModal
         isOpen={state.isDetailedDataModalOpen}
         onClose={() => state.setIsDetailedDataModalOpen(false)}
-        player={null}
+        player={linkedPlayer}
         rakeHistory={state.rakeHistory || []}
         pointHistory={state.pointHistory || []}
         getDisplayName={getDisplayName}
