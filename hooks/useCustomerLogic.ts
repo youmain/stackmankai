@@ -85,21 +85,6 @@ export const useCustomerLogic = ({
 
   // linkedPlayerが見つかった時にstoreIdを自動更新
   useEffect(() => {
-    // console.log("[v0] === useEffect triggered ===")
-    // console.log("[v0] linkedPlayer:", linkedPlayer ? {
-    //   id: linkedPlayer.id,
-    //   name: linkedPlayer.name,
-    //   uniqueId: linkedPlayer.uniqueId,
-    //   storeId: linkedPlayer.storeId,
-    //   storeName: linkedPlayer.storeName
-    // } : "NOT FOUND")
-    // console.log("[v0] customerAccount:", customerAccount ? {
-    //   id: customerAccount.id,
-    //   playerId: customerAccount.playerId,
-    //   playerName: customerAccount.playerName,
-    //   storeId: customerAccount.storeId
-    // } : "NOT FOUND")
-    
     const updateStoreIdIfNeeded = async () => {
       if (linkedPlayer && customerAccount) {
         // storeIdまたはplayerNameが未設定または不正な場合に更新
@@ -107,10 +92,6 @@ export const useCustomerLogic = ({
         const needsUpdate = !customerAccount.storeId || hasInvalidPlayerName
         
         if (needsUpdate && linkedPlayer.storeId) {
-          // console.log("[v0] Updating customerAccount with player info:", {
-          //   storeId: linkedPlayer.storeId,
-          //   playerName: linkedPlayer.name || linkedPlayer.pokerName,
-          // })
           try {
             const playerName = linkedPlayer.name || linkedPlayer.pokerName || `プレイヤー${linkedPlayer.uniqueId}`
             await updateCustomerAccount(customerAccount.id, {
@@ -125,55 +106,33 @@ export const useCustomerLogic = ({
               storeName: linkedPlayer.storeName || "未設定",
               playerName: playerName,
             })
-            // console.log("[v0] CustomerAccount updated successfully")
           } catch (error) {
-            // console.error("[v0] Error updating customerAccount:", error)
+            console.error("[useCustomerLogic] Error updating customerAccount:", error)
           }
         }
         
         // プレイヤーのstoreNameが未設定の場合、店舗情報から取得して更新
-        // console.log("[v0] Checking storeName update condition:", {
-        //   hasStoreId: !!linkedPlayer.storeId,
-        //   storeName: linkedPlayer.storeName,
-        //   storeNameType: typeof linkedPlayer.storeName,
-        //   needsUpdate: !linkedPlayer.storeName || linkedPlayer.storeName === "未設定" || linkedPlayer.storeName === ""
-        // })
-        
-        // TEMPORARY: Force update storeName for debugging (remove after testing)
-        const forceUpdate = true
-        
-        if (linkedPlayer.storeId && (forceUpdate || !linkedPlayer.storeName || linkedPlayer.storeName === "未設定" || linkedPlayer.storeName === "")) {
-          // console.log("[v0] Player storeName is missing, fetching from store...")
-          // console.log("[v0] Player storeId:", linkedPlayer.storeId)
-          // console.log("[v0] Player document ID:", linkedPlayer.id)
+        if (linkedPlayer.storeId && (!linkedPlayer.storeName || linkedPlayer.storeName === "未設定" || linkedPlayer.storeName === "")) {
           try {
             const db = getDb()
             if (db) {
-              // Use document ID directly instead of querying by storeId field
               const storeDocRef = doc(db, "stores", linkedPlayer.storeId)
               const storeDoc = await getDoc(storeDocRef)
               
               if (storeDoc.exists()) {
                 const storeData = storeDoc.data()
                 const storeName = storeData.storeName || "未設定"
-                
-                // console.log("[v0] Store found:", storeName)
-                
-                // プレイヤーのstoreNameを更新
                 await updatePlayer(linkedPlayer.id, { storeName })
-                // console.log("[v0] Player storeName updated:", storeName)
-              } else {
-                // console.warn("[v0] Store document not found:", linkedPlayer.storeId)
               }
             }
           } catch (error) {
-            // console.error("[v0] Error updating player storeName:", error)
+            console.error("[useCustomerLogic] Error updating player storeName:", error)
           }
         }
       }
     }
     updateStoreIdIfNeeded()
-  }, [linkedPlayer, customerAccount])
+  }, [linkedPlayer?.id, linkedPlayer?.storeId, linkedPlayer?.storeName, customerAccount?.id, customerAccount?.storeId, customerAccount?.playerName])
 
   return {
     linkedPlayer,
