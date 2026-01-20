@@ -191,4 +191,14 @@ export const saveAdminPassword = async (password: string): Promise<void> => {
   }
 }
 
+export const deleteCustomerAccount = async (id: string): Promise<void> => {
+  try {
+    const db = checkFirebaseConfig()
+    await deleteDoc(doc(db, "customerAccounts", id))
+  } catch (error) {
+    console.error("Failed to delete customer account:", error)
+    throw error
+  }
+}
+
 // --- Ranking & Sales Functions ---
