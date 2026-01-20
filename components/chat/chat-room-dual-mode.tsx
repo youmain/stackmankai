@@ -100,12 +100,12 @@ export function ChatRoomDualMode({ onViewModeChange }: { onViewModeChange?: (mod
 
   // Show turn notification
   useEffect(() => {
-    if (isMyTurn && viewMode !== "poker") {
+    if (isMyTurn && internalViewMode !== "poker") {
       setShowTurnNotification(true)
     } else {
       setShowTurnNotification(false)
     }
-  }, [isMyTurn, viewMode])
+  }, [isMyTurn, internalViewMode])
 
   // Load hidden messages from storage
   useEffect(() => {
@@ -265,7 +265,7 @@ export function ChatRoomDualMode({ onViewModeChange }: { onViewModeChange?: (mod
           </Alert>
         )}
 
-        {viewMode === "poker" && pokerGame && (
+        {internalViewMode === "poker" && pokerGame && (
           <Card className="flex-1">
             <CardContent className="p-4">
               <PokerTable
