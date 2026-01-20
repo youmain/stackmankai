@@ -41,9 +41,16 @@ import {
   getRemainingTimeForGame,
 } from "@/components/chat/poker-game-manager"
 
-export function ChatRoomDualMode() {
+export function ChatRoomDualMode({ onViewModeChange }: { onViewModeChange?: (mode: any) => void }) {
   const { customerAccount } = useAuth()
-  const { viewMode, setViewMode } = useViewMode()
+  const { viewMode, setViewMode: setInternalViewMode } = useViewMode()
+
+  const setViewMode = useCallback((mode: any) => {
+    setInternalViewMode(mode);
+    if (typeof onViewModeChange === 'function') {
+      onViewModeChange(mode);
+    }
+  }, [setInternalViewMode, onViewModeChange]);
 
   // Chat states
   const [messages, setMessages] = useState<ChatMessage[]>([])
