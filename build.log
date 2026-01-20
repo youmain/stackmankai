@@ -1,0 +1,104 @@
+
+> my-v0-project@0.1.1 build
+> next build
+
+▲ Next.js 16.1.1 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 27.8s
+  Skipping validation of types
+  Collecting page data using 5 workers ...
+(node:20862) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:20843) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:20870) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:20856) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:20842) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[v0] STRIPE_WEBHOOK_SECRET is not configured - Webhook validation will be disabled
+  Generating static pages using 5 workers (0/59) ...
+[v0] 📱 PlayersPageコンポーネント実行開始
+[v0] 🔐 認証状態確認: { userName: null, hasUserName: false }
+[v0] 💰 レーキ合計計算: { rakeHistoryCount: 0, rakeHistoryItems: [], calculatedTotal: 0 }
+[MenuModal] Rendered. isOpen: false customerAccount: false linkedPlayer: false
+  Generating static pages using 5 workers (14/59) 
+  Generating static pages using 5 workers (29/59) 
+[v0] STRIPE_WEBHOOK_SECRET is not configured - Webhook validation will be disabled
+  Generating static pages using 5 workers (44/59) 
+✓ Generating static pages using 5 workers (59/59) in 921.6ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /admin
+├ ○ /admin-access
+├ ○ /admin/error-logs
+├ ○ /admin/test-error
+├ ƒ /api/auth/login
+├ ƒ /api/cron/reset-rake
+├ ƒ /api/delete-all-players
+├ ƒ /api/employee/create-invite
+├ ƒ /api/employee/force-logout
+├ ƒ /api/employee/login
+├ ƒ /api/employee/update-role
+├ ƒ /api/employee/verify-invite
+├ ƒ /api/generate-ai-comments
+├ ƒ /api/init-ai-players
+├ ƒ /api/migrate-storeid
+├ ƒ /api/store/register
+├ ƒ /api/stripe/create-checkout-session
+├ ƒ /api/stripe/create-customer
+├ ƒ /api/stripe/create-subscription
+├ ƒ /api/stripe/webhook
+├ ƒ /api/temp-update-stack
+├ ƒ /api/test-deepseek
+├ ƒ /api/test-deepseek-direct
+├ ○ /chat
+├ ○ /create-post
+├ ○ /customer-auth
+├ ○ /customer-view
+├ ○ /customer-view/chat
+├ ○ /daily-sales
+├ ○ /employee-dashboard
+├ ○ /employee-login
+├ ○ /employee-management
+├ ○ /games
+├ ƒ /games/[id]
+├ ○ /help
+├ ○ /landing
+├ ○ /legal
+├ ○ /migrate-data
+├ ○ /monthly-sales
+├ ○ /my-posts
+├ ○ /password-change
+├ ○ /payment-confirmation
+├ ○ /player-management
+├ ○ /player-purchase-history
+├ ○ /players
+├ ○ /posts
+├ ƒ /posts/[id]
+├ ○ /rankings
+├ ○ /receipts
+├ ○ /stack-man-hand
+├ ƒ /stack-man-hand/display/[handId]
+├ ○ /stack-man-hand/purchase
+├ ○ /stack-manager
+├ ○ /stackman-password-change
+├ ○ /store-dashboard
+├ ○ /store-login
+├ ○ /store-ranking-settings
+├ ○ /store-register
+├ ○ /store-settings
+├ ○ /store-stack-man-hand-admin
+├ ƒ /store/[storeName]
+├ ○ /subscription-admin
+└ ○ /test-firebase-auth
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

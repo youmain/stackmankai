@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { User, Menu } from 'lucide-react' // Only essential icons for the final page structure
+import { User, Menu, Loader2 } from 'lucide-react'
 
 import type { Player, DailyRanking, MonthlyPoints, StoreRankingSettings, RakeHistory, CustomerAccount } from "@/types"
 
@@ -14,19 +14,18 @@ import { useCustomerHandlers } from "@/hooks/useCustomerHandlers"
 import { CustomerHeader } from "@/components/customer-view/layout/CustomerHeader"
 import { ViewSwitcher } from "@/components/customer-view/ViewSwitcher"
 import PlayerDetailedDataModal from "@/components/player-detailed-data-modal"
-import MenuModal from "@/components/customer-view/modals/MenuModal"
+import { MenuModal } from "@/components/customer-view/modals/MenuModal"
 import ResetStatisticsModal from "@/components/customer-view/modals/ResetStatisticsModal"
 import PlayerLinkingModal from "@/components/customer-view/modals/PlayerLinkingModal"
 import PlayerConfirmationModal from "@/components/customer-view/modals/PlayerConfirmationModal"
 import LinkingSuccessModal from "@/components/customer-view/modals/LinkingSuccessModal"
 import AccountCancellationModal from "@/components/customer-view/modals/AccountCancellationModal"
 
-
 export default function CustomerView() {
   const state = useCustomerState()
 
   const { linkedPlayer, getDisplayName, getPlayerName } = useCustomerLogic({
-    players: state.players,
+    players: state.players || [],
     customerAccount: state.customerAccount,
     setCustomerAccount: state.setCustomerAccount,
   })
@@ -47,7 +46,7 @@ export default function CustomerView() {
     skipLinkingAfterSuccess: state.skipLinkingAfterSuccess,
     currentRewardRate: state.storeSettings?.rewardRate ?? 0.1,
     storeSettings: state.storeSettings,
-    players: state.players,
+    players: state.players || [],
     setLinkedPlayer: () => {},
     setPlayerSearchId: state.setPlayerIdInput,
     setIsPlayerLinking: state.setIsLinking,
@@ -70,6 +69,16 @@ export default function CustomerView() {
     signOut: state.signOut,
     playerId: state.customerAccount?.playerId || null,
   })
+
+  // 読み込み中の表示
+  if (state.isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+        <Loader2 className="w-10 h-10 text-blue-600 animate-spin mb-4" />
+        <p className="text-gray-600 font-medium">データを読み込み中...</p>
+      </div>
+    )
+  }
 
   const {
     handlePaymentCompletion,
@@ -101,12 +110,12 @@ export default function CustomerView() {
           viewMode={state.viewMode}
           linkedPlayer={linkedPlayer}
           customerAccount={state.customerAccount}
-          dailyRankings={state.dailyRankings}
-          monthlyPoints={state.monthlyPoints}
+          dailyRankings={state.dailyRankings || []}
+          monthlyPoints={state.monthlyPoints || []}
           storeSettings={state.storeSettings}
-          rakeHistory={state.rakeHistory}
-          pointHistory={state.pointHistory}
-          players={state.players}
+          rakeHistory={state.rakeHistory || []}
+          pointHistory={state.pointHistory || []}
+          players={state.players || []}
           selectedPostId={state.selectedPostId}
           selectedTab={state.selectedTab}
           activeTab={state.activeTab}
@@ -133,18 +142,7 @@ export default function CustomerView() {
         onOpenChange={state.setIsMenuOpen}
         customerAccount={state.customerAccount}
         linkedPlayer={linkedPlayer}
-        getDisplayName={getDisplayName}
-        onDetailedDataClick={handleDetailedDataClick}
-        onPlayerIdChange={handlePlayerIdChange}
-        onResetStatistics={handleStatisticsReset}
-        onPlayerLinkClick={handlePlayerLinkClick}
-        onAccountCancellation={handleAccountCancellation}
         onViewModeChange={state.setViewMode}
-        onLogout={() => {
-          state.setCustomerAccount(null)
-          state.signOut()
-          window.location.href = "/"
-        }}
       />
 
       <ResetStatisticsModal
@@ -199,8 +197,8 @@ export default function CustomerView() {
         isOpen={state.isDetailedDataModalOpen}
         onClose={() => state.setIsDetailedDataModalOpen(false)}
         player={null}
-        rakeHistory={state.rakeHistory}
-        pointHistory={state.pointHistory}
+        rakeHistory={state.rakeHistory || []}
+        pointHistory={state.pointHistory || []}
         getDisplayName={getDisplayName}
         activeTab={state.activeTab}
         setActiveTab={state.setActiveTab}
@@ -208,7 +206,7 @@ export default function CustomerView() {
         setSelectedPlayerForChart={state.setSelectedPlayerForChart}
         isChartModalOpen={state.isChartModalOpen}
         setIsChartModalOpen={state.setIsChartModalOpen}
-        players={state.players}
+        players={state.players || []}
       />
     </div>
   )

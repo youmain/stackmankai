@@ -8,15 +8,20 @@ interface ChatViewProps {
   linkedPlayer: any
   customerAccount: any
   getDisplayName: (player: any) => string
-  onViewModeChange?: (mode: string) => void
+  onViewModeChange: (mode: any) => void
 }
 
-export const ChatView = React.memo<React.FC<ChatViewProps>>(({ onViewModeChange, linkedPlayer, customerAccount, getDisplayName }) => {
+export const ChatView = React.memo<React.FC<ChatViewProps>>(({ 
+  onViewModeChange, 
+  linkedPlayer, 
+  customerAccount, 
+  getDisplayName 
+}) => {
   return (
-    <div className="space-y-4 h-full">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-purple-800">チャット</h2>
-        <Button variant="outline" onClick={() => onViewModeChange?.('main')}>
+    <div className="space-y-4 h-full flex flex-col">
+      <div className="flex items-center justify-between px-4 pt-2">
+        <h2 className="text-2xl font-bold text-purple-800">チャット & ポーカー</h2>
+        <Button variant="outline" onClick={() => onViewModeChange('main')}>
           戻る
         </Button>
       </div>
