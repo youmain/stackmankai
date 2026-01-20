@@ -119,6 +119,8 @@ export default function CustomerView() {
     handleAccountCancellation,
   } = handlers
 
+  const viewMode = state.viewMode || "main";
+
   return (
     <div className="min-h-screen bg-gray-50">
       <CustomerHeader
@@ -131,7 +133,7 @@ export default function CustomerView() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         <ViewSwitcher
-          viewMode={state.viewMode}
+          viewMode={viewMode}
           linkedPlayer={linkedPlayer}
           customerAccount={state.customerAccount}
           dailyRankings={state.dailyRankings || []}
