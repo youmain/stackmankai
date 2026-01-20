@@ -73,7 +73,7 @@ export function PostsList({ onPostClick }: PostsListProps = {}) {
     loadPosts()
   }, [])
 
-  const filteredPosts = posts.filter((post) => {
+  const filteredPosts = (posts || []).filter((post) => {
     const matchesSearch =
       post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (typeof post.situation === "string" && post.situation.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -120,7 +120,7 @@ export function PostsList({ onPostClick }: PostsListProps = {}) {
     )
   })
 
-  const sortedPosts = [...filteredPosts].sort((a, b) => {
+  const sortedPosts = [...(filteredPosts || [])].sort((a, b) => {
     switch (sortBy) {
       case "popular":
         return (b.likes || 0) - (a.likes || 0)
