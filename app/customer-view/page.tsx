@@ -71,7 +71,7 @@ export default function CustomerView() {
     playerId: state.customerAccount?.playerId || null,
   })
 
-  // 読み込み中の表示
+  // 読み込み中の表示 (修正済み)
   if (state.isLoading && !state.customerAccount) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
