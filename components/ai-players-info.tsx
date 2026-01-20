@@ -37,7 +37,7 @@ export function AIPlayersInfo() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {AI_PLAYERS.map((player) => (
+            {(AI_PLAYERS || []).map((player) => (
               <div key={player.id} className="bg-white p-4 rounded-lg border border-purple-100 shadow-sm space-y-3">
                 <div className="flex items-start justify-between">
                   <div>
@@ -64,7 +64,7 @@ export function AIPlayersInfo() {
                 <div>
                   <p className="text-xs text-gray-500 mb-2">特徴</p>
                   <ul className="space-y-1">
-                    {player.characteristics.slice(0, 3).map((char, index) => (
+                    {(player.characteristics || []).slice(0, 3).map((char, index) => (
                       <li key={index} className="text-xs text-gray-600 flex items-start">
                         <span className="mr-1">•</span>
                         <span>{char}</span>
@@ -79,19 +79,19 @@ export function AIPlayersInfo() {
                       <Star className="h-3 w-3 text-green-500" />
                       得意
                     </p>
-                    <p className="text-xs text-green-700">{player.strengths[0]}</p>
+                    <p className="text-xs text-green-700">{(player.strengths || [])[0] || "N/A"}</p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 mb-1 flex items-center gap-1">
                       <Target className="h-3 w-3 text-orange-500" />
                       苦手
                     </p>
-                    <p className="text-xs text-orange-700">{player.weaknesses[0]}</p>
+                    <p className="text-xs text-orange-700">{(player.weaknesses || [])[0] || "N/A"}</p>
                   </div>
                 </div>
 
                 <div className="pt-2 border-t border-gray-200">
-                  <p className="text-xs text-purple-600 italic">「{player.famousQuotes[0]}」</p>
+                  <p className="text-xs text-purple-600 italic">「{(player.famousQuotes || [])[0] || "名言なし"}」</p>
                 </div>
               </div>
             ))}
