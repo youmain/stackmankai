@@ -17,17 +17,30 @@ export const ChatView = React.memo<React.FC<ChatViewProps>>(({
   customerAccount, 
   getDisplayName 
 }) => {
+  const handleModeChange = (mode: any) => {
+    if (typeof onViewModeChange === 'function') {
+      onViewModeChange(mode);
+    }
+  };
+
   return (
     <div className="space-y-4 h-full flex flex-col">
       <div className="flex items-center justify-between px-4 pt-2">
         <h2 className="text-2xl font-bold text-purple-800">チャット & ポーカー</h2>
-        <Button variant="outline" onClick={() => onViewModeChange('main')}>
+        <Button variant="outline" onClick={() => handleModeChange('main')}>
           戻る
         </Button>
       </div>
       <div className="flex-1 overflow-hidden">
-        <ChatRoomDualMode />
+        <ChatRoomDualMode 
+          storeId={customerAccount?.storeId}
+          customerAccountId={customerAccount?.id}
+          customerAccountName={getDisplayName(linkedPlayer)}
+          onViewModeChange={handleModeChange}
+        />
       </div>
     </div>
   )
 })
+
+ChatView.displayName = 'ChatView'

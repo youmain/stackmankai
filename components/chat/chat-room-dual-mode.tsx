@@ -207,28 +207,31 @@ export function ChatRoomDualMode() {
   }, [customerAccount?.storeId, customerAccount?.id])
 
   // Handle send message
-  const handleSendMessageClick = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSendMessageClick = useCallback(async (e?: React.FormEvent) => {
+    e?.preventDefault()
+    if (!customerAccount) return
     await handleSendMessage(
       newMessage,
-      customerAccount?.storeId,
-      customerAccount?.id,
-      customerAccount?.playerName || customerAccount?.email.split("@")[0],
+      customerAccount.storeId,
+      customerAccount.id,
+      customerAccount.playerName || customerAccount.email.split("@")[0],
       setNewMessage,
       setIsSending,
       setError
     )
-  }
+  }, [newMessage, customerAccount])
 
   // Handle clear history
-  const handleClearHistoryClick = () => {
-    handleClearHistory(customerAccount?.storeId, setHiddenMessageIds)
-  }
+  const handleClearHistoryClick = useCallback(() => {
+    if (!customerAccount) return
+    handleClearHistory(customerAccount.storeId, setHiddenMessageIds)
+  }, [customerAccount])
 
   // Handle toggle visibility
-  const handleToggleVisibility = (messageId: string) => {
-    toggleMessageVisibility(messageId, hiddenMessageIds, setHiddenMessageIds, customerAccount?.storeId)
-  }
+  const handleToggleVisibility = useCallback((messageId: string) => {
+    if (!customerAccount) return
+    toggleMessageVisibility(messageId, hiddenMessageIds, setHiddenMessageIds, customerAccount.storeId)
+  }, [hiddenMessageIds, customerAccount])
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-screen p-4 bg-gray-50">
@@ -257,13 +260,13 @@ export function ChatRoomDualMode() {
             <CardContent className="p-4">
               <PokerTable
                 game={pokerGame}
+                currentUserId={customerAccount?.id || ""}
                 onAction={(action, amount) => handlePokerAction(pokerGameId, action, amount, setError)}
                 onJoinSeat={(seatIndex) => handleJoinSeat(pokerGameId, seatIndex, customerAccount?.id, customerAccount?.playerName, setError)}
                 onLeaveSeat={() => handleLeaveSeat(pokerGameId, customerAccount?.id, setError)}
                 onStartGame={() => handleStartGame(pokerGameId, setError)}
                 onTimeout={() => handleTimeout(pokerGameId, customerAccount?.id, setError)}
                 onReadyNextHand={() => handleReadyNextHand(pokerGameId, customerAccount?.id, setError)}
-                onDeleteGame={() => handleDeleteGame(pokerGameId, setPokerGameId, setPokerGame, setError)}
                 onResetGame={() => handleResetGame(pokerGameId, setError)}
               />
             </CardContent>
@@ -301,12 +304,12 @@ export function ChatRoomDualMode() {
               activeUsers={activeUsers}
               currentUserId={customerAccount?.id || ""}
               inputRef={inputRef}
-              onMessageChange={setNewMessage}
-              onSendMessage={() => handleSendMessageClick({ preventDefault: () => {} } as any)}
+              onMessageChange={(msg) => setNewMessage(msg)}
+              onSendMessage={() => handleSendMessageClick()}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault()
-                  handleSendMessageClick(e as any)
+                  handleSendMessageClick()
                 }
               }}
               onClearHistory={handleClearHistoryClick}

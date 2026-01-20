@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { User, BarChart3, Star, Zap, AlertCircle, Gift } from "lucide-react"
+import { MainDashboard } from "../MainDashboard"
 import { CustomerAccount, LinkedPlayer, Player, PointHistory, StoreRankingSettings, PlayerStats } from "@/types"
 import { getDisplayName } from "@/lib/utils/formatters" // getDisplayName is defined in page.tsx, but I'll assume it's available or pass it as prop
 
@@ -19,6 +20,7 @@ interface CustomerMainContentProps {
   playingPlayers: Player[]
   getDisplayName: (player: LinkedPlayer) => string
   handleDetailedDataClick: () => void
+  onViewModeChange: (mode: string) => void
 }
 
 export const CustomerMainContent: React.FC<CustomerMainContentProps> = ({
@@ -32,13 +34,30 @@ export const CustomerMainContent: React.FC<CustomerMainContentProps> = ({
   playingPlayers = [],
   getDisplayName,
   handleDetailedDataClick,
+  onViewModeChange,
 }) => {
   const router = useRouter()
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       {/* currentCustomerの代わりにcustomerAccountを使用 */}
-      {customerAccount?.playerId && linkedPlayer && viewMode !== "chat" && (
+      {customerAccount?.playerId && linkedPlayer && viewMode === "main" && (
+        <MainDashboard
+          linkedPlayer={linkedPlayer as any}
+          storeSettings={storeSettings as any}
+          dailyRankings={[]}
+          monthlyRankings={[]}
+          pointHistory={pointHistory}
+          isDoublePointDay={false}
+          hasSpecialRate={false}
+          currentRewardRate={currentRewardRate}
+          currentMonthStr={new Date().toISOString().slice(0, 7)}
+          onDetailedDataClick={handleDetailedDataClick}
+          onViewModeChange={onViewModeChange}
+        />
+      )}
+
+      {customerAccount?.playerId && linkedPlayer && viewMode !== "chat" && viewMode !== "main" && (
         <>
           {/* プレイヤー情報カード */}
           <Card className="border-green-200 bg-green-50 shadow-md">

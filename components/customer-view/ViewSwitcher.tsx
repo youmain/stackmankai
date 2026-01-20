@@ -213,7 +213,7 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
           linkedPlayer={linkedPlayer}
           customerAccount={customerAccount}
           getDisplayName={getDisplayName}
-          onViewModeChange={setViewMode}
+          onViewModeChange={(mode) => setViewMode(mode)}
         />
       )
     case "main":
@@ -231,6 +231,7 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
           playingPlayers={players.filter(p => p.isPlaying)}
           getDisplayName={getDisplayName}
           handleDetailedDataClick={() => setIsChartModalOpen(true)}
+          onViewModeChange={(mode) => setViewMode(mode)}
         />
       )
   }
