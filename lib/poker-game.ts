@@ -250,6 +250,21 @@ export const leavePokerGame = async (
       updatedAt: serverTimestamp(),
     }))
   }
+
+  // 退席時に残っているスタックをスタポカ貯スタックに戻す
+  if (leavingPlayer && leavingPlayer.stack > 0) {
+    const db = getDb()!
+    const playerRef = doc(db, "players", userId);
+    const playerSnap = await getDoc(playerRef);
+    if (playerSnap.exists()) {
+      const playerData = playerSnap.data();
+      const currentStapokaBalance = playerData.stapokaBalance || 0;
+      await updateDoc(playerRef, {
+        stapokaBalance: currentStapokaBalance + leavingPlayer.stack,
+        updatedAt: serverTimestamp(),
+      });
+    }
+  }
 }
 
 /**

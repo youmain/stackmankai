@@ -196,19 +196,6 @@ export const advancePhase = async (
     })
     winner.stack += potAmount
     
-    // Update player's stapokaBalance in the players collection
-    const db = getDb()!
-    const playerRef = doc(db, "players", winner.userId);
-    const playerSnap = await getDoc(playerRef);
-    if (playerSnap.exists()) {
-      const playerData = playerSnap.data();
-      const currentStapokaBalance = playerData.stapokaBalance || 0;
-      await updateDoc(playerRef, {
-        stapokaBalance: currentStapokaBalance + potAmount,
-        updatedAt: serverTimestamp(),
-      });
-    }
-    
     // Set next hand start time (7 seconds from now)
     const nextHandStartTime = Timestamp.fromMillis(Date.now() + 7000)
     
@@ -382,37 +369,6 @@ export const evaluateShowdown = async (
   
   // Distribute pots to winners
   distributePots(pots, gameData.players, winnersByStrength)
-
-  // Update stapokaBalance for all winners
-  const db = getDb()!
-  for (const winnerIndex of winners) {
-    const winner = gameData.players[winnerIndex]
-    // Note: distributePots already updated winner.stack
-    // We need to find how much they won in this specific hand
-    // For simplicity, we'll update based on the final stack change if we had tracked it,
-    // but here we'll just add the pot share to their stapokaBalance.
-    // In a real implementation, we'd calculate the exact profit.
-    const playerRef = doc(db, "players", winner.userId);
-    const playerSnap = await getDoc(playerRef);
-    if (playerSnap.exists()) {
-      const playerData = playerSnap.data();
-      const currentStapokaBalance = playerData.stapokaBalance || 0;
-      // This is a simplified logic: adding the won amount to the balance
-      // In a more robust system, we'd sync the entire stack at the end of the game
-      const winAmount = pots.reduce((acc, pot) => {
-        const potWinners = winnersByStrength[0].filter(idx => pot.eligiblePlayerIndices.includes(idx));
-        if (potWinners.includes(winnerIndex)) {
-          return acc + Math.floor(pot.amount / potWinners.length);
-        }
-        return acc;
-      }, 0);
-
-      await updateDoc(playerRef, {
-        stapokaBalance: currentStapokaBalance + winAmount,
-        updatedAt: serverTimestamp(),
-      });
-    }
-  }
   
   // Store hand results for history
   const handResult = {

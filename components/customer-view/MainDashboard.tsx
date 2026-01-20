@@ -92,7 +92,7 @@ export const MainDashboard = React.memo<React.FC<MainDashboardProps>>(({
                 <div className="text-2xl sm:text-3xl font-bold text-blue-600">
                   {linkedPlayer && 'systemBalance' in linkedPlayer ? (linkedPlayer.systemBalance || 0).toLocaleString() : '0'}
                 </div>
-                <div className="text-xs text-gray-500 mt-1">店舗管理の貯スタック</div>
+                <div className="text-xs text-gray-500 mt-1">店舗管理の貯スタック（閲覧専用）</div>
               </div>
 
               {/* スタポカ貯スタック */}
@@ -105,7 +105,7 @@ export const MainDashboard = React.memo<React.FC<MainDashboardProps>>(({
                   <div className="text-2xl sm:text-3xl font-bold text-purple-600">
                     {linkedPlayer && 'stapokaBalance' in linkedPlayer ? (linkedPlayer.stapokaBalance || 0).toLocaleString() : '0'}
                   </div>
-                  <div className="text-xs text-gray-500 mt-1">アプリ内ポーカー / ハンド購入に使用</div>
+                  <div className="text-xs text-gray-500 mt-1">スタポカ貯スタック（アプリ内専用）</div>
                   <div className="text-xs text-purple-600 mt-2 font-semibold">→ ハンドを購入</div>
                 </div>
               </Link>
