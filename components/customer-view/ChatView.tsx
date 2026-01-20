@@ -34,7 +34,7 @@ export const ChatView: React.FC<ChatViewProps> = React.memo(({
       </div>
       <div className="flex-1 overflow-hidden">
         <ChatRoomDualMode 
-          onViewModeChange={handleModeChange}
+          onViewModeChange={(mode) => handleModeChange(mode)}
         />
       </div>
     </div>

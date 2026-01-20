@@ -45,11 +45,17 @@ export function ChatRoomDualMode({ onViewModeChange }: { onViewModeChange?: (mod
   const { customerAccount } = useAuth()
   const { viewMode: internalViewMode, setViewMode: setInternalViewMode } = useViewMode()
 
+  // 外部から渡された onViewModeChange がある場合はそれを使用し、
+  // ない場合は内部の setInternalViewMode を使用する
   const handleModeChange = useCallback((mode: any) => {
     console.log('Mode change requested:', mode);
+    
+    // 常に内部状態を更新してUIを切り替える
     if (typeof setInternalViewMode === 'function') {
       setInternalViewMode(mode);
     }
+    
+    // 外部のハンドラがあれば呼ぶ
     if (typeof onViewModeChange === 'function') {
       onViewModeChange(mode);
     }
@@ -265,7 +271,7 @@ export function ChatRoomDualMode({ onViewModeChange }: { onViewModeChange?: (mod
           </Alert>
         )}
 
-        {internalViewMode === "poker" && pokerGame && (
+        {(internalViewMode === "poker" || internalViewMode === "spectate") && pokerGame && (
           <Card className="flex-1">
             <CardContent className="p-4">
               <PokerTable
