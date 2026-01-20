@@ -36,7 +36,11 @@ export const useCustomerLogic = ({
 
   // linkedPlayerを早期に定義（useMemoで最適化）
   const linkedPlayer = useMemo((): Player | null => {
-    const found = players.find((player) => {
+    if (!players || !Array.isArray(players)) {
+      console.warn("[useCustomerLogic] players is not an array:", players)
+      return null
+    }
+    const found = (players || []).find((player) => {
       if (!customerAccount?.playerId) return false
 
       // console.log("[v0] プレイヤー照合チェック:", {
