@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { memo } from 'react'
 import { useRouter } from 'next/navigation'
@@ -52,6 +52,14 @@ const MenuModal = memo(function MenuModal({
   getDisplayName,
 }: MenuModalProps) {
   console.log("[MenuModal] Rendered. isOpen:", isOpen, "customerAccount:", !!customerAccount, "linkedPlayer:", !!linkedPlayer);
+  console.log("[MenuModal] customerAccount details:", customerAccount ? {
+    id: customerAccount.id,
+    playerId: customerAccount.playerId,
+    playerName: customerAccount.playerName,
+    storeName: customerAccount.storeName,
+    storeId: customerAccount.storeId,
+  } : "NULL");
+  
   const router = useRouter()
 
   const handleClose = () => {
@@ -139,6 +147,22 @@ const MenuModal = memo(function MenuModal({
     }
   }
 
+  const handleMyPosts = () => {
+    try {
+      handleViewModeChange('my-posts')
+    } catch (error) {
+      console.error("[MenuModal] Error in handleMyPosts:", error);
+    }
+  }
+
+  const handleHandRecords = () => {
+    try {
+      handleViewModeChange('posts')
+    } catch (error) {
+      console.error("[MenuModal] Error in handleHandRecords:", error);
+    }
+  }
+
   const handleAccountCancellationClick = () => {
     try {
       onAccountCancellation()
@@ -165,7 +189,7 @@ const MenuModal = memo(function MenuModal({
         </SheetHeader>
         <div className="mt-6 space-y-3">
           {/* プレイヤー情報セクション */}
-          {customerAccount && (
+          {customerAccount ? (
             <div className="border-b pb-4 mb-4">
               <h3 className="text-sm font-medium text-gray-500 mb-3">プレイヤー情報</h3>
 
@@ -179,7 +203,7 @@ const MenuModal = memo(function MenuModal({
               </div>
 
               {/* プレイヤー紐付け状態に基づくメニュー */}
-              {linkedPlayer && (
+              {linkedPlayer ? (
                 <div className="space-y-2 mb-4">
                   <h4 className="text-sm font-semibold text-gray-600 pt-2">プレイヤー向け機能</h4>
                   {/* 1. ダッシュボード */}
@@ -253,13 +277,11 @@ const MenuModal = memo(function MenuModal({
                     Stack Man Hand購入
                   </Button>
 
-
-
                   {/* 8. ハンド記録を見る */}
                   <Button
                     variant="ghost"
                     className="w-full justify-start text-base py-3"
-                    onClick={() => handleViewModeChange('posts')}
+                    onClick={handleHandRecords}
                   >
                     <FileText className="h-5 w-5 mr-3" />
                     ハンド記録を見る
@@ -269,7 +291,7 @@ const MenuModal = memo(function MenuModal({
                   <Button
                     variant="ghost"
                     className="w-full justify-start text-base py-3"
-                    onClick={() => handleViewModeChange('my-posts')}
+                    onClick={handleMyPosts}
                   >
                     <History className="h-5 w-5 mr-3" />
                     自分の投稿履歴
@@ -277,8 +299,8 @@ const MenuModal = memo(function MenuModal({
 
                   {/* 10. スタックマン解約 */}
                   <Button
-                    variant="outline"
-                    className="w-full justify-start text-orange-600 hover:text-orange-700 hover:bg-orange-50 bg-transparent"
+                    variant="ghost"
+                    className="w-full justify-start text-base py-3 text-red-600 hover:text-red-700 hover:bg-red-50"
                     onClick={handleAccountCancellationClick}
                   >
                     <AlertTriangle className="mr-2 h-4 w-4" />
@@ -296,10 +318,7 @@ const MenuModal = memo(function MenuModal({
                   </Button>
 
                 </div>
-              )}
-
-              {/* linkedPlayerが存在しない場合は、プレイヤー情報紐付けのメッセージとボタンを表示 */}
-              {!linkedPlayer && (
+              ) : (
                 <div className="space-y-2 mb-4">
                   <Alert className="border-orange-200 bg-orange-50">
                     <AlertCircle className="h-4 w-4" />
@@ -348,7 +367,7 @@ const MenuModal = memo(function MenuModal({
                 <Button
                   variant="ghost"
                   className="w-full justify-start text-base py-3"
-                  onClick={() => handleViewModeChange('posts')}
+                  onClick={handleHandRecords}
                 >
                   <FileText className="h-5 w-5 mr-3" />
                   ハンド記録を見る
@@ -358,7 +377,7 @@ const MenuModal = memo(function MenuModal({
                 <Button
                   variant="ghost"
                   className="w-full justify-start text-base py-3"
-                  onClick={() => handleViewModeChange('my-posts')}
+                  onClick={handleMyPosts}
                 >
                   <History className="h-5 w-5 mr-3" />
                   自分の投稿履歴
@@ -366,8 +385,8 @@ const MenuModal = memo(function MenuModal({
 
                 {/* 10. スタックマン解約 */}
                 <Button
-                  variant="outline"
-                  className="w-full justify-start text-orange-600 hover:text-orange-700 hover:bg-orange-50 bg-transparent"
+                  variant="ghost"
+                  className="w-full justify-start text-base py-3 text-red-600 hover:text-red-700 hover:bg-red-50"
                   onClick={handleAccountCancellationClick}
                 >
                   <AlertTriangle className="mr-2 h-4 w-4" />
@@ -385,10 +404,7 @@ const MenuModal = memo(function MenuModal({
                 </Button>
               </div>
             </div>
-          )}
-
-          {/* customerAccountが存在しない場合 */}
-          {!customerAccount && (
+          ) : (
             <Alert className="border-red-200 bg-red-50">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription className="text-red-800 text-sm">
