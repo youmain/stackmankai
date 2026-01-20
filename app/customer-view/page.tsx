@@ -87,9 +87,16 @@ export default function CustomerView() {
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
         <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
         <h2 className="text-xl font-bold text-gray-900 mb-2">認証エラー</h2>
-        <p className="text-gray-600 mb-6 text-center">
-          顧客情報が見つかりませんでした。<br />再度ログインしてください。
+        <p className="text-gray-600 mb-2 text-center">
+          顧客情報が見つかりませんでした。
         </p>
+        <div className="bg-gray-100 p-4 rounded-md mb-6 text-xs font-mono text-gray-500 max-w-md overflow-auto">
+          Debug: {JSON.stringify({ 
+            hasAuth: !!state.customerAccount, 
+            loading: state.isLoading,
+            dataLoaded: state.dataLoaded
+          })}
+        </div>
         <Button onClick={() => state.signOut()} className="bg-blue-600 hover:bg-blue-700">
           ログイン画面へ戻る
         </Button>
