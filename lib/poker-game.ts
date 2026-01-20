@@ -147,12 +147,18 @@ export const joinPokerGame = async (
     }))
 
     // Update player's stapokaBalance in the players collection
+    // Subtract buy-in from stapokaBalance
     const db = getDb()!
     const playerRef = doc(db, "players", userId);
-    await updateDoc(playerRef, {
-      stapokaBalance: gameData.players.find(p => p.userId === userId)?.stack || 0, // Assuming stack is the new stapokaBalance after joining
-      updatedAt: serverTimestamp(),
-    });
+    const playerSnap = await getDoc(playerRef);
+    if (playerSnap.exists()) {
+      const playerData = playerSnap.data();
+      const currentStapokaBalance = playerData.stapokaBalance || 0;
+      await updateDoc(playerRef, {
+        stapokaBalance: Math.max(0, currentStapokaBalance - buyIn),
+        updatedAt: serverTimestamp(),
+      });
+    }
   }, "座席への参加に失敗しました")
 }
 
