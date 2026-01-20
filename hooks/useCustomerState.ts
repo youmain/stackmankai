@@ -59,10 +59,16 @@ export const useCustomerState = () => {
 
     const unsubscribe = subscribeToPlayers((newPlayers) => {
       setPlayers(newPlayers || [])
-      setDataLoaded(prev => ({ ...prev, players: true }))
+      setDataLoaded(prev => {
+        if (prev.players) return prev;
+        return { ...prev, players: true };
+      })
     }, (error) => {
       console.error("Players subscription error:", error);
-      setDataLoaded(prev => ({ ...prev, players: true }))
+      setDataLoaded(prev => {
+        if (prev.players) return prev;
+        return { ...prev, players: true };
+      })
     }, storeId)
 
     return () => {
@@ -75,7 +81,10 @@ export const useCustomerState = () => {
   // 他のデータのロード状態も管理
   useEffect(() => {
     if (customerAccount) {
-      setDataLoaded(prev => ({ ...prev, customers: true }))
+      setDataLoaded(prev => {
+        if (prev.customers) return prev;
+        return { ...prev, customers: true };
+      })
     }
   }, [customerAccount])
 
