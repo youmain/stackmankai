@@ -43,39 +43,24 @@ export const useCustomerState = () => {
   const [currentRewardRate, setCurrentRewardRate] = useState<number>(5) // Track current reward rate
 
   // --- 3. Loading/Status State ---
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [dataLoaded, setDataLoaded] = useState<DataLoadedState>({
-    customers: false,
-    players: false,
-    dailyRankings: false,
-    monthlyPoints: false,
-    storeSettings: false,
+    customers: true,
+    players: true,
+    dailyRankings: true,
+    monthlyPoints: true,
+    storeSettings: true,
   })
 
   // --- 7. Data Subscription Effects ---
   useEffect(() => {
     if (!customerAccount?.storeId) {
       setPlayers([])
-      setDataLoaded((prev) => ({ ...prev, players: true }))
       return
     }
 
     const unsubscribe = subscribeToPlayers(customerAccount.storeId, (newPlayers) => {
       setPlayers(newPlayers)
-      setDataLoaded((prev) => {
-        const newState = { ...prev, players: true }
-        // 状態更新関数の中でisLoadingを判定することで、最新のdataLoadedを参照しつつ無限ループを防ぐ
-        setIsLoading(
-          !(
-            newState.customers &&
-            newState.players &&
-            newState.dailyRankings &&
-            newState.monthlyPoints &&
-            newState.storeSettings
-          ),
-        )
-        return newState
-      })
     })
 
     return () => unsubscribe
