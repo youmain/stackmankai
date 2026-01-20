@@ -54,7 +54,8 @@ export const useCustomerState = () => {
 
   // --- 7. Data Subscription Effects ---
   useEffect(() => {
-    // storeIdがない場合は全プレイヤーを取得（紐付け用）
+    // プレイヤーデータの購読
+    // storeIdがある場合はその店舗のプレイヤーのみ、ない場合は全プレイヤー（紐付け用）
     const storeId = customerAccount?.storeId || undefined;
 
     const unsubscribe = subscribeToPlayers((newPlayers) => {
@@ -78,7 +79,7 @@ export const useCustomerState = () => {
     }
   }, [customerAccount?.storeId])
 
-  // 他のデータのロード状態も管理
+  // 顧客アカウントのロード状態管理
   useEffect(() => {
     if (customerAccount) {
       setDataLoaded(prev => {
@@ -86,14 +87,18 @@ export const useCustomerState = () => {
         return { ...prev, customers: true };
       })
     }
-  }, [customerAccount])
+  }, [customerAccount?.id]) // IDのみを監視して無限ループを防止
 
   // 全体のロード状態を更新
   useEffect(() => {
     if (dataLoaded.players && dataLoaded.customers) {
-      setIsLoading(false)
+      // わずかな遅延を入れてレンダリングの安定を図る
+      const timer = setTimeout(() => {
+        setIsLoading(false)
+      }, 100)
+      return () => clearTimeout(timer)
     }
-  }, [dataLoaded])
+  }, [dataLoaded.players, dataLoaded.customers])
 
   // --- 4. Player Linking/Modal State ---
   const [isDetailedDataModalOpen, setIsDetailedDataModalOpen] = useState(false)
