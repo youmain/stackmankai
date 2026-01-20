@@ -43,28 +43,44 @@ export const useCustomerState = () => {
   const [currentRewardRate, setCurrentRewardRate] = useState<number>(5) // Track current reward rate
 
   // --- 3. Loading/Status State ---
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [dataLoaded, setDataLoaded] = useState<DataLoadedState>({
-    customers: true,
-    players: true,
-    dailyRankings: true,
-    monthlyPoints: true,
-    storeSettings: true,
+    customers: false,
+    players: false,
+    dailyRankings: false,
+    monthlyPoints: false,
+    storeSettings: false,
   })
 
   // --- 7. Data Subscription Effects ---
   useEffect(() => {
     if (!customerAccount?.storeId) {
       setPlayers([])
+      setDataLoaded(prev => ({ ...prev, players: true }))
       return
     }
 
     const unsubscribe = subscribeToPlayers(customerAccount.storeId, (newPlayers) => {
-      setPlayers(newPlayers)
+      setPlayers(newPlayers || [])
+      setDataLoaded(prev => ({ ...prev, players: true }))
     })
 
     return () => unsubscribe
   }, [customerAccount?.storeId])
+
+  // 他のデータのロード状態も管理
+  useEffect(() => {
+    if (customerAccount) {
+      setDataLoaded(prev => ({ ...prev, customers: true }))
+    }
+  }, [customerAccount])
+
+  // 全体のロード状態を更新
+  useEffect(() => {
+    if (dataLoaded.players && dataLoaded.customers) {
+      setIsLoading(false)
+    }
+  }, [dataLoaded])
 
   // --- 4. Player Linking/Modal State ---
   const [isDetailedDataModalOpen, setIsDetailedDataModalOpen] = useState(false)

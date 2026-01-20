@@ -71,7 +71,7 @@ export default function CustomerView() {
   })
 
   // 読み込み中の表示
-  if (state.isLoading) {
+  if (state.isLoading && !state.customerAccount) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
         <Loader2 className="w-10 h-10 text-blue-600 animate-spin mb-4" />
