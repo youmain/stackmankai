@@ -38,6 +38,7 @@ interface MenuModalProps {
 }
 
 const MenuModal = memo(function MenuModal({
+  const { error } = useAuth()
   isOpen,
   onOpenChange,
   customerAccount,
@@ -405,12 +406,19 @@ const MenuModal = memo(function MenuModal({
               </div>
             </div>
           ) : (
-            <Alert className="border-red-200 bg-red-50">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription className="text-red-800 text-sm">
-                顧客情報が見つかりません。再度ログインしてください。
-              </AlertDescription>
-            </Alert>
+	            <div className="p-4 text-center">
+	              <p className="text-lg font-semibold text-red-600">エラーが発生しました</p>
+	              <p className="text-sm text-gray-500 mt-2">
+	                {error ? error : "顧客情報が見つかりません。再度ログインしてください。"}
+	              </p>
+	              <p className="text-xs text-gray-400 mt-2">
+	                ※ Firebase Security Rules の設定が不十分な可能性があります。
+	              </p>
+	              <Button onClick={handleLogoutClick} className="mt-4 w-full">
+	                <LogOut className="mr-2 h-4 w-4" />
+	                ログアウト
+	              </Button>
+	            </div>
           )}
         </div>
       </SheetContent>
