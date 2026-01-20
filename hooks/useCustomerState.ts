@@ -54,18 +54,22 @@ export const useCustomerState = () => {
 
   // --- 7. Data Subscription Effects ---
   useEffect(() => {
-    if (!customerAccount?.storeId) {
-      setPlayers([])
-      setDataLoaded(prev => ({ ...prev, players: true }))
-      return
-    }
+    // storeIdがない場合は全プレイヤーを取得（紐付け用）
+    const storeId = customerAccount?.storeId || undefined;
 
-    const unsubscribe = subscribeToPlayers(customerAccount.storeId, (newPlayers) => {
+    const unsubscribe = subscribeToPlayers((newPlayers) => {
       setPlayers(newPlayers || [])
       setDataLoaded(prev => ({ ...prev, players: true }))
-    })
+    }, (error) => {
+      console.error("Players subscription error:", error);
+      setDataLoaded(prev => ({ ...prev, players: true }))
+    }, storeId)
 
-    return () => unsubscribe
+    return () => {
+      if (typeof unsubscribe === 'function') {
+        unsubscribe();
+      }
+    }
   }, [customerAccount?.storeId])
 
   // 他のデータのロード状態も管理
