@@ -52,37 +52,48 @@ function RankingsContent() {
     const currentYear = currentDate.getFullYear()
     const currentMonth = currentDate.getMonth() + 1
 
-    const unsubscribePlayers = subscribeToPlayers((playersData) => {
-      setPlayers(playersData)
-    }, undefined, storeId)
+    let unsubscribePlayers: (() => void) | undefined
+    let unsubscribeRakeHistory: (() => void) | undefined
+    let unsubscribeStoreSettings: (() => void) | undefined
+    let unsubscribeDailyRankings: (() => void) | undefined
+    let unsubscribeMonthlyPoints: (() => void) | undefined
+    let unsubscribeMonthlyRankings: (() => void) | undefined
 
-    const unsubscribeRakeHistory = subscribeToRakeHistory((rakeData) => {
-      setRakeHistory(rakeData)
-    }, storeId)
+    try {
+      unsubscribePlayers = subscribeToPlayers((playersData) => {
+        setPlayers(playersData || [])
+      }, (error) => console.error("Players subscription error:", error), storeId)
 
-    const unsubscribeStoreSettings = subscribeToStoreRankingSettings((settingsData) => {
-      setStoreRankingSettings(settingsData)
-    }, storeId)
+      unsubscribeRakeHistory = subscribeToRakeHistory((rakeData) => {
+        setRakeHistory(rakeData || [])
+      }, storeId)
 
-    const unsubscribeDailyRankings = subscribeToDailyRankings((dailyData) => {
-      setDailyRankings(dailyData)
-    }, storeId)
+      unsubscribeStoreSettings = subscribeToStoreRankingSettings((settingsData) => {
+        setStoreRankingSettings(Array.isArray(settingsData) ? settingsData[0] : settingsData)
+      }, storeId)
 
-    const unsubscribeMonthlyPoints = subscribeToMonthlyPoints(currentYear, currentMonth, (monthlyData) => {
-      setMonthlyPoints(monthlyData)
-    }, storeId)
+      unsubscribeDailyRankings = subscribeToDailyRankings((dailyData) => {
+        setDailyRankings(dailyData || [])
+      }, storeId)
 
-    const unsubscribeMonthlyRankings = subscribeToMonthlyRankings((rankingData) => {
-      setMonthlyRankings(rankingData)
-    }, storeId)
+      unsubscribeMonthlyPoints = subscribeToMonthlyPoints(currentYear, currentMonth, (monthlyData) => {
+        setMonthlyPoints(monthlyData || [])
+      }, storeId)
+
+      unsubscribeMonthlyRankings = subscribeToMonthlyRankings((rankingData) => {
+        setMonthlyRankings(rankingData || [])
+      }, storeId)
+    } catch (error) {
+      console.error("Subscription setup error:", error)
+    }
 
     return () => {
-      unsubscribePlayers()
-      unsubscribeRakeHistory()
-      unsubscribeStoreSettings()
-      unsubscribeDailyRankings()
-      unsubscribeMonthlyPoints()
-      unsubscribeMonthlyRankings()
+      unsubscribePlayers?.()
+      unsubscribeRakeHistory?.()
+      unsubscribeStoreSettings?.()
+      unsubscribeDailyRankings?.()
+      unsubscribeMonthlyPoints?.()
+      unsubscribeMonthlyRankings?.()
     }
   }, [storeId])
 

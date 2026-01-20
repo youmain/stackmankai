@@ -55,8 +55,7 @@ export const createOrUpdateUser = async (name: string): Promise<string> => {
     return `mock_user_${Date.now()}`
   }
 
-  const db = checkFirebaseConfig()
-  const playersCollection = getPlayersCollection()
+  const usersCollection = getUsersCollection()
 
   const q = query(usersCollection, where("name", "==", name), limit(1))
   const snapshot = await getDocs(q)
