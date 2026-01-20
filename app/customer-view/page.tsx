@@ -143,6 +143,13 @@ export default function CustomerView() {
         customerAccount={state.customerAccount}
         linkedPlayer={linkedPlayer}
         onViewModeChange={state.setViewMode}
+        onDetailedDataClick={handleDetailedDataClick}
+        onPlayerIdChange={handlePlayerIdChange}
+        onResetStatistics={() => state.setIsResetConfirmOpen(true)}
+        onPlayerLinkClick={handlePlayerLinkClick}
+        onAccountCancellation={() => state.setIsCancelConfirmOpen(true)}
+        onLogout={state.signOut}
+        getDisplayName={getDisplayName}
       />
 
       <ResetStatisticsModal
