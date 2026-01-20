@@ -163,25 +163,25 @@ export default function CustomerView() {
       {/* Modals */}
       <MenuModal
         isOpen={state.isMenuOpen}
-        onOpenChange={state.setIsMenuOpen}
+        onOpenChange={(open) => state.setIsMenuOpen(open)}
         customerAccount={state.customerAccount}
         linkedPlayer={linkedPlayer}
-        onViewModeChange={state.setViewMode}
-        onDetailedDataClick={handleDetailedDataClick}
-        onPlayerIdChange={handlePlayerIdChange}
+        onViewModeChange={(mode) => state.setViewMode(mode)}
+        onDetailedDataClick={() => handleDetailedDataClick()}
+        onPlayerIdChange={() => handlePlayerIdChange()}
         onResetStatistics={() => state.setIsResetConfirmOpen(true)}
-        onPlayerLinkClick={handlePlayerLinkClick}
+        onPlayerLinkClick={() => handlePlayerLinkClick()}
         onAccountCancellation={() => state.setIsCancelConfirmOpen(true)}
-        onLogout={state.signOut}
+        onLogout={() => state.signOut()}
         getDisplayName={getDisplayName}
       />
 
       <ResetStatisticsModal
         isOpen={state.isResetConfirmOpen}
-        onOpenChange={state.setIsResetConfirmOpen}
+        onOpenChange={(open) => state.setIsResetConfirmOpen(open)}
         linkedPlayer={linkedPlayer}
         isResetting={state.isResetting}
-        onConfirm={handleStatisticsReset}
+        onConfirm={() => handleStatisticsReset()}
       />
 
       <PlayerLinkingModal
@@ -194,33 +194,33 @@ export default function CustomerView() {
           }
         }}
         playerIdInput={state.playerIdInput}
-        onPlayerIdInputChange={handlePlayerIdChange}
+        onPlayerIdInputChange={(val) => state.setPlayerIdInput(val)}
         isLinking={state.isLinking}
         linkingError={state.linkingError || ""}
-        onSearch={handlePlayerIdLink}
+        onSearch={() => handlePlayerIdLink()}
       />
 
       <PlayerConfirmationModal
         isOpen={state.showConfirmation}
-        onOpenChange={state.setShowConfirmation}
+        onOpenChange={(open) => state.setShowConfirmation(open)}
         selectedPlayer={state.selectedPlayer}
         isLinking={state.isLinking}
-        onConfirm={confirmPlayerLink}
+        onConfirm={() => confirmPlayerLink()}
       />
 
       <LinkingSuccessModal
         isOpen={state.showLinkingSuccessModal}
-        onOpenChange={state.setShowLinkingSuccessModal}
+        onOpenChange={(open) => state.setShowLinkingSuccessModal(open)}
         customerAccount={state.customerAccount}
         skipLinkingAfterSuccess={state.skipLinkingAfterSuccess}
-        onSkipChange={handleSkipLinkingAfterSuccessChange}
+        onSkipChange={(checked) => handleSkipLinkingAfterSuccessChange(checked)}
         onClose={() => state.setShowLinkingSuccessModal(false)}
       />
 
       <AccountCancellationModal
         isOpen={state.isCancelConfirmOpen}
-        onOpenChange={state.setIsCancelConfirmOpen}
-        onConfirm={handleAccountCancellation}
+        onOpenChange={(open) => state.setIsCancelConfirmOpen(open)}
+        onConfirm={() => handleAccountCancellation()}
         isCancelling={state.isCancelling}
       />
 
@@ -232,11 +232,11 @@ export default function CustomerView() {
         pointHistory={state.pointHistory || []}
         getDisplayName={getDisplayName}
         activeTab={state.activeTab}
-        setActiveTab={state.setActiveTab}
+        setActiveTab={(tab) => state.setActiveTab(tab)}
         selectedPlayerForChart={state.selectedPlayerForChart}
-        setSelectedPlayerForChart={state.setSelectedPlayerForChart}
+        setSelectedPlayerForChart={(player) => state.setSelectedPlayerForChart(player)}
         isChartModalOpen={state.isChartModalOpen}
-        setIsChartModalOpen={state.setIsChartModalOpen}
+        setIsChartModalOpen={(open) => state.setIsChartModalOpen(open)}
         players={state.players || []}
       />
     </div>

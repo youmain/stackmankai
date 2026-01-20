@@ -52,6 +52,18 @@ const MenuModal = memo(function MenuModal({
   onLogout,
   getDisplayName,
 }: MenuModalProps) {
+  // デバッグ用: プロップスが関数であることを確認
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[MenuModal] Handlers check:', {
+      onViewModeChange: typeof onViewModeChange,
+      onDetailedDataClick: typeof onDetailedDataClick,
+      onPlayerIdChange: typeof onPlayerIdChange,
+      onResetStatistics: typeof onResetStatistics,
+      onPlayerLinkClick: typeof onPlayerLinkClick,
+      onAccountCancellation: typeof onAccountCancellation,
+      onLogout: typeof onLogout
+    });
+  }
   const { error } = useAuth()
   const router = useRouter()
 
