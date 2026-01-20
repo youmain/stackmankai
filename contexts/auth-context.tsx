@@ -169,7 +169,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                   console.log("[Auth] New customer account created with ID:", newAccountId);
                   // 作成後、onSnapshotが新しいアカウントを検知して更新するため、ここでは何もしない
                 } catch (createError) {
-                  console.error("[Auth] Failed to auto-create customer account:", createError);
+                  const error = createError as any;
+                  if (error.code === 'permission-denied' || error.message?.includes('Missing or insufficient permissions')) {
+                    console.error("[Auth] ❌ 権限エラーによりアカウントの自動作成に失敗しました。Firebase Security Rulesを確認してください。", createError);
+                    setError("権限エラー: アカウント情報にアクセスできません。管理者に連絡してください。");
+                  } else {
+                    console.error("[Auth] Failed to auto-create customer account:", createError);
+                  }
                   // 作成に失敗しても、とりあえず続行
                 }
               }
