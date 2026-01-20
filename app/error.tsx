@@ -29,6 +29,10 @@ export default function Error({
           <p className="text-gray-600">
             申し訳ございません。予期しないエラーが発生しました。
           </p>
+          <div className="bg-red-50 p-3 rounded text-xs font-mono text-red-800 overflow-auto max-h-32">
+            {error.message || "Unknown error"}
+            {error.digest && <div className="mt-1 text-red-400">Digest: {error.digest}</div>}
+          </div>
           <Button onClick={() => reset()} className="w-full">
             再試行
           </Button>
