@@ -69,7 +69,11 @@ function RankingsContent() {
       }, storeId)
 
       unsubscribeStoreSettings = subscribeToStoreRankingSettings((settingsData) => {
-        setStoreRankingSettings(Array.isArray(settingsData) ? settingsData[0] : settingsData)
+        if (Array.isArray(settingsData) && settingsData.length > 0) {
+          setStoreRankingSettings(settingsData[0])
+        } else if (settingsData && !Array.isArray(settingsData)) {
+          setStoreRankingSettings(settingsData as any)
+        }
       }, storeId)
 
       unsubscribeDailyRankings = subscribeToDailyRankings((dailyData) => {
