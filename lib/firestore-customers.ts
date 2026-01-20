@@ -55,8 +55,11 @@ const log = createModuleLogger("Firestore")
 // --- 顧客アカウント関連操作 ---
 
 export const subscribeToCustomerAccount = (uid: string, callback: (account: CustomerAccount | null) => void): (() => void) => {
-  if (!isFirebaseConfigured) {
-    log.warn("[v0] モック環境: CustomerAccountリスナーをスキップ");
+  // ローカル開発環境ではモックデータを使用
+  const isLocalEnv = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+  
+  if (!isFirebaseConfigured() || isLocalEnv) {
+    log.warn("[v0] モック環境またはローカル環境: CustomerAccountリスナーをスキップ");
     // モック環境ではダミーのcustomerAccountを返す
     // リスナーを登録し、現在のモックデータを即座にコールバック
     if (!mockCustomerAccountListeners[uid]) {
@@ -71,11 +74,12 @@ export const subscribeToCustomerAccount = (uid: string, callback: (account: Cust
       systemBalance: 40000,
       playerName: "モックプレイヤー",
       playerId: "mockPlayerId",
-      storeId: "mockStoreId",
-      storeName: "モック店舗",
+      storeId: "king-high-store",
+      storeName: "King High",
       createdAt: new Date(),
       updatedAt: new Date(),
     };
+    console.log("[subscribeToCustomerAccount] Returning mock account:", currentMockAccount);
     callback(currentMockAccount);
 
     // リスナー解除関数を返す
@@ -85,6 +89,12 @@ export const subscribeToCustomerAccount = (uid: string, callback: (account: Cust
   }
 
   const db = checkFirebaseConfig() as any;
+  if (!db) {
+    console.error("[subscribeToCustomerAccount] Firebase DB is not available");
+    callback(null);
+    return () => {};
+  }
+  
   const customerDocRef = doc(db, "customerAccounts", uid);
 
   return onSnapshot(customerDocRef, (docSnap) => {
