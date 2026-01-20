@@ -99,7 +99,13 @@ export const useCustomerHandlers = (props: CustomerHandlersProps) => {
     setLinkingError(null)
     
     try {
-      const player = players.find(p => p.uniqueId === playerSearchId)
+      if (!players || !Array.isArray(players)) {
+        console.warn("[useCustomerHandlers] players is not an array:", players)
+        setLinkingError("プレイヤーデータの読み込みに失敗しました。")
+        setIsPlayerLinking(false)
+        return
+      }
+      const player = (players || []).find(p => p.uniqueId === playerSearchId)
 
       if (player) {
         setLinkedPlayer(player)
