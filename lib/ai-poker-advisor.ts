@@ -1,10 +1,11 @@
 /**
  * AIポーカーアドバイザー
- * LLMを使用して戦略的なアドバイスを生成
+ * DeepSeek LLMを使用して戦略的なアドバイスを生成
  * 3つのタイプ: エクスプロイト、バランス、GTO
  */
 
-import { OpenAI } from "openai"
+import { createOpenAI } from "@ai-sdk/openai"
+import { generateText } from "ai"
 import type { PlayerStats } from "./poker-stats"
 import { classifyPlayStyle, estimateOpponentRange } from "./poker-stats"
 
@@ -20,14 +21,17 @@ export interface PokerAdvice {
 }
 
 /**
- * OpenAIクライアントの初期化
+ * DeepSeekクライアントの初期化
  */
-const getOpenAIClient = () => {
-  const apiKey = process.env.OPENAI_API_KEY
+const getDeepSeekClient = () => {
+  const apiKey = process.env.DEEPSEEK_API_KEY
   if (!apiKey) {
-    throw new Error("OPENAI_API_KEY is not configured")
+    throw new Error("DEEPSEEK_API_KEY is not configured")
   }
-  return new OpenAI({ apiKey })
+  return createOpenAI({
+    apiKey,
+    baseURL: "https://api.deepseek.com/v1",
+  })
 }
 
 /**
@@ -47,59 +51,51 @@ export const generatePokerAdvice = async (
   opponentStackSize: number,
   advisorType: AdvisorType = "balanced"
 ): Promise<PokerAdvice> => {
-  const client = getOpenAIClient()
-
-  // 相手のプレイスタイルを分類
-  const playStyle = opponentStats ? classifyPlayStyle(opponentStats) : "unknown"
-  const opponentRange = opponentStats
-    ? estimateOpponentRange(opponentStats, "bet", gamePhase)
-    : "Unknown"
-
-  // プロンプトを構築
-  const prompt = buildAdvicePrompt({
-    playerHand,
-    communityCards,
-    potSize,
-    potOdds,
-    opponentStats,
-    playStyle,
-    opponentRange,
-    gamePhase,
-    stackSize,
-    opponentStackSize,
-  })
-
   try {
-    const systemPrompt = buildSystemPrompt(advisorType)
-    const response = await client.chat.completions.create({
-      model: "gpt-4.1-mini",
-      messages: [
-        {
-          role: "system",
-          content: systemPrompt,
-        },
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-      temperature: advisorType === "gto" ? 0.3 : 0.7,
-      max_tokens: 500,
+    const deepseek = getDeepSeekClient()
+
+    // 相手のプレイスタイルを分類
+    const playStyle = opponentStats ? classifyPlayStyle(opponentStats) : "unknown"
+    const opponentRange = opponentStats
+      ? estimateOpponentRange(opponentStats, "bet", gamePhase)
+      : "Unknown"
+
+    // プロンプトを構築
+    const prompt = buildAdvicePrompt({
+      playerHand,
+      communityCards,
+      potSize,
+      potOdds,
+      opponentStats,
+      playStyle,
+      opponentRange,
+      gamePhase,
+      stackSize,
+      opponentStackSize,
     })
 
-    const content = response.choices[0].message.content || ""
+    const systemPrompt = buildSystemPrompt(advisorType)
+
+    // DeepSeek APIを使用してアドバイスを生成
+    const { text } = await generateText({
+      model: deepseek("deepseek-chat"),
+      system: systemPrompt,
+      prompt: prompt,
+      temperature: advisorType === "gto" ? 0.3 : 0.7,
+      maxTokens: 500,
+    })
 
     // レスポンスをパース
-    const advice = parseAdviceResponse(content, advisorType)
+    const advice = parseAdviceResponse(text, advisorType)
 
     return advice
   } catch (error) {
-    console.error("Error generating poker advice:", error)
+    console.error("Error generating poker advice with DeepSeek:", error)
 
     // エラーの場合は基本的なアドバイスを返す
     return {
       currentAnalysis: `ポットオッズ: ${(potOdds * 100).toFixed(1)}%、エクイティ: ${(playerHand.equity * 100).toFixed(1)}%`,
-      opponentAnalysis: `相手のプレイスタイル: ${playStyle}`,
+      opponentAnalysis: `相手のプレイスタイル: unknown`,
       recommendedAction: playerHand.equity > potOdds ? "call" : "fold",
       reasoning: "AIアドバイスの生成に失敗しました。基本的な確率に基づいてアドバイスしています。",
       confidence: 0.5,
