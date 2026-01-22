@@ -599,7 +599,17 @@ export function PokerTable({ game, currentUserId, onAction, onJoinSeat, onLeaveS
         />
       )}
       
-
+      {/* AIアドバイザーパネル */}
+      <div className="bg-gray-800 border-t border-gray-700">
+        <PokerAdvisorPanel
+          advice={advice}
+          isLoading={isAdviceLoading}
+          error={adviceError}
+          advisorType={advisorType}
+          onTypeChange={setAdvisorType}
+          playerStats={null}
+        />
+      </div>
     </div>
   )
 }
