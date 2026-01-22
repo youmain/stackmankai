@@ -10,6 +10,9 @@ import { TimeoutIndicator } from "./timeout-indicator"
 import { WinnerDisplay } from "./winner-display"
 import { RoundIndicator, PhaseProgressBar } from "./round-indicator"
 import { CompactActionHistory } from "./action-history"
+import { PokerAdvisorPanel } from "./PokerAdvisorPanel"
+import { usePokerAdvice } from "@/hooks/usePokerAdvice"
+import { AdvisorType } from "@/lib/ai-poker-advisor"
 
 interface PokerTableProps {
   game: PokerGameState | null
@@ -204,6 +207,13 @@ const PlayerCard = ({
 
 export function PokerTable({ game, currentUserId, onAction, onJoinSeat, onLeaveSeat, onStartGame, onResetGame, onTimeout, onReadyNextHand }: PokerTableProps) {
   const [betAmount, setBetAmount] = useState(game?.minRaise?.toString() || "")
+  const [advisorType, setAdvisorType] = useState<AdvisorType>("balanced")
+  
+  const { advice, isLoading: isAdviceLoading, error: adviceError } = usePokerAdvice({
+    game,
+    currentUserId,
+    advisorType
+  })
   const [countdown, setCountdown] = useState<number | null>(null)
   const [showWinnerDisplay, setShowWinnerDisplay] = useState(true)
   const [visibleCommunityCards, setVisibleCommunityCards] = useState<number>(0)
