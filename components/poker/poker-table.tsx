@@ -209,9 +209,21 @@ export function PokerTable({ game, currentUserId, onAction, onJoinSeat, onLeaveS
   const [betAmount, setBetAmount] = useState(game?.minRaise?.toString() || "")
   const [advisorType, setAdvisorType] = useState<AdvisorType>("balanced")
   
-  const { advice, isLoading: isAdviceLoading, error: adviceError } = usePokerAdvice({
-    game,
-    currentUserId,
+  // AIアドバイザーの引数を準備
+  const currentPlayerForAdvice = game?.players.find(p => p.userId === currentUserId);
+  const opponentForAdvice = game?.players.find(p => p.userId !== currentUserId);
+  
+  const { advice, loading: isAdviceLoading, error: adviceError } = usePokerAdvice({
+    storeId: "default", // または適切なID
+    gameId: "default",
+    playerId: currentUserId,
+    playerCards: currentPlayerForAdvice?.cards || [],
+    communityCards: game?.communityCards || [],
+    potSize: game?.pot || 0,
+    playerStack: currentPlayerForAdvice?.stack || 0,
+    opponentStack: opponentForAdvice?.stack || 0,
+    gamePhase: game?.phase || "waiting",
+    opponentId: opponentForAdvice?.userId,
     advisorType
   })
   const [countdown, setCountdown] = useState<number | null>(null)

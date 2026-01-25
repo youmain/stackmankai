@@ -43,6 +43,10 @@ export const usePokerAdvice = (params: UsePokerAdviceParams) => {
 
   // アドバイスを生成
   const generateAdvice = useCallback(async () => {
+    if (!params.playerCards || params.playerCards.length === 0) {
+      return;
+    }
+    
     setLoading(true)
     setError(null)
 
