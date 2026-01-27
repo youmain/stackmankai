@@ -25,6 +25,23 @@ export const useCustomerState = () => {
   const { customerAccount, setCustomerAccount, signOut } = useAuth()
   const router = useRouter()
 
+  // --- 5. Computed Values (Time) ---
+  const currentDate = useMemo(() => new Date(), [])
+  const currentYear = useMemo(() => currentDate.getFullYear(), [currentDate])
+  const currentMonth = useMemo(() => currentDate.getMonth() + 1, [currentDate])
+  const currentMonthStr = useMemo(() => currentDate.toISOString().slice(0, 7), [currentDate]) // YYYY-MM
+  const today = useMemo(() => new Date(), [])
+
+
+
+
+
+
+
+
+
+
+
   // --- 1. View State ---
   const [viewMode, setViewMode] = useState<"main" | "posts" | "my-posts" | "post-detail" | "ai-players" | "chat">("main")
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null)
@@ -51,6 +68,80 @@ export const useCustomerState = () => {
     monthlyPoints: false,
     storeSettings: false,
   })
+
+  // --- 4. Player Linking/Modal State ---
+  const [isDetailedDataModalOpen, setIsDetailedDataModalOpen] = useState(false)
+  const [selectedPlayerForDetailedData, setSelectedPlayerForDetailedData] = useState<{
+    playerId: string
+    playerName: string
+    player?: Player
+  } | null>(null)
+  const [playerIdInput, setPlayerIdInput] = useState("")
+  const [isLinking, setIsLinking] = useState(false)
+  const [linkingError, setLinkingError] = useState<string | null>(null)
+  const [skipLinking, setSkipLinking] = useState(false)
+  const [showLinkingSuccessModal, setShowLinkingSuccessModal] = useState(false)
+  const [skipLinkingAfterSuccess, setSkipLinkingAfterSuccess] = useState(false)
+  const [showConfirmation, setShowConfirmation] = useState(false)
+  const [selectedPlayer, setSelectedPlayer] = useState<any>(null)
+  const [selectedPlayerForChart, setSelectedPlayerForChart] = useState<string | null>(null)
+  const [isChartModalOpen, setIsChartModalOpen] = useState(false)
+  const [showPlayerIdForm, setShowPlayerIdForm] = useState(false)
+  const [originalPlayerData, setOriginalPlayerData] = useState<{ playerId: string; playerName: string } | null>(null)
+  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false)
+  const [isResetting, setIsResetting] = useState(false)
+  const [isCancelConfirmOpen, setIsCancelConfirmOpen] = useState(false)
+  const [isCancelling, setIsCancelling] = useState(false)
+  const [showPlayerLinkModal, setShowPlayerLinkModal] = useState(false)
+
+
+
+  // --- 6. Initial Load Effects (from page.tsx) ---
+
+  // forceResetパラメータでゲームをリセット（一時的な機能）
+  useEffect(() => {
+    if (!customerAccount?.storeId) return
+    const urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.get("forceReset") === "true") {
+      const storageKey = `pokerGameId_${customerAccount.storeId}`
+      localStorage.removeItem(storageKey)
+      // パラメータを削除してリロード
+      urlParams.delete("forceReset")
+      const newUrl = window.location.pathname + (urlParams.toString() ? "?" + urlParams.toString() : "")
+      window.location.href = newUrl
+    }
+  }, [customerAccount?.storeId])
+
+  // localStorageとURLパラメータからviewModeを読み取る
+  useEffect(() => {
+    // まずlocalStorageから復元
+    const saved = localStorage.getItem("customerViewMode")
+    if (saved === "chat" || saved === "posts" || saved === "my-posts" || saved === "ai-players") {
+      setViewMode(saved)
+    }
+    
+    // URLパラメータがあればそちらを優先
+    const urlParams = new URLSearchParams(window.location.search)
+    const viewModeParam = urlParams.get("viewMode")
+    if (viewModeParam === "chat" || viewModeParam === "posts" || viewModeParam === "my-posts" || viewModeParam === "ai-players") {
+      setViewMode(viewModeParam)
+    }
+  }, [])
+
+  // viewModeが変更されたらローカルストレージに保存
+  useEffect(() => {
+    if (viewMode !== "post-detail") {
+      localStorage.setItem("customerViewMode", viewMode)
+    }
+  }, [viewMode])
+
+  // skipLinkingAfterSuccessの初期化
+  useEffect(() => {
+    const skipSuccess = localStorage.getItem("skipPlayerLinkingSuccess")
+    if (skipSuccess === "true") {
+      setSkipLinkingAfterSuccess(true)
+    }
+  }, [])
 
   // --- 7. Data Subscription Effects ---
   useEffect(() => {
@@ -99,85 +190,6 @@ export const useCustomerState = () => {
       return () => clearTimeout(timer)
     }
   }, [dataLoaded.players, dataLoaded.customers])
-
-  // --- 4. Player Linking/Modal State ---
-  const [isDetailedDataModalOpen, setIsDetailedDataModalOpen] = useState(false)
-  const [selectedPlayerForDetailedData, setSelectedPlayerForDetailedData] = useState<{
-    playerId: string
-    playerName: string
-    player?: Player
-  } | null>(null)
-  const [playerIdInput, setPlayerIdInput] = useState("")
-  const [isLinking, setIsLinking] = useState(false)
-  const [linkingError, setLinkingError] = useState<string | null>(null)
-  const [skipLinking, setSkipLinking] = useState(false)
-  const [showLinkingSuccessModal, setShowLinkingSuccessModal] = useState(false)
-  const [skipLinkingAfterSuccess, setSkipLinkingAfterSuccess] = useState(false)
-  const [showConfirmation, setShowConfirmation] = useState(false)
-  const [selectedPlayer, setSelectedPlayer] = useState<any>(null)
-  const [selectedPlayerForChart, setSelectedPlayerForChart] = useState<string | null>(null)
-  const [isChartModalOpen, setIsChartModalOpen] = useState(false)
-  const [showPlayerIdForm, setShowPlayerIdForm] = useState(false)
-  const [originalPlayerData, setOriginalPlayerData] = useState<{ playerId: string; playerName: string } | null>(null)
-  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false)
-  const [isResetting, setIsResetting] = useState(false)
-  const [isCancelConfirmOpen, setIsCancelConfirmOpen] = useState(false)
-  const [isCancelling, setIsCancelling] = useState(false)
-  const [showPlayerLinkModal, setShowPlayerLinkModal] = useState(false)
-
-  // --- 5. Computed Values (Time) ---
-  const currentDate = useMemo(() => new Date(), [])
-  const currentYear = useMemo(() => currentDate.getFullYear(), [currentDate])
-  const currentMonth = useMemo(() => currentDate.getMonth() + 1, [currentDate])
-  const currentMonthStr = useMemo(() => currentDate.toISOString().slice(0, 7), [currentDate]) // YYYY-MM
-  const today = useMemo(() => new Date(), [])
-
-  // --- 6. Initial Load Effects (from page.tsx) ---
-
-  // forceResetパラメータでゲームをリセット（一時的な機能）
-  useEffect(() => {
-    if (!customerAccount?.storeId) return
-    const urlParams = new URLSearchParams(window.location.search)
-    if (urlParams.get("forceReset") === "true") {
-      const storageKey = `pokerGameId_${customerAccount.storeId}`
-      localStorage.removeItem(storageKey)
-      // パラメータを削除してリロード
-      urlParams.delete("forceReset")
-      const newUrl = window.location.pathname + (urlParams.toString() ? "?" + urlParams.toString() : "")
-      window.location.href = newUrl
-    }
-  }, [customerAccount?.storeId])
-
-  // localStorageとURLパラメータからviewModeを読み取る
-  useEffect(() => {
-    // まずlocalStorageから復元
-    const saved = localStorage.getItem("customerViewMode")
-    if (saved === "chat" || saved === "posts" || saved === "my-posts" || saved === "ai-players") {
-      setViewMode(saved)
-    }
-    
-    // URLパラメータがあればそちらを優先
-    const urlParams = new URLSearchParams(window.location.search)
-    const viewModeParam = urlParams.get("viewMode")
-    if (viewModeParam === "chat" || viewModeParam === "posts" || viewModeParam === "my-posts" || viewModeParam === "ai-players") {
-      setViewMode(viewModeParam)
-    }
-  }, [])
-
-  // viewModeが変更されたらローカルストレージに保存
-  useEffect(() => {
-    if (viewMode !== "post-detail") {
-      localStorage.setItem("customerViewMode", viewMode)
-    }
-  }, [viewMode])
-
-  // skipLinkingAfterSuccessの初期化
-  useEffect(() => {
-    const skipSuccess = localStorage.getItem("skipPlayerLinkingSuccess")
-    if (skipSuccess === "true") {
-      setSkipLinkingAfterSuccess(true)
-    }
-  }, [])
 
   return {
     // States
