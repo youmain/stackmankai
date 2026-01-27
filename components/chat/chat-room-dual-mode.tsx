@@ -271,9 +271,9 @@ export function ChatRoomDualMode({ onViewModeChange }: { onViewModeChange?: (mod
           </Alert>
         )}
 
-        {(internalViewMode === "poker" || internalViewMode === "spectate") && pokerGame && (
-          <Card className="flex-1">
-            <CardContent className="p-4">
+        {(internalViewMode === "poker" || internalViewMode === "spectate") && (
+          <Card className="flex-1 bg-gray-900 border-gray-800 overflow-hidden flex flex-col">
+            <CardContent className="p-0 flex-1 overflow-y-auto">
               <PokerTable
                 game={pokerGame}
                 currentUserId={customerAccount?.id || ""}

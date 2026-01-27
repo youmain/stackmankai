@@ -213,8 +213,8 @@ export function PokerTable({ game, currentUserId, onAction, onJoinSeat, onLeaveS
   const currentPlayerForAdvice = game?.players.find(p => p.userId === currentUserId);
   const opponentForAdvice = game?.players.find(p => p.userId !== currentUserId);
   
-  const { advice, loading: isAdviceLoading, error: adviceError } = usePokerAdvice({
-    storeId: "default", // または適切なID
+  const { advice, loading: isAdviceLoading, error: adviceError, generateAdvice } = usePokerAdvice({
+    storeId: "default",
     gameId: "default",
     playerId: currentUserId,
     playerCards: currentPlayerForAdvice?.cards || [],
@@ -226,6 +226,13 @@ export function PokerTable({ game, currentUserId, onAction, onJoinSeat, onLeaveS
     opponentId: opponentForAdvice?.userId,
     advisorType
   })
+
+  // 自分のターンになったらアドバイスを自動生成
+  useEffect(() => {
+    if (isMyTurn && generateAdvice) {
+      generateAdvice()
+    }
+  }, [isMyTurn, generateAdvice])
   const [countdown, setCountdown] = useState<number | null>(null)
   const [showWinnerDisplay, setShowWinnerDisplay] = useState(true)
   const [visibleCommunityCards, setVisibleCommunityCards] = useState<number>(0)
@@ -290,10 +297,21 @@ export function PokerTable({ game, currentUserId, onAction, onJoinSeat, onLeaveS
   
   if (!game) {
     return (
-      <Card className="w-full">
-        <CardContent className="p-6">
-          <div className="text-center text-muted-foreground">
-            ゲームが見つかりません
+      <Card className="w-full bg-gray-900 border-gray-800">
+        <CardContent className="p-12 flex flex-col items-center justify-center min-h-[400px]">
+          <div className="text-center space-y-4">
+            <div className="text-4xl">🃏</div>
+            <div className="text-xl font-bold text-white">ポーカーテーブルを準備中</div>
+            <div className="text-gray-400 max-w-xs mx-auto">
+              ゲームデータを受信しています。しばらくお待ちいただくか、画面をリロードしてください。
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={() => window.location.reload()}
+              className="mt-4"
+            >
+              画面を更新する
+            </Button>
           </div>
         </CardContent>
       </Card>
