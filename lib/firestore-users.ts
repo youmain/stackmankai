@@ -79,8 +79,9 @@ export const createOrUpdateUser = async (name: string): Promise<string> => {
   }
 }
 
-export const subscribeToUsers = (callback: (users: any[]) => void): (() => void) => {
-  if (!isFirebaseConfigured) {
+export const subscribeToUsers = (arg1: any): (() => void) => {
+  const callback = typeof arg1 === "function" ? arg1 : () => {};
+  if (!isFirebaseConfigured()) {
     callback(mockUsers)
     return () => {}
   }
@@ -96,8 +97,11 @@ export const subscribeToUsers = (callback: (users: any[]) => void): (() => void)
 
 import { performanceMonitor } from './performance-monitor'
 
-export const subscribeToRakeHistory = (callback: (history: any[]) => void, storeId?: string | null): (() => void) => {
-  if (!isFirebaseConfigured) {
+export const subscribeToRakeHistory = (arg1: any, arg2?: any): (() => void) => {
+  const callback = typeof arg1 === "function" ? arg1 : (typeof arg2 === "function" ? arg2 : () => {});
+  const storeId = typeof arg1 === "string" ? arg1 : (typeof arg2 === "string" ? arg2 : null);
+
+  if (!isFirebaseConfigured()) {
     callback(mockRakeHistory)
     return () => {}
   }
@@ -116,8 +120,9 @@ export const subscribeToRakeHistory = (callback: (history: any[]) => void, store
 
 // --- Store Functions ---
 
-export const subscribeToStores = (callback: (stores: any[]) => void): (() => void) => {
-  if (!isFirebaseConfigured) {
+export const subscribeToStores = (arg1: any): (() => void) => {
+  const callback = typeof arg1 === "function" ? arg1 : () => {};
+  if (!isFirebaseConfigured()) {
     callback([])
     return () => {}
   }
