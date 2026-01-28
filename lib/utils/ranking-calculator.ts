@@ -26,6 +26,7 @@ export function calculateRankings(games: RakeHistory[], allPlayers?: Player[]): 
   // 全プレイヤーを初期化（allPlayersが提供されている場合）
   if (allPlayers) {
     allPlayers.forEach((player) => {
+      if (!player) return;
       const playerName = getPlayerDisplayName(player)
 
       playerStats[player.id] = {
