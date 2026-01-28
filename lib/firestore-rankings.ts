@@ -49,10 +49,10 @@ const log = createModuleLogger("Firestore")
 
 // --- ランキング・統計関連操作 ---
 
-export const subscribeToDailyRankings = (
-  callback: (rankings: PlayerRanking[]) => void,
-  storeId?: string | null,
-): (() => void) => {
+export const subscribeToDailyRankings = (arg1: any, arg2?: any): (() => void) => {
+  const callback = typeof arg1 === "function" ? arg1 : (typeof arg2 === "function" ? arg2 : () => {});
+  const storeId = typeof arg1 === "string" ? arg1 : (typeof arg2 === "string" ? arg2 : null);
+
   if (!isFirebaseConfigured) {
     callback(mockDailyRankings)
     return () => {}
@@ -71,7 +71,21 @@ export const subscribeToDailyRankings = (
   })
 }
 
-export const subscribeToMonthlyPoints = (year: number, month: number, callback: (points: any[]) => void, storeId?: string | null): (() => void) => {
+export const subscribeToMonthlyPoints = (arg1: any, arg2?: any, arg3?: any, arg4?: any): (() => void) => {
+  // Handle various signatures
+  let callback: (points: any[]) => void = () => {};
+  let storeId: string | null = null;
+
+  if (typeof arg1 === "function") callback = arg1;
+  else if (typeof arg2 === "function") callback = arg2;
+  else if (typeof arg3 === "function") callback = arg3;
+  else if (typeof arg4 === "function") callback = arg4;
+
+  if (typeof arg1 === "string") storeId = arg1;
+  else if (typeof arg2 === "string") storeId = arg2;
+  else if (typeof arg3 === "string") storeId = arg3;
+  else if (typeof arg4 === "string") storeId = arg4;
+
   if (!isFirebaseConfigured) {
     callback(mockMonthlyPoints)
     return () => {}
@@ -89,7 +103,10 @@ export const subscribeToMonthlyPoints = (year: number, month: number, callback: 
   })
 }
 
-export const subscribeToMonthlyRankings = (callback: (rankings: any[]) => void, storeId?: string | null): (() => void) => {
+export const subscribeToMonthlyRankings = (arg1: any, arg2?: any): (() => void) => {
+  const callback = typeof arg1 === "function" ? arg1 : (typeof arg2 === "function" ? arg2 : () => {});
+  const storeId = typeof arg1 === "string" ? arg1 : (typeof arg2 === "string" ? arg2 : null);
+
   if (!isFirebaseConfigured) {
     callback(mockMonthlyRankings)
     return () => {}
@@ -107,10 +124,10 @@ export const subscribeToMonthlyRankings = (callback: (rankings: any[]) => void, 
   })
 }
 
-export const subscribeToDailySales = (
-  callback: (sales: DailySales[]) => void,
-  storeId?: string | null,
-): (() => void) => {
+export const subscribeToDailySales = (arg1: any, arg2?: any): (() => void) => {
+  const callback = typeof arg1 === "function" ? arg1 : (typeof arg2 === "function" ? arg2 : () => {});
+  const storeId = typeof arg1 === "string" ? arg1 : (typeof arg2 === "string" ? arg2 : null);
+
   if (!isFirebaseConfigured) {
     callback([])
     return () => {}
@@ -186,10 +203,10 @@ export const saveStoreRankingSettings = async (storeId: string, settings: Partia
   }
 }
 
-export const subscribeToStoreRankingSettings = (
-  callback: (settings: StoreRankingSettings[]) => void,
-  storeId?: string | null,
-): (() => void) => {
+export const subscribeToStoreRankingSettings = (arg1: any, arg2?: any): (() => void) => {
+  const callback = typeof arg1 === "function" ? arg1 : (typeof arg2 === "function" ? arg2 : () => {});
+  const storeId = typeof arg1 === "string" ? arg1 : (typeof arg2 === "string" ? arg2 : null);
+
   if (!isFirebaseConfigured) {
     callback(mockStoreRankingSettings)
     return () => {}
