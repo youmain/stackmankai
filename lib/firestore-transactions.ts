@@ -199,9 +199,11 @@ export const deductRewardPoints = async (
   log.info("[v0] ポイント消費完了", { playerId: validatedId, 前: currentPoints, 後: newPoints })
 }
 
-export const subscribeToPointHistory = (playerId: string, callback: (history: any[]) => void): (() => void) => {
-  if (!isFirebaseConfigured) {
-    log.warn("[v0] モック環境: ポイント履歴リスナーをスキップ")
+export const subscribeToPointHistory = (arg1: any, arg2?: any): (() => void) => {
+  const playerId = typeof arg1 === "string" ? arg1 : (typeof arg2 === "string" ? arg2 : null);
+  const callback = typeof arg1 === "function" ? arg1 : (typeof arg2 === "function" ? arg2 : () => {});
+
+  if (!isFirebaseConfigured() || !playerId) {
     callback([])
     return () => {}
   }
@@ -226,7 +228,10 @@ export const subscribeToPointHistory = (playerId: string, callback: (history: an
 
 // --- User Functions ---
 
-export const subscribeToReceipts = (callback: (receipts: Receipt[]) => void, storeId?: string | null): (() => void) => {
+export const subscribeToReceipts = (arg1: any, arg2?: any): (() => void) => {
+  const callback = typeof arg1 === "function" ? arg1 : (typeof arg2 === "function" ? arg2 : () => {});
+  const storeId = typeof arg1 === "string" ? arg1 : (typeof arg2 === "string" ? arg2 : null);
+
   if (!isFirebaseConfigured) {
     callback(mockReceipts)
     return () => {}
@@ -244,8 +249,11 @@ export const subscribeToReceipts = (callback: (receipts: Receipt[]) => void, sto
   })
 }
 
-export const subscribeToReceiptItems = (receiptId: string, callback: (items: ReceiptItem[]) => void): (() => void) => {
-  if (!isFirebaseConfigured) {
+export const subscribeToReceiptItems = (arg1: any, arg2?: any): (() => void) => {
+  const receiptId = typeof arg1 === "string" ? arg1 : (typeof arg2 === "string" ? arg2 : null);
+  const callback = typeof arg1 === "function" ? arg1 : (typeof arg2 === "function" ? arg2 : () => {});
+
+  if (!isFirebaseConfigured() || !receiptId) {
     callback([])
     return () => {}
   }
