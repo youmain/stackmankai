@@ -61,7 +61,7 @@ export const subscribeToDailyRankings = (arg1: any, arg2?: any): (() => void) =>
   const callback = typeof arg1 === "function" ? arg1 : (typeof arg2 === "function" ? arg2 : () => {});
   const storeId = typeof arg1 === "string" ? arg1 : (typeof arg2 === "string" ? arg2 : null);
 
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     callback(mockDailyRankings)
     return () => {}
   }
@@ -99,7 +99,7 @@ export const subscribeToMonthlyPoints = (arg1: any, arg2?: any, arg3?: any, arg4
   else if (typeof arg3 === "string") storeId = arg3;
   else if (typeof arg4 === "string") storeId = arg4;
 
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     callback(mockMonthlyPoints)
     return () => {}
   }
@@ -125,7 +125,7 @@ export const subscribeToMonthlyRankings = (arg1: any, arg2?: any): (() => void) 
   const callback = typeof arg1 === "function" ? arg1 : (typeof arg2 === "function" ? arg2 : () => {});
   const storeId = typeof arg1 === "string" ? arg1 : (typeof arg2 === "string" ? arg2 : null);
 
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     callback(mockMonthlyRankings)
     return () => {}
   }
@@ -151,7 +151,7 @@ export const subscribeToDailySales = (arg1: any, arg2?: any): (() => void) => {
   const callback = typeof arg1 === "function" ? arg1 : (typeof arg2 === "function" ? arg2 : () => {});
   const storeId = typeof arg1 === "string" ? arg1 : (typeof arg2 === "string" ? arg2 : null);
 
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     callback([])
     return () => {}
   }
@@ -174,7 +174,7 @@ export const subscribeToDailySales = (arg1: any, arg2?: any): (() => void) => {
 }
 
 export const deleteDailySales = async (salesId: string): Promise<void> => {
-  if (!isFirebaseConfigured) return
+  if (!isFirebaseConfigured()) return
   try {
     await deleteDoc(doc(getDailySalesCollection(), salesId))
   } catch (error) {
@@ -185,7 +185,7 @@ export const deleteDailySales = async (salesId: string): Promise<void> => {
 }
 
 export const settleDailySales = async (date: string, salesData: any): Promise<void> => {
-  if (!isFirebaseConfigured) return
+  if (!isFirebaseConfigured()) return
   try {
     const salesCollection = getDailySalesCollection()
     const docRef = doc(salesCollection, date)
@@ -202,7 +202,7 @@ export const settleDailySales = async (date: string, salesData: any): Promise<vo
 }
 
 export const getStoreRankingSettings = async (storeId: string): Promise<StoreRankingSettings | null> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     return mockStoreRankingSettings.find((s) => s.id === storeId) || null
   }
   try {
@@ -220,7 +220,7 @@ export const getStoreRankingSettings = async (storeId: string): Promise<StoreRan
 }
 
 export const saveStoreRankingSettings = async (storeId: string, settings: Partial<StoreRankingSettings>): Promise<void> => {
-  if (!isFirebaseConfigured) return
+  if (!isFirebaseConfigured()) return
   try {
     const settingsRef = doc(getStoreRankingSettingsCollection(), storeId)
     await setDoc(settingsRef, { ...settings, updatedAt: serverTimestamp() }, { merge: true })
@@ -235,7 +235,7 @@ export const subscribeToStoreRankingSettings = (arg1: any, arg2?: any): (() => v
   const callback = typeof arg1 === "function" ? arg1 : (typeof arg2 === "function" ? arg2 : () => {});
   const storeId = typeof arg1 === "string" ? arg1 : (typeof arg2 === "string" ? arg2 : null);
 
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     callback(mockStoreRankingSettings)
     return () => {}
   }

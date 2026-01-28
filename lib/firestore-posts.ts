@@ -52,7 +52,7 @@ const log = createModuleLogger("Firestore")
 // --- ハンド記録・投稿・チャット関連操作 ---
 
 export const addPost = async (post: Omit<Post, "id">): Promise<string> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: 投稿追加をシミュレート", { post })
     return `mock_post_${Date.now()}`
   }
@@ -72,7 +72,7 @@ export const addPost = async (post: Omit<Post, "id">): Promise<string> => {
 }
 
 export const updatePost = async (id: string, updates: Partial<Post>): Promise<void> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: 投稿更新をシミュレート", { id, updates })
     return
   }
@@ -87,7 +87,7 @@ export const updatePost = async (id: string, updates: Partial<Post>): Promise<vo
 }
 
 export const deletePost = async (id: string): Promise<void> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: 投稿削除をシミュレート", { id })
     return
   }
@@ -123,7 +123,7 @@ export const subscribeToChatMessages = (arg1: any, arg2?: any): (() => void) => 
 }
 
 export const addChatMessage = async (message: string, userId: string, userName: string, storeId: string): Promise<void> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: チャットメッセージ追加をシミュレート", { storeId, message, userId, userName })
     return
   }
@@ -161,7 +161,7 @@ export const subscribeToActiveUsers = (arg1: any, arg2?: any): (() => void) => {
 }
 
 export const setActiveUser = async (gameId: string, userId: string, userData: any): Promise<void> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: アクティブユーザー設定をシミュレート", { gameId, userId })
     return
   }
@@ -176,7 +176,7 @@ export const setActiveUser = async (gameId: string, userId: string, userData: an
 }
 
 export const removeActiveUser = async (gameId: string, userId: string): Promise<void> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: アクティブユーザー削除をシミュレート", { gameId, userId })
     return
   }
@@ -224,7 +224,7 @@ export const subscribeToUserPosts = (arg1: any, arg2?: any): (() => void) => {
 
 
 export const createPost = async (postData: Omit<Post, 'id' | 'createdAt'>): Promise<string> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     console.log("[v0] Mock environment: Simulating post creation");
     const newId = `mock_post_${Date.now()}`;
     return newId;
@@ -250,7 +250,7 @@ export const sendChatMessage = async (message: string, userId: string, userName:
 
 
 export const setUserPresence = async (storeId: string, userId: string, displayName: string): Promise<void> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: ユーザープレゼンス設定をシミュレート", { storeId, userId, displayName });
     return;
   }
@@ -276,7 +276,7 @@ export const setUserPresence = async (storeId: string, userId: string, displayNa
 
 
 export const removeUserPresence = async (storeId: string, userId: string): Promise<void> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: ユーザープレゼンス削除をシミュレート", { storeId, userId });
     return;
   }
@@ -298,7 +298,7 @@ export const removeUserPresence = async (storeId: string, userId: string): Promi
 
 
 export const getPostById = async (postId: string): Promise<Post | null> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     return null;
   }
   try {
@@ -318,7 +318,7 @@ export const subscribeToStorePosts = (arg1: any, arg2?: any): (() => void) => {
   const callback = typeof arg1 === "function" ? arg1 : (typeof arg2 === "function" ? arg2 : () => {});
   const storeId = typeof arg1 === "string" ? arg1 : (typeof arg2 === "string" ? arg2 : null);
 
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     callback([])
     return () => {}
   }
@@ -337,7 +337,7 @@ export const subscribeToStorePosts = (arg1: any, arg2?: any): (() => void) => {
 
 
 export const deleteAllPosts = async (storeId: string): Promise<void> => {
-  if (!isFirebaseConfigured) return
+  if (!isFirebaseConfigured()) return
   try {
     const postsCollection = getPostsCollection()
     const q = query(postsCollection, where("storeId", "==", storeId))

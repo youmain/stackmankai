@@ -109,7 +109,7 @@ export const subscribeToCustomerAccount = (arg1: any, arg2?: any): (() => void) 
 }
 
 export const createCustomerAccount = async (account: Omit<CustomerAccount, "id">): Promise<string> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: 顧客アカウント作成をシミュレート", { account })
     return `mock_customer_${Date.now()}`
   }
@@ -129,7 +129,7 @@ export const createCustomerAccount = async (account: Omit<CustomerAccount, "id">
 }
 
 export const getCustomerAccount = async (id: string): Promise<CustomerAccount | null> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     return null
   }
   try {
@@ -147,7 +147,7 @@ export const getCustomerAccount = async (id: string): Promise<CustomerAccount | 
 }
 
 export const updateCustomerAccount = async (id: string, updates: Partial<CustomerAccount>): Promise<void> => {
-  if (!isFirebaseConfigured) return
+  if (!isFirebaseConfigured()) return
   try {
     const accountRef = doc(getCustomerAccountsCollection(), id)
     await updateDoc(accountRef, { ...updates, updatedAt: serverTimestamp() })
@@ -159,7 +159,7 @@ export const updateCustomerAccount = async (id: string, updates: Partial<Custome
 }
 
 export const deleteCustomerAccount = async (id: string): Promise<void> => {
-  if (!isFirebaseConfigured) return
+  if (!isFirebaseConfigured()) return
   try {
     await deleteDoc(doc(getCustomerAccountsCollection(), id))
   } catch (error) {
@@ -186,7 +186,7 @@ export const subscribeToCustomerAccounts = (arg1: any): (() => void) => {
 // --- Payment History Functions ---
 
 export const addPaymentHistory = async (history: Omit<PaymentHistory, "id">): Promise<string> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: 支払い履歴追加をシミュレート", { history })
     return `mock_payment_history_${Date.now()}`
   }
@@ -224,7 +224,7 @@ export const subscribeToPlayerPurchaseHistory = (arg1: any, arg2?: any): (() => 
 
 
 export const getCustomerByEmail = async (email: string): Promise<CustomerAccount | null> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     return null;
   }
   try {
@@ -258,7 +258,7 @@ export const createCustomerInFirestore = async (
   email: string,
   uid?: string
 ): Promise<string> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: 顧客アカウント作成をシミュレート", { email })
     return uid || `mock_customer_${Date.now()}`
   }

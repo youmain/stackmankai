@@ -54,7 +54,7 @@ const log = createModuleLogger("Firestore")
 // --- ユーザー・店舗関連操作 ---
 
 export const createOrUpdateUser = async (name: string): Promise<string> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: ユーザー作成をシミュレート", { name })
     return `mock_user_${Date.now()}`
   }
@@ -139,7 +139,7 @@ export const subscribeToStores = (arg1: any): (() => void) => {
 }
 
 export const getStore = async (id: string): Promise<any | null> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     return null
   }
   const storeRef = doc(collection(getDb(), "stores"), id)
@@ -154,7 +154,7 @@ export const getStore = async (id: string): Promise<any | null> => {
 
 
 export const getUserData = async (userId: string): Promise<any | null> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     return null;
   }
   const userRef = doc(getUsersCollection(), userId);

@@ -79,7 +79,7 @@ export const subscribeToGames = (arg1: any): (() => void) => {
 }
 
 export const getGame = async (id: string): Promise<Game | null> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     const game = mockGames.find((g) => g.id === id)
     return game || null
   }
@@ -99,7 +99,7 @@ export const getGame = async (id: string): Promise<Game | null> => {
 }
 
 export const addGame = async (game: Omit<Game, "id">): Promise<string> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: ゲーム追加をシミュレート", { game })
     return `mock_game_${Date.now()}`
   }
@@ -119,7 +119,7 @@ export const addGame = async (game: Omit<Game, "id">): Promise<string> => {
 }
 
 export const updateGame = async (id: string, updates: Partial<Game>): Promise<void> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: ゲーム更新をシミュレート", { id, updates })
     return
   }
@@ -135,7 +135,7 @@ export const updateGame = async (id: string, updates: Partial<Game>): Promise<vo
 }
 
 export const deleteGame = async (id: string): Promise<void> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: ゲーム削除をシミュレート", { id })
     return
   }
@@ -152,7 +152,7 @@ export const deleteGame = async (id: string): Promise<void> => {
 // --- Receipt Functions ---
 
 export const deleteAllGames = async (storeId: string): Promise<void> => {
-  if (!isFirebaseConfigured) return
+  if (!isFirebaseConfigured()) return
   try {
     const gamesCollection = getGamesCollection()
     const q = query(gamesCollection, where("storeId", "==", storeId))
@@ -213,7 +213,7 @@ export const updateGameParticipantStack = async (
   playerId: string,
   stack: number,
 ): Promise<void> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: ゲーム参加者のスタック更新をシミュレート", { gameId, playerId, stack });
     return;
   }

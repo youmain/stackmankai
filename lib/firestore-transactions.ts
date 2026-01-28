@@ -101,7 +101,7 @@ export const addRewardPoints = async (
   rate?: number,
   createdBy = "system",
 ): Promise<void> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: ポイント付与をシミュレート", { playerId, points, reason })
     return
   }
@@ -159,7 +159,7 @@ export const deductRewardPoints = async (
   receiptId?: string,
   createdBy = "system",
 ): Promise<void> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: ポイント消費をシミュレート", { playerId, points, reason })
     return
   }
@@ -242,7 +242,7 @@ export const subscribeToReceipts = (arg1: any, arg2?: any): (() => void) => {
   const callback = typeof arg1 === "function" ? arg1 : (typeof arg2 === "function" ? arg2 : () => {});
   const storeId = typeof arg1 === "string" ? arg1 : (typeof arg2 === "string" ? arg2 : null);
 
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     callback(mockReceipts)
     return () => {}
   }
@@ -276,7 +276,7 @@ export const subscribeToReceiptItems = (arg1: any, arg2?: any): (() => void) => 
 }
 
 export const getReceipt = async (id: string): Promise<Receipt | null> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     const receipt = mockReceipts.find((r) => r.id === id)
     return receipt || null
   }
@@ -290,7 +290,7 @@ export const getReceipt = async (id: string): Promise<Receipt | null> => {
 }
 
 export const addReceipt = async (receipt: Omit<Receipt, "id">): Promise<string> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: レシート追加をシミュレート", { receipt })
     return `mock_receipt_${Date.now()}`
   }
@@ -304,7 +304,7 @@ export const addReceipt = async (receipt: Omit<Receipt, "id">): Promise<string> 
 }
 
 export const updateReceipt = async (id: string, updates: Partial<Receipt>): Promise<void> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: レシート更新をシミュレート", { id, updates })
     return
   }
@@ -320,7 +320,7 @@ export const completeReceipt = async (
   pointsUsed: number,
   completedBy: string,
 ): Promise<void> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     log.info("[v0] モック環境: レシート完了をシミュレート", { receiptId })
     return
   }
@@ -391,7 +391,7 @@ export const completeReceipt = async (
 }
 
 export const deleteReceipt = async (receiptId: string): Promise<void> => {
-  if (!isFirebaseConfigured) return
+  if (!isFirebaseConfigured()) return
 
   try {
     const db = getDb()
@@ -418,7 +418,7 @@ export const deleteReceipt = async (receiptId: string): Promise<void> => {
 // --- Admin Functions ---
 
 export const deleteAllReceipts = async (storeId: string): Promise<void> => {
-  if (!isFirebaseConfigured) return
+  if (!isFirebaseConfigured()) return
   try {
     const receiptsCollection = getReceiptsCollection()
     const q = query(receiptsCollection, where("storeId", "==", storeId))
@@ -457,7 +457,7 @@ export const createStandaloneReceipt = async (storeId: string, customerName: str
 
 
 export const addReceiptItem = async (receiptId: string, item: Omit<ReceiptItem, "id">): Promise<string> => {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured()) {
     return `mock_receipt_item_${Date.now()}`;
   }
   try {
@@ -477,7 +477,7 @@ export const addReceiptItem = async (receiptId: string, item: Omit<ReceiptItem, 
 
 
 export const deleteReceiptItem = async (receiptId: string, itemId: string): Promise<void> => {
-  if (!isFirebaseConfigured) return;
+  if (!isFirebaseConfigured()) return;
   try {
     const itemRef = doc(getReceiptItemsCollection(), itemId);
     await deleteDoc(itemRef);
