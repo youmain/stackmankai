@@ -187,7 +187,9 @@ export async function getGoogleRedirectResult(): Promise<UserCredential | null> 
 export function onAuthStateChanged(callback: (user: User | null) => void): (() => void) {
   const auth = getAuthInstance()
   if (!auth) {
-    throw new Error("Firebase Authが初期化されていません")
+    // Authが初期化されていない場合は、未ログインとしてコールバックを呼び出し、空の関数を返す
+    callback(null)
+    return () => {}
   }
 
   return onAuthStateChangedFn(auth, callback)
@@ -210,7 +212,7 @@ export { signIn as signInWithEmailAndPassword }
 export async function waitForAuthState(expectedUid?: string, timeoutMs: number = 30000): Promise<User | null> {
   const auth = getAuthInstance()
   if (!auth) {
-    throw new Error("Firebase Authが初期化されていません")
+    return null
   }
 
   return new Promise((resolve, reject) => {
