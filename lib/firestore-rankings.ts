@@ -17,6 +17,14 @@ import {
   writeBatch,
 } from "firebase/firestore"
 import { getDb, isFirebaseConfigured } from "./firebase"
+import {
+  getDailyRankingsCollection,
+  getMonthlyPointsCollection,
+  getMonthlyRankingsCollection,
+  getDailySalesCollection,
+  getStoreRankingSettingsCollection,
+} from "./firestore-common"
+import { getPlayer, updatePlayer } from "./firestore-players"
 
 // Force Vercel rebuild with stable version - Manus AI (2026-01-13)
 import { validateId } from "./validation"

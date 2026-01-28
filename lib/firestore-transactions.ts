@@ -17,6 +17,14 @@ import {
   writeBatch,
 } from "firebase/firestore"
 import { getDb, isFirebaseConfigured } from "./firebase"
+import {
+  getPointHistoryCollection,
+  getPlayersCollection,
+  getReceiptsCollection,
+  getReceiptItemsCollection,
+} from "./firestore-common"
+import { updatePlayerMembershipRank } from "./firestore-players"
+import { getStoreRankingSettings } from "./firestore-rankings"
 
 // Force Vercel rebuild with stable version - Manus AI (2026-01-13)
 import { validateId } from "./validation"
@@ -98,7 +106,8 @@ export const addRewardPoints = async (
     return
   }
 
-  const db = checkFirebaseConfig()
+  const db = getDb()
+  if (!db) throw new Error("Database not initialized")
   const validatedId = validateId(playerId, "プレイヤーID")
   const validatedPoints = Math.max(0, Math.floor(points))
 
@@ -155,7 +164,8 @@ export const deductRewardPoints = async (
     return
   }
 
-  const db = checkFirebaseConfig()
+  const db = getDb()
+  if (!db) throw new Error("Database not initialized")
   const validatedId = validateId(playerId, "プレイヤーID")
   const validatedPoints = Math.max(0, Math.floor(points))
 
@@ -384,8 +394,9 @@ export const deleteReceipt = async (receiptId: string): Promise<void> => {
   if (!isFirebaseConfigured) return
 
   try {
-    const db = checkFirebaseConfig()
-    const batch = writeBatch(checkFirebaseConfig())
+    const db = getDb()
+  if (!db) throw new Error("Database not initialized")
+    const batch = writeBatch(db)
 
     // Delete receipt
     batch.delete(doc(getReceiptsCollection(), receiptId))
@@ -412,7 +423,7 @@ export const deleteAllReceipts = async (storeId: string): Promise<void> => {
     const receiptsCollection = getReceiptsCollection()
     const q = query(receiptsCollection, where("storeId", "==", storeId))
     const snapshot = await getDocs(q)
-    const batch = writeBatch(checkFirebaseConfig())
+    const batch = writeBatch(db)
     snapshot.docs.forEach((doc) => {
       batch.delete(doc.ref)
     })
