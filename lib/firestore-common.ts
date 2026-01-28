@@ -23,21 +23,33 @@ const getSafeDb = (): Firestore | null => {
 
 // 安全なラッパー関数
 export const safeQuery = (collectionRef: any, ...queryConstraints: any[]): any => {
-  if (!collectionRef || typeof firestoreQuery !== 'function') return null;
+  // firestoreQuery が関数でない場合、または collectionRef が無効な場合は null を返す
+  if (typeof firestoreQuery !== 'function') {
+    console.warn("[safeQuery] firestoreQuery is not a function. This might happen during build optimization.");
+    return null;
+  }
+  if (!collectionRef) return null;
+  
   try {
     return firestoreQuery(collectionRef, ...queryConstraints);
   } catch (e) {
-    console.error("[safeQuery] Error:", e);
+    console.error("[safeQuery] Error executing query:", e);
     return null;
   }
 };
 
 export const safeOnSnapshot = (query: any, onNext: (snapshot: any) => void, onError?: (error: any) => void): (() => void) => {
-  if (!query || typeof firestoreOnSnapshot !== 'function') return () => {};
+  // firestoreOnSnapshot が関数でない場合、または query が無効な場合は空の関数を返す
+  if (typeof firestoreOnSnapshot !== 'function') {
+    console.warn("[safeOnSnapshot] firestoreOnSnapshot is not a function.");
+    return () => {};
+  }
+  if (!query) return () => {};
+  
   try {
     return firestoreOnSnapshot(query, onNext, onError);
   } catch (e) {
-    console.error("[safeOnSnapshot] Error:", e);
+    console.error("[safeOnSnapshot] Error setting up snapshot:", e);
     return () => {};
   }
 };
