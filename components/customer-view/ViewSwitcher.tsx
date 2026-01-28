@@ -71,32 +71,32 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
   const playerStats = useMemo(() => {
     if (!linkedPlayer) return null
 
-    const playerRakeHistory = rakeHistory.filter(
-      (r) => r.playerId === linkedPlayer.playerId
+    const playerRakeHistory = (rakeHistory || []).filter(
+      (r) => r && r.playerId === (linkedPlayer.playerId || linkedPlayer.id)
     )
-    const playerPointHistory = pointHistory.filter(
-      (p) => p.playerId === linkedPlayer.playerId
+    const playerPointHistory = (pointHistory || []).filter(
+      (p) => p && p.playerId === (linkedPlayer.playerId || linkedPlayer.id)
     )
 
     const totalProfit = playerRakeHistory.reduce(
-      (sum, r) => sum + r.profit,
+      (sum, r) => sum + (Number(r.profit) || 0),
       0
     )
     const totalRake = playerRakeHistory.reduce(
-      (sum, r) => sum + r.rake,
+      (sum, r) => sum + (Number(r.rake) || 0),
       0
     )
     const totalGames = playerRakeHistory.length
-    const winRate = totalGames > 0 ? (playerRakeHistory.filter((r) => r.profit > 0).length / totalGames) * 100 : 0
+    const winRate = totalGames > 0 ? (playerRakeHistory.filter((r) => (Number(r.profit) || 0) > 0).length / totalGames) * 100 : 0
     const maxWin = playerRakeHistory.reduce(
-      (max, r) => Math.max(max, r.profit),
+      (max, r) => Math.max(max, Number(r.profit) || 0),
       0
     )
     const averageProfit = totalGames > 0 ? totalProfit / totalGames : 0
 
     // ポイント関連の計算
     const totalPoints = playerPointHistory.reduce(
-      (sum, p) => sum + p.point,
+      (sum, p) => sum + (Number((p as any).point) || 0),
       0
     )
     const currentPoints = totalPoints // 簡略化のため、ここでは合計を現在のポイントとする
@@ -136,11 +136,11 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
 
   // 月間ポイントランキング
   const monthlyPointRankings = useMemo(() => {
-    if (!monthlyPoints || monthlyPoints.length === 0) return []
+    if (!Array.isArray(monthlyPoints) || monthlyPoints.length === 0) return []
     return [...monthlyPoints]
-      .sort((a, b) => b.totalPoints - a.totalPoints)
+      .sort((a, b) => (Number(b.totalPoints) || 0) - (Number(a.totalPoints) || 0))
       .map((mp, index) => {
-        const player = players?.find(p => p.playerId === mp.playerId)
+        const player = (players || [])?.find(p => p && (p.playerId === mp.playerId || p.id === mp.playerId))
         return {
           ...mp,
           rank: index + 1,
@@ -151,23 +151,24 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
 
   // プレイヤーの月間ポイント
   const playerMonthlyPoints = useMemo(() => {
-    if (!linkedPlayer) return null
-    return monthlyPoints.find(mp => mp.playerId === linkedPlayer.playerId) || null
+    if (!linkedPlayer || !Array.isArray(monthlyPoints)) return null
+    return monthlyPoints.find(mp => mp && (mp.playerId === (linkedPlayer.playerId || linkedPlayer.id))) || null
   }, [linkedPlayer, monthlyPoints])
 
   // プレイヤーのランキング情報
   const playerRanking = useMemo(() => {
-    if (!linkedPlayer) return null
-    const rank = rankings.find(r => r.playerId === linkedPlayer.playerId)
-    const winRateRank = winRateRankings.find(r => r.playerId === linkedPlayer.playerId)
-    const maxWinRank = maxWinRankings.find(r => r.playerId === linkedPlayer.playerId)
-    const winStreakRank = winStreakRankings.find(r => r.playerId === linkedPlayer.playerId)
+    if (!linkedPlayer || !Array.isArray(rankings)) return null
+    const pid = linkedPlayer.playerId || linkedPlayer.id
+    const rank = rankings.find(r => r && r.playerId === pid)
+    const winRateRank = (winRateRankings || []).find(r => r && r.playerId === pid)
+    const maxWinRank = (maxWinRankings || []).find(r => r && r.playerId === pid)
+    const winStreakRank = (winStreakRankings || []).find(r => r && r.playerId === pid)
 
     return {
-      rank: rank?.rank || null,
-      winRateRank: winRateRank?.rank || null,
-      maxWinRank: maxWinRank?.rank || null,
-      winStreakRank: winStreakRank?.rank || null,
+      rank: (rank as any)?.rank || null,
+      winRateRank: (winRateRank as any)?.rank || null,
+      maxWinRank: (maxWinRank as any)?.rank || null,
+      winStreakRank: (winStreakRank as any)?.rank || null,
     }
   }, [linkedPlayer, rankings, winRateRankings, maxWinRankings, winStreakRankings])
 
