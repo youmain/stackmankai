@@ -169,8 +169,9 @@ export const deleteCustomerAccount = async (id: string): Promise<void> => {
   }
 }
 
-export const subscribeToCustomerAccounts = (callback: (customers: CustomerAccount[]) => void): (() => void) => {
-  if (!isFirebaseConfigured) {
+export const subscribeToCustomerAccounts = (arg1: any): (() => void) => {
+  const callback = typeof arg1 === "function" ? arg1 : () => {};
+  if (!isFirebaseConfigured()) {
     callback([])
     return () => {}
   }
@@ -203,11 +204,11 @@ export const addPaymentHistory = async (history: Omit<PaymentHistory, "id">): Pr
   }
 }
 
-export const subscribeToPlayerPurchaseHistory = (
-  playerId: string,
-  callback: (history: PaymentHistory[]) => void,
-): (() => void) => {
-  if (!isFirebaseConfigured) {
+export const subscribeToPlayerPurchaseHistory = (arg1: any, arg2?: any): (() => void) => {
+  const playerId = typeof arg1 === "string" ? arg1 : (typeof arg2 === "string" ? arg2 : null);
+  const callback = typeof arg1 === "function" ? arg1 : (typeof arg2 === "function" ? arg2 : () => {});
+
+  if (!isFirebaseConfigured() || !playerId) {
     callback([])
     return () => {}
   }
