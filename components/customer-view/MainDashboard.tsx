@@ -231,7 +231,7 @@ export const MainDashboard = React.memo<React.FC<MainDashboardProps>>(({
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => onDetailedDataClick(ranking.playerId || "", ranking.playerName)}
+                        onClick={() => onDetailedDataClick(ranking.playerId || "", ranking.playerName, undefined)}
                       >
                         詳細
                       </Button>
