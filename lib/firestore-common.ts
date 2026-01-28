@@ -7,17 +7,11 @@ import {
   serverTimestamp,
   type Firestore
 } from "firebase/firestore"
-import { db } from "./firebase"
+import { getDb } from "./firebase"
 
 // ヘルパー: DBインスタンスが利用可能かチェック
 const getSafeDb = (): Firestore | null => {
-  if (!db) {
-    if (typeof window !== "undefined") {
-      console.warn("[Firestore] Database instance is not initialized yet.")
-    }
-    return null
-  }
-  return db
+  return getDb()
 }
 
 // 各コレクション取得関数を安全に定義
