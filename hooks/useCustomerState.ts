@@ -152,12 +152,21 @@ export const useCustomerState = () => {
     };
     let unsubscribe: (() => void) | undefined;
     try {
-      const result = subscribeToPlayers(storeId || null, onPlayersUpdate, onPlayersError);
-      if (typeof result === 'function') {
-        unsubscribe = result;
+      // Firebaseが初期化されている場合のみ購読を開始
+      const { isFirebaseConfigured, getDb } = require("@/lib/firebase");
+      if (isFirebaseConfigured() && getDb()) {
+        const result = subscribeToPlayers(storeId || null, onPlayersUpdate, onPlayersError);
+        if (typeof result === 'function') {
+          unsubscribe = result;
+        }
+      } else {
+        // 初期化されていない場合はモックデータをセットしてロード完了とする
+        const { mockPlayers } = require("@/lib/firestore-mock-data");
+        onPlayersUpdate(storeId ? mockPlayers.filter((p: any) => p.storeId === storeId) : mockPlayers);
       }
     } catch (error) {
       console.error("Failed to subscribe to players:", error);
+      setDataLoaded(prev => ({ ...prev, players: true }));
     }
 
     return () => {
