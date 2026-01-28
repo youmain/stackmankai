@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Button } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { CardDisplay } from "./card-display"
 import type { PokerPlayer, GamePhase } from "@/types/poker"
 

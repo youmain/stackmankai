@@ -59,11 +59,18 @@ export function PokerTable({
   )
 
   // AIアドバイスフックの呼び出し
-  const { advice, isLoading: isAdviceLoading } = usePokerAdvice({
-    game: game || undefined,
-    currentPlayer: currentPlayerForAdvice,
-    opponent: opponentForAdvice,
-    isMyTurn: !!isMyTurn
+  const { advice, loading: isAdviceLoading } = usePokerAdvice({
+    storeId: game?.storeId || "",
+    gameId: game?.id || "",
+    playerId: currentUserId,
+    playerCards: currentPlayerForAdvice?.cards || [],
+    communityCards: game?.communityCards || [],
+    potSize: game?.pot || 0,
+    playerStack: currentPlayerForAdvice?.stack || 0,
+    opponentStack: opponentForAdvice?.stack || 0,
+    gamePhase: game?.phase || "waiting",
+    opponentId: opponentForAdvice?.userId,
+    advisorType: "balanced"
   })
 
   // コミュニティカードのアニメーション表示
@@ -371,8 +378,14 @@ export function PokerTable({
       {/* ショーダウン・勝者表示オーバーレイ */}
       {game.phase === "showdown" && (
         <WinnerDisplay 
-          game={game} 
-          onReadyNextHand={onReadyNextHand}
+          winners={game.players.filter(p => game.winners?.includes(p.userId))}
+          allPlayers={game.players.filter(p => !p.isFolded || game.winners?.includes(p.userId))}
+          communityCards={game.communityCards}
+          pot={game.pot}
+          showByFold={game.showByFold}
+          onNextHand={onReadyNextHand}
+          readyPlayers={game.nextHandReadyPlayers}
+          nextHandStartTime={game.nextHandStartTime}
           currentUserId={currentUserId}
         />
       )}

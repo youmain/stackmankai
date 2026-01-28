@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { PokerGame, PokerCard, PokerPlayer } from "@/types/poker"
+import type { PokerGameState, Card as PokerCard, PokerPlayer } from "@/types/poker"
 
 // スートの色を取得
 const getSuitColor = (suit: string) => {
@@ -57,7 +57,7 @@ const CardDisplay = ({ card, isHidden, size = "normal" }: { card: PokerCard; isH
 }
 
 interface PokerTableMobileProps {
-  game: PokerGame
+  game: PokerGameState
   currentUserId: string
   onJoinSeat: (seatIndex: number) => void
   onAction: (action: string, amount?: number) => void
@@ -73,16 +73,16 @@ export default function PokerTableMobile({
 }: PokerTableMobileProps) {
   const [betAmount, setBetAmount] = useState(0)
   
-  const currentPlayer = game.players.find(p => p.userId === currentUserId)
+  const currentPlayer = game.players.find((p: PokerPlayer) => p.userId === currentUserId)
   const isMyTurn = currentPlayer && game.players[game.currentPlayerIndex]?.userId === currentUserId
-  const myPlayerIndex = game.players.findIndex(p => p.userId === currentUserId)
+  const myPlayerIndex = game.players.findIndex((p: PokerPlayer) => p.userId === currentUserId)
   
   // 自分以外のプレイヤーを取得
-  const otherPlayers = game.players.filter(p => p.userId !== currentUserId)
+  const otherPlayers = game.players.filter((p: PokerPlayer) => p.userId !== currentUserId)
   
   // 空席を取得（自分の座席を除く）
   const emptySeats = Array.from({ length: 10 }, (_, i) => i)
-    .filter(i => !game.players.some(p => p.seatIndex === i) && (myPlayerIndex === -1 || i !== myPlayerIndex))
+    .filter(i => !game.players.some((p: PokerPlayer) => p.seatIndex === i) && (myPlayerIndex === -1 || i !== myPlayerIndex))
   
   return (
     <div className="flex flex-col h-screen bg-gray-900 text-white overflow-hidden">
@@ -93,7 +93,7 @@ export default function PokerTableMobile({
       
       {/* 他のプレイヤー表示エリア */}
       <div className="flex-1 overflow-y-auto p-2 space-y-2">
-        {otherPlayers.map((player) => {
+        {otherPlayers.map((player: PokerPlayer) => {
           const isCurrentPlayerTurn = game.players[game.currentPlayerIndex]?.userId === player.userId
           const isDealer = game.dealerIndex === player.seatIndex
           const isSB = game.smallBlindIndex === player.seatIndex
