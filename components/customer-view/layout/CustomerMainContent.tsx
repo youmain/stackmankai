@@ -19,7 +19,7 @@ interface CustomerMainContentProps {
   storeSettings: StoreRankingSettings | null
   playingPlayers: Player[]
   getDisplayName: (player: LinkedPlayer) => string
-  handleDetailedDataClick: () => void
+  onDetailedDataClick: (playerId: string, playerName: string, player: Player | null) => void
   onViewModeChange: (mode: string) => void
 }
 
@@ -33,7 +33,7 @@ export const CustomerMainContent: React.FC<CustomerMainContentProps> = ({
   storeSettings,
   playingPlayers = [],
   getDisplayName,
-  handleDetailedDataClick,
+  onDetailedDataClick,
   onViewModeChange,
 }) => {
   const router = useRouter()
@@ -52,7 +52,7 @@ export const CustomerMainContent: React.FC<CustomerMainContentProps> = ({
           hasSpecialRate={false}
           currentRewardRate={currentRewardRate}
           currentMonthStr={new Date().toISOString().slice(0, 7)}
-          onDetailedDataClick={handleDetailedDataClick}
+          onDetailedDataClick={() => onDetailedDataClick(linkedPlayer.id, getDisplayName(linkedPlayer), linkedPlayer as any)}
           onViewModeChange={onViewModeChange}
         />
       )}
@@ -157,7 +157,7 @@ export const CustomerMainContent: React.FC<CustomerMainContentProps> = ({
                   </Badge>
                 </div>
               </div>
-              <Button onClick={handleDetailedDataClick} className="w-full bg-blue-600 hover:bg-blue-700">
+              <Button onClick={() => onDetailedDataClick(linkedPlayer.id, getDisplayName(linkedPlayer), linkedPlayer as any)} className="w-full bg-blue-600 hover:bg-blue-700">
                 <BarChart3 className="h-4 w-4 mr-2" />
                 詳細データを見る
               </Button>
