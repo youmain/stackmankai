@@ -153,16 +153,30 @@ export const useCustomerState = () => {
     let unsubscribe: (() => void) | undefined;
     try {
       // Firebaseが初期化されている場合のみ購読を開始
-      const { isFirebaseConfigured, getDb } = require("@/lib/firebase");
-      if (isFirebaseConfigured() && getDb()) {
-        const result = subscribeToPlayers(storeId || null, onPlayersUpdate, onPlayersError);
-        if (typeof result === 'function') {
-          unsubscribe = result;
+      const firebase = require("@/lib/firebase");
+      const isConfigured = typeof firebase.isFirebaseConfigured === 'function' ? firebase.isFirebaseConfigured() : false;
+      const db = typeof firebase.getDb === 'function' ? firebase.getDb() : null;
+
+      if (isConfigured && db) {
+        // subscribeToPlayers が関数であることを確認
+        if (typeof subscribeToPlayers === 'function') {
+          const result = subscribeToPlayers(storeId || null, onPlayersUpdate, onPlayersError);
+          if (typeof result === 'function') {
+            unsubscribe = result;
+          }
+        } else {
+          console.warn("[useCustomerState] subscribeToPlayers is not a function.");
+          setDataLoaded(prev => ({ ...prev, players: true }));
         }
       } else {
         // 初期化されていない場合はモックデータをセットしてロード完了とする
-        const { mockPlayers } = require("@/lib/firestore-mock-data");
-        onPlayersUpdate(storeId ? mockPlayers.filter((p: any) => p.storeId === storeId) : mockPlayers);
+        try {
+          const { mockPlayers } = require("@/lib/firestore-mock-data");
+          onPlayersUpdate(storeId ? mockPlayers.filter((p: any) => p.storeId === storeId) : mockPlayers);
+        } catch (e) {
+          console.warn("[useCustomerState] Failed to load mock players:", e);
+          setDataLoaded(prev => ({ ...prev, players: true }));
+        }
       }
     } catch (error) {
       console.error("Failed to subscribe to players:", error);
