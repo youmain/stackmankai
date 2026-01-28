@@ -67,8 +67,8 @@ export const subscribeToPlayers = (
   if (typeof storeIdOrCallback === "string") {
     // 新しいシグネチャ: subscribeToPlayers(storeId, callback)
     actualStoreId = storeIdOrCallback
-    actualCallback = callbackOrOnError as (players: Player[]) => void
-    actualOnError = storeIdOrUndefined as ((error: Error) => void) | undefined
+    actualCallback = typeof callbackOrOnError === "function" ? (callbackOrOnError as (players: Player[]) => void) : ((players: Player[]) => {});
+    actualOnError = typeof storeIdOrUndefined === "function" ? (storeIdOrUndefined as (error: Error) => void) : undefined;
   } else if (typeof storeIdOrCallback === "function") {
     // 古いシグネチャ: subscribeToPlayers(callback, onError?, storeId?)
     actualCallback = storeIdOrCallback
