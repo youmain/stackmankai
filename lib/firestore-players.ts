@@ -44,6 +44,11 @@ export const subscribeToPlayers = (
 
   try {
     const playersCol = getPlayersCollection()
+    if (!playersCol) {
+      console.warn("[subscribeToPlayers] Players collection is not available.");
+      return () => {};
+    }
+    
     const whereFn = firestore.where;
     const orderByFn = firestore.orderBy;
     
@@ -52,9 +57,12 @@ export const subscribeToPlayers = (
       return () => {};
     }
 
-    const q = storeId 
-      ? safeQuery(playersCol, whereFn("storeId", "==", storeId), orderByFn("name"))
-      : safeQuery(playersCol, orderByFn("name"))
+    const queryConstraints = [orderByFn("name")];
+    if (storeId) {
+      queryConstraints.unshift(whereFn("storeId", "==", storeId));
+    }
+
+    const q = safeQuery(playersCol, ...queryConstraints);
 
     const unsubscribe = safeOnSnapshot(
       q,

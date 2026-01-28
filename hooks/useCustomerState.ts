@@ -157,6 +157,7 @@ export const useCustomerState = () => {
       const isConfigured = typeof firebase.isFirebaseConfigured === 'function' ? firebase.isFirebaseConfigured() : false;
       const db = typeof firebase.getDb === 'function' ? firebase.getDb() : null;
 
+      // Firebaseが設定済みかつDBインスタンスが取得できた場合のみ購読を開始
       if (isConfigured && db) {
         // subscribeToPlayers が関数であることを確認
         if (typeof subscribeToPlayers === 'function') {
