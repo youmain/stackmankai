@@ -20,6 +20,8 @@ import { getDb, isFirebaseConfigured } from "./firebase"
 import {
   getCustomerAccountsCollection,
   getPaymentHistoryCollection,
+  safeQuery,
+  safeOnSnapshot,
 } from "./firestore-common"
 import { updatePlayer } from "./firestore-players"
 
@@ -96,7 +98,7 @@ export const subscribeToCustomerAccount = (arg1: any, arg2?: any): (() => void) 
   
   const customerDocRef = doc(db, "customerAccounts", uid);
 
-  return onSnapshot(customerDocRef, (docSnap) => {
+  return safeOnSnapshot(customerDocRef as any, (docSnap) => {
     if (docSnap.exists()) {
       callback({ id: docSnap.id, ...docSnap.data() } as CustomerAccount);
     } else {
@@ -176,8 +178,8 @@ export const subscribeToCustomerAccounts = (arg1: any): (() => void) => {
     return () => {}
   }
   const accountsCollection = getCustomerAccountsCollection()
-  const q = query(accountsCollection, orderBy("createdAt", "desc"))
-  return onSnapshot(q, (snapshot) => {
+  const q = safeQuery(accountsCollection, orderBy("createdAt", "desc"))
+  return safeOnSnapshot(q, (snapshot) => {
     const customers = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as CustomerAccount)
     callback(customers)
   })
@@ -213,8 +215,8 @@ export const subscribeToPlayerPurchaseHistory = (arg1: any, arg2?: any): (() => 
     return () => {}
   }
   const historyCollection = getPaymentHistoryCollection()
-  const q = query(historyCollection, where("playerId", "==", playerId), orderBy("createdAt", "desc"))
-  return onSnapshot(q, (snapshot) => {
+  const q = safeQuery(historyCollection, where("playerId", "==", playerId), orderBy("createdAt", "desc"))
+  return safeOnSnapshot(q, (snapshot) => {
     const history = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as PaymentHistory)
     callback(history)
   })
