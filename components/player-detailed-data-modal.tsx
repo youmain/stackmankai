@@ -64,11 +64,11 @@ function PlayerDetailedDataModal({
         setLoading(false)
 
         return () => {
-          unsubscribeReceipts()
-          unsubscribeDailyRankings()
-          unsubscribeMonthlyPoints()
-          unsubscribePointHistory()
-          unsubscribeStores()
+          if (typeof unsubscribeReceipts === 'function') unsubscribeReceipts()
+          if (typeof unsubscribeDailyRankings === 'function') unsubscribeDailyRankings()
+          if (typeof unsubscribeMonthlyPoints === 'function') unsubscribeMonthlyPoints()
+          if (typeof unsubscribePointHistory === 'function') unsubscribePointHistory()
+          if (typeof unsubscribeStores === 'function') unsubscribeStores()
         }
       } catch (error) {
         console.error("プレイヤーデータ読み込みエラー:", error)
