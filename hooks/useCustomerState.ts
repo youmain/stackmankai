@@ -154,14 +154,21 @@ export const useCustomerState = () => {
       console.error("Players subscription error:", error);
       setDataLoaded(prev => ({ ...prev, players: true }));
     };
-
-    const unsubscribe = subscribeToPlayers(storeId || null, onPlayersUpdate, onPlayersError)
+    let unsubscribe: (() => void) | undefined;
+    try {
+      const result = subscribeToPlayers(storeId || null, onPlayersUpdate, onPlayersError);
+      if (typeof result === 'function') {
+        unsubscribe = result;
+      }
+    } catch (error) {
+      console.error("Failed to subscribe to players:", error);
+    }
 
     return () => {
       if (typeof unsubscribe === 'function') {
         unsubscribe();
       }
-    }
+    };
   }, [customerAccount])
 
   // 顧客アカウントのロード状態管理
