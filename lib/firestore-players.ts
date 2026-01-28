@@ -55,26 +55,13 @@ const log = createModuleLogger("Firestore")
 // --- プレイヤー関連操作 ---
 
 export const subscribeToPlayers = (
-  storeIdOrCallback: string | ((players: Player[]) => void),
-  callbackOrOnError?: ((players: Player[]) => void) | ((error: Error) => void),
-  storeIdOrUndefined?: string | null,
+  storeId: string | null,
+  callback: (players: Player[]) => void,
+  onError?: (error: Error) => void
 ): (() => void) => {
-  // オーバーロード対応: 新しいシグネチャ (storeId, callback) と古いシグネチャ (callback, onError?, storeId?) の両方に対応
-  let actualStoreId: string | null = null
-  let actualCallback: (players: Player[]) => void
-  let actualOnError: ((error: Error) => void) | undefined
-
-  if (typeof storeIdOrCallback === "string") {
-    // 新しいシグネチャ: subscribeToPlayers(storeId, callback)
-    actualStoreId = storeIdOrCallback
-    actualCallback = callbackOrOnError as (players: Player[]) => void
-    actualOnError = storeIdOrUndefined as ((error: Error) => void) | undefined
-  } else {
-    // 古いシグネチャ: subscribeToPlayers(callback, onError?, storeId?)
-    actualCallback = storeIdOrCallback
-    actualOnError = callbackOrOnError as ((error: Error) => void) | undefined
-    actualStoreId = storeIdOrUndefined || null
-  }
+  const actualStoreId = storeId
+  const actualCallback = callback
+  const actualOnError = onError
 
   if (!isFirebaseConfigured()) {
     if (actualStoreId) {
