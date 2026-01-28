@@ -155,7 +155,7 @@ export const useCustomerState = () => {
       setDataLoaded(prev => ({ ...prev, players: true }));
     };
 
-    const unsubscribe = subscribeToPlayers(storeId || "", onPlayersUpdate, onPlayersError)
+    const unsubscribe = subscribeToPlayers(storeId || null, onPlayersUpdate, onPlayersError)
 
     return () => {
       if (typeof unsubscribe === 'function') {

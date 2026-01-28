@@ -55,13 +55,30 @@ const log = createModuleLogger("Firestore")
 // --- プレイヤー関連操作 ---
 
 export const subscribeToPlayers = (
-  storeId: string | null,
-  callback: (players: Player[]) => void,
-  onError?: (error: Error) => void
+  storeIdOrCallback: string | ((players: Player[]) => void),
+  callbackOrOnError?: ((players: Player[]) => void) | ((error: Error) => void),
+  storeIdOrUndefined?: string | null,
 ): (() => void) => {
-  const actualStoreId = storeId
-  const actualCallback = callback
-  const actualOnError = onError
+  // オーバーロード対応: 新しいシグネチャ (storeId, callback) と古いシグネチャ (callback, onError?, storeId?) の両方に対応
+  let actualStoreId: string | null = null
+  let actualCallback: (players: Player[]) => void
+  let actualOnError: ((error: Error) => void) | undefined
+
+  if (typeof storeIdOrCallback === "string") {
+    // 新しいシグネチャ: subscribeToPlayers(storeId, callback)
+    actualStoreId = storeIdOrCallback
+    actualCallback = callbackOrOnError as (players: Player[]) => void
+    actualOnError = storeIdOrUndefined as ((error: Error) => void) | undefined
+  } else if (typeof storeIdOrCallback === "function") {
+    // 古いシグネチャ: subscribeToPlayers(callback, onError?, storeId?)
+    actualCallback = storeIdOrCallback
+    actualOnError = typeof callbackOrOnError === "function" ? (callbackOrOnError as (error: Error) => void) : undefined
+    actualStoreId = typeof callbackOrOnError === "string" ? callbackOrOnError : (storeIdOrUndefined || null)
+  } else {
+    // 予期しない引数の場合
+    console.error("Invalid arguments to subscribeToPlayers", { storeIdOrCallback, callbackOrOnError, storeIdOrUndefined });
+    return () => {};
+  }
 
   if (!isFirebaseConfigured()) {
     if (actualStoreId) {
