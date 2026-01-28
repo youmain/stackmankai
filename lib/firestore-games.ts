@@ -49,8 +49,9 @@ const log = createModuleLogger("Firestore")
 
 // --- ゲーム関連操作 ---
 
-export const subscribeToActiveGames = (callback: (games: Game[]) => void): (() => void) => {
-  if (!isFirebaseConfigured) {
+export const subscribeToActiveGames = (arg1: any): (() => void) => {
+  const callback = typeof arg1 === "function" ? arg1 : () => {};
+  if (!isFirebaseConfigured()) {
     callback(mockGames.filter((g) => g.status === "active"))
     return () => {}
   }
@@ -62,8 +63,9 @@ export const subscribeToActiveGames = (callback: (games: Game[]) => void): (() =
   })
 }
 
-export const subscribeToGames = (callback: (games: Game[]) => void): (() => void) => {
-  if (!isFirebaseConfigured) {
+export const subscribeToGames = (arg1: any): (() => void) => {
+  const callback = typeof arg1 === "function" ? arg1 : () => {};
+  if (!isFirebaseConfigured()) {
     callback(mockGames)
     return () => {}
   }
