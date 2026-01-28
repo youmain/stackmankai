@@ -177,18 +177,15 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
     case "posts":
       return (
         <PostsView
-          linkedPlayer={linkedPlayer}
-          customerAccount={customerAccount}
-          handlePostClick={handlePostClick}
+          onViewModeChange={(mode) => setViewMode(mode)}
+          onPostClick={handlePostClick}
         />
       )
     case "my-posts":
       return (
         <PostsView
-          linkedPlayer={linkedPlayer}
-          customerAccount={customerAccount}
-          handlePostClick={handlePostClick}
-          isMyPostsView={true}
+          onViewModeChange={(mode) => setViewMode(mode)}
+          onPostClick={handlePostClick}
         />
       )
     case "post-detail":
@@ -201,10 +198,7 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
     case "ai-players":
       return (
         <AIPlayersView
-          linkedPlayer={linkedPlayer}
-          customerAccount={customerAccount}
-          players={players}
-          getDisplayName={getDisplayName}
+          onViewModeChange={(mode) => setViewMode(mode)}
         />
       )
     case "chat":
