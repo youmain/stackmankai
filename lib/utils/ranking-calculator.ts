@@ -77,11 +77,12 @@ export function calculateRankings(games: RakeHistory[], allPlayers?: Player[]): 
     }
 
     // 最終ゲーム日を更新
-    const gameDate = game.createdAt instanceof Date 
-      ? game.createdAt 
-      : typeof game.createdAt === 'string' 
-      ? new Date(game.createdAt) 
-      : (game.createdAt as any).toDate()
+    const gameDate = (() => {
+      if (game.createdAt instanceof Date) return game.createdAt;
+      if (typeof game.createdAt === 'string') return new Date(game.createdAt);
+      if (game.createdAt && typeof (game.createdAt as any).toDate === 'function') return (game.createdAt as any).toDate();
+      return new Date();
+    })();
     if (!stats.lastGameDate || gameDate > stats.lastGameDate) {
       stats.lastGameDate = gameDate
     }
@@ -92,16 +93,18 @@ export function calculateRankings(games: RakeHistory[], allPlayers?: Player[]): 
     const playerGames = games
       .filter((game) => game.playerId === stats.playerId)
       .sort((a, b) => {
-        const dateA = a.createdAt instanceof Date 
-          ? a.createdAt 
-          : typeof a.createdAt === 'string' 
-          ? new Date(a.createdAt) 
-          : (a.createdAt as any).toDate()
-        const dateB = b.createdAt instanceof Date 
-          ? b.createdAt 
-          : typeof b.createdAt === 'string' 
-          ? new Date(b.createdAt) 
-          : (b.createdAt as any).toDate()
+        const dateA = (() => {
+          if (a.createdAt instanceof Date) return a.createdAt;
+          if (typeof a.createdAt === 'string') return new Date(a.createdAt);
+          if (a.createdAt && typeof (a.createdAt as any).toDate === 'function') return (a.createdAt as any).toDate();
+          return new Date(0);
+        })();
+        const dateB = (() => {
+          if (b.createdAt instanceof Date) return b.createdAt;
+          if (typeof b.createdAt === 'string') return new Date(b.createdAt);
+          if (b.createdAt && typeof (b.createdAt as any).toDate === 'function') return (b.createdAt as any).toDate();
+          return new Date(0);
+        })();
         return dateA.getTime() - dateB.getTime()
       })
 
