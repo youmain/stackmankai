@@ -159,6 +159,8 @@ export default function CustomerView() {
           setSelectedPlayerForChart={state.setSelectedPlayerForChart}
           setIsChartModalOpen={state.setIsChartModalOpen}
           setViewMode={state.setViewMode}
+          setSelectedPlayerForDetailedData={state.setSelectedPlayerForDetailedData}
+          setIsDetailedDataModalOpen={state.setIsDetailedDataModalOpen}
         />
       </div>
 

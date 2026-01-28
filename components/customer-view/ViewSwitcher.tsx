@@ -55,19 +55,18 @@ interface ViewSwitcherProps {
   setSelectedPlayerForChart: (player: string | null) => void
   setIsChartModalOpen: (isOpen: boolean) => void
   setViewMode: (mode: string) => void
+  setSelectedPlayerForDetailedData: (player: any) => void
+  setIsDetailedDataModalOpen: (isOpen: boolean) => void
 }
 
 export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
   viewMode, linkedPlayer, customerAccount, dailyRankings, monthlyPoints, storeSettings, rakeHistory, pointHistory, players = [],
   selectedPostId, selectedTab, activeTab, currentDate, currentYear, currentMonth, currentMonthStr, today, isLoading,
-  getDisplayName, handlePostClick, handleBackFromPostDetail, setSelectedTab, setActiveTab, setSelectedPlayerForChart, setIsChartModalOpen, setViewMode
+  getDisplayName, handlePostClick, handleBackFromPostDetail, setSelectedTab, setActiveTab, setSelectedPlayerForChart, setIsChartModalOpen, setViewMode,
+  setSelectedPlayerForDetailedData, setIsDetailedDataModalOpen
 }) => {
 
-  // page.tsxから移動したuseMemoの計算結果をここで再計算するか、propsとして受け取る
-  // 依存関係を減らすため、一旦ここで再計算する（理想はuseCustomerLogicに移動済み）
-  // 既にuseCustomerLogicに移動済みのため、ここではViewSwitcherのロジックのみを記述する
-
-  // プレイヤーの統計情報を計算 (page.tsxのロジックを再現)
+  // プレイヤーの統計情報を計算
   const playerStats = useMemo(() => {
     if (!linkedPlayer) return null
 
@@ -113,7 +112,7 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
     }
   }, [linkedPlayer, rakeHistory, pointHistory])
 
-  // ランキング計算 (page.tsxのロジックを再現)
+  // ランキング計算
   const rankings = useMemo(() => {
     if (!rakeHistory || rakeHistory.length === 0) return []
     return calculateRankings(rakeHistory, players)
@@ -134,7 +133,7 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
     return getWinStreakRankings(rankings)
   }, [rankings])
 
-  // 月間ポイントランキング (page.tsxのロジックを再現)
+  // 月間ポイントランキング
   const monthlyPointRankings = useMemo(() => {
     if (!monthlyPoints || monthlyPoints.length === 0) return []
     return [...monthlyPoints]
@@ -149,13 +148,13 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
       })
   }, [monthlyPoints, players, getDisplayName])
 
-  // プレイヤーの月間ポイント (page.tsxのロジックを再現)
+  // プレイヤーの月間ポイント
   const playerMonthlyPoints = useMemo(() => {
     if (!linkedPlayer) return null
     return monthlyPoints.find(mp => mp.playerId === linkedPlayer.playerId) || null
   }, [linkedPlayer, monthlyPoints])
 
-  // プレイヤーのランキング情報 (page.tsxのロジックを再現)
+  // プレイヤーのランキング情報
   const playerRanking = useMemo(() => {
     if (!linkedPlayer) return null
     const rank = rankings.find(r => r.playerId === linkedPlayer.playerId)
@@ -212,7 +211,6 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
       )
     case "main":
     default:
-      // MainDashboardのJSXをCustomerMainContentに置き換える
       return (
         <CustomerMainContent
           linkedPlayer={linkedPlayer}
@@ -224,7 +222,10 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
           storeSettings={storeSettings}
           playingPlayers={players.filter(p => p.isPlaying)}
           getDisplayName={getDisplayName}
-          handleDetailedDataClick={() => setIsChartModalOpen(true)}
+          onDetailedDataClick={(playerId, playerName, player) => {
+            setSelectedPlayerForDetailedData(player ? { playerId, playerName, player } : { playerId, playerName });
+            setIsDetailedDataModalOpen(true);
+          }}
           onViewModeChange={(mode) => setViewMode(mode)}
         />
       )
