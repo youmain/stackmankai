@@ -60,95 +60,111 @@ export const checkFirebaseConfig = () => {
 
   const db = getDb()
   if (!db) {
-    throw new Error("Firestoreが初期化されていません。環境変数を確認してください。")
+    // モック環境や初期化失敗時は null を返して呼び出し側で対処させる
+    return null
   }
   return db
 }
 
 export const getPlayersCollection = (storeId?: string) => {
   const db = checkFirebaseConfig()
-  // プレイヤーデータは常にトップレベルの /players コレクションに保存されている
-  // storeIdでの絞り込みはクエリ条件で実施する
+  if (!db) return null
   return collection(db, "players")
 }
 
 export const getPointHistoryCollection = () => {
   const db = checkFirebaseConfig()
+  if (!db) return null
   return collection(db, "pointHistory")
 }
 
 export const getUsersCollection = () => {
   const db = checkFirebaseConfig()
+  if (!db) return null
   return collection(db, "users")
 }
 
 export const getGamesCollection = () => {
   const db = checkFirebaseConfig()
+  if (!db) return null
   return collection(db, "games")
 }
 
 export const getTransactionsCollection = () => {
   const db = checkFirebaseConfig()
+  if (!db) return null
   return collection(db, "transactions")
 }
 
 export const getGameTransactionsCollection = () => {
   const db = checkFirebaseConfig()
+  if (!db) return null
   return collection(db, "gameTransactions")
 }
 
 export const getRakeHistoryCollection = () => {
   const db = checkFirebaseConfig()
+  if (!db) return null
   return collection(db, "rakeHistory")
 }
 
 export const getReceiptsCollection = () => {
   const db = checkFirebaseConfig()
+  if (!db) return null
   return collection(db, "receipts")
 }
 
 export const getReceiptItemsCollection = () => {
   const db = checkFirebaseConfig()
+  if (!db) return null
   return collection(db, "receiptItems")
 }
 
 export const getDailySalesCollection = () => {
   const db = checkFirebaseConfig()
+  if (!db) return null
   return collection(db, "dailySales")
 }
 
 export const getStoreRankingSettingsCollection = () => {
   const db = checkFirebaseConfig()
+  if (!db) return null
   return collection(db, "storeRankingSettings")
 }
 
 export const getCustomerAccountsCollection = () => {
   const db = checkFirebaseConfig()
+  if (!db) return null
   return collection(db, "customerAccounts")
 }
 
 export const getPostsCollection = () => {
   const db = checkFirebaseConfig()
+  if (!db) return null
   return collection(db, "posts")
 }
 
 export const getPaymentHistoryCollection = () => {
   const db = checkFirebaseConfig()
+  if (!db) return null
   return collection(db, "paymentHistory")
 }
 
 export const getDailyRankingsCollection = () => {
   const db = checkFirebaseConfig()
+  if (!db) return null
   return collection(db, "dailyRankings")
 }
 
 export const getMonthlyRankingsCollection = () => {
   const db = checkFirebaseConfig()
+  if (!db) return null
   return collection(db, "monthlyRankings")
 }
 
 export const getMonthlyPointsCollection = () => {
   const db = checkFirebaseConfig()
+  if (!db) return null
   return collection(db, "monthlyPoints")
 }
 
