@@ -21,6 +21,7 @@ import {
   getCustomerAccountsCollection,
   getPaymentHistoryCollection,
 } from "./firestore-common"
+import { updatePlayer } from "./firestore-players"
 
 // Force Vercel rebuild with stable version - Manus AI (2026-01-13)
 import { validateId } from "./validation"
