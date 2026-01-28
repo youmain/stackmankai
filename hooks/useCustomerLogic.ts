@@ -24,14 +24,17 @@ export const useCustomerLogic = ({
   setCustomerAccount,
 }: UseCustomerLogicProps): UseCustomerLogicReturn => {
 
-  const getDisplayName = (player: Player) => {
+  const getDisplayName = (player: any) => {
     if (!player) return "不明なプレイヤー";
-    return player.pokerName || player.name || `プレイヤー${player.id || ""}`
+    return player.pokerName || player.name || `プレイヤー${player.id || player.uniqueId || ""}`
   }
 
   const getPlayerName = (player: any): string => {
+    if (!player) return "プレイヤー"
     if (typeof player === "string") return player
-    if (typeof player === "object" && player?.name) return player.name
+    if (typeof player === "object") {
+      return player.pokerName || player.name || "プレイヤー"
+    }
     return "プレイヤー"
   }
 
