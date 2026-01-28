@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { isFirebaseConfigured } from "@/lib/firebase"
-import { checkFirebaseConfig } from "@/lib/firestore-common"
+// import { checkFirebaseConfig } from "@/lib/firestore-common"
 import { useRouter } from "next/navigation"
 
 // New components
@@ -61,8 +61,8 @@ export default function CustomerAuthPage() {
     const checkAuth = async () => {
       setIsLoading(true)
       try {
-        // checkFirebaseConfig を呼び出して Firestore が初期化されているか確認
-        checkFirebaseConfig()
+        // Firestore が初期化されているか確認
+        // checkFirebaseConfig()
         await checkAuthStateOnMount(storeInfo, setCurrentCustomer, setError)
       } catch (err: any) {
         console.error("[Auth] Initialization error:", err)

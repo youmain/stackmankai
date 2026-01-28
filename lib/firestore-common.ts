@@ -1,206 +1,129 @@
 import {
-  Timestamp,
+  collection,
   doc,
   getDoc,
-  updateDoc,
-  serverTimestamp,
-  getDocs,
-  query,
-  where,
-  orderBy,
-  limit,
-  addDoc,
-  onSnapshot,
-  collection,
-  deleteDoc,
   setDoc,
-  writeBatch,
+  deleteDoc,
+  serverTimestamp,
+  type Firestore
 } from "firebase/firestore"
-import { getDb, isFirebaseConfigured } from "./firebase"
+import { db } from "./firebase"
 
-// Force Vercel rebuild with stable version - Manus AI (2026-01-13)
-import { validateId } from "./validation"
-import { createModuleLogger } from "./logger"
-import type {
-  Player,
-  Game,
-  Receipt,
-  ReceiptItem,
-  DailySales,
-  StoreRankingSettings,
-  CustomerAccount,
-  PaymentHistory,
-} from "@/types"
-import type { PostData as Post } from "@/types/post"
-import type { PlayerRanking } from "@/types"
-import {
-  mockPlayers,
-  mockGames,
-  mockReceipts,
-  mockRakeHistory,
-  mockUsers,
-  mockStoreRankingSettings,
-  mockDailyRankings,
-  mockMonthlyRankings,
-  mockMonthlyPoints,
-} from "./mock-data"
-
-const log = createModuleLogger("Firestore")
-
-// --- 共通・ユーティリティ関数 ---
-
-export const checkFirebaseConfig = () => {
-  if (typeof window !== "undefined") {
-    const isConfigured = !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY || 
-                        (window as any).__FIREBASE_CONFIGURED__;
-    if (!isConfigured) {
-      console.warn("[Firebase] Configuration missing in browser");
-    }
-  }
-
-  const db = getDb()
+// ヘルパー: DBインスタンスが利用可能かチェック
+const getSafeDb = (): Firestore | null => {
   if (!db) {
-    // モック環境や初期化失敗時は null を返して呼び出し側で対処させる
+    if (typeof window !== "undefined") {
+      console.warn("[Firestore] Database instance is not initialized yet.")
+    }
     return null
   }
   return db
 }
 
-export const getPlayersCollection = (storeId?: string) => {
-  const db = checkFirebaseConfig()
-  if (!db) return null as any
-  return collection(db, "players")
+// 各コレクション取得関数を安全に定義
+export const getPlayersCollection = () => {
+  const safeDb = getSafeDb()
+  return safeDb ? collection(safeDb, "players") : null as any
 }
 
 export const getPointHistoryCollection = () => {
-  const db = checkFirebaseConfig()
-  if (!db) return null as any
-  return collection(db, "pointHistory")
+  const safeDb = getSafeDb()
+  return safeDb ? collection(safeDb, "pointHistory") : null as any
 }
 
 export const getUsersCollection = () => {
-  const db = checkFirebaseConfig()
-  if (!db) return null as any
-  return collection(db, "users")
+  const safeDb = getSafeDb()
+  return safeDb ? collection(safeDb, "users") : null as any
 }
 
 export const getGamesCollection = () => {
-  const db = checkFirebaseConfig()
-  if (!db) return null as any
-  return collection(db, "games")
+  const safeDb = getSafeDb()
+  return safeDb ? collection(safeDb, "games") : null as any
 }
 
 export const getTransactionsCollection = () => {
-  const db = checkFirebaseConfig()
-  if (!db) return null as any
-  return collection(db, "transactions")
+  const safeDb = getSafeDb()
+  return safeDb ? collection(safeDb, "transactions") : null as any
 }
 
 export const getGameTransactionsCollection = () => {
-  const db = checkFirebaseConfig()
-  if (!db) return null as any
-  return collection(db, "gameTransactions")
+  const safeDb = getSafeDb()
+  return safeDb ? collection(safeDb, "gameTransactions") : null as any
 }
 
 export const getRakeHistoryCollection = () => {
-  const db = checkFirebaseConfig()
-  if (!db) return null as any
-  return collection(db, "rakeHistory")
+  const safeDb = getSafeDb()
+  return safeDb ? collection(safeDb, "rakeHistory") : null as any
 }
 
 export const getReceiptsCollection = () => {
-  const db = checkFirebaseConfig()
-  if (!db) return null as any
-  return collection(db, "receipts")
+  const safeDb = getSafeDb()
+  return safeDb ? collection(safeDb, "receipts") : null as any
 }
 
 export const getReceiptItemsCollection = () => {
-  const db = checkFirebaseConfig()
-  if (!db) return null as any
-  return collection(db, "receiptItems")
+  const safeDb = getSafeDb()
+  return safeDb ? collection(safeDb, "receiptItems") : null as any
 }
 
 export const getDailySalesCollection = () => {
-  const db = checkFirebaseConfig()
-  if (!db) return null as any
-  return collection(db, "dailySales")
+  const safeDb = getSafeDb()
+  return safeDb ? collection(safeDb, "dailySales") : null as any
 }
 
 export const getStoreRankingSettingsCollection = () => {
-  const db = checkFirebaseConfig()
-  if (!db) return null as any
-  return collection(db, "storeRankingSettings")
+  const safeDb = getSafeDb()
+  return safeDb ? collection(safeDb, "storeRankingSettings") : null as any
 }
 
 export const getCustomerAccountsCollection = () => {
-  const db = checkFirebaseConfig()
-  if (!db) return null as any
-  return collection(db, "customerAccounts")
+  const safeDb = getSafeDb()
+  return safeDb ? collection(safeDb, "customerAccounts") : null as any
 }
 
 export const getPostsCollection = () => {
-  const db = checkFirebaseConfig()
-  if (!db) return null as any
-  return collection(db, "posts")
+  const safeDb = getSafeDb()
+  return safeDb ? collection(safeDb, "posts") : null as any
 }
 
 export const getPaymentHistoryCollection = () => {
-  const db = checkFirebaseConfig()
-  if (!db) return null as any
-  return collection(db, "paymentHistory")
+  const safeDb = getSafeDb()
+  return safeDb ? collection(safeDb, "paymentHistory") : null as any
 }
 
 export const getDailyRankingsCollection = () => {
-  const db = checkFirebaseConfig()
-  if (!db) return null as any
-  return collection(db, "dailyRankings")
+  const safeDb = getSafeDb()
+  return safeDb ? collection(safeDb, "dailyRankings") : null as any
 }
 
 export const getMonthlyRankingsCollection = () => {
-  const db = checkFirebaseConfig()
-  if (!db) return null as any
-  return collection(db, "monthlyRankings")
+  const safeDb = getSafeDb()
+  return safeDb ? collection(safeDb, "monthlyRankings") : null as any
 }
 
 export const getMonthlyPointsCollection = () => {
-  const db = checkFirebaseConfig()
-  if (!db) return null as any
-  return collection(db, "monthlyPoints")
+  const safeDb = getSafeDb()
+  return safeDb ? collection(safeDb, "monthlyPoints") : null as any
 }
 
-// --- Point System Functions ---
-
-export const getMembershipRankDetails = (rank: string) => {
-  switch (rank) {
-    case "platinum":
-      return { name: "プラチナ", color: "#E5E4E2" }
-    case "gold":
-      return { name: "ゴールド", color: "#FFD700" }
-    case "silver":
-      return { name: "シルバー", color: "#C0C0C0" }
-    default:
-      return { name: "ブロンズ", color: "#CD7F32" }
-  }
-}
-
-
-export const getAdminPassword = async (): Promise<string | null> => {
+// パスワード関連
+export const getAdminPassword = async (): Promise<string> => {
   try {
-    const db = checkFirebaseConfig()
-    const docRef = doc(db, "settings", "admin")
+    const safeDb = getSafeDb()
+    if (!safeDb) return "0000"
+    const docRef = doc(safeDb, "settings", "admin")
     const snapshot = await getDoc(docRef)
-    if (!snapshot.exists()) return "0000"
-    return snapshot.data().password || "0000"
-  } catch (error) {
+    return snapshot.exists() ? (snapshot.data().password || "0000") : "0000"
+  } catch {
     return "0000"
   }
 }
 
-
 export const saveAdminPassword = async (password: string): Promise<void> => {
+  const safeDb = getSafeDb()
+  if (!safeDb) return
   try {
-    const db = checkFirebaseConfig()
-    const docRef = doc(db, "settings", "admin")
+    const docRef = doc(safeDb, "settings", "admin")
     await setDoc(docRef, { password, updatedAt: serverTimestamp() })
   } catch (error) {
     console.error("Failed to save admin password:", error)
@@ -208,13 +131,12 @@ export const saveAdminPassword = async (password: string): Promise<void> => {
 }
 
 export const deleteCustomerAccount = async (id: string): Promise<void> => {
+  const safeDb = getSafeDb()
+  if (!safeDb) return
   try {
-    const db = checkFirebaseConfig()
-    await deleteDoc(doc(db, "customerAccounts", id))
+    await deleteDoc(doc(safeDb, "customerAccounts", id))
   } catch (error) {
     console.error("Failed to delete customer account:", error)
     throw error
   }
 }
-
-// --- Ranking & Sales Functions ---

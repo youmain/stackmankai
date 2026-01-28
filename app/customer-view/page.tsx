@@ -71,7 +71,7 @@ export default function CustomerView() {
     playerId: state.customerAccount?.playerId || null,
   })
 
-  // 読み込み中の表示 (修正済み)
+  // 読み込み中の表示
   if (state.isLoading && !state.customerAccount) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
@@ -161,6 +161,7 @@ export default function CustomerView() {
           setViewMode={state.setViewMode}
           setSelectedPlayerForDetailedData={state.setSelectedPlayerForDetailedData}
           setIsDetailedDataModalOpen={state.setIsDetailedDataModalOpen}
+          onDetailedDataClick={handleDetailedDataClick}
         />
       </div>
 
@@ -231,7 +232,7 @@ export default function CustomerView() {
       <PlayerDetailedDataModal
         isOpen={state.isDetailedDataModalOpen}
         onClose={() => state.setIsDetailedDataModalOpen(false)}
-        player={linkedPlayer}
+        player={state.selectedPlayerForDetailedData?.player || linkedPlayer}
         rakeHistory={state.rakeHistory || []}
         pointHistory={state.pointHistory || []}
         getDisplayName={getDisplayName}

@@ -57,13 +57,14 @@ interface ViewSwitcherProps {
   setViewMode: (mode: string) => void
   setSelectedPlayerForDetailedData: (player: any) => void
   setIsDetailedDataModalOpen: (isOpen: boolean) => void
+  onDetailedDataClick?: () => void
 }
 
 export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
   viewMode, linkedPlayer, customerAccount, dailyRankings, monthlyPoints, storeSettings, rakeHistory, pointHistory, players = [],
   selectedPostId, selectedTab, activeTab, currentDate, currentYear, currentMonth, currentMonthStr, today, isLoading,
   getDisplayName, handlePostClick, handleBackFromPostDetail, setSelectedTab, setActiveTab, setSelectedPlayerForChart, setIsChartModalOpen, setViewMode,
-  setSelectedPlayerForDetailedData, setIsDetailedDataModalOpen
+  setSelectedPlayerForDetailedData, setIsDetailedDataModalOpen, onDetailedDataClick
 }) => {
 
   // プレイヤーの統計情報を計算
@@ -223,8 +224,12 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
           playingPlayers={players.filter(p => p.isPlaying)}
           getDisplayName={getDisplayName}
           onDetailedDataClick={(playerId, playerName, player) => {
-            setSelectedPlayerForDetailedData(player ? { playerId, playerName, player } : { playerId, playerName });
-            setIsDetailedDataModalOpen(true);
+            if (onDetailedDataClick) {
+              onDetailedDataClick();
+            } else {
+              setSelectedPlayerForDetailedData(player ? { playerId, playerName, player } : { playerId, playerName });
+              setIsDetailedDataModalOpen(true);
+            }
           }}
           onViewModeChange={(mode) => setViewMode(mode)}
         />

@@ -17,7 +17,6 @@
 
 // --- Common & Utilities ---
 export {
-  checkFirebaseConfig,
   getPlayersCollection,
   getPointHistoryCollection,
   getUsersCollection,
@@ -35,7 +34,6 @@ export {
   getDailyRankingsCollection,
   getMonthlyRankingsCollection,
   getMonthlyPointsCollection,
-  getMembershipRankDetails,
   getAdminPassword,
   saveAdminPassword,
 } from './firestore-common'

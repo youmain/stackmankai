@@ -18,7 +18,6 @@ import {
 } from "firebase/firestore"
 import { getDb, isFirebaseConfigured } from "./firebase"
 import {
-  checkFirebaseConfig,
   getCustomerAccountsCollection,
   getPaymentHistoryCollection,
 } from "./firestore-common"
@@ -87,7 +86,7 @@ export const subscribeToCustomerAccount = (arg1: any, arg2?: any): (() => void) 
     return () => {};
   }
 
-  const db = checkFirebaseConfig() as any;
+  const db = getDb() as any;
   if (!db) {
     console.error("[subscribeToCustomerAccount] Firebase DB is not available");
     callback(null);

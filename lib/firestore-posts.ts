@@ -17,7 +17,7 @@ import {
   writeBatch,
 } from "firebase/firestore"
 import { getDb, isFirebaseConfigured } from "./firebase"
-import { checkFirebaseConfig } from "./firestore-common"
+// import { checkFirebaseConfig } from "./firestore-common"
 
 // Force Vercel rebuild with stable version - Manus AI (2026-01-13)
 import { validateId } from "./validation"
@@ -255,7 +255,8 @@ export const setUserPresence = async (storeId: string, userId: string, displayNa
   }
 
   try {
-    const db = checkFirebaseConfig();
+    const db = getDb();
+    if (!db) throw new Error("Database not initialized");
     const presenceRef = doc(db, "stores", storeId, "activeUsers", userId);
 
     await setDoc(presenceRef, {
@@ -280,7 +281,8 @@ export const removeUserPresence = async (storeId: string, userId: string): Promi
   }
 
   try {
-    const db = checkFirebaseConfig();
+    const db = getDb();
+    if (!db) throw new Error("Database not initialized");
     const presenceRef = doc(db, "stores", storeId, "activeUsers", userId);
 
     await deleteDoc(presenceRef);
@@ -339,7 +341,9 @@ export const deleteAllPosts = async (storeId: string): Promise<void> => {
     const postsCollection = getPostsCollection()
     const q = query(postsCollection, where("storeId", "==", storeId))
     const snapshot = await getDocs(q)
-    const batch = writeBatch(checkFirebaseConfig())
+    const db = getDb();
+    if (!db) throw new Error("Database not initialized");
+    const batch = writeBatch(db)
     snapshot.docs.forEach((doc) => {
       batch.delete(doc.ref)
     })

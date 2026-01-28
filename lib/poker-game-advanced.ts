@@ -419,8 +419,8 @@ export const startNextHand = async (
   // Remove players with 0 stack
   const activePlayers = gameData.players.filter(p => p.stack > 0)
   
-  // Need at least 2 players to start next hand
-  if (activePlayers.length < 2) {
+  // Need at least 1 player to start next hand
+  if (activePlayers.length < 1) {
     console.log(`[startNextHand] Not enough players to start next hand: ${activePlayers.length}`)
     return
   }
@@ -435,8 +435,11 @@ export const startNextHand = async (
   // In preflop, action starts after BB (UTG position)
   // For 3 players or less, action starts with dealer (who is also UTG)
   let newCurrentPlayerIndex: number
-  if (activePlayers.length <= 3) {
-    // With 3 or fewer players, dealer acts first preflop
+  if (activePlayers.length === 1) {
+    // With 1 player, that player acts first
+    newCurrentPlayerIndex = 0
+  } else if (activePlayers.length <= 3) {
+    // With 2-3 players, dealer acts first preflop
     newCurrentPlayerIndex = newDealerIndex
   } else {
     // With 4+ players, UTG (after BB) acts first

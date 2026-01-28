@@ -220,8 +220,8 @@ export function PokerTable({
             )}
           </div>
           
-          {/* ゲーム開始ボタン（待機中かつ2人以上） */}
-          {game.phase === "waiting" && game.players.length >= 2 && (
+          {/* ゲーム開始ボタン（待機中かつ1人以上） */}
+          {game.phase === "waiting" && game.players.length >= 1 && (
             <Button 
               onClick={onStartGame}
               className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-black font-bold px-8 py-2 rounded-full shadow-lg transform hover:scale-105 transition-transform"
@@ -231,9 +231,9 @@ export function PokerTable({
           )}
           
           {/* 待機メッセージ */}
-          {game.phase === "waiting" && game.players.length < 2 && (
+          {game.phase === "waiting" && game.players.length === 0 && (
             <div className="mt-4 text-gray-400 text-sm animate-pulse">
-              他のプレイヤーを待っています... (現在 {game.players.length}/2人)
+              座席に座ってゲームを開始してください
             </div>
           )}
         </div>
