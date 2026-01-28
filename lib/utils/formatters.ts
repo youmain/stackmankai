@@ -28,14 +28,27 @@ export function formatChips(chips: number, showSign = false): string {
  * @param includeTime - 時刻を含めるか（デフォルト: false）
  * @returns フォーマットされた文字列
  */
-export function formatDate(date: Date | string, includeTime = false): string {
-  const dateObj = typeof date === "string" ? new Date(date) : date
+export function formatDate(date: Date | string | any, includeTime = false): string {
+  try {
+    const dateObj = (() => {
+      if (date instanceof Date) return date;
+      if (typeof date === "string") return new Date(date);
+      if (date && typeof date.toDate === "function") return date.toDate();
+      return new Date(date);
+    })();
 
-  if (includeTime) {
-    return dateObj.toLocaleString("ja-JP")
+    if (isNaN(dateObj.getTime())) {
+      return "----/--/--";
+    }
+
+    if (includeTime) {
+      return dateObj.toLocaleString("ja-JP");
+    }
+
+    return dateObj.toLocaleDateString("ja-JP");
+  } catch (e) {
+    return "----/--/--";
   }
-
-  return dateObj.toLocaleDateString("ja-JP")
 }
 
 /**
