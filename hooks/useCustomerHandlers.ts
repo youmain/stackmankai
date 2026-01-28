@@ -227,7 +227,7 @@ export const useCustomerHandlers = (props: CustomerHandlersProps) => {
   // 10. ポスト表示
   const handlePostClick = useCallback((postId: string) => {
     setSelectedPostId(postId)
-    setViewMode("detail")
+    setViewMode("post-detail" as any)
   }, [setSelectedPostId, setViewMode])
 
   // 11. 詳細から戻る
