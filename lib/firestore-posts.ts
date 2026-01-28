@@ -110,7 +110,9 @@ export const subscribeToChatMessages = (arg1: any, arg2?: any): (() => void) => 
     callback([])
     return () => {}
   }
-  const messagesCollection = collection(getDb(), `stores/${storeId}/chatMessages`)
+  const db = getDb()
+  if (!db) return () => {}
+  const messagesCollection = collection(db, `stores/${storeId}/chatMessages`)
   const q = query(messagesCollection, orderBy("createdAt", "asc"))
   return onSnapshot(q, (snapshot) => {
     const messages = snapshot.docs.map((doc) => ({
@@ -153,7 +155,9 @@ export const subscribeToActiveUsers = (arg1: any, arg2?: any): (() => void) => {
     callback([])
     return () => {}
   }
-  const activeUsersCollection = collection(getDb(), `stores/${storeId}/activeUsers`)
+  const db = getDb()
+  if (!db) return () => {}
+  const activeUsersCollection = collection(db, `stores/${storeId}/activeUsers`)
   return onSnapshot(activeUsersCollection, (snapshot) => {
     const users = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
     callback(users)
@@ -207,6 +211,7 @@ export const subscribeToUserPosts = (arg1: any, arg2?: any): (() => void) => {
   }
 
   const postsCollection = getPostsCollection();
+  if (!postsCollection) return () => {};
   const q = query(postsCollection, where("authorId", "==", userId), orderBy("createdAt", "desc"));
 
   return onSnapshot(q, (snapshot) => {
@@ -323,6 +328,7 @@ export const subscribeToStorePosts = (arg1: any, arg2?: any): (() => void) => {
     return () => {}
   }
   const postsCollection = getPostsCollection()
+  if (!postsCollection) return () => {}
   let q = query(postsCollection, orderBy("createdAt", "desc"))
 
   if (storeId) {

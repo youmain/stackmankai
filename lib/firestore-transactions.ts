@@ -72,7 +72,7 @@ export const recordPointHistory = async (
 ): Promise<void> => {
   const historyCollection = getPointHistoryCollection()
   if (!historyCollection) {
-    console.warn("[v0] モック環境: ポイント履歴記録をスキップ")
+    log.info("[v0] モック環境: ポイント履歴記録をスキップ")
     return
   }
 
@@ -247,6 +247,7 @@ export const subscribeToReceipts = (arg1: any, arg2?: any): (() => void) => {
     return () => {}
   }
   const receiptsCollection = getReceiptsCollection()
+  if (!receiptsCollection) return () => {}
   let q = query(receiptsCollection, orderBy("createdAt", "desc"))
 
   if (storeId) {
@@ -268,6 +269,7 @@ export const subscribeToReceiptItems = (arg1: any, arg2?: any): (() => void) => 
     return () => {}
   }
   const itemsCollection = getReceiptItemsCollection()
+  if (!itemsCollection) return () => {}
   const q = query(itemsCollection, where("receiptId", "==", receiptId))
   return onSnapshot(q, (snapshot) => {
     const items = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as ReceiptItem)

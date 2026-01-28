@@ -68,6 +68,7 @@ export const subscribeToDailyRankings = (arg1: any, arg2?: any): (() => void) =>
 
   try {
     const rankingsCollection = getDailyRankingsCollection()
+    if (!rankingsCollection) return () => {}
     let q = query(rankingsCollection, orderBy("date", "desc"), limit(30))
 
     if (storeId) {
@@ -105,6 +106,7 @@ export const subscribeToMonthlyPoints = (arg1: any, arg2?: any, arg3?: any, arg4
   }
   try {
     const pointsCollection = getMonthlyPointsCollection()
+    if (!pointsCollection) return () => {}
     let q = query(pointsCollection, orderBy("month", "desc"), limit(12))
 
     if (storeId) {
@@ -131,6 +133,7 @@ export const subscribeToMonthlyRankings = (arg1: any, arg2?: any): (() => void) 
   }
   try {
     const rankingsCollection = getMonthlyRankingsCollection()
+    if (!rankingsCollection) return () => {}
     let q = query(rankingsCollection, orderBy("month", "desc"), limit(12))
 
     if (storeId) {
@@ -157,6 +160,7 @@ export const subscribeToDailySales = (arg1: any, arg2?: any): (() => void) => {
   }
   try {
     const salesCollection = getDailySalesCollection()
+    if (!salesCollection) return () => {}
     let q = query(salesCollection, orderBy("date", "desc"), limit(30))
 
     if (storeId) {
@@ -241,6 +245,7 @@ export const subscribeToStoreRankingSettings = (arg1: any, arg2?: any): (() => v
   }
   try {
     const settingsCollection = getStoreRankingSettingsCollection()
+    if (!settingsCollection) return () => {}
     let q = query(settingsCollection)
 
     if (storeId) {
