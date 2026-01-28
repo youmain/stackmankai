@@ -22,14 +22,24 @@ const getSafeDb = (): Firestore | null => {
 }
 
 // 安全なラッパー関数
-export const safeQuery = (collectionRef: CollectionReference | null, ...queryConstraints: any[]): Query | null => {
-  if (!collectionRef) return null;
-  return firestoreQuery(collectionRef, ...queryConstraints);
+export const safeQuery = (collectionRef: any, ...queryConstraints: any[]): any => {
+  if (!collectionRef || typeof firestoreQuery !== 'function') return null;
+  try {
+    return firestoreQuery(collectionRef, ...queryConstraints);
+  } catch (e) {
+    console.error("[safeQuery] Error:", e);
+    return null;
+  }
 };
 
-export const safeOnSnapshot = (query: Query | null, onNext: (snapshot: any) => void, onError?: (error: any) => void): (() => void) => {
-  if (!query) return () => {};
-  return firestoreOnSnapshot(query, onNext, onError);
+export const safeOnSnapshot = (query: any, onNext: (snapshot: any) => void, onError?: (error: any) => void): (() => void) => {
+  if (!query || typeof firestoreOnSnapshot !== 'function') return () => {};
+  try {
+    return firestoreOnSnapshot(query, onNext, onError);
+  } catch (e) {
+    console.error("[safeOnSnapshot] Error:", e);
+    return () => {};
+  }
 };
 
 // 各コレクション取得関数を安全に定義
