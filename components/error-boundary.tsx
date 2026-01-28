@@ -49,11 +49,16 @@ export class ErrorBoundary extends Component<Props, State> {
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">エラーが発生しました</h1>
             <p className="text-gray-600 mb-6">
-              申し訳ございません。アプリケーションの実行中に予期しない問題が発生しました。
+              申し訳ございません。予期しないエラーが発生しました。
               <br />
-              <span className="text-xs text-red-400 mt-2 block font-mono">
+              <span className="text-sm text-red-500 mt-2 block font-mono font-bold">
                 {this.state.error?.message || "Unknown error"}
               </span>
+              {this.state.error?.stack && (
+                <span className="text-[10px] text-gray-400 mt-4 block font-mono text-left overflow-auto max-h-32 p-2 bg-gray-50 rounded border">
+                  {this.state.error.stack}
+                </span>
+              )}
             </p>
             <Button 
               onClick={this.handleReset}
