@@ -12,7 +12,7 @@ import {
   deleteDoc,
   writeBatch,
 } from "firebase/firestore"
-import { db, isFirebaseConfigured } from "./firebase"
+import { getDb, isFirebaseConfigured } from "./firebase"
 import {
   getPlayersCollection,
   deleteCustomerAccount,
@@ -47,7 +47,7 @@ export const subscribeToPlayers = (
   }
 
   // Firebaseが未設定またはDBがない場合はモックデータを返す
-  if (!isFirebaseConfigured() || !db) {
+  if (!isFirebaseConfigured() || !getDb()) {
     const players = storeId ? mockPlayers.filter(p => p.storeId === storeId) : mockPlayers
     callback(players as Player[])
     return () => {}
@@ -87,7 +87,7 @@ export const subscribeToPlayers = (
 }
 
 export const getPlayer = async (id: string): Promise<Player | null> => {
-  if (!isFirebaseConfigured() || !db) {
+  if (!isFirebaseConfigured() || !getDb()) {
     return (mockPlayers.find(p => p.id === id) as Player) || null
   }
   try {
@@ -102,7 +102,7 @@ export const getPlayer = async (id: string): Promise<Player | null> => {
 }
 
 export const addPlayer = async (player: Omit<Player, "id">): Promise<string> => {
-  if (!isFirebaseConfigured() || !db) return `mock_${Date.now()}`
+  if (!isFirebaseConfigured() || !getDb()) return `mock_${Date.now()}`
   const playersCol = getPlayersCollection()
   if (!playersCol) throw new Error("Database not initialized")
   const docRef = await addDoc(playersCol, { ...player, createdAt: serverTimestamp(), updatedAt: serverTimestamp() })
@@ -110,14 +110,14 @@ export const addPlayer = async (player: Omit<Player, "id">): Promise<string> => 
 }
 
 export const updatePlayer = async (id: string, updates: Partial<Player>): Promise<void> => {
-  if (!isFirebaseConfigured() || !db) return
+  if (!isFirebaseConfigured() || !getDb()) return
   const playersCol = getPlayersCollection()
   if (!playersCol) return
   await updateDoc(doc(playersCol, validateId(id, "プレイヤーID")), { ...updates, updatedAt: serverTimestamp() })
 }
 
 export const deletePlayer = async (id: string): Promise<void> => {
-  if (!isFirebaseConfigured() || !db) return
+  if (!isFirebaseConfigured() || !getDb()) return
   const playersCol = getPlayersCollection()
   if (!playersCol) return
   await deleteDoc(doc(playersCol, validateId(id, "プレイヤーID")))
@@ -143,21 +143,21 @@ export const updatePlayerMembershipRank = async (playerId: string): Promise<void
 }
 
 export const deleteAllPlayers = async (storeId: string): Promise<void> => {
-  if (!db) return
+  if (!getDb()) return
   const playersCol = getPlayersCollection()
   if (!playersCol) return
   const snapshot = await getDocs(query(playersCol, where("storeId", "==", storeId)))
-  const batch = writeBatch(db)
+  const batch = writeBatch(getDb()!)
   snapshot.docs.forEach(d => batch.delete(d.ref))
   await batch.commit()
 }
 
 export const resetPlayerStatistics = async (storeId: string): Promise<void> => {
-  if (!db) return
+  if (!getDb()) return
   const playersCol = getPlayersCollection()
   if (!playersCol) return
   const snapshot = await getDocs(query(playersCol, where("storeId", "==", storeId)))
-  const batch = writeBatch(db)
+  const batch = writeBatch(getDb()!)
   snapshot.docs.forEach(d => batch.update(d.ref, { totalBuyin: 0, totalProfit: 0, totalGames: 0 }))
   await batch.commit()
 }
