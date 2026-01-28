@@ -54,20 +54,22 @@ const log = createModuleLogger("Firestore")
 
 // --- 顧客アカウント関連操作 ---
 
-export const subscribeToCustomerAccount = (uid: string, callback: (account: CustomerAccount | null) => void): (() => void) => {
+export const subscribeToCustomerAccount = (arg1: any, arg2?: any): (() => void) => {
+  const uid = typeof arg1 === "string" ? arg1 : (typeof arg2 === "string" ? arg2 : null);
+  const callback = typeof arg1 === "function" ? arg1 : (typeof arg2 === "function" ? arg2 : () => {});
+
+  if (!uid) {
+    console.error("subscribeToCustomerAccount: Missing UID", { arg1, arg2 });
+    return () => {};
+  }
+
   // ローカル開発環境ではモックデータを使用
   const isLocalEnv = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
   
   if (!isFirebaseConfigured() || isLocalEnv) {
     log.warn("[v0] モック環境またはローカル環境: CustomerAccountリスナーをスキップ");
-    // モック環境ではダミーのcustomerAccountを返す
-    // リスナーを登録し、現在のモックデータを即座にコールバック
-    if (!mockCustomerAccountListeners[uid]) {
-      mockCustomerAccountListeners[uid] = [];
-    }
-    mockCustomerAccountListeners[uid].push(callback);
-
-    const currentMockAccount = mockCustomerAccounts[uid] || {
+    
+    const currentMockAccount = {
       id: uid,
       email: "mock.customer@example.com",
       stapokaBalance: 40000,
@@ -82,10 +84,7 @@ export const subscribeToCustomerAccount = (uid: string, callback: (account: Cust
     console.log("[subscribeToCustomerAccount] Returning mock account:", currentMockAccount);
     callback(currentMockAccount);
 
-    // リスナー解除関数を返す
-    return () => {
-      mockCustomerAccountListeners[uid] = mockCustomerAccountListeners[uid].filter(l => l !== callback);
-    };
+    return () => {};
   }
 
   const db = checkFirebaseConfig() as any;
