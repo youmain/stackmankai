@@ -145,13 +145,17 @@ export const useCustomerState = () => {
     // storeIdがある場合はその店舗のプレイヤーのみ、ない場合は全プレイヤー（紐付け用）
     const storeId = customerAccount.storeId || undefined;
 
-    const unsubscribe = subscribeToPlayers(storeId || "", (newPlayers) => {
+    const onPlayersUpdate = (newPlayers: Player[]) => {
       setPlayers(newPlayers || [])
       setDataLoaded(prev => ({ ...prev, players: true }));
-    }, (error) => {
+    };
+    
+    const onPlayersError = (error: Error) => {
       console.error("Players subscription error:", error);
       setDataLoaded(prev => ({ ...prev, players: true }));
-    })
+    };
+
+    const unsubscribe = subscribeToPlayers(storeId || "", onPlayersUpdate, onPlayersError)
 
     return () => {
       if (typeof unsubscribe === 'function') {
