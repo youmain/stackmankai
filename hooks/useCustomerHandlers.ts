@@ -187,17 +187,20 @@ export const useCustomerHandlers = (props: CustomerHandlersProps) => {
   }, [linkedPlayer, setIsStatisticsResetOpen])
 
   // 5. 詳細データ表示
-  const handleDetailedDataClick = useCallback(() => {
-    if (linkedPlayer) {
+  const handleDetailedDataClick = useCallback((playerId?: string, playerName?: string, player?: Player) => {
+    if (player) {
+      setSelectedPlayerForDetailedData(player)
+      setIsDetailedDataModalOpen(true)
+    } else if (linkedPlayer) {
       setSelectedPlayerForDetailedData(linkedPlayer)
       setIsDetailedDataModalOpen(true)
     }
   }, [linkedPlayer, setSelectedPlayerForDetailedData, setIsDetailedDataModalOpen])
 
   // 6. プレイヤーカードクリック（現在は詳細データ表示と同じ）
-  const handlePlayerClick = useCallback((playerId: string, playerName: string) => {
+  const handlePlayerClick = useCallback((playerId: string, playerName: string, player?: Player) => {
     // 現在は詳細データ表示と同じロジック
-    handleDetailedDataClick()
+    handleDetailedDataClick(playerId, playerName, player)
   }, [handleDetailedDataClick])
 
   // 7. プレイヤーID変更
