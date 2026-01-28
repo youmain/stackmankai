@@ -28,7 +28,7 @@ export const CustomerMainContent: React.FC<CustomerMainContentProps> = ({
   linkedPlayer,
   viewMode,
   playerStats,
-  pointHistory,
+  pointHistory = [],
   currentRewardRate,
   storeSettings,
   playingPlayers = [],
@@ -37,6 +37,13 @@ export const CustomerMainContent: React.FC<CustomerMainContentProps> = ({
   onViewModeChange,
 }) => {
   const router = useRouter()
+
+  const safeGetDisplayName = (player: any) => {
+    if (typeof getDisplayName === 'function') {
+      return getDisplayName(player);
+    }
+    return player?.pokerName || player?.name || "不明なプレイヤー";
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
@@ -47,12 +54,16 @@ export const CustomerMainContent: React.FC<CustomerMainContentProps> = ({
           storeSettings={storeSettings as any}
           dailyRankings={[]}
           monthlyRankings={[]}
-          pointHistory={pointHistory}
+          pointHistory={pointHistory || []}
           isDoublePointDay={false}
           hasSpecialRate={false}
           currentRewardRate={currentRewardRate}
           currentMonthStr={new Date().toISOString().slice(0, 7)}
-          onDetailedDataClick={() => onDetailedDataClick(linkedPlayer.id, getDisplayName(linkedPlayer), linkedPlayer as any)}
+          onDetailedDataClick={() => {
+            if (typeof onDetailedDataClick === 'function') {
+              onDetailedDataClick(linkedPlayer.id, safeGetDisplayName(linkedPlayer), linkedPlayer as any);
+            }
+          }}
           onViewModeChange={onViewModeChange}
         />
       )}
@@ -71,7 +82,7 @@ export const CustomerMainContent: React.FC<CustomerMainContentProps> = ({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-gray-600">プレイヤー名</p>
-                  <p className="text-lg font-semibold text-gray-900">{getDisplayName(linkedPlayer)}</p>
+                  <p className="text-lg font-semibold text-gray-900">{safeGetDisplayName(linkedPlayer)}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">ホーム店舗</p>
@@ -157,7 +168,11 @@ export const CustomerMainContent: React.FC<CustomerMainContentProps> = ({
                   </Badge>
                 </div>
               </div>
-              <Button onClick={() => onDetailedDataClick(linkedPlayer.id, getDisplayName(linkedPlayer), linkedPlayer as any)} className="w-full bg-blue-600 hover:bg-blue-700">
+              <Button onClick={() => {
+                if (typeof onDetailedDataClick === 'function') {
+                  onDetailedDataClick(linkedPlayer.id, safeGetDisplayName(linkedPlayer), linkedPlayer as any);
+                }
+              }} className="w-full bg-blue-600 hover:bg-blue-700">
                 <BarChart3 className="h-4 w-4 mr-2" />
                 詳細データを見る
               </Button>
