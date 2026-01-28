@@ -20,39 +20,40 @@ export interface RankingData {
  * @param allPlayers - 全プレイヤーの配列（オプション）
  * @returns ランキングデータの配列（収支順にソート済み）
  */
-export function calculateRankings(games: RakeHistory[], allPlayers?: Player[]): RankingData[] {
+export function calculateRankings(games: RakeHistory[] = [], allPlayers: Player[] = []): RankingData[] {
+  if (!Array.isArray(games)) games = [];
+  if (!Array.isArray(allPlayers)) allPlayers = [];
+  
   const playerStats: Record<string, RankingData> = {}
 
-  // 全プレイヤーを初期化（allPlayersが提供されている場合）
-  if (allPlayers) {
-    allPlayers.forEach((player) => {
-      if (!player) return;
-      const playerName = getPlayerDisplayName(player)
+  // 全プレイヤーを初期化
+  allPlayers.forEach((player) => {
+    if (!player || !player.id) return;
+    const playerName = getPlayerDisplayName(player)
 
-      playerStats[player.id] = {
-        playerId: player.id,
-        playerName,
-        totalProfit: 0,
-        totalGames: 0,
-        winRate: 0,
-        lastGameDate: null,
-        averageProfit: 0,
-        maxWin: 0,
-        maxWinStreak: 0,
-        currentStreak: 0,
-        totalPoints: 0,
-      }
-    })
-  }
+    playerStats[player.id] = {
+      playerId: player.id,
+      playerName,
+      totalProfit: 0,
+      totalGames: 0,
+      winRate: 0,
+      lastGameDate: null,
+      averageProfit: 0,
+      maxWin: 0,
+      maxWinStreak: 0,
+      currentStreak: 0,
+      totalPoints: 0,
+    }
+  })
 
   // ゲーム結果を反映
   games.forEach((game) => {
-    // 必須プロパティがない場合はスキップ
-    if (!game.playerId || game.finalStack === undefined || game.buyIn === undefined || game.additionalStack === undefined) {
-      return
-    }
-
-    const profit = game.finalStack - (game.buyIn + game.additionalStack)
+    if (!game || !game.playerId) return;
+    
+    const finalStack = Number(game.finalStack) || 0;
+    const buyIn = Number(game.buyIn) || 0;
+    const additionalStack = Number(game.additionalStack) || 0;
+    const profit = finalStack - (buyIn + additionalStack);
 
     if (!playerStats[game.playerId]) {
       playerStats[game.playerId] = {
@@ -77,7 +78,6 @@ export function calculateRankings(games: RakeHistory[], allPlayers?: Player[]): 
       stats.maxWin = profit
     }
 
-    // 最終ゲーム日を更新
     const gameDate = (() => {
       if (game.createdAt instanceof Date) return game.createdAt;
       if (typeof game.createdAt === 'string') return new Date(game.createdAt);
@@ -89,10 +89,9 @@ export function calculateRankings(games: RakeHistory[], allPlayers?: Player[]): 
     }
   })
 
-  // 勝率と連勝記録を計算
   Object.values(playerStats).forEach((stats) => {
     const playerGames = games
-      .filter((game) => game.playerId === stats.playerId)
+      .filter((game) => game && game.playerId === stats.playerId)
       .sort((a, b) => {
         const dateA = (() => {
           if (a.createdAt instanceof Date) return a.createdAt;
@@ -109,25 +108,26 @@ export function calculateRankings(games: RakeHistory[], allPlayers?: Player[]): 
         return dateA.getTime() - dateB.getTime()
       })
 
-    const wins = playerGames.filter((game) => 
-      game.finalStack !== undefined && 
-      game.buyIn !== undefined && 
-      game.additionalStack !== undefined && 
-      game.finalStack - (game.buyIn + game.additionalStack) > 0
-    ).length
+    const wins = playerGames.filter((game) => {
+      const f = Number(game.finalStack) || 0;
+      const b = Number(game.buyIn) || 0;
+      const a = Number(game.additionalStack) || 0;
+      return (f - (b + a)) > 0;
+    }).length;
+    
     stats.winRate = stats.totalGames > 0 ? (wins / stats.totalGames) * 100 : 0
     stats.averageProfit = stats.totalGames > 0 ? stats.totalProfit / stats.totalGames : 0
 
-    // 連勝記録を計算
     let maxStreak = 0
     let currentStreak = 0
     let lastResult = 0
 
     playerGames.forEach((game) => {
-      if (game.finalStack === undefined || game.buyIn === undefined || game.additionalStack === undefined) {
-        return
-      }
-      const profit = game.finalStack - (game.buyIn + game.additionalStack)
+      const f = Number(game.finalStack) || 0;
+      const b = Number(game.buyIn) || 0;
+      const a = Number(game.additionalStack) || 0;
+      const profit = f - (b + a);
+      
       if (profit > 0) {
         currentStreak = lastResult > 0 ? currentStreak + 1 : 1
         maxStreak = Math.max(maxStreak, currentStreak)
@@ -141,7 +141,7 @@ export function calculateRankings(games: RakeHistory[], allPlayers?: Player[]): 
     stats.currentStreak = lastResult > 0 ? currentStreak : 0
   })
 
-  return Object.values(playerStats).sort((a, b) => b.totalProfit - a.totalProfit)
+  return Object.values(playerStats).sort((a, b) => (b.totalProfit || 0) - (a.totalProfit || 0))
 }
 
 /**
