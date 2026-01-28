@@ -8,17 +8,18 @@ import { getDb, isFirebaseConfigured } from "./firebase"
 
 // Helper to ensure db is available
 const checkDb = () => {
-  if (!isFirebaseConfigured) throw new Error("Firebase is not configured")
-  const db = getDb()
-  if (!db) throw new Error("Firestore is not initialized")
-  return db
+  const isConfigured = typeof isFirebaseConfigured === 'function' ? isFirebaseConfigured() : isFirebaseConfigured;
+  if (!isConfigured) return null;
+  return getDb();
 }
+
 import type { RakeCollection, RakeSettings, StackReset, StackResetSettings } from "@/types/stack-man-hand"
 
 /**
  * Check if a task should run based on last execution time
  */
 const shouldRunTask = (lastRunKey: string, targetHour: number): boolean => {
+  if (typeof window === 'undefined') return false;
   const lastRun = localStorage.getItem(lastRunKey)
   const now = new Date()
   
@@ -40,17 +41,17 @@ const shouldRunTask = (lastRunKey: string, targetHour: number): boolean => {
  * Get target hour from time string (e.g., "03:00" -> 3)
  */
 const getTargetHour = (timeString: string): number => {
+  if (!timeString) return 0;
   const [hour] = timeString.split(":")
-  return parseInt(hour, 10)
+  return parseInt(hour, 10) || 0
 }
 
 /**
  * Collect rake from all players
  */
 export const collectRake = async (storeId: string): Promise<{ success: boolean; message: string; amount?: number }> => {
-  if (!isFirebaseConfigured) return { success: false, message: "Firebase is not configured" }
-  const db = getDb()
-  if (!db) throw new Error("Firestore is not initialized")
+  const db = checkDb();
+  if (!db) return { success: false, message: "Firebase is not configured" }
   
   try {
     // Get store settings
@@ -72,7 +73,7 @@ export const collectRake = async (storeId: string): Promise<{ success: boolean; 
     const tomorrow = new Date(today)
     tomorrow.setDate(tomorrow.getDate() + 1)
     
-    const collectionsRef = collection(checkDb(), "stores", storeId, "rakeCollections")
+    const collectionsRef = collection(db, "stores", storeId, "rakeCollections")
     const todayCollectionQuery = query(
       collectionsRef,
       where("collectedAt", ">=", Timestamp.fromDate(today)),
@@ -86,7 +87,7 @@ export const collectRake = async (storeId: string): Promise<{ success: boolean; 
     }
     
     // Get all players
-    const playersRef = collection(checkDb(), "players", `store_${storeId}`, "players")
+    const playersRef = collection(db, "players", `store_${storeId}`, "players")
     const playersSnapshot = await getDocs(playersRef)
     
     if (playersSnapshot.empty) {
@@ -154,7 +155,9 @@ export const collectRake = async (storeId: string): Promise<{ success: boolean; 
     console.log(`[collectRake] Collected ${totalAmount} chips from ${playerRakes.length} players`)
     
     // Update last run time
-    localStorage.setItem(`lastRakeCollection_${storeId}`, new Date().toISOString())
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`lastRakeCollection_${storeId}`, new Date().toISOString())
+    }
     
     return {
       success: true,
@@ -174,9 +177,8 @@ export const collectRake = async (storeId: string): Promise<{ success: boolean; 
  * Reset stacks for all players
  */
 export const resetStacks = async (storeId: string): Promise<{ success: boolean; message: string; resetCount?: number }> => {
-  if (!isFirebaseConfigured) return { success: false, message: "Firebase is not configured" }
-  const db = getDb()
-  if (!db) throw new Error("Firestore is not initialized")
+  const db = checkDb();
+  if (!db) return { success: false, message: "Firebase is not configured" }
   
   try {
     // Get store settings
@@ -198,7 +200,7 @@ export const resetStacks = async (storeId: string): Promise<{ success: boolean; 
     const tomorrow = new Date(today)
     tomorrow.setDate(tomorrow.getDate() + 1)
     
-    const resetsRef = collection(checkDb(), "stores", storeId, "stackResets")
+    const resetsRef = collection(db, "stores", storeId, "stackResets")
     const todayResetQuery = query(
       resetsRef,
       where("resetAt", ">=", Timestamp.fromDate(today)),
@@ -212,7 +214,7 @@ export const resetStacks = async (storeId: string): Promise<{ success: boolean; 
     }
     
     // Get all players
-    const playersRef = collection(checkDb(), "players", `store_${storeId}`, "players")
+    const playersRef = collection(db, "players", `store_${storeId}`, "players")
     const playersSnapshot = await getDocs(playersRef)
     
     if (playersSnapshot.empty) {
@@ -285,7 +287,9 @@ export const resetStacks = async (storeId: string): Promise<{ success: boolean; 
     console.log(`[resetStacks] Reset ${resetCount} players to minimum stack`)
     
     // Update last run time
-    localStorage.setItem(`lastStackReset_${storeId}`, new Date().toISOString())
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`lastStackReset_${storeId}`, new Date().toISOString())
+    }
     
     return {
       success: true,
@@ -306,12 +310,11 @@ export const resetStacks = async (storeId: string): Promise<{ success: boolean; 
  * Should be called on app initialization
  */
 export const checkAndRunScheduledTasks = async (storeId: string): Promise<void> => {
-  if (!storeId || !isFirebaseConfigured) return
+  if (!storeId) return
+  const db = checkDb();
+  if (!db) return
   
   try {
-    const db = getDb()
-    if (!db) return
-    
     // Get store settings
     const storeDoc = await getDoc(doc(db, "stores", storeId))
     if (!storeDoc.exists()) return
