@@ -68,103 +68,103 @@ export const checkFirebaseConfig = () => {
 
 export const getPlayersCollection = (storeId?: string) => {
   const db = checkFirebaseConfig()
-  if (!db) return null
+  if (!db) return null as any
   return collection(db, "players")
 }
 
 export const getPointHistoryCollection = () => {
   const db = checkFirebaseConfig()
-  if (!db) return null
+  if (!db) return null as any
   return collection(db, "pointHistory")
 }
 
 export const getUsersCollection = () => {
   const db = checkFirebaseConfig()
-  if (!db) return null
+  if (!db) return null as any
   return collection(db, "users")
 }
 
 export const getGamesCollection = () => {
   const db = checkFirebaseConfig()
-  if (!db) return null
+  if (!db) return null as any
   return collection(db, "games")
 }
 
 export const getTransactionsCollection = () => {
   const db = checkFirebaseConfig()
-  if (!db) return null
+  if (!db) return null as any
   return collection(db, "transactions")
 }
 
 export const getGameTransactionsCollection = () => {
   const db = checkFirebaseConfig()
-  if (!db) return null
+  if (!db) return null as any
   return collection(db, "gameTransactions")
 }
 
 export const getRakeHistoryCollection = () => {
   const db = checkFirebaseConfig()
-  if (!db) return null
+  if (!db) return null as any
   return collection(db, "rakeHistory")
 }
 
 export const getReceiptsCollection = () => {
   const db = checkFirebaseConfig()
-  if (!db) return null
+  if (!db) return null as any
   return collection(db, "receipts")
 }
 
 export const getReceiptItemsCollection = () => {
   const db = checkFirebaseConfig()
-  if (!db) return null
+  if (!db) return null as any
   return collection(db, "receiptItems")
 }
 
 export const getDailySalesCollection = () => {
   const db = checkFirebaseConfig()
-  if (!db) return null
+  if (!db) return null as any
   return collection(db, "dailySales")
 }
 
 export const getStoreRankingSettingsCollection = () => {
   const db = checkFirebaseConfig()
-  if (!db) return null
+  if (!db) return null as any
   return collection(db, "storeRankingSettings")
 }
 
 export const getCustomerAccountsCollection = () => {
   const db = checkFirebaseConfig()
-  if (!db) return null
+  if (!db) return null as any
   return collection(db, "customerAccounts")
 }
 
 export const getPostsCollection = () => {
   const db = checkFirebaseConfig()
-  if (!db) return null
+  if (!db) return null as any
   return collection(db, "posts")
 }
 
 export const getPaymentHistoryCollection = () => {
   const db = checkFirebaseConfig()
-  if (!db) return null
+  if (!db) return null as any
   return collection(db, "paymentHistory")
 }
 
 export const getDailyRankingsCollection = () => {
   const db = checkFirebaseConfig()
-  if (!db) return null
+  if (!db) return null as any
   return collection(db, "dailyRankings")
 }
 
 export const getMonthlyRankingsCollection = () => {
   const db = checkFirebaseConfig()
-  if (!db) return null
+  if (!db) return null as any
   return collection(db, "monthlyRankings")
 }
 
 export const getMonthlyPointsCollection = () => {
   const db = checkFirebaseConfig()
-  if (!db) return null
+  if (!db) return null as any
   return collection(db, "monthlyPoints")
 }
 
