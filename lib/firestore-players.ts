@@ -55,28 +55,26 @@ const log = createModuleLogger("Firestore")
 // --- プレイヤー関連操作 ---
 
 export const subscribeToPlayers = (
-  storeIdOrCallback: string | ((players: Player[]) => void),
-  callbackOrOnError?: ((players: Player[]) => void) | ((error: Error) => void),
-  storeIdOrUndefined?: string | null,
+  arg1: any,
+  arg2?: any,
+  arg3?: any
 ): (() => void) => {
-  // オーバーロード対応: 新しいシグネチャ (storeId, callback) と古いシグネチャ (callback, onError?, storeId?) の両方に対応
   let actualStoreId: string | null = null
-  let actualCallback: (players: Player[]) => void
+  let actualCallback: (players: Player[]) => void = () => {}
   let actualOnError: ((error: Error) => void) | undefined
 
-  if (typeof storeIdOrCallback === "string") {
-    // 新しいシグネチャ: subscribeToPlayers(storeId, callback)
-    actualStoreId = storeIdOrCallback
-    actualCallback = typeof callbackOrOnError === "function" ? (callbackOrOnError as (players: Player[]) => void) : ((players: Player[]) => {});
-    actualOnError = typeof storeIdOrUndefined === "function" ? (storeIdOrUndefined as (error: Error) => void) : undefined;
-  } else if (typeof storeIdOrCallback === "function") {
-    // 古いシグネチャ: subscribeToPlayers(callback, onError?, storeId?)
-    actualCallback = storeIdOrCallback
-    actualOnError = typeof callbackOrOnError === "function" ? (callbackOrOnError as (error: Error) => void) : undefined
-    actualStoreId = typeof callbackOrOnError === "string" ? callbackOrOnError : (storeIdOrUndefined || null)
+  if (typeof arg1 === "string") {
+    // subscribeToPlayers(storeId, callback, onError?)
+    actualStoreId = arg1
+    actualCallback = typeof arg2 === "function" ? arg2 : () => {}
+    actualOnError = typeof arg3 === "function" ? arg3 : undefined
+  } else if (typeof arg1 === "function") {
+    // subscribeToPlayers(callback, onError?, storeId?)
+    actualCallback = arg1
+    actualOnError = typeof arg2 === "function" ? arg2 : undefined
+    actualStoreId = typeof arg3 === "string" ? arg3 : (typeof arg2 === "string" ? arg2 : null)
   } else {
-    // 予期しない引数の場合
-    console.error("Invalid arguments to subscribeToPlayers", { storeIdOrCallback, callbackOrOnError, storeIdOrUndefined });
+    console.error("Invalid arguments to subscribeToPlayers", { arg1, arg2, arg3 });
     return () => {};
   }
 
