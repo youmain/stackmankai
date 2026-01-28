@@ -58,17 +58,22 @@ export const subscribeToDailyRankings = (arg1: any, arg2?: any): (() => void) =>
     return () => {}
   }
 
-  const rankingsCollection = getDailyRankingsCollection()
-  let q = query(rankingsCollection, orderBy("date", "desc"), limit(30))
+  try {
+    const rankingsCollection = getDailyRankingsCollection()
+    let q = query(rankingsCollection, orderBy("date", "desc"), limit(30))
 
-  if (storeId) {
-    q = query(rankingsCollection, where("storeId", "==", storeId), orderBy("date", "desc"), limit(30))
+    if (storeId) {
+      q = query(rankingsCollection, where("storeId", "==", storeId), orderBy("date", "desc"), limit(30))
+    }
+
+    return onSnapshot(q, (snapshot) => {
+      const rankings = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+      callback(rankings)
+    })
+  } catch (error) {
+    console.error("Error in subscribeToDailyRankings:", error);
+    return () => {};
   }
-
-  return onSnapshot(q, (snapshot) => {
-    const rankings = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-    callback(rankings)
-  })
 }
 
 export const subscribeToMonthlyPoints = (arg1: any, arg2?: any, arg3?: any, arg4?: any): (() => void) => {
@@ -90,17 +95,22 @@ export const subscribeToMonthlyPoints = (arg1: any, arg2?: any, arg3?: any, arg4
     callback(mockMonthlyPoints)
     return () => {}
   }
-  const pointsCollection = getMonthlyPointsCollection()
-  let q = query(pointsCollection, orderBy("month", "desc"), limit(12))
+  try {
+    const pointsCollection = getMonthlyPointsCollection()
+    let q = query(pointsCollection, orderBy("month", "desc"), limit(12))
 
-  if (storeId) {
-    q = query(pointsCollection, where("storeId", "==", storeId), orderBy("month", "desc"), limit(12))
+    if (storeId) {
+      q = query(pointsCollection, where("storeId", "==", storeId), orderBy("month", "desc"), limit(12))
+    }
+
+    return onSnapshot(q, (snapshot) => {
+      const points = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+      callback(points)
+    })
+  } catch (error) {
+    console.error("Error in subscribeToMonthlyPoints:", error);
+    return () => {};
   }
-
-  return onSnapshot(q, (snapshot) => {
-    const points = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-    callback(points)
-  })
 }
 
 export const subscribeToMonthlyRankings = (arg1: any, arg2?: any): (() => void) => {
@@ -111,17 +121,22 @@ export const subscribeToMonthlyRankings = (arg1: any, arg2?: any): (() => void) 
     callback(mockMonthlyRankings)
     return () => {}
   }
-  const rankingsCollection = getMonthlyRankingsCollection()
-  let q = query(rankingsCollection, orderBy("month", "desc"), limit(12))
+  try {
+    const rankingsCollection = getMonthlyRankingsCollection()
+    let q = query(rankingsCollection, orderBy("month", "desc"), limit(12))
 
-  if (storeId) {
-    q = query(rankingsCollection, where("storeId", "==", storeId), orderBy("month", "desc"), limit(12))
+    if (storeId) {
+      q = query(rankingsCollection, where("storeId", "==", storeId), orderBy("month", "desc"), limit(12))
+    }
+
+    return onSnapshot(q, (snapshot) => {
+      const rankings = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+      callback(rankings)
+    })
+  } catch (error) {
+    console.error("Error in subscribeToMonthlyRankings:", error);
+    return () => {};
   }
-
-  return onSnapshot(q, (snapshot) => {
-    const rankings = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-    callback(rankings)
-  })
 }
 
 export const subscribeToDailySales = (arg1: any, arg2?: any): (() => void) => {
@@ -132,17 +147,22 @@ export const subscribeToDailySales = (arg1: any, arg2?: any): (() => void) => {
     callback([])
     return () => {}
   }
-  const salesCollection = getDailySalesCollection()
-  let q = query(salesCollection, orderBy("date", "desc"), limit(30))
+  try {
+    const salesCollection = getDailySalesCollection()
+    let q = query(salesCollection, orderBy("date", "desc"), limit(30))
 
-  if (storeId) {
-    q = query(salesCollection, where("storeId", "==", storeId), orderBy("date", "desc"), limit(30))
+    if (storeId) {
+      q = query(salesCollection, where("storeId", "==", storeId), orderBy("date", "desc"), limit(30))
+    }
+
+    return onSnapshot(q, (snapshot) => {
+      const sales = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as DailySales)
+      callback(sales)
+    })
+  } catch (error) {
+    console.error("Error in subscribeToDailySales:", error);
+    return () => {};
   }
-
-  return onSnapshot(q, (snapshot) => {
-    const sales = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as DailySales)
-    callback(sales)
-  })
 }
 
 export const deleteDailySales = async (salesId: string): Promise<void> => {
@@ -211,17 +231,22 @@ export const subscribeToStoreRankingSettings = (arg1: any, arg2?: any): (() => v
     callback(mockStoreRankingSettings)
     return () => {}
   }
-  const settingsCollection = getStoreRankingSettingsCollection()
-  let q = query(settingsCollection)
+  try {
+    const settingsCollection = getStoreRankingSettingsCollection()
+    let q = query(settingsCollection)
 
-  if (storeId) {
-    q = query(settingsCollection, where("storeId", "==", storeId))
+    if (storeId) {
+      q = query(settingsCollection, where("storeId", "==", storeId))
+    }
+
+    return onSnapshot(q, (snapshot) => {
+      const settings = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as StoreRankingSettings)
+      callback(settings)
+    })
+  } catch (error) {
+    console.error("Error in subscribeToStoreRankingSettings:", error);
+    return () => {};
   }
-
-  return onSnapshot(q, (snapshot) => {
-    const settings = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as StoreRankingSettings)
-    callback(settings)
-  })
 }
 
 // --- Customer Account Functions ---
