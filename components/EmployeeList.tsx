@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { auth, db } from '@/lib/firebase';
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { getAuthInstance, getDb } from '@/lib/firebase';
+import * as firestore from 'firebase/firestore';
 import { Users, LogOut, Crown, Shield } from 'lucide-react';
 
 interface Employee {
@@ -23,13 +23,22 @@ export default function EmployeeList({ storeId, currentUserId, isOwner }: Employ
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // SSR Guard
+    if (typeof window === 'undefined') return () => {};
+    
+    const db = getDb();
+    if (!db || typeof firestore.collection !== 'function' || typeof firestore.query !== 'function' || typeof firestore.where !== 'function' || typeof firestore.onSnapshot !== 'function') {
+      setLoading(false);
+      return () => {};
+    }
+
     // 従業員一覧をリアルタイムで取得
-    const q = query(
-      collection(getDb()!, 'employees'),
-      where('storeId', '==', storeId)
+    const q = firestore.query(
+      firestore.collection(db, 'employees'),
+      firestore.where('storeId', '==', storeId)
     );
     
-    const unsubscribe = onSnapshot(q, (snapshot) => {
+    const unsubscribe = firestore.onSnapshot(q, (snapshot) => {
       const employeeList = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
@@ -48,6 +57,8 @@ export default function EmployeeList({ storeId, currentUserId, isOwner }: Employ
     }
     
     try {
+      const auth = getAuthInstance();
+      if (!auth) throw new Error('ログインが必要です');
       const user = auth.currentUser;
       if (!user) {
         throw new Error('ログインが必要です');
@@ -86,6 +97,8 @@ export default function EmployeeList({ storeId, currentUserId, isOwner }: Employ
     }
     
     try {
+      const auth = getAuthInstance();
+      if (!auth) throw new Error('ログインが必要です');
       const user = auth.currentUser;
       if (!user) {
         throw new Error('ログインが必要です');

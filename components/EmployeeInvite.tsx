@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { auth } from '@/lib/firebase';
+import { getAuthInstance } from '@/lib/firebase';
 import QRCode from 'qrcode';
 import { QrCode, Copy, Check, UserPlus } from 'lucide-react';
 
@@ -21,6 +21,8 @@ export default function EmployeeInvite({ storeId }: EmployeeInviteProps) {
   const generateInviteCode = async () => {
     setLoading(true);
     try {
+      const auth = getAuth();
+      if (!auth) throw new Error('Firebase Auth is not initialized');
       const user = auth.currentUser;
       if (!user) {
         throw new Error('ログインが必要です');
@@ -51,7 +53,9 @@ export default function EmployeeInvite({ storeId }: EmployeeInviteProps) {
       setInviteCode(data.inviteCode);
       
       // QRコードを生成（ログインページのURLに招待コードを含める）
-      const loginUrl = `${window.location.origin}/employee-login?code=${data.inviteCode}`;
+      const origin = typeof window !== 'undefined' ? window.location.origin : '';
+      if (!origin) throw new Error('Cannot determine application origin.');
+      const loginUrl = `${origin}/employee-login?code=${data.inviteCode}`;
       const qrDataUrl = await QRCode.toDataURL(loginUrl, {
         width: 300,
         margin: 2,
@@ -67,6 +71,7 @@ export default function EmployeeInvite({ storeId }: EmployeeInviteProps) {
   };
 
   const copyToClipboard = () => {
+    if (typeof window === 'undefined') return;
     const loginUrl = `${window.location.origin}/employee-login?code=${inviteCode}`;
     navigator.clipboard.writeText(loginUrl);
     setCopied(true);
@@ -180,10 +185,10 @@ export default function EmployeeInvite({ storeId }: EmployeeInviteProps) {
               ログインURLを共有（LINE等で送信）:
             </p>
             <div className="flex items-center space-x-2">
-              <input
-                type="text"
-                value={`${window.location.origin}/employee-login?code=${inviteCode}`}
-                readOnly
+	              <input
+	                type="text"
+	                value={typeof window !== 'undefined' ? `${window.location.origin}/employee-login?code=${inviteCode}` : 'URL is only available on client-side'}
+	                readOnly
                 className="flex-1 border rounded-lg px-3 py-2 bg-gray-50 text-xs"
               />
               <button

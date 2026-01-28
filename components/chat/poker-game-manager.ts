@@ -1,4 +1,4 @@
-import { doc, getDoc } from "firebase/firestore"
+import * as firestore from "firebase/firestore"
 import { getDb } from "@/lib/firebase"
 import {
   createPokerGame,
@@ -18,17 +18,17 @@ export async function fetchOperationHours(
   setOperationHours: (hours: PokerOperationHours | null) => void,
   setError: (error: string) => void,
 ): Promise<void> {
-  if (!storeId) return
+  const db = getDb()
+  if (!storeId || !db || typeof firestore.doc !== 'function' || typeof firestore.getDoc !== 'function') return
 
   try {
-    const db = getDb()
-    const storeRef = doc(db, "stores", storeId)
-    const storeSnap = await getDoc(storeRef)
+    const storeRef = firestore.doc(db, "stores", storeId)
+    const storeSnap = await firestore.getDoc(storeRef)
 
     if (storeSnap.exists()) {
       const storeData = storeSnap.data()
       if (storeData?.pokerOperationHours) {
-        setOperationHours(storeData.pokerOperationHours)
+        setOperationHours(storeData.pokerOperationHours as PokerOperationHours)
       }
     }
   } catch (err) {

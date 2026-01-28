@@ -2,8 +2,8 @@
  * Reset/delete poker game
  */
 
-import { doc, deleteDoc } from "firebase/firestore"
-import { db } from "@/lib/firebase"
+import * as firestore from "firebase/firestore"
+import { getDb } from "@/lib/firebase"
 
 /**
  * Delete a poker game completely
@@ -12,8 +12,12 @@ export const deletePokerGame = async (
   storeId: string,
   gameId: string
 ): Promise<void> => {
-  if (!db) throw new Error("Firebase is not configured")
+  const db = getDb()
+  if (!db || typeof firestore.doc !== 'function' || typeof firestore.deleteDoc !== 'function') {
+    // SSRまたは未初期化の場合は処理をスキップ
+    return
+  }
   
-  const gameDoc = doc(db, "stores", storeId, "poker_games", gameId)
-  await deleteDoc(gameDoc)
+  const gameDoc = firestore.doc(db, "stores", storeId, "poker_games", gameId)
+  await firestore.deleteDoc(gameDoc)
 }

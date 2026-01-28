@@ -2,14 +2,15 @@
 
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { db } from '@/lib/firebase';
-import { doc, onSnapshot, getDoc } from 'firebase/firestore';
+import { getDb, getAuthInstance } from '@/lib/firebase';
+import * as firestore from 'firebase/firestore';
 
 export function useEmployeeSession() {
   const router = useRouter();
   const checkIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return; // SSR Guard
     const sessionId = localStorage.getItem('employeeSessionId');
     
     if (!sessionId) {
@@ -17,9 +18,15 @@ export function useEmployeeSession() {
       return;
     }
     
+    const db = getDb();
+    if (!db || typeof firestore.onSnapshot !== 'function' || typeof firestore.doc !== 'function' || typeof firestore.getDoc !== 'function') {
+      console.warn("Firebase or Firestore functions not available for employee session.");
+      return;
+    }
+
     // リアルタイムリスナーを設定
-    const unsubscribe = onSnapshot(
-      doc(db, 'employeeSessions', sessionId),
+    const unsubscribe = firestore.onSnapshot(
+      firestore.doc(db, 'employeeSessions', sessionId),
       (snapshot) => {
         if (!snapshot.exists() || !snapshot.data()?.active) {
           handleLogout();
@@ -33,7 +40,7 @@ export function useEmployeeSession() {
     // 定期的なセッションチェック（30秒ごと）
     checkIntervalRef.current = setInterval(async () => {
       try {
-        const sessionDoc = await getDoc(doc(db, 'employeeSessions', sessionId));
+        const sessionDoc = await firestore.getDoc(firestore.doc(db, 'employeeSessions', sessionId));
         if (!sessionDoc.exists() || !sessionDoc.data()?.active) {
           handleLogout();
         }
@@ -51,11 +58,13 @@ export function useEmployeeSession() {
   }, [router]);
 
   const handleLogout = () => {
-    localStorage.removeItem('employeeSessionId');
-    localStorage.removeItem('employeeId');
-    localStorage.removeItem('employeeName');
-    localStorage.removeItem('storeId');
-    localStorage.removeItem('employeeRole');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('employeeSessionId');
+      localStorage.removeItem('employeeId');
+      localStorage.removeItem('employeeName');
+      localStorage.removeItem('storeId');
+      localStorage.removeItem('employeeRole');
+    }
     router.push('/employee-login?message=logged_out');
   };
 }
