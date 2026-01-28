@@ -54,11 +54,7 @@ export const useCustomerState = () => {
 
   // --- 4. Player Linking/Modal State ---
   const [isDetailedDataModalOpen, setIsDetailedDataModalOpen] = useState(false)
-  const [selectedPlayerForDetailedData, setSelectedPlayerForDetailedData] = useState<{
-    playerId: string
-    playerName: string
-    player?: Player
-  } | null>(null)
+  const [selectedPlayerForDetailedData, setSelectedPlayerForDetailedData] = useState<any>(null)
   const [playerIdInput, setPlayerIdInput] = useState("")
   const [isLinking, setIsLinking] = useState(false)
   const [linkingError, setLinkingError] = useState<string | null>(null)

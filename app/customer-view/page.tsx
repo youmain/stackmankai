@@ -55,7 +55,7 @@ export default function CustomerView() {
     setIsLinkingSuccessOpen: state.setShowLinkingSuccessModal,
     setIsStatisticsResetOpen: state.setIsResetConfirmOpen,
     setIsAccountCancellationOpen: state.setIsCancelConfirmOpen,
-    setSelectedPlayerForDetailedData: (player) => state.setSelectedPlayerForDetailedData(player ? { playerId: player.id, playerName: player.name, player } : null),
+    setSelectedPlayerForDetailedData: (player) => state.setSelectedPlayerForDetailedData(player ? { playerId: player.id, playerName: player.pokerName || player.name || "Unknown", player } : null),
     setIsDetailedDataModalOpen: state.setIsDetailedDataModalOpen,
     setViewMode: state.setViewMode,
     setSelectedPostId: state.setSelectedPostId,
