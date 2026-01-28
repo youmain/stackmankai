@@ -17,87 +17,104 @@ const getSafeDb = (): Firestore | null => {
 // 各コレクション取得関数を安全に定義
 export const getPlayersCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "players") : null as any
+  if (!safeDb) throw new Error("Database not initialized")
+  return collection(safeDb, "players")
 }
 
 export const getPointHistoryCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "pointHistory") : null as any
+  if (!safeDb) throw new Error("Database not initialized")
+  return collection(safeDb, "pointHistory")
 }
 
 export const getUsersCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "users") : null as any
+  if (!safeDb) throw new Error("Database not initialized")
+  return collection(safeDb, "users")
 }
 
 export const getGamesCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "games") : null as any
+  if (!safeDb) throw new Error("Database not initialized")
+  return collection(safeDb, "games")
 }
 
 export const getTransactionsCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "transactions") : null as any
+  if (!safeDb) throw new Error("Database not initialized")
+  return collection(safeDb, "transactions")
 }
 
 export const getGameTransactionsCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "gameTransactions") : null as any
+  if (!safeDb) throw new Error("Database not initialized")
+  return collection(safeDb, "gameTransactions")
 }
 
 export const getRakeHistoryCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "rakeHistory") : null as any
+  if (!safeDb) throw new Error("Database not initialized")
+  return collection(safeDb, "rakeHistory")
 }
 
 export const getReceiptsCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "receipts") : null as any
+  if (!safeDb) throw new Error("Database not initialized")
+  return collection(safeDb, "receipts")
 }
 
 export const getReceiptItemsCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "receiptItems") : null as any
+  if (!safeDb) throw new Error("Database not initialized")
+  return collection(safeDb, "receiptItems")
 }
 
 export const getDailySalesCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "dailySales") : null as any
+  if (!safeDb) throw new Error("Database not initialized")
+  return collection(safeDb, "dailySales")
 }
 
 export const getStoreRankingSettingsCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "storeRankingSettings") : null as any
+  if (!safeDb) throw new Error("Database not initialized")
+  return collection(safeDb, "storeRankingSettings")
 }
 
 export const getCustomerAccountsCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "customerAccounts") : null as any
+  if (!safeDb) throw new Error("Database not initialized")
+  return collection(safeDb, "customerAccounts")
 }
 
 export const getPostsCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "posts") : null as any
+  if (!safeDb) throw new Error("Database not initialized")
+  return collection(safeDb, "posts")
 }
 
 export const getPaymentHistoryCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "paymentHistory") : null as any
+  if (!safeDb) throw new Error("Database not initialized")
+  return collection(safeDb, "paymentHistory")
 }
 
 export const getDailyRankingsCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "dailyRankings") : null as any
+  if (!safeDb) throw new Error("Database not initialized")
+  return collection(safeDb, "dailyRankings")
 }
 
 export const getMonthlyRankingsCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "monthlyRankings") : null as any
+  if (!safeDb) throw new Error("Database not initialized")
+  return collection(safeDb, "monthlyRankings")
 }
 
 export const getMonthlyPointsCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "monthlyPoints") : null as any
+  if (!safeDb) throw new Error("Database not initialized")
+  return collection(safeDb, "monthlyPoints")
 }
 
 // パスワード関連
