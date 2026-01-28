@@ -17,6 +17,10 @@ import {
   writeBatch,
 } from "firebase/firestore"
 import { getDb, isFirebaseConfigured } from "./firebase"
+import {
+  getUsersCollection,
+  getRakeHistoryCollection,
+} from "./firestore-common"
 
 // Force Vercel rebuild with stable version - Manus AI (2026-01-13)
 import { validateId } from "./validation"

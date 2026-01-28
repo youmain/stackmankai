@@ -17,6 +17,7 @@ import {
   writeBatch,
 } from "firebase/firestore"
 import { getDb, isFirebaseConfigured } from "./firebase"
+import { getGamesCollection } from "./firestore-common"
 
 // Force Vercel rebuild with stable version - Manus AI (2026-01-13)
 import { validateId } from "./validation"
@@ -156,7 +157,9 @@ export const deleteAllGames = async (storeId: string): Promise<void> => {
     const gamesCollection = getGamesCollection()
     const q = query(gamesCollection, where("storeId", "==", storeId))
     const snapshot = await getDocs(q)
-    const batch = writeBatch(checkFirebaseConfig())
+    const db = getDb()
+    if (!db) throw new Error("Database not initialized")
+    const batch = writeBatch(db)
     snapshot.docs.forEach((doc) => {
       batch.delete(doc.ref)
     })
@@ -216,7 +219,8 @@ export const updateGameParticipantStack = async (
   }
 
   try {
-    const db = checkFirebaseConfig();
+    const db = getDb();
+    if (!db) throw new Error("Database not initialized");
     const gameRef = doc(db, "games", gameId);
     const gameSnap = await getDoc(gameRef);
 
