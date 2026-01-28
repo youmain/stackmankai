@@ -101,11 +101,11 @@ export const deletePost = async (id: string): Promise<void> => {
 
 // --- Chat Functions ---
 
-export const subscribeToChatMessages = (
-  storeId: string,
-  callback: (messages: any[]) => void,
-): (() => void) => {
-  if (!isFirebaseConfigured) {
+export const subscribeToChatMessages = (arg1: any, arg2?: any): (() => void) => {
+  const storeId = typeof arg1 === "string" ? arg1 : (typeof arg2 === "string" ? arg2 : null);
+  const callback = typeof arg1 === "function" ? arg1 : (typeof arg2 === "function" ? arg2 : () => {});
+
+  if (!isFirebaseConfigured() || !storeId) {
     callback([])
     return () => {}
   }
@@ -144,11 +144,11 @@ export const addChatMessage = async (message: string, userId: string, userName: 
 
 // --- Active Users Functions ---
 
-export const subscribeToActiveUsers = (
-  storeId: string,
-  callback: (users: any[]) => void,
-): (() => void) => {
-  if (!isFirebaseConfigured) {
+export const subscribeToActiveUsers = (arg1: any, arg2?: any): (() => void) => {
+  const storeId = typeof arg1 === "string" ? arg1 : (typeof arg2 === "string" ? arg2 : null);
+  const callback = typeof arg1 === "function" ? arg1 : (typeof arg2 === "function" ? arg2 : () => {});
+
+  if (!isFirebaseConfigured() || !storeId) {
     callback([])
     return () => {}
   }
@@ -196,12 +196,11 @@ export const removeActiveUser = async (gameId: string, userId: string): Promise<
 // --- Other Functions ---
 
 
-export const subscribeToUserPosts = (
-  userId: string,
-  callback: (posts: Post[]) => void
-): (() => void) => {
-  if (!isFirebaseConfigured) {
-    console.log("[v0] Mock environment: Skipping user posts subscription");
+export const subscribeToUserPosts = (arg1: any, arg2?: any): (() => void) => {
+  const userId = typeof arg1 === "string" ? arg1 : (typeof arg2 === "string" ? arg2 : null);
+  const callback = typeof arg1 === "function" ? arg1 : (typeof arg2 === "function" ? arg2 : () => {});
+
+  if (!isFirebaseConfigured() || !userId) {
     callback([]);
     return () => {};
   }
@@ -312,10 +311,10 @@ export const getPostById = async (postId: string): Promise<Post | null> => {
 };
 
 
-export const subscribeToStorePosts = (
-  callback: (posts: Post[]) => void,
-  storeId?: string | null,
-): (() => void) => {
+export const subscribeToStorePosts = (arg1: any, arg2?: any): (() => void) => {
+  const callback = typeof arg1 === "function" ? arg1 : (typeof arg2 === "function" ? arg2 : () => {});
+  const storeId = typeof arg1 === "string" ? arg1 : (typeof arg2 === "string" ? arg2 : null);
+
   if (!isFirebaseConfigured) {
     callback([])
     return () => {}
