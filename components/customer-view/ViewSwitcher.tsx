@@ -115,24 +115,24 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
 
   // ランキング計算 (page.tsxのロジックを再現)
   const rankings = useMemo(() => {
-    if (!players || players.length === 0) return []
-    return calculateRankings(players, dailyRankings)
-  }, [players, dailyRankings])
+    if (!rakeHistory || rakeHistory.length === 0) return []
+    return calculateRankings(rakeHistory, players)
+  }, [rakeHistory, players])
 
   const winRateRankings = useMemo(() => {
-    if (!players || players.length === 0) return []
-    return getWinRateRankings(players, dailyRankings)
-  }, [players, dailyRankings])
+    if (!rankings || rankings.length === 0) return []
+    return getWinRateRankings(rankings)
+  }, [rankings])
 
   const maxWinRankings = useMemo(() => {
-    if (!players || players.length === 0) return []
-    return getMaxWinRankings(players, dailyRankings)
-  }, [players, dailyRankings])
+    if (!rankings || rankings.length === 0) return []
+    return getMaxWinRankings(rankings)
+  }, [rankings])
 
   const winStreakRankings = useMemo(() => {
-    if (!players || players.length === 0) return []
-    return getWinStreakRankings(players, dailyRankings)
-  }, [players, dailyRankings])
+    if (!rankings || rankings.length === 0) return []
+    return getWinStreakRankings(rankings)
+  }, [rankings])
 
   // 月間ポイントランキング (page.tsxのロジックを再現)
   const monthlyPointRankings = useMemo(() => {
