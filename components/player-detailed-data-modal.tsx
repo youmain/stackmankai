@@ -53,12 +53,12 @@ function PlayerDetailedDataModal({
         }
 
         // 各種データの購読開始
-        const unsubscribeReceipts = subscribeToReceipts(setReceipts)
-        const unsubscribeDailyRankings = subscribeToDailyRankings(setDailyRankings)
+        const unsubscribeReceipts = subscribeToReceipts(null, setReceipts)
+        const unsubscribeDailyRankings = subscribeToDailyRankings(null, setDailyRankings)
         const currentYear = new Date().getFullYear()
         const currentMonth = new Date().getMonth() + 1
-        const unsubscribeMonthlyPoints = subscribeToMonthlyPoints(currentYear, currentMonth, setMonthlyPoints)
-        const unsubscribePointHistory = subscribeToPointHistory(passedPlayer.id, setPointHistory)
+        const unsubscribeMonthlyPoints = subscribeToMonthlyPoints(null, currentYear, currentMonth, setMonthlyPoints)
+        const unsubscribePointHistory = subscribeToPointHistory(null, passedPlayer.id, setPointHistory)
         const unsubscribeStores = subscribeToStores(setStores)
 
         setLoading(false)
