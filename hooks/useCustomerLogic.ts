@@ -25,7 +25,8 @@ export const useCustomerLogic = ({
 }: UseCustomerLogicProps): UseCustomerLogicReturn => {
 
   const getDisplayName = (player: Player) => {
-    return player.pokerName || player.name || `プレイヤー${player.id}`
+    if (!player) return "不明なプレイヤー";
+    return player.pokerName || player.name || `プレイヤー${player.id || ""}`
   }
 
   const getPlayerName = (player: any): string => {
