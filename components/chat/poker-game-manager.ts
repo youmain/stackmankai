@@ -60,19 +60,21 @@ export async function initGame(
 }
 
 export async function handleJoinSeat(
+  storeId: string | undefined,
   pokerGameId: string | null,
   seatIndex: number,
   customerId: string | undefined,
   customerName: string | undefined,
   setError: (error: string) => void,
+  buyIn: number = 2000,
 ): Promise<void> {
-  if (!pokerGameId || !customerId || !customerName) {
+  if (!storeId || !pokerGameId || !customerId || !customerName) {
     setError("必要な情報が不足しています")
     return
   }
 
   try {
-    await joinPokerGame(pokerGameId, customerId, customerName, seatIndex)
+    await joinPokerGame(storeId, pokerGameId, customerId, customerName, seatIndex, buyIn)
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : "座席への参加に失敗しました"
     setError(errorMessage)
@@ -81,17 +83,18 @@ export async function handleJoinSeat(
 }
 
 export async function handleLeaveSeat(
+  storeId: string | undefined,
   pokerGameId: string | null,
   customerId: string | undefined,
   setError: (error: string) => void,
 ): Promise<void> {
-  if (!pokerGameId || !customerId) {
+  if (!storeId || !pokerGameId || !customerId) {
     setError("必要な情報が不足しています")
     return
   }
 
   try {
-    await leavePokerGame(pokerGameId, customerId)
+    await leavePokerGame(storeId, pokerGameId, customerId)
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : "座席からの退出に失敗しました"
     setError(errorMessage)
@@ -100,16 +103,17 @@ export async function handleLeaveSeat(
 }
 
 export async function handleStartGame(
+  storeId: string | undefined,
   pokerGameId: string | null,
   setError: (error: string) => void,
 ): Promise<void> {
-  if (!pokerGameId) {
-    setError("ゲームIDが不足しています")
+  if (!storeId || !pokerGameId) {
+    setError("必要な情報が不足しています")
     return
   }
 
   try {
-    await startNewHand(pokerGameId)
+    await startNewHand(storeId, pokerGameId)
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : "ゲーム開始に失敗しました"
     setError(errorMessage)
@@ -118,18 +122,20 @@ export async function handleStartGame(
 }
 
 export async function handlePokerAction(
+  storeId: string | undefined,
   pokerGameId: string | null,
-  action: string,
+  userId: string | undefined,
+  action: any,
   amount?: number,
   setError?: (error: string) => void,
 ): Promise<void> {
-  if (!pokerGameId) {
-    setError?.("ゲームIDが不足しています")
+  if (!storeId || !pokerGameId || !userId) {
+    setError?.("必要な情報が不足しています")
     return
   }
 
   try {
-    await performAction(pokerGameId, action, amount)
+    await performAction(storeId, pokerGameId, userId, action, amount)
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : "アクション実行に失敗しました"
     setError?.(errorMessage)
@@ -157,17 +163,18 @@ export async function handleTimeout(
 }
 
 export async function handleReadyNextHand(
+  storeId: string | undefined,
   pokerGameId: string | null,
   customerId: string | undefined,
   setError: (error: string) => void,
 ): Promise<void> {
-  if (!pokerGameId || !customerId) {
+  if (!storeId || !pokerGameId || !customerId) {
     setError("必要な情報が不足しています")
     return
   }
 
   try {
-    await startNewHand(pokerGameId)
+    await startNewHand(storeId, pokerGameId)
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : "次のハンド開始に失敗しました"
     setError(errorMessage)

@@ -293,12 +293,12 @@ export function ChatRoomDualMode({ onViewModeChange }: { onViewModeChange?: (mod
               <PokerTable
                 game={pokerGame}
                 currentUserId={customerAccount?.id || ""}
-                onAction={(action, amount) => handlePokerAction(pokerGameId, action, amount, setError)}
-                onJoinSeat={(seatIndex) => handleJoinSeat(pokerGameId, seatIndex, customerAccount?.id, customerAccount?.playerName, setError)}
-                onLeaveSeat={() => handleLeaveSeat(pokerGameId, customerAccount?.id, setError)}
-                onStartGame={() => handleStartGame(pokerGameId, setError)}
+                onAction={(action, amount) => handlePokerAction(customerAccount?.storeId, pokerGameId, customerAccount?.id, action, amount, setError)}
+                onJoinSeat={(seatIndex) => handleJoinSeat(customerAccount?.storeId, pokerGameId, seatIndex, customerAccount?.id, customerAccount?.playerName, setError)}
+                onLeaveSeat={() => handleLeaveSeat(customerAccount?.storeId, pokerGameId, customerAccount?.id, setError)}
+                onStartGame={() => handleStartGame(customerAccount?.storeId, pokerGameId, setError)}
                 onTimeout={() => handleTimeout(pokerGameId, customerAccount?.id, setError)}
-                onReadyNextHand={() => handleReadyNextHand(pokerGameId, customerAccount?.id, setError)}
+                onReadyNextHand={() => handleReadyNextHand(customerAccount?.storeId, pokerGameId, customerAccount?.id, setError)}
                 onResetGame={() => handleResetGame(pokerGameId, setError)}
               />
             </CardContent>
