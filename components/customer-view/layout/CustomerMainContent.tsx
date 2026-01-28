@@ -195,13 +195,20 @@ export const CustomerMainContent: React.FC<CustomerMainContentProps> = ({
                             {history.type === "earn" ? "獲得" : "使用"}
                           </Badge>
                           <span className="text-sm text-gray-600">
-                            {history.createdAt?.toLocaleString("ja-JP", {
-                              year: "numeric",
-                              month: "2-digit",
-                              day: "2-digit",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
+                            {(() => {
+                              try {
+                                const date = history.createdAt?.toDate ? history.createdAt.toDate() : (history.createdAt ? new Date(history.createdAt) : new Date());
+                                return date.toLocaleString("ja-JP", {
+                                  year: "numeric",
+                                  month: "2-digit",
+                                  day: "2-digit",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                });
+                              } catch (e) {
+                                return "----/--/-- --:--";
+                              }
+                            })()}
                           </span>
                         </div>
                         <p className="text-sm text-gray-700 mt-1">{history.reason}</p>
