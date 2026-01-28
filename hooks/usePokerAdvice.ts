@@ -52,9 +52,11 @@ export const usePokerAdvice = (params: UsePokerAdviceParams) => {
 
     try {
       // エクイティを計算（簡略版）
+      // calculateEquity は usePokerAdvice の外で定義されているため、useCallback の依存配列に含める必要はない
       const equity = calculateEquity(params.playerCards, params.communityCards)
 
       // ポットオッズを計算
+      // calculatePotOdds は usePokerAdvice の外で定義されているため、useCallback の依存配列に含める必要はない
       const potOdds = calculatePotOdds(params.potSize, params.playerStack)
 
       // プレイヤーハンドを構築

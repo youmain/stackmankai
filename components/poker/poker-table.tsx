@@ -210,22 +210,33 @@ export function PokerTable({ game, currentUserId, onAction, onJoinSeat, onLeaveS
   const [advisorType, setAdvisorType] = useState<AdvisorType>("balanced")
   
   // AIアドバイザーの引数を準備
-  const currentPlayerForAdvice = game?.players.find(p => p.userId === currentUserId);
-  const opponentForAdvice = game?.players.find(p => p.userId !== currentUserId);
+  // 相手は複数いる可能性があるため、ここでは最初の相手を選択（簡略化のため）
+  const opponentForAdvice = game?.players.find(p => p.userId !== currentUserId && p.seatNumber !== null);
   
   const { advice, loading: isAdviceLoading, error: adviceError, generateAdvice } = usePokerAdvice({
-    storeId: "default",
-    gameId: "default",
+    storeId: "default", // 実際には game.storeId を使用すべきだが、ここでは一旦 "default"
+    gameId: game?.id || "default", // game.id を使用
     playerId: currentUserId,
-    playerCards: currentPlayerForAdvice?.cards || [],
+    playerCards: game?.players.find(p => p.userId === currentUserId)?.cards || [],
     communityCards: game?.communityCards || [],
     potSize: game?.pot || 0,
-    playerStack: currentPlayerForAdvice?.stack || 0,
+    playerStack: game?.players.find(p => p.userId === currentUserId)?.stack || 0,
     opponentStack: opponentForAdvice?.stack || 0,
     gamePhase: game?.phase || "waiting",
     opponentId: opponentForAdvice?.userId,
     advisorType
   })
+
+  // 自分のターンかどうかを判定する useMemo を追加
+  const isMyTurn = useMemo(() => {
+    if (!game) return false
+    const currentPlayer = game.players.find(p => p.userId === currentUserId)
+    return currentPlayer && 
+           game.currentPlayerIndex !== undefined && 
+           game.players[game.currentPlayerIndex]?.userId === currentUserId && 
+           game.phase !== "waiting" && 
+           game.phase !== "showdown"
+  }, [game, currentUserId])
 
   // 自分のターンになったらアドバイスを自動生成
   useEffect(() => {
@@ -319,7 +330,7 @@ export function PokerTable({ game, currentUserId, onAction, onJoinSeat, onLeaveS
   }
   
   const currentPlayer = game.players.find(p => p.userId === currentUserId)
-  const isMyTurn = currentPlayer && game.currentPlayerIndex !== undefined && game.players[game.currentPlayerIndex]?.userId === currentUserId && game.phase !== "waiting" && game.phase !== "showdown"
+  // isMyTurn は useMemo で定義済み
   
   // デバッグログ
   console.log('[PokerTable] Debug:', {

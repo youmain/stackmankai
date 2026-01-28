@@ -25,23 +25,6 @@ export const useCustomerState = () => {
   const { customerAccount, setCustomerAccount, signOut } = useAuth()
   const router = useRouter()
 
-  // --- 5. Computed Values (Time) ---
-  const currentDate = useMemo(() => new Date(), [])
-  const currentYear = useMemo(() => currentDate.getFullYear(), [currentDate])
-  const currentMonth = useMemo(() => currentDate.getMonth() + 1, [currentDate])
-  const currentMonthStr = useMemo(() => currentDate.toISOString().slice(0, 7), [currentDate]) // YYYY-MM
-  const today = useMemo(() => new Date(), [])
-
-
-
-
-
-
-
-
-
-
-
   // --- 1. View State ---
   const [viewMode, setViewMode] = useState<"main" | "posts" | "my-posts" | "post-detail" | "ai-players" | "chat">("main")
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null)
@@ -94,13 +77,19 @@ export const useCustomerState = () => {
   const [isCancelling, setIsCancelling] = useState(false)
   const [showPlayerLinkModal, setShowPlayerLinkModal] = useState(false)
 
-
+  // --- 5. Computed Values (Time) ---
+  // Dateオブジェクトはレンダリングごとに新しいインスタンスになるため、useMemoでラップし、依存配列を空にする
+  const currentDate = useMemo(() => new Date(), [])
+  const currentYear = useMemo(() => currentDate.getFullYear(), [currentDate])
+  const currentMonth = useMemo(() => currentDate.getMonth() + 1, [currentDate])
+  const currentMonthStr = useMemo(() => currentDate.toISOString().slice(0, 7), [currentDate]) // YYYY-MM
+  const today = useMemo(() => new Date(), [])
 
   // --- 6. Initial Load Effects (from page.tsx) ---
 
   // forceResetパラメータでゲームをリセット（一時的な機能）
   useEffect(() => {
-    if (!customerAccount?.storeId) return
+    if (!customerAccount?.storeId || typeof window === 'undefined') return // windowの存在チェックを追加
     const urlParams = new URLSearchParams(window.location.search)
     if (urlParams.get("forceReset") === "true") {
       const storageKey = `pokerGameId_${customerAccount.storeId}`
@@ -114,17 +103,19 @@ export const useCustomerState = () => {
 
   // localStorageとURLパラメータからviewModeを読み取る
   useEffect(() => {
+    if (typeof window === 'undefined') return // windowの存在チェックを追加
+    
     // まずlocalStorageから復元
     const saved = localStorage.getItem("customerViewMode")
-    if (saved === "chat" || saved === "posts" || saved === "my-posts" || saved === "ai-players") {
-      setViewMode(saved)
+    if (saved === "chat" || saved === "posts" || saved === "my-posts" || saved === "post-detail" || saved === "ai-players") {
+      setViewMode(saved as any)
     }
     
     // URLパラメータがあればそちらを優先
     const urlParams = new URLSearchParams(window.location.search)
     const viewModeParam = urlParams.get("viewMode")
-    if (viewModeParam === "chat" || viewModeParam === "posts" || viewModeParam === "my-posts" || viewModeParam === "ai-players") {
-      setViewMode(viewModeParam)
+    if (viewModeParam === "chat" || viewModeParam === "posts" || viewModeParam === "my-posts" || viewModeParam === "post-detail" || viewModeParam === "ai-players") {
+      setViewMode(viewModeParam as any)
     }
   }, [])
 
@@ -144,23 +135,22 @@ export const useCustomerState = () => {
   }, [])
 
   // --- 7. Data Subscription Effects ---
+  
+  // プレイヤーデータの購読
   useEffect(() => {
-    // プレイヤーデータの購読
+    if (!customerAccount) {
+      return;
+    }
+    
     // storeIdがある場合はその店舗のプレイヤーのみ、ない場合は全プレイヤー（紐付け用）
-    const storeId = customerAccount?.storeId || undefined;
+    const storeId = customerAccount.storeId || undefined;
 
     const unsubscribe = subscribeToPlayers((newPlayers) => {
       setPlayers(newPlayers || [])
-      setDataLoaded(prev => {
-        if (prev.players) return prev;
-        return { ...prev, players: true };
-      })
+      setDataLoaded(prev => ({ ...prev, players: true }));
     }, (error) => {
       console.error("Players subscription error:", error);
-      setDataLoaded(prev => {
-        if (prev.players) return prev;
-        return { ...prev, players: true };
-      })
+      setDataLoaded(prev => ({ ...prev, players: true }));
     }, storeId)
 
     return () => {
@@ -168,22 +158,20 @@ export const useCustomerState = () => {
         unsubscribe();
       }
     }
-  }, [customerAccount?.storeId])
+  }, [customerAccount])
 
   // 顧客アカウントのロード状態管理
   useEffect(() => {
     if (customerAccount) {
-      setDataLoaded(prev => {
-        if (prev.customers) return prev;
-        return { ...prev, customers: true };
-      })
+      setDataLoaded(prev => ({ ...prev, customers: true }));
+    } else {
+      setDataLoaded(prev => ({ ...prev, customers: true }));
     }
-  }, [customerAccount?.id]) // IDのみを監視して無限ループを防止
+  }, [customerAccount?.id])
 
   // 全体のロード状態を更新
   useEffect(() => {
     if (dataLoaded.players && dataLoaded.customers) {
-      // わずかな遅延を入れてレンダリングの安定を図る
       const timer = setTimeout(() => {
         setIsLoading(false)
       }, 100)
