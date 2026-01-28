@@ -40,6 +40,7 @@ import {
   handleResetGame,
   getRemainingTimeForGame,
 } from "@/components/chat/poker-game-manager"
+import { subscribeToPokerGame } from "@/lib/poker-game"
 
 export function ChatRoomDualMode({ onViewModeChange }: { onViewModeChange?: (mode: any) => void }) {
   const { customerAccount } = useAuth()
@@ -211,7 +212,7 @@ export function ChatRoomDualMode({ onViewModeChange }: { onViewModeChange?: (mod
 
   // Initialize poker game
   useEffect(() => {
-    if (!customerAccount?.storeId) return
+    if (!customerAccount?.storeId || !customerAccount?.id) return
 
     initGame(
       customerAccount.storeId,
@@ -221,6 +222,21 @@ export function ChatRoomDualMode({ onViewModeChange }: { onViewModeChange?: (mod
       setError
     )
   }, [customerAccount?.storeId, customerAccount?.id])
+
+  // Subscribe to poker game updates
+  useEffect(() => {
+    if (!pokerGameId) return
+
+    const unsubscribe = subscribeToPokerGame(pokerGameId, (updatedGame) => {
+      setPokerGame(updatedGame)
+    })
+
+    return () => {
+      if (typeof unsubscribe === 'function') {
+        unsubscribe()
+      }
+    }
+  }, [pokerGameId])
 
   // Handle send message
   const handleSendMessageClick = useCallback(async (e?: React.FormEvent) => {
