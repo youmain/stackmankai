@@ -68,7 +68,7 @@ export const useCustomerHandlers = (props: CustomerHandlersProps) => {
 
   // 1. 支払い完了処理
   const handlePaymentCompletion = useCallback(async () => {
-    if (!customerAccount) return
+    if (!customerAccount || !customerAccount.id) return
 
     try {
       // サーバーサイドのAPIを叩く、Firebaseのデータを更新するなど
@@ -76,7 +76,9 @@ export const useCustomerHandlers = (props: CustomerHandlersProps) => {
       
       // 顧客アカウントのhasCompletedPaymentをtrueに更新
       await updateCustomerAccount(customerAccount.id, { hasCompletedPayment: true })
-      setCustomerAccount((prev) => prev ? { ...prev, hasCompletedPayment: true } : null)
+      if (typeof setCustomerAccount === 'function') {
+        setCustomerAccount((prev: any) => prev ? { ...prev, hasCompletedPayment: true } : null)
+      }
 
       // プレイヤー紐づけがスキップ設定されている場合は、ここで紐づけ処理をスキップ
       if (skipLinkingAfterSuccess) {
@@ -85,7 +87,9 @@ export const useCustomerHandlers = (props: CustomerHandlersProps) => {
       }
 
       // 紐づけ処理へ
-      setShowPlayerLinkModal(true)
+      if (typeof setShowPlayerLinkModal === 'function') {
+        setShowPlayerLinkModal(true)
+      }
     } catch (error) {
       console.error('Error updating payment status:', error)
     }
