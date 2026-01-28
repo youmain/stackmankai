@@ -16,6 +16,8 @@ import { getDb, isFirebaseConfigured } from "./firebase"
 import {
   getPlayersCollection,
   deleteCustomerAccount,
+  safeQuery,
+  safeOnSnapshot,
 } from "./firestore-common"
 import { validateId } from "./validation"
 import { createModuleLogger } from "./logger"
@@ -55,13 +57,11 @@ export const subscribeToPlayers = (
 
   try {
     const playersCol = getPlayersCollection()
-    if (!playersCol) return () => {}
-
     const q = storeId 
-      ? query(playersCol, where("storeId", "==", storeId), orderBy("name"))
-      : query(playersCol, orderBy("name"))
+      ? safeQuery(playersCol, where("storeId", "==", storeId), orderBy("name"))
+      : safeQuery(playersCol, orderBy("name"))
 
-    const unsubscribe = onSnapshot(
+    const unsubscribe = safeOnSnapshot(
       q,
       (snapshot) => {
         const players = snapshot.docs.map((doc) => ({

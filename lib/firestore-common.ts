@@ -5,7 +5,14 @@ import {
   setDoc,
   deleteDoc,
   serverTimestamp,
-  type Firestore
+  query as firestoreQuery,
+  where as firestoreWhere,
+  orderBy as firestoreOrderBy,
+  limit as firestoreLimit,
+  onSnapshot as firestoreOnSnapshot,
+  type Firestore,
+  type CollectionReference,
+  type Query
 } from "firebase/firestore"
 import { getDb } from "./firebase"
 
@@ -14,90 +21,101 @@ const getSafeDb = (): Firestore | null => {
   return getDb()
 }
 
+// 安全なラッパー関数
+export const safeQuery = (collectionRef: CollectionReference | null, ...queryConstraints: any[]): Query | null => {
+  if (!collectionRef) return null;
+  return firestoreQuery(collectionRef, ...queryConstraints);
+};
+
+export const safeOnSnapshot = (query: Query | null, onNext: (snapshot: any) => void, onError?: (error: any) => void): (() => void) => {
+  if (!query) return () => {};
+  return firestoreOnSnapshot(query, onNext, onError);
+};
+
 // 各コレクション取得関数を安全に定義
 export const getPlayersCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "players") : null as any
+  return safeDb ? collection(safeDb, "players") : null
 }
 
 export const getPointHistoryCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "pointHistory") : null as any
+  return safeDb ? collection(safeDb, "pointHistory") : null
 }
 
 export const getUsersCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "users") : null as any
+  return safeDb ? collection(safeDb, "users") : null
 }
 
 export const getGamesCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "games") : null as any
+  return safeDb ? collection(safeDb, "games") : null
 }
 
 export const getTransactionsCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "transactions") : null as any
+  return safeDb ? collection(safeDb, "transactions") : null
 }
 
 export const getGameTransactionsCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "gameTransactions") : null as any
+  return safeDb ? collection(safeDb, "gameTransactions") : null
 }
 
 export const getRakeHistoryCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "rakeHistory") : null as any
+  return safeDb ? collection(safeDb, "rakeHistory") : null
 }
 
 export const getReceiptsCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "receipts") : null as any
+  return safeDb ? collection(safeDb, "receipts") : null
 }
 
 export const getReceiptItemsCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "receiptItems") : null as any
+  return safeDb ? collection(safeDb, "receiptItems") : null
 }
 
 export const getDailySalesCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "dailySales") : null as any
+  return safeDb ? collection(safeDb, "dailySales") : null
 }
 
 export const getStoreRankingSettingsCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "storeRankingSettings") : null as any
+  return safeDb ? collection(safeDb, "storeRankingSettings") : null
 }
 
 export const getCustomerAccountsCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "customerAccounts") : null as any
+  return safeDb ? collection(safeDb, "customerAccounts") : null
 }
 
 export const getPostsCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "posts") : null as any
+  return safeDb ? collection(safeDb, "posts") : null
 }
 
 export const getPaymentHistoryCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "paymentHistory") : null as any
+  return safeDb ? collection(safeDb, "paymentHistory") : null
 }
 
 export const getDailyRankingsCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "dailyRankings") : null as any
+  return safeDb ? collection(safeDb, "dailyRankings") : null
 }
 
 export const getMonthlyRankingsCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "monthlyRankings") : null as any
+  return safeDb ? collection(safeDb, "monthlyRankings") : null
 }
 
 export const getMonthlyPointsCollection = () => {
   const safeDb = getSafeDb()
-  return safeDb ? collection(safeDb, "monthlyPoints") : null as any
+  return safeDb ? collection(safeDb, "monthlyPoints") : null
 }
 
 // パスワード関連
