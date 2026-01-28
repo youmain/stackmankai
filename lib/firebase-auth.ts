@@ -5,6 +5,7 @@ import {
   getRedirectResult,
   GoogleAuthProvider,
   signOut,
+  onAuthStateChanged as onAuthStateChangedFn,
   type User,
   type UserCredential,
 } from "firebase/auth"
@@ -183,13 +184,12 @@ export async function getGoogleRedirectResult(): Promise<UserCredential | null> 
 /**
  * 認証状態の変更を監視
  */
-export function onAuthStateChanged(callback: (user: User | null) => void): () => void {
+export function onAuthStateChanged(callback: (user: User | null) => void): (() => void) {
   const auth = getAuthInstance()
   if (!auth) {
     throw new Error("Firebase Authが初期化されていません")
   }
 
-  const { onAuthStateChanged: onAuthStateChangedFn } = require("firebase/auth")
   return onAuthStateChangedFn(auth, callback)
 }
 
@@ -219,7 +219,6 @@ export async function waitForAuthState(expectedUid?: string, timeoutMs: number =
       reject(new Error(`認証状態の待機がタイムアウトしました (${timeoutMs}ms)`))
     }, timeoutMs)
 
-    const { onAuthStateChanged: onAuthStateChangedFn } = require("firebase/auth")
     const unsubscribe = onAuthStateChangedFn(auth, (user: User | null) => {
       // 期待するUIDが指定されている場合
       if (expectedUid) {
