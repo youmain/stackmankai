@@ -1,21 +1,4 @@
-import {
-  Timestamp,
-  doc,
-  getDoc,
-  updateDoc,
-  serverTimestamp,
-  getDocs,
-  query,
-  where,
-  orderBy,
-  limit,
-  addDoc,
-  onSnapshot,
-  collection,
-  deleteDoc,
-  setDoc,
-  writeBatch,
-} from "firebase/firestore"
+import * as firestore from "firebase/firestore"
 import { getDb, isFirebaseConfigured } from "./firebase"
 import {
   getCustomerAccountsCollection,
@@ -96,7 +79,7 @@ export const subscribeToCustomerAccount = (arg1: any, arg2?: any): (() => void) 
     return () => {};
   }
   
-  const customerDocRef = doc(db, "customerAccounts", uid);
+  const customerDocRef = firestore.doc(db, "customerAccounts", uid);
 
   try {
     return safeOnSnapshot(customerDocRef as any, (docSnap) => {
@@ -123,10 +106,11 @@ export const createCustomerAccount = async (account: Omit<CustomerAccount, "id">
   }
   try {
     const accountsCollection = getCustomerAccountsCollection()
-    const docRef = await addDoc(accountsCollection, {
+    if (!accountsCollection) throw new Error("Database not initialized")
+    const docRef = await firestore.addDoc(accountsCollection, {
       ...account,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
+      createdAt: firestore.serverTimestamp(),
+      updatedAt: firestore.serverTimestamp(),
     })
     return docRef.id
   } catch (error) {
@@ -141,8 +125,10 @@ export const getCustomerAccount = async (id: string): Promise<CustomerAccount | 
     return null
   }
   try {
-    const accountRef = doc(getCustomerAccountsCollection(), id)
-    const accountSnap = await getDoc(accountRef)
+    const accountsCollection = getCustomerAccountsCollection()
+    if (!accountsCollection) return null
+    const accountRef = firestore.doc(accountsCollection, id)
+    const accountSnap = await firestore.getDoc(accountRef)
     if (!accountSnap.exists()) {
       return null
     }
@@ -157,8 +143,10 @@ export const getCustomerAccount = async (id: string): Promise<CustomerAccount | 
 export const updateCustomerAccount = async (id: string, updates: Partial<CustomerAccount>): Promise<void> => {
   if (!isFirebaseConfigured()) return
   try {
-    const accountRef = doc(getCustomerAccountsCollection(), id)
-    await updateDoc(accountRef, { ...updates, updatedAt: serverTimestamp() })
+    const accountsCollection = getCustomerAccountsCollection()
+    if (!accountsCollection) return
+    const accountRef = firestore.doc(accountsCollection, id)
+    await firestore.updateDoc(accountRef, { ...updates, updatedAt: firestore.serverTimestamp() })
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
     log.error("[ERROR] 顧客アカウント更新に失敗しました", { error: errorMessage, id })
@@ -169,7 +157,9 @@ export const updateCustomerAccount = async (id: string, updates: Partial<Custome
 export const deleteCustomerAccount = async (id: string): Promise<void> => {
   if (!isFirebaseConfigured()) return
   try {
-    await deleteDoc(doc(getCustomerAccountsCollection(), id))
+    const accountsCollection = getCustomerAccountsCollection()
+    if (!accountsCollection) return
+    await firestore.deleteDoc(firestore.doc(accountsCollection, id))
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
     log.error("[ERROR] 顧客アカウント削除に失敗しました", { error: errorMessage, id })
@@ -184,9 +174,9 @@ export const subscribeToCustomerAccounts = (arg1: any): (() => void) => {
     return () => {}
   }
   const accountsCollection = getCustomerAccountsCollection()
-  const q = safeQuery(accountsCollection, orderBy("createdAt", "desc"))
+  const q = safeQuery(accountsCollection, firestore.orderBy("createdAt", "desc"))
   return safeOnSnapshot(q, (snapshot) => {
-    const customers = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as CustomerAccount)
+    const customers = snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }) as CustomerAccount)
     callback(customers)
   })
 }
@@ -200,9 +190,10 @@ export const addPaymentHistory = async (history: Omit<PaymentHistory, "id">): Pr
   }
   try {
     const historyCollection = getPaymentHistoryCollection()
-    const docRef = await addDoc(historyCollection, {
+    if (!historyCollection) throw new Error("Database not initialized")
+    const docRef = await firestore.addDoc(historyCollection, {
       ...history,
-      createdAt: serverTimestamp(),
+      createdAt: firestore.serverTimestamp(),
     })
     return docRef.id
   } catch (error) {
@@ -221,9 +212,9 @@ export const subscribeToPlayerPurchaseHistory = (arg1: any, arg2?: any): (() => 
     return () => {}
   }
   const historyCollection = getPaymentHistoryCollection()
-  const q = safeQuery(historyCollection, where("playerId", "==", playerId), orderBy("createdAt", "desc"))
+  const q = safeQuery(historyCollection, firestore.where("playerId", "==", playerId), firestore.orderBy("createdAt", "desc"))
   return safeOnSnapshot(q, (snapshot) => {
-    const history = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as PaymentHistory)
+    const history = snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }) as PaymentHistory)
     callback(history)
   })
 }
@@ -237,8 +228,9 @@ export const getCustomerByEmail = async (email: string): Promise<CustomerAccount
   }
   try {
     const customersCollection = getCustomerAccountsCollection();
-    const q = query(customersCollection, where("email", "==", email));
-    const snapshot = await getDocs(q);
+    if (!customersCollection) return null
+    const q = firestore.query(customersCollection, firestore.where("email", "==", email));
+    const snapshot = await firestore.getDocs(q);
     if (snapshot.empty) return null;
     const doc = snapshot.docs[0];
     return { id: doc.id, ...doc.data() } as CustomerAccount;
@@ -273,25 +265,26 @@ export const createCustomerInFirestore = async (
 
   try {
     const accountsCollection = getCustomerAccountsCollection()
+    if (!accountsCollection) throw new Error("Database not initialized")
     
     // uid が指定されている場合は、そのIDで作成
     if (uid) {
-      const docRef = doc(accountsCollection, uid)
-      await setDoc(docRef, {
+      const docRef = firestore.doc(accountsCollection, uid)
+      await firestore.setDoc(docRef, {
         ...accountData,
         email,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
+        createdAt: firestore.serverTimestamp(),
+        updatedAt: firestore.serverTimestamp(),
       })
       return uid
     }
 
     // uid が指定されていない場合は、自動生成
-    const docRef = await addDoc(accountsCollection, {
+    const docRef = await firestore.addDoc(accountsCollection, {
       ...accountData,
       email,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
+      createdAt: firestore.serverTimestamp(),
+      updatedAt: firestore.serverTimestamp(),
     })
     return docRef.id
   } catch (error) {

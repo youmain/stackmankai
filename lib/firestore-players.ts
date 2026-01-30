@@ -1,4 +1,4 @@
-import { doc, getDoc, addDoc, updateDoc, deleteDoc, serverTimestamp, where, orderBy, writeBatch, getDocs, query } from "firebase/firestore"
+import * as firestore from "firebase/firestore"
 import { getDb, isFirebaseConfigured } from "./firebase"
 import {
   getPlayersCollection,
@@ -49,17 +49,14 @@ export const subscribeToPlayers = (
       return () => {};
     }
     
-    const whereFn = where;
-    const orderByFn = orderBy;
-    
-    if (typeof whereFn !== 'function' || typeof orderByFn !== 'function' || typeof query !== 'function' || typeof safeQuery !== 'function' || typeof safeOnSnapshot !== 'function') {
+    if (typeof firestore.where !== 'function' || typeof firestore.orderBy !== 'function' || typeof firestore.query !== 'function' || typeof safeQuery !== 'function' || typeof safeOnSnapshot !== 'function') {
       console.warn("[subscribeToPlayers] Firebase query/snapshot functions are not available.");
       return () => {};
     }
 
-    const queryConstraints = [orderByFn("name")];
+    const queryConstraints = [firestore.orderBy("name")];
     if (storeId) {
-      queryConstraints.unshift(whereFn("storeId", "==", storeId));
+      queryConstraints.unshift(firestore.where("storeId", "==", storeId));
     }
 
     const q = safeQuery(playersCol, ...queryConstraints);
@@ -96,8 +93,8 @@ export const getPlayer = async (id: string): Promise<Player | null> => {
   }
   try {
     const playersCol = getPlayersCollection()
-    if (!playersCol || typeof doc !== 'function' || typeof getDoc !== 'function') return null
-    const playerSnap = await getDoc(doc(playersCol, validateId(id, "プレイヤーID")))
+    if (!playersCol || typeof firestore.doc !== 'function' || typeof firestore.getDoc !== 'function') return null
+    const playerSnap = await firestore.getDoc(firestore.doc(playersCol, validateId(id, "プレイヤーID")))
     return playerSnap.exists() ? ({ id: playerSnap.id, ...playerSnap.data() } as Player) : null
   } catch (error) {
     log.error("プレイヤー取得失敗:", error)
@@ -108,11 +105,11 @@ export const getPlayer = async (id: string): Promise<Player | null> => {
 export const addPlayer = async (player: Omit<Player, "id">): Promise<string> => {
   if (!isFirebaseConfigured() || !getDb()) return `mock_${Date.now()}`
   const playersCol = getPlayersCollection()
-  if (!playersCol || typeof addDoc !== 'function') throw new Error("Database not initialized")
-  const docRef = await addDoc(playersCol, { 
+  if (!playersCol || typeof firestore.addDoc !== 'function') throw new Error("Database not initialized")
+  const docRef = await firestore.addDoc(playersCol, { 
     ...player, 
-    createdAt: typeof serverTimestamp === 'function' ? serverTimestamp() : new Date(), 
-    updatedAt: typeof serverTimestamp === 'function' ? serverTimestamp() : new Date() 
+    createdAt: typeof firestore.serverTimestamp === 'function' ? firestore.serverTimestamp() : new Date(), 
+    updatedAt: typeof firestore.serverTimestamp === 'function' ? firestore.serverTimestamp() : new Date() 
   })
   return docRef.id
 }
@@ -120,18 +117,18 @@ export const addPlayer = async (player: Omit<Player, "id">): Promise<string> => 
 export const updatePlayer = async (id: string, updates: Partial<Player>): Promise<void> => {
   if (!isFirebaseConfigured() || !getDb()) return
   const playersCol = getPlayersCollection()
-  if (!playersCol || typeof doc !== 'function' || typeof updateDoc !== 'function') return
-  await updateDoc(doc(playersCol, validateId(id, "プレイヤーID")), { 
+  if (!playersCol || typeof firestore.doc !== 'function' || typeof firestore.updateDoc !== 'function') return
+  await firestore.updateDoc(firestore.doc(playersCol, validateId(id, "プレイヤーID")), { 
     ...updates, 
-    updatedAt: typeof serverTimestamp === 'function' ? serverTimestamp() : new Date() 
+    updatedAt: typeof firestore.serverTimestamp === 'function' ? firestore.serverTimestamp() : new Date() 
   })
 }
 
 export const deletePlayer = async (id: string): Promise<void> => {
   if (!isFirebaseConfigured() || !getDb()) return
   const playersCol = getPlayersCollection()
-  if (!playersCol || typeof doc !== 'function' || typeof deleteDoc !== 'function') return
-  await deleteDoc(doc(playersCol, validateId(id, "プレイヤーID")))
+  if (!playersCol || typeof firestore.doc !== 'function' || typeof firestore.deleteDoc !== 'function') return
+  await firestore.deleteDoc(firestore.doc(playersCol, validateId(id, "プレイヤーID")))
 }
 
 export const archivePlayer = async (id: string): Promise<void> => {
@@ -155,22 +152,22 @@ export const updatePlayerMembershipRank = async (playerId: string): Promise<void
 
 export const deleteAllPlayers = async (storeId: string): Promise<void> => {
   const db = getDb();
-  if (!db || typeof getDocs !== 'function' || typeof query !== 'function' || typeof where !== 'function' || typeof writeBatch !== 'function') return
+  if (!db || typeof firestore.getDocs !== 'function' || typeof firestore.query !== 'function' || typeof firestore.where !== 'function' || typeof firestore.writeBatch !== 'function') return
   const playersCol = getPlayersCollection()
   if (!playersCol) return
-  const snapshot = await getDocs(query(playersCol, where("storeId", "==", storeId)))
-  const batch = writeBatch(db)
+  const snapshot = await firestore.getDocs(firestore.query(playersCol, firestore.where("storeId", "==", storeId)))
+  const batch = firestore.writeBatch(db)
   snapshot.docs.forEach(d => batch.delete(d.ref))
   await batch.commit()
 }
 
 export const resetPlayerStatistics = async (storeId: string): Promise<void> => {
   const db = getDb();
-  if (!db || typeof getDocs !== 'function' || typeof query !== 'function' || typeof where !== 'function' || typeof writeBatch !== 'function') return
+  if (!db || typeof firestore.getDocs !== 'function' || typeof firestore.query !== 'function' || typeof firestore.where !== 'function' || typeof firestore.writeBatch !== 'function') return
   const playersCol = getPlayersCollection()
   if (!playersCol) return
-  const snapshot = await getDocs(query(playersCol, where("storeId", "==", storeId)))
-  const batch = writeBatch(db)
+  const snapshot = await firestore.getDocs(firestore.query(playersCol, firestore.where("storeId", "==", storeId)))
+  const batch = firestore.writeBatch(db)
   snapshot.docs.forEach(d => batch.update(d.ref, { totalBuyin: 0, totalProfit: 0, totalGames: 0 }))
   await batch.commit()
 }

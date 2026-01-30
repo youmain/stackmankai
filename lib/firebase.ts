@@ -1,6 +1,6 @@
-import { initializeApp, getApps, type FirebaseApp } from "firebase/app"
-import { getFirestore, type Firestore } from "firebase/firestore"
-import { getAuth, type Auth } from "firebase/auth"
+import * as firebase from "firebase/app"
+import * as firestore from "firebase/firestore"
+import * as auth from "firebase/auth"
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyB2IryF98PSSX5oToDF8aDtbLzXjJnXcXU",
@@ -11,53 +11,61 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:1156500357078:web:86697336338006934882ed",
 }
 
-let app: FirebaseApp | undefined
-let db: Firestore | undefined
-let auth: Auth | undefined
+let app: firebase.FirebaseApp | undefined
+let db: firestore.Firestore | undefined
+let authInstance: auth.Auth | undefined
 
-// サーバーサイドとクライアントサイドの両方で安全に初期化
-const apps = getApps()
-if (apps.length > 0) {
-  app = apps[0]
-} else {
-  try {
-    app = initializeApp(firebaseConfig)
-  } catch (error) {
-    console.error("[Firebase] Initialization error:", error)
+// 初期化関数
+function initializeFirebase() {
+  if (typeof window === 'undefined') return; // SSRガード
+
+  const apps = firebase.getApps()
+  if (apps.length > 0) {
+    app = apps[0]
+  } else {
+    try {
+      app = firebase.initializeApp(firebaseConfig)
+      console.log("[Firebase] Initialized successfully")
+    } catch (error) {
+      console.error("[Firebase] Initialization error:", error)
+    }
+  }
+
+  if (app) {
+    try {
+      db = firestore.getFirestore(app)
+      authInstance = auth.getAuth(app)
+    } catch (error) {
+      console.error("[Firebase] Error getting services:", error)
+    }
   }
 }
 
-if (app) {
-  db = getFirestore(app)
-  auth = getAuth(app)
+// クライアントサイドでの即時初期化試行
+if (typeof window !== 'undefined') {
+  initializeFirebase()
 }
 
-export { app, db, auth }
+export { app, db, authInstance as auth }
 
-export function getDb(): Firestore | null {
-  if (!db && app) {
-    try {
-      db = getFirestore(app)
-    } catch (e) {
-      console.error("[Firebase] Error getting Firestore instance:", e);
-      return null;
-    }
+export function getDb(): firestore.Firestore | null {
+  if (typeof window === 'undefined') return null;
+  
+  if (!db) {
+    initializeFirebase()
   }
   return db || null
 }
 
-export function getAuthInstance(): Auth | null {
-  if (!auth && app) {
-    try {
-      auth = getAuth(app)
-    } catch (e) {
-      console.error("[Firebase] Error getting Auth instance:", e);
-      return null;
-    }
+export function getAuthInstance(): auth.Auth | null {
+  if (typeof window === 'undefined') return null;
+
+  if (!authInstance) {
+    initializeFirebase()
   }
-  return auth || null
+  return authInstance || null
 }
 
 export function isFirebaseConfigured(): boolean {
-  return !!app && !!firebaseConfig.apiKey
+  return !!firebaseConfig.apiKey
 }

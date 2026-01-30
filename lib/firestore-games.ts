@@ -1,21 +1,4 @@
-import {
-  Timestamp,
-  doc,
-  getDoc,
-  updateDoc,
-  serverTimestamp,
-  getDocs,
-  query,
-  where,
-  orderBy,
-  limit,
-  addDoc,
-  onSnapshot,
-  collection,
-  deleteDoc,
-  setDoc,
-  writeBatch,
-} from "firebase/firestore"
+import * as firestore from "firebase/firestore"
 import { getDb, isFirebaseConfigured } from "./firebase"
 import { getGamesCollection, safeQuery, safeOnSnapshot } from "./firestore-common"
 
@@ -57,9 +40,9 @@ export const subscribeToActiveGames = (arg1: any): (() => void) => {
     return () => {}
   }
   const gamesCollection = getGamesCollection()
-  const q = safeQuery(gamesCollection, where("status", "==", "active"), orderBy("startTime", "desc"))
+  const q = safeQuery(gamesCollection, firestore.where("status", "==", "active"), firestore.orderBy("startTime", "desc"))
   return safeOnSnapshot(q, (snapshot) => {
-    const games = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Game)
+    const games = snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }) as Game)
     callback(games)
   })
 }
@@ -71,9 +54,9 @@ export const subscribeToGames = (arg1: any): (() => void) => {
     return () => {}
   }
   const gamesCollection = getGamesCollection()
-  const q = safeQuery(gamesCollection, orderBy("startTime", "desc"))
+  const q = safeQuery(gamesCollection, firestore.orderBy("startTime", "desc"))
   return safeOnSnapshot(q, (snapshot) => {
-    const games = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Game)
+    const games = snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }) as Game)
     callback(games)
   })
 }
@@ -85,8 +68,10 @@ export const getGame = async (id: string): Promise<Game | null> => {
   }
   try {
     const validatedId = validateId(id, "ゲームID")
-    const gameRef = doc(getGamesCollection(), validatedId)
-    const gameSnap = await getDoc(gameRef)
+    const gamesCollection = getGamesCollection()
+    if (!gamesCollection) return null
+    const gameRef = firestore.doc(gamesCollection, validatedId)
+    const gameSnap = await firestore.getDoc(gameRef)
     if (!gameSnap.exists()) {
       return null
     }
@@ -105,10 +90,11 @@ export const addGame = async (game: Omit<Game, "id">): Promise<string> => {
   }
   try {
     const gamesCollection = getGamesCollection()
-    const docRef = await addDoc(gamesCollection, {
+    if (!gamesCollection) throw new Error("Database not initialized")
+    const docRef = await firestore.addDoc(gamesCollection, {
       ...game,
-      startTime: serverTimestamp(),
-      updatedAt: serverTimestamp(),
+      startTime: firestore.serverTimestamp(),
+      updatedAt: firestore.serverTimestamp(),
     })
     return docRef.id
   } catch (error) {
@@ -125,8 +111,10 @@ export const updateGame = async (id: string, updates: Partial<Game>): Promise<vo
   }
   try {
     const validatedId = validateId(id, "ゲームID")
-    const gameRef = doc(getGamesCollection(), validatedId)
-    await updateDoc(gameRef, { ...updates, updatedAt: serverTimestamp() })
+    const gamesCollection = getGamesCollection()
+    if (!gamesCollection) return
+    const gameRef = firestore.doc(gamesCollection, validatedId)
+    await firestore.updateDoc(gameRef, { ...updates, updatedAt: firestore.serverTimestamp() })
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
     log.error("[ERROR] ゲーム更新に失敗しました", { error: errorMessage, id })
@@ -141,7 +129,9 @@ export const deleteGame = async (id: string): Promise<void> => {
   }
   try {
     const validatedId = validateId(id, "ゲームID")
-    await deleteDoc(doc(getGamesCollection(), validatedId))
+    const gamesCollection = getGamesCollection()
+    if (!gamesCollection) return
+    await firestore.deleteDoc(firestore.doc(gamesCollection, validatedId))
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
     log.error("[ERROR] ゲーム削除に失敗しました", { error: errorMessage, id })
@@ -155,11 +145,12 @@ export const deleteAllGames = async (storeId: string): Promise<void> => {
   if (!isFirebaseConfigured()) return
   try {
     const gamesCollection = getGamesCollection()
-    const q = query(gamesCollection, where("storeId", "==", storeId))
-    const snapshot = await getDocs(q)
+    if (!gamesCollection) return
+    const q = firestore.query(gamesCollection, firestore.where("storeId", "==", storeId))
+    const snapshot = await firestore.getDocs(q)
     const db = getDb()
     if (!db) throw new Error("Database not initialized")
-    const batch = writeBatch(db)
+    const batch = firestore.writeBatch(db)
     snapshot.docs.forEach((doc) => {
       batch.delete(doc.ref)
     })
@@ -221,8 +212,8 @@ export const updateGameParticipantStack = async (
   try {
     const db = getDb();
     if (!db) throw new Error("Database not initialized");
-    const gameRef = doc(db, "games", gameId);
-    const gameSnap = await getDoc(gameRef);
+    const gameRef = firestore.doc(db, "games", gameId);
+    const gameSnap = await firestore.getDoc(gameRef);
 
     if (!gameSnap.exists()) {
       throw new Error(`ゲームが見つかりません: ${gameId}`);
@@ -239,9 +230,9 @@ export const updateGameParticipantStack = async (
     const updatedParticipants = [...participants];
     updatedParticipants[participantIndex].stack = stack;
 
-    await updateDoc(gameRef, {
+    await firestore.updateDoc(gameRef, {
       participants: updatedParticipants,
-      updatedAt: serverTimestamp(),
+      updatedAt: firestore.serverTimestamp(),
     });
 
     log.info("[v0] ゲーム参加者のスタック更新完了", { gameId, playerId, stack });
