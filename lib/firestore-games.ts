@@ -17,7 +17,7 @@ import {
   writeBatch,
 } from "firebase/firestore"
 import { getDb, isFirebaseConfigured } from "./firebase"
-import { getGamesCollection } from "./firestore-common"
+import { getGamesCollection, safeQuery, safeOnSnapshot } from "./firestore-common"
 
 // Force Vercel rebuild with stable version - Manus AI (2026-01-13)
 import { validateId } from "./validation"
@@ -57,8 +57,8 @@ export const subscribeToActiveGames = (arg1: any): (() => void) => {
     return () => {}
   }
   const gamesCollection = getGamesCollection()
-  const q = query(gamesCollection, where("status", "==", "active"), orderBy("startTime", "desc"))
-  return onSnapshot(q, (snapshot) => {
+  const q = safeQuery(gamesCollection, where("status", "==", "active"), orderBy("startTime", "desc"))
+  return safeOnSnapshot(q, (snapshot) => {
     const games = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Game)
     callback(games)
   })
@@ -71,8 +71,8 @@ export const subscribeToGames = (arg1: any): (() => void) => {
     return () => {}
   }
   const gamesCollection = getGamesCollection()
-  const q = query(gamesCollection, orderBy("startTime", "desc"))
-  return onSnapshot(q, (snapshot) => {
+  const q = safeQuery(gamesCollection, orderBy("startTime", "desc"))
+  return safeOnSnapshot(q, (snapshot) => {
     const games = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Game)
     callback(games)
   })

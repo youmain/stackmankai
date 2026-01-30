@@ -23,7 +23,7 @@ export const safeQuery = (collectionRef: any, ...queryConstraints: any[]): any =
   try {
     return q(collectionRef, ...queryConstraints);
   } catch (e) {
-    console.error("[safeQuery] Error executing query:", e);
+    console.error("[safeQuery] Error executing query:", e, "Query:", queryConstraints);
     return null;
   }
 };
@@ -39,7 +39,7 @@ export const safeOnSnapshot = (query: any, onNext: (snapshot: any) => void, onEr
   try {
     return snap(query, onNext, onError);
   } catch (e) {
-    console.error("[safeOnSnapshot] Error setting up snapshot:", e);
+    console.error("[safeOnSnapshot] Error setting up snapshot:", e, "Query:", query);
     return () => {};
   }
 };

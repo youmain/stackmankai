@@ -36,14 +36,24 @@ export { app, db, auth }
 
 export function getDb(): Firestore | null {
   if (!db && app) {
-    db = getFirestore(app)
+    try {
+      db = getFirestore(app)
+    } catch (e) {
+      console.error("[Firebase] Error getting Firestore instance:", e);
+      return null;
+    }
   }
   return db || null
 }
 
 export function getAuthInstance(): Auth | null {
   if (!auth && app) {
-    auth = getAuth(app)
+    try {
+      auth = getAuth(app)
+    } catch (e) {
+      console.error("[Firebase] Error getting Auth instance:", e);
+      return null;
+    }
   }
   return auth || null
 }

@@ -52,8 +52,8 @@ export const subscribeToPlayers = (
     const whereFn = where;
     const orderByFn = orderBy;
     
-    if (typeof whereFn !== 'function' || typeof orderByFn !== 'function' || typeof query !== 'function') {
-      console.warn("[subscribeToPlayers] Firebase query functions are not available.");
+    if (typeof whereFn !== 'function' || typeof orderByFn !== 'function' || typeof query !== 'function' || typeof safeQuery !== 'function' || typeof safeOnSnapshot !== 'function') {
+      console.warn("[subscribeToPlayers] Firebase query/snapshot functions are not available.");
       return () => {};
     }
 
@@ -85,6 +85,7 @@ export const subscribeToPlayers = (
     return typeof unsubscribe === "function" ? unsubscribe : () => {}
   } catch (error) {
     log.error("Failed to setup players subscription:", error)
+    if (onError) onError(error as Error)
     return () => {}
   }
 }

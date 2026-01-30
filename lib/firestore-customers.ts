@@ -98,16 +98,22 @@ export const subscribeToCustomerAccount = (arg1: any, arg2?: any): (() => void) 
   
   const customerDocRef = doc(db, "customerAccounts", uid);
 
-  return safeOnSnapshot(customerDocRef as any, (docSnap) => {
-    if (docSnap.exists()) {
-      callback({ id: docSnap.id, ...docSnap.data() } as CustomerAccount);
-    } else {
+  try {
+    return safeOnSnapshot(customerDocRef as any, (docSnap) => {
+      if (docSnap.exists()) {
+        callback({ id: docSnap.id, ...docSnap.data() } as CustomerAccount);
+      } else {
+        callback(null);
+      }
+    }, (error) => {
+      console.error("Error subscribing to customer account:", error);
       callback(null);
-    }
-  }, (error) => {
-    console.error("Error subscribing to customer account:", error);
+    });
+  } catch (error) {
+    console.error("Failed to setup customer account subscription:", error);
     callback(null);
-  });
+    return () => {};
+  }
 }
 
 export const createCustomerAccount = async (account: Omit<CustomerAccount, "id">): Promise<string> => {
